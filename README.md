@@ -1,0 +1,47 @@
+# Stick2XU
+
+Custom sticker sheets for XU students. Customers design a sheet on their phone, pick a pickup date, time, and gate, and get their stickers at school. Stick2XU is run by students and isn't an official XU service.
+
+First time setting it up? See **SETUP.md**.
+
+## How it works for customers
+
+1. **Design.** Add pictures, pick a size, and tap where each one goes. Every sticker shows its white die-cut border.
+2. **Details.** Nickname, grade and section, then a pickup date, time (Lunch 12:30 PM or After class 5:10 PM), and gate (Gate 1 or Gate 4). Pay in cash at pickup, or by GCash.
+3. **Pickup pass.** They get a code like `STK-7KQ4` and a "Your pickup" summary.
+4. **Pickup day.** They check **My order** until it says Ready. At the gate, they look for the seller's signal and tap **I'm here**.
+
+## The admin page
+
+Open `your-site/#/admin` and log in.
+
+**Orders**, in the order they move through:
+
+- **To review:** check each design. Approve it, or reject it with a reason the customer will see.
+- **To print:** download the PDF and print at **100% / "Actual size"** on sticker paper. Cut along the thin grey lines around each white border. Orders where the customer tapped "I'll be there" are listed first.
+- **Printing:** tap **Mark ready** when they're cut and bagged. Write the code and nickname on each bag.
+- **Ready:** grouped by pickup date. Keep this open on your phone at the gate. When someone taps "I'm here", they jump to the top with a gold **Here now** tag and a pop-up with their name, section, and gate. It checks every 15 seconds. Then tap **Picked up and paid**, or **Didn't show up**.
+- **Done / Other:** finished, rejected, cancelled, and no-show orders.
+
+After 2 no-shows, that nickname and section can't order anymore. You can change the limit in Supabase under `shop_settings → max_noshows`.
+
+**Earnings:** total earned, the last 7 days, money still to collect, and which posters bring in orders.
+
+**Poster QR codes:** type a name for each poster spot (like `gate-1` or `library-board`), then download the QR code. Every poster should get its own name, so Earnings can show which spots work. Set `siteUrl` in CONFIG before making these.
+
+**Settings:** the pickup signal, meaning what customers look for at the gate: "the person **holding / wearing** ___", like "holding a Stick2XU sign" or "wearing a yellow lanyard". Changes show up for customers right away.
+
+## Changing things
+
+| To change | Where |
+|---|---|
+| Price per sheet, max sheets per order, no-show limit | Supabase → Table Editor → `shop_settings` |
+| Pickup signal | Admin page → Settings |
+| Pickup days, times, gates, grades, GCash details, holidays | `CONFIG` at the top of `index.html`, then push |
+| Colors | The `--xu-...` values at the top of the `<style>` in `index.html` |
+
+## Keeping it running
+
+- Pictures are deleted automatically 30 days after an order is finished. The cleanup runs when the admin page opens. Order records stay, so earnings history is kept.
+- Free Supabase projects pause after about a week with no activity. Over breaks, open the Supabase dashboard once a week, or restore the project when you come back.
+- After updating `index.html`, also run the latest `schema.sql` in Supabase if it changed. It's safe to run again.

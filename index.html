@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stick2XU · Make your own sticker sheet</title>
+<meta name="description" content="Design your own sticker sheet on your phone. ₱50 per sheet, picked up at school.">
+<meta property="og:title" content="Stick2XU">
+<meta property="og:description" content="Turn your pictures into a sticker sheet. ₱50 per sheet.">
+<meta name="theme-color" content="#F4F5FA">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-3 -3 30 30'%3E%3Cpath d='M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z' fill='%233a52a3' stroke='%23fff' stroke-width='3' stroke-linejoin='round' paint-order='stroke'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F5FA; --paper:#FFFFFF; --ink:#283971; --muted:#5B6385; --line:#D8DCEB;
+  --xu-blue1:#283971; --xu-blue2:#3a52a3; --xu-gold-official:#b99430; --xu-gold:#F2BC2E; --xu-red:#ec282a; --gold-soft:#FFF3D1;
+  --accent:var(--xu-blue2); --accent-d:var(--xu-blue1); --accent-soft:#E6E9F5; --on-accent:#FFFFFF;
+  --ok:#17834A; --ok-soft:#DCF2E5; --bad:#D11F21; --bad-soft:#FDE3E3; --warn-soft:#FFF0C4;
+  --backing:#DADDEA; --backing-line:#CCD0E0;
+  --display:'Cabinet Grotesk','Arial Black',system-ui,sans-serif;
+  --body:'Satoshi',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --r-lg:28px; --r-md:18px; --r-sm:12px;
+  --shadow:3px 3px 0 var(--ink); --shadow-sm:2px 2px 0 var(--ink);
+  --ease:cubic-bezier(.16,1,.3,1);
+  --z-bar:20; --z-toast:40;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100dvh}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.06;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+#app{position:relative;z-index:1}
+h1,h2,h3{font-family:var(--display);font-weight:800;margin:0;letter-spacing:-.02em;line-height:1.02;text-wrap:balance}
+h2{font-size:clamp(28px,4vw,36px)} h3{font-size:21px;letter-spacing:-.01em}
+p{margin:0 0 10px;text-wrap:pretty}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+.skip{position:absolute;left:12px;top:-60px;background:var(--ink);color:#fff;padding:10px 14px;border-radius:10px;z-index:var(--z-toast);text-decoration:none}
+.skip:focus{top:12px}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+.muted{color:var(--muted)} .small{font-size:15px}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1120px;margin:0 auto;padding:8px 20px 140px}
+.narrow{max-width:640px}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1120px;margin:0 auto;padding:16px 20px}
+
+/* the die-cut wordmark */
+.mark{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:-.02em;text-decoration:none;color:var(--ink);display:inline-block;transform:rotate(-3deg);
+  text-shadow:2px 0 #fff,-2px 0 #fff,0 2px #fff,0 -2px #fff,1.5px 1.5px #fff,-1.5px 1.5px #fff,1.5px -1.5px #fff,-1.5px -1.5px #fff,
+    3px 0 #fff,-3px 0 #fff,0 3px #fff,0 -3px #fff,2.2px 2.2px #fff,-2.2px 2.2px #fff,2.2px -2.2px #fff,-2.2px -2.2px #fff;
+  filter:drop-shadow(0 2px 3px rgba(40,57,113,.28))}
+.mark b{color:var(--xu-gold)}
+.pilllink{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;border:2px solid var(--ink);background:var(--paper);
+  text-decoration:none;font-weight:700;font-size:15px;box-shadow:var(--shadow-sm);transition:transform .2s var(--ease),box-shadow .2s var(--ease);cursor:pointer}
+.pilllink:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:10px 10px 10px 24px;border-radius:999px;
+  border:2px solid var(--ink);background:var(--accent);color:var(--on-accent);font-weight:700;font-size:17px;line-height:1.1;text-decoration:none;
+  box-shadow:var(--shadow);cursor:pointer;touch-action:manipulation;transition:transform .2s var(--ease),box-shadow .2s var(--ease),background-color .2s var(--ease)}
+.btn .bi{flex:none;width:34px;height:34px;border-radius:50%;background:var(--xu-gold);color:var(--xu-blue1);display:grid;place-items:center;transition:transform .3s var(--ease)}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink);background-color:var(--accent-d)}
+.btn:hover .bi{transform:translateX(3px)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn.plain{background:var(--paper);color:var(--ink)} .btn.plain:hover{background:var(--accent-soft)}
+.btn.dark{background:var(--ink);color:#fff} .btn.dark:hover{background:#1C2955} .btn.dark .bi{background:var(--xu-gold);color:var(--xu-blue1)}
+.btn.noi{padding:10px 24px}
+.btn.sm{min-height:44px;font-size:15px;padding:8px 16px;gap:8px;box-shadow:var(--shadow-sm)}
+.btn.sm:hover{box-shadow:4px 4px 0 var(--ink)} .btn.sm:active{box-shadow:1px 1px 0 var(--ink)}
+.btn.ok,.btn.ok:hover{background:var(--ok);color:#fff} .btn.danger,.btn.danger:hover{background:var(--bad);color:#fff}
+.btn.wide{width:100%}
+.btn[disabled]{opacity:.42;pointer-events:none;box-shadow:none}
+
+.panel{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-lg);padding:24px;box-shadow:var(--shadow)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;padding:4px 10px;border-radius:8px;background:#EEEFF2;color:var(--ink)}
+.tag.ok{background:var(--ok-soft);color:#0F5F34} .tag.bad{background:var(--bad-soft);color:#8E1F1F} .tag.warn{background:var(--warn-soft);color:#6B4B00} .tag.hot{background:var(--accent-soft);color:#8A2A12}
+
+/* ---------- home ---------- */
+.home{min-height:calc(100dvh - 90px);display:flex;flex-direction:column}
+.hero{flex:1;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding:24px 0 48px}
+.hero h1{font-size:clamp(44px,6vw,70px)}
+.hero .lead{font-size:19px;max-width:38ch;margin:20px 0 30px;color:#2E3B57}
+.facts{display:flex;flex-wrap:wrap;gap:10px 22px;margin:28px 0 0;padding:16px 0 0;border-top:1px solid var(--line);list-style:none;font-size:15px;color:var(--muted);font-weight:500}
+.facts li{display:flex;align-items:center;gap:8px}
+.facts svg{color:#C9951A}
+.facts b{color:var(--ink)}
+@media(max-width:820px){.hero{grid-template-columns:1fr;gap:28px;padding-top:12px}}
+
+.sheet-art{position:relative;aspect-ratio:210/297;width:min(100%,380px);margin:0 auto;border-radius:10px;background-color:var(--backing);
+  background-image:linear-gradient(var(--backing-line) 1px,transparent 1px),linear-gradient(90deg,var(--backing-line) 1px,transparent 1px);background-size:9.5% 6.7%;
+  border:2px solid var(--ink);box-shadow:8px 8px 0 var(--ink);transform:rotate(2.5deg)}
+@media(max-width:820px){.sheet-art{width:min(78%,320px)}}
+.hs{position:absolute;filter:drop-shadow(0 3px 3px rgba(40,57,113,.28));animation:stick .7s var(--ease) both;animation-delay:var(--d);transform:rotate(var(--r))}
+.hs.txt{display:grid;place-items:center;font-family:var(--display);font-weight:800;color:var(--ink);border:5px solid #fff;border-radius:16px;line-height:1;text-align:center;padding:8px 10px}
+.hs.peel::after{content:"";position:absolute;right:-5px;bottom:-5px;width:34%;height:34%;border-top-left-radius:70%;
+  background:linear-gradient(135deg,transparent 45%,#E9EAEE 48%,#fff 80%);box-shadow:-3px -3px 5px rgba(40,57,113,.2)}
+@keyframes stick{from{opacity:0;transform:translateY(-26px) scale(1.25) rotate(calc(var(--r) - 14deg))}to{opacity:1;transform:rotate(var(--r))}}
+
+footer{border-top:1px solid var(--line);padding:22px 0;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-size:15px;color:var(--muted)}
+
+/* ---------- progress ---------- */
+.prog{display:flex;gap:8px;align-items:center;margin:0 0 18px;flex-wrap:wrap}
+.prog span{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;color:var(--muted)}
+.prog i{font-style:normal;width:26px;height:26px;border-radius:50%;border:2px solid var(--muted);display:grid;place-items:center;font-size:13px}
+.prog .on{color:var(--ink)} .prog .on i{background:var(--xu-gold);border-color:var(--ink);color:var(--ink)}
+.prog .done i{background:var(--ink);border-color:var(--ink);color:#fff}
+.prog .bar{width:28px;height:2px;background:var(--line)}
+
+/* ---------- designer ---------- */
+.designer{display:grid;grid-template-columns:340px 1fr;gap:28px;align-items:start}
+@media(max-width:900px){.designer{grid-template-columns:1fr;gap:20px}}
+.tools{position:sticky;top:16px}
+
+.stephead{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:20px;margin:0 0 12px}
+.stephead i{font-style:normal;width:28px;height:28px;border-radius:50%;background:var(--xu-gold);color:var(--ink);display:grid;place-items:center;font-size:14px}
+.tools section+section{margin-top:22px;padding-top:20px;border-top:1px dashed var(--line)}
+.upload{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border:2px dashed var(--ink);border-radius:var(--r-md);background:#F6F6F8;cursor:pointer;font-weight:700;transition:background-color .2s var(--ease)}
+.upload:hover{background:var(--accent-soft)}
+.upload .ui{width:42px;height:42px;border-radius:12px;background:var(--accent);color:#fff;border:2px solid var(--ink);display:grid;place-items:center;flex:none}
+.upload small{display:block;font-weight:500;color:var(--muted);font-size:14px}
+.tray{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
+.thumb{position:relative;width:64px;height:64px;padding:0;border-radius:14px;border:2px solid var(--line);background:#F1F1F4 center/cover no-repeat;cursor:pointer;transition:transform .2s var(--ease)}
+.thumb:active{transform:scale(.95)}
+.thumb.on{border-color:var(--ink);box-shadow:0 0 0 3px var(--xu-gold)}
+.thumb .x{position:absolute;top:-10px;right:-10px;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;border:2px solid #fff;display:grid;place-items:center;cursor:pointer}
+.sizes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.size{display:flex;align-items:center;gap:10px;min-height:56px;padding:8px 12px;border-radius:14px;border:2px solid var(--line);background:var(--paper);cursor:pointer;text-align:left;font-weight:700;transition:border-color .2s var(--ease),transform .2s var(--ease)}
+.size:active{transform:scale(.97)}
+.size.on{border-color:var(--ink);background:var(--gold-soft);outline:3px solid var(--xu-gold);outline-offset:-1px;box-shadow:var(--shadow-sm)}
+.size .g{flex:none;display:grid;gap:2px;width:28px;height:28px}
+.size .g b{background:var(--ink);border-radius:2px}
+.size small{display:block;font-weight:500;color:var(--muted);font-size:13px}
+.hint{display:flex;gap:10px;align-items:flex-start;background:#F3F3F6;border-radius:var(--r-sm);padding:12px;font-size:15px}
+.hint svg{flex:none;margin-top:2px}
+@media(max-width:900px){.tools{position:static;padding:18px}
+  .tools section.tip{display:none}
+  .tools section+section{margin-top:16px;padding-top:14px}
+  .upload{padding:10px}.upload small{display:none}
+  .sizes{grid-template-columns:repeat(4,1fr);gap:8px}
+  .size{flex-direction:column;justify-content:center;gap:6px;padding:8px 4px;text-align:center;font-size:14px}
+  .size small{display:none}
+  .prog{gap:6px}.prog .bar{width:14px}.prog span{font-size:14px}}
+.hint.mob{display:none;width:min(100%,520px);margin:0 0 12px}
+@media(max-width:900px){.hint.mob{display:flex}}
+
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab{min-height:42px;padding:6px 16px;border-radius:999px;border:2px solid var(--ink);background:var(--paper);font-weight:700;font-size:15px;cursor:pointer;transition:background-color .2s var(--ease)}
+.tab.on{background:var(--ink);color:#fff}
+.tab.add{border-style:dashed;display:inline-flex;align-items:center;gap:6px}
+.stage{display:flex;flex-direction:column;align-items:center}
+.page{position:relative;width:min(100%,520px);aspect-ratio:210/297;border-radius:10px;border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink);
+  background-color:var(--backing);background-image:linear-gradient(var(--backing-line) 1px,transparent 1px),linear-gradient(90deg,var(--backing-line) 1px,transparent 1px);background-size:4.76% 3.37%}
+.cell{position:absolute;padding:0;border:2px dashed rgba(40,57,113,.22);border-radius:12px;background:transparent;cursor:pointer;transition:background-color .15s var(--ease),border-color .15s var(--ease)}
+.cell:hover{background:rgba(58,82,163,.12);border-color:var(--accent)}
+.stk{position:absolute;padding:0;border:0;background:transparent center/100% 100% no-repeat;cursor:pointer;filter:drop-shadow(0 2px 2.5px rgba(40,57,113,.32));transition:transform .2s var(--ease)}
+.stk:hover{transform:scale(1.03)}
+.stk.sel{outline:2.5px dashed var(--ink);outline-offset:2px;border-radius:12px;transform:scale(1.03)}
+.stk.pop{animation:pop .35s var(--ease)}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.07)}100%{transform:scale(1)}}
+.stk .w{position:absolute;left:6%;bottom:6%;display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;background:var(--warn-soft);border:1.5px solid var(--ink);border-radius:6px;padding:0 5px;filter:none}
+.selbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:18px}
+.under{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin-top:16px;font-size:15px;color:var(--muted);text-align:center}
+.shake{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+.bottombar{position:fixed;left:0;right:0;bottom:0;z-index:var(--z-bar);background:rgba(244,245,250,.93);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-top:2px solid var(--ink);padding:12px 20px calc(12px + env(safe-area-inset-bottom,0px))}
+.bottombar .in{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.bottombar .tot{font-family:var(--display);font-weight:800;font-size:30px;line-height:1}
+.bottombar .sub{font-size:14px;color:var(--muted)}
+
+/* ---------- forms ---------- */
+.field{display:grid;gap:8px;margin-bottom:22px}
+.lab{font-weight:700}
+.lab .req,legend .req{color:var(--xu-red)}
+.help{font-size:14px;color:var(--muted);margin:0}
+.inp{width:100%;min-height:52px;font:inherit;font-size:17px;padding:12px 14px;border-radius:14px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);transition:box-shadow .2s var(--ease)}
+.inp:focus{outline:none;box-shadow:0 0 0 4px var(--accent-soft),var(--shadow-sm)}
+.inp[aria-invalid="true"]{border-color:var(--bad);box-shadow:0 0 0 3px var(--bad-soft)}
+.ferr{color:var(--bad);font-weight:700;font-size:15px;margin:0;display:flex;gap:6px;align-items:center}
+.ferr:empty{display:none}
+fieldset{border:0;padding:0;margin:0 0 22px;min-width:0}
+legend{font-weight:700;padding:0;margin-bottom:8px}
+.choice{display:flex;gap:12px;align-items:center;min-height:52px;padding:10px 14px;border:2px solid var(--line);border-radius:14px;margin-bottom:8px;cursor:pointer;background:var(--paper);transition:border-color .2s var(--ease),background-color .2s var(--ease)}
+.choice input{accent-color:var(--ink);width:20px;height:20px;flex:none;margin:0}
+.choice:has(input:checked){border-color:var(--ink);background:var(--accent-soft)}
+.nudge{display:flex;gap:8px;align-items:center;background:var(--ok-soft);color:#0F5F34;border-radius:12px;padding:10px 12px;font-weight:700;font-size:15px;margin-top:8px}
+.gcashbox{background:#F3F3F6;border-radius:14px;padding:14px;margin-top:4px;font-size:15px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.summary{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0 24px}
+.mini{position:relative;width:86px;aspect-ratio:210/297;border-radius:5px;border:2px solid var(--ink);background:var(--backing);flex:none}
+.mini span{position:absolute;border-radius:4px;background:#fff center/cover no-repeat;box-shadow:0 0 0 1.5px #fff}
+.mini span.fit{background-size:contain}
+.mini span.o{background-color:transparent;background-size:100% 100%;box-shadow:none;filter:drop-shadow(0 1px 1px rgba(40,57,113,.3))}
+.mini .gone{position:absolute;inset:0;display:grid;place-items:center;font-size:11px;color:var(--muted);text-align:center;padding:4px}
+.totalrow{display:flex;justify-content:space-between;align-items:baseline;border-top:2px solid var(--ink);padding-top:14px;margin-top:8px}
+.totalrow b{font-family:var(--display);font-size:34px}
+.formerr{background:var(--bad-soft);color:#8E1F1F;border-radius:12px;padding:12px;font-weight:700;margin-top:14px}
+.formerr:empty{display:none}
+
+/* ---------- pickup pass ---------- */
+.pass{display:grid;grid-template-columns:130px 1fr;border:2px solid var(--ink);border-radius:var(--r-lg);background:var(--paper);box-shadow:6px 6px 0 var(--ink);overflow:hidden;
+  -webkit-mask:radial-gradient(circle 12px at 130px 0,#0000 98%,#000) top/100% 51% no-repeat,radial-gradient(circle 12px at 130px 100%,#0000 98%,#000) bottom/100% 51% no-repeat;
+          mask:radial-gradient(circle 12px at 130px 0,#0000 98%,#000) top/100% 51% no-repeat,radial-gradient(circle 12px at 130px 100%,#0000 98%,#000) bottom/100% 51% no-repeat}
+.pass .side{background:var(--gold-soft);border-right:2px dashed var(--ink);padding:16px;color:var(--ink);text-align:center}
+.pass .side{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.pass .side .m{font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:.08em;line-height:1}
+.pass .side .dd{font-family:var(--display);font-weight:800;font-size:52px;line-height:.95;color:var(--ink)}
+.pass .tip{display:flex;gap:6px;align-items:center}
+.pass .body{padding:20px 22px}
+.pass .k{font-size:14px;font-weight:700;color:var(--muted)}
+.pass .code{font-family:var(--display);font-weight:800;white-space:nowrap;font-size:clamp(28px,8.5vw,52px);letter-spacing:.04em;line-height:1;margin:4px 0 6px}
+.pass .who{font-weight:700}
+.pass .tip{font-size:15px;color:var(--ink);font-weight:500;margin:10px 0 0}
+.gs{display:grid;grid-template-columns:120px auto 1fr;gap:10px;align-items:center}
+.gs .dash{font-family:var(--display);font-weight:800;font-size:24px}
+select.inp{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:36px;background:var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23283971' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center}
+.choice small{display:block;color:var(--muted);font-weight:500;font-size:14px}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0 26px}
+.pt{border:2px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:2px;align-content:start}
+.pt .k{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.pt .k svg{color:#C9951A}
+.pt b{font-family:var(--display);font-weight:800;font-size:22px;line-height:1.15}
+.pt span:last-child{font-size:15px;color:var(--muted)}
+.pt.hi{background:var(--gold-soft);border-color:var(--ink)}
+@media(max-width:480px){.pgrid{grid-template-columns:1fr}}
+mark{background:var(--xu-gold);color:var(--ink);padding:0 6px;border-radius:6px;font-weight:700}
+.steps2{list-style:none;counter-reset:st;margin:12px 0 20px;padding:0;display:grid;gap:14px}
+.steps2 li{counter-increment:st;display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start}
+.steps2 li::before{content:counter(st);width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:800}
+.steps2 b{display:block;font-size:18px;margin-bottom:2px}
+.steps2 span{color:var(--muted)}
+.notes{border-top:1px solid var(--line);padding-top:14px;display:grid;gap:10px}
+.notes p{display:grid;grid-template-columns:24px 1fr;gap:10px;margin:0;font-size:15px}
+.notes svg{color:#C9951A;margin-top:2px}
+.goodlist{list-style:none;margin:0;padding:0}
+.goodlist li{display:grid;grid-template-columns:32px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.goodlist li:last-child{border-bottom:0}
+.goodlist svg{color:#C9951A;margin-top:2px}
+.goodlist b{display:block}
+@media(max-width:420px){.pass{grid-template-columns:92px 1fr;-webkit-mask:none;mask:none}.pass .side .dd{font-size:42px}.pass .body{padding:16px}}
+
+.track{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:18px 0 6px}
+.track div{text-align:center;font-size:13px;font-weight:700;color:var(--muted)}
+.track i{display:block;height:8px;border-radius:99px;background:var(--line);margin-bottom:8px}
+.track .on{color:var(--ink)} .track .on i{background:var(--ink)} .track .now i{background:var(--xu-gold);border:2px solid var(--ink);height:10px;margin-top:-1px}
+.stmsg{display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:800;font-size:26px;line-height:1.1}
+.stmsg .ic{flex:none;width:48px;height:48px;border-radius:14px;border:2px solid var(--ink);display:grid;place-items:center;background:var(--accent-soft)}
+dl.kv{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:18px 0 0;padding-top:16px;border-top:1px solid var(--line)}
+dl.kv dt{color:var(--muted)} dl.kv dd{margin:0;font-weight:700}
+
+.sk{border-radius:12px;background:linear-gradient(90deg,#E2E3E8 25%,#F0F1F4 50%,#E2E3E8 75%);background-size:200% 100%;animation:shimmer 1.2s infinite linear}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+
+/* ---------- admin ---------- */
+.atabs{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 22px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.chip{min-height:42px;display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;border:2px solid var(--line);background:var(--paper);font-weight:700;font-size:15px;cursor:pointer}
+.chip.on{border-color:var(--ink);background:var(--ink);color:#fff}
+.chip .c{min-width:22px;padding:0 6px;border-radius:99px;background:var(--xu-gold);color:var(--ink);font-size:13px;text-align:center}
+.olist{display:grid;gap:16px}
+.ocard{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:18px;box-shadow:var(--shadow)}
+.ohead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pdot{width:56px;height:58px;border-radius:14px;border:2px solid var(--ink);background:var(--gold-soft);display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none;line-height:1}
+.pdot small{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.pdot b{font-family:var(--display);font-size:26px}
+.tag.here{background:var(--xu-gold);color:var(--ink);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 5px rgba(242,188,46,.35)}}
+.dayhead{font-family:var(--display);font-weight:800;font-size:22px;margin:10px 0 -4px;display:flex;align-items:center;gap:10px}
+.dayhead .tag{font-family:var(--body)}
+.ocode{font-family:var(--display);font-weight:800;font-size:24px;line-height:1}
+.ohead .st{margin-left:auto}
+.ometa{display:grid;gap:4px;margin:14px 0 10px}
+.ometa div{display:flex;gap:8px;align-items:flex-start}
+.ometa svg{flex:none;margin-top:3px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.oacts{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.rejbox{margin-top:14px;padding:14px;border-radius:14px;background:var(--bad-soft)}
+.rejbox .quick{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.stats{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px;margin-bottom:20px}
+.stats .panel{padding:18px}
+.stats b{display:block;font-family:var(--display);font-size:38px;line-height:1.05}
+.stats .hero-stat{background:var(--accent);color:#fff}
+@media(max-width:820px){.stats{grid-template-columns:1fr 1fr}.stats .hero-stat{grid-column:1/-1}}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:16px}
+th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:700}
+.qrrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.qrrow .inp{flex:1;min-width:200px}
+.qrwrap{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:start;margin-top:22px;padding-top:22px;border-top:1px solid var(--line)}
+.qrwrap > div:last-child{display:grid;gap:12px;align-content:start}
+.qrwrap .lab{margin:0}
+@media(max-width:700px){.qrwrap{grid-template-columns:1fr}}
+#qrbox{background:#fff;padding:14px;border-radius:16px;border:2px solid var(--ink);display:inline-block;box-shadow:var(--shadow)}
+#qrbox img,#qrbox canvas{display:block;width:220px;height:220px}
+.url{word-break:break-all;background:#F3F3F6;border-radius:10px;padding:10px 12px;font-size:14px}
+.empty{display:grid;justify-items:center;gap:10px;text-align:center;padding:40px 20px;border:2px dashed var(--line);border-radius:var(--r-md);color:var(--muted)}
+
+#toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));z-index:var(--z-toast);transform:translate(-50%,16px);opacity:0;pointer-events:none;
+  display:flex;align-items:center;gap:14px;background:var(--ink);color:#fff;padding:12px 16px;border-radius:14px;font-weight:700;max-width:92vw;
+  transition:opacity .2s var(--ease),transform .25s var(--ease)}
+#toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#toast button{border:2px solid #fff;background:transparent;color:#fff;border-radius:999px;padding:4px 12px;font-weight:700;cursor:pointer}
+.spin{width:18px;height:18px;border:3px solid rgba(40,57,113,.3);border-top-color:var(--ink);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div id="app"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* =====================================================================
+   SETTINGS — edit these
+   ===================================================================== */
+const CONFIG = {
+  shopName: 'Stick2XU',
+
+  // Paste from Supabase → Project Settings → API.
+  supabaseUrl: 'https://afyniszezhjtycwdxhgh.supabase.co',
+  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmeW5pc3plemhqdHljd2R4aGdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwNDUwMDgsImV4cCI6MjEwNjYyMTAwOH0.JbQVH6ZtS4nxJ6cx29Xoi6h0VePSFZ9j9tBl3Hke5PA',
+  bucket: 'sticker-uploads',
+
+  // The real web address of the site. Set this BEFORE making poster QR codes.
+  siteUrl: '',
+
+  currency: '₱',
+  pricePerSheet: 50,      // in Supabase mode the price comes from the shop_settings table
+  maxSheets: 3,
+  maxNoShows: 2,
+
+  // Match this to the sticker paper (A4 = 210 x 297 mm).
+  sheet: { widthMm: 210, heightMm: 297, cols: 4, rows: 6, marginMm: 10, gapMm: 3 },
+  outlineMm: 2.2,          // thickness of the white sticker border
+
+  sizes: [
+    { n: 1, name: 'Small',  note: '1 square' },
+    { n: 2, name: 'Medium', note: '2 × 2' },
+    { n: 3, name: 'Large',  note: '3 × 3' },
+    { n: 4, name: 'Huge',   note: '4 × 4' },
+  ],
+
+  // Pickup schedule. Day numbers: 0 = Sunday, 1 = Monday ... 6 = Saturday.
+  pickupWeekdays: [2, 5],        // Tuesday and Friday
+  pickupTimes: [                 // customers pick one of these
+    { label: 'Lunch', time: '12:30 PM' },
+    { label: 'After class', time: '5:10 PM' },
+  ],
+  leadDays: 2,                   // earliest pickup is this many days after ordering (time to check and print)
+  datesToShow: 3,                // how many upcoming pickup dates customers can choose from
+  noPickupDates: [],             // skip these, e.g. ['2026-11-02'] for holidays or exam days
+  pickupOptions: ['Gate 1', 'Gate 4'],
+  allowCustomPickup: false,      // true shows a "Somewhere else in school" option
+  // What the seller holds or wears at pickup. These are only the starting values:
+  // change them anytime from the admin page under Settings.
+  signalVerb: 'holding',         // 'holding' or 'wearing'
+  signalItem: 'a Stick2XU sign',
+  grades: [7, 8, 9, 10],
+
+  gcash: { enabled: true, name: 'J. Dela Cruz', number: '0917 000 0000' },
+
+  maxPictures: 20,
+  cleanupDays: 30
+};
+
+/* =====================================================================
+   Helpers
+   ===================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const uid = () => Math.random().toString(36).slice(2, 10);
+const norm = s => String(s || '').trim().toLowerCase().replace(/\s+/g, ' ');
+const money = n => CONFIG.currency + Number(n || 0).toLocaleString();
+const safeLS = {
+  get(k){ try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v){ try { localStorage.setItem(k, v); return true; } catch { return false; } },
+  del(k){ try { localStorage.removeItem(k); } catch {} }
+};
+const readJSON = k => { try { return JSON.parse(safeLS.get(k) || 'null'); } catch { return null; } };
+const ACTIVE = ['pending','approved','printing','ready'];
+const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+const makeCode = () => 'STK-' + Array.from({ length: 4 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
+const blobToDataURL = b => new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); });
+const fmtTime = iso => new Date(iso).toLocaleString([], { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+const radio = (form, name) => { const r = form.querySelector(`input[name="${name}"]:checked`); return r ? r.value : ''; };
+const revoke = u => { try { URL.revokeObjectURL(u); } catch {} };
+const pad2 = n => String(n).padStart(2, '0');
+const ymd = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+const parseYmd = v => { const [y, m, d] = String(v).split('-').map(Number); return new Date(y, m - 1, d); };
+const fmtDate = (v, o = { weekday: 'long', month: 'long', day: 'numeric' }) => v ? parseYmd(v).toLocaleDateString('en-US', o) : '';
+const signal = () => `the person ${S.settings.signalVerb} ${S.settings.signalItem}`;
+const timeLabel = t => `${t.label} (${t.time})`;
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const pickupDaysText = () => CONFIG.pickupWeekdays.map(n => DAY_NAMES[n]).join(' and ');
+function pickupDates(){
+  const out = [], d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + CONFIG.leadDays);
+  for (let i = 0; i < 42 && out.length < CONFIG.datesToShow; i++) {
+    if (CONFIG.pickupWeekdays.includes(d.getDay()) && !CONFIG.noPickupDates.includes(ymd(d))) out.push(ymd(d));
+    d.setDate(d.getDate() + 1);
+  }
+  return out;
+}
+const dayLabel = v => v === ymd(new Date()) ? 'Today' : fmtDate(v, { weekday: 'long', month: 'short', day: 'numeric' });
+
+/* Line icons, one stroke weight */
+const ICONS = {
+  plus:'<path d="M12 5v14M5 12h14"/>', arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  image:'<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/>',
+  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/>',
+  fit:'<rect x="3" y="3" width="18" height="18" rx="3"/><rect x="7.5" y="7.5" width="9" height="9" rx="1.5"/>',
+  fill:'<path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/>',
+  box:'<path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7M12 11v10"/>',
+  pin:'<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  cash:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4M18 10v4"/>',
+  phone:'<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/>',
+  printer:'<path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/>',
+  refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
+  logout:'<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H3"/>',
+  qr:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM21 14v.01M14 21h.01M17 21h4v-4"/>',
+  chart:'<path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/>', list:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
+  ghost:'<path d="M5 21V10a7 7 0 0 1 14 0v11l-2.3-1.8-2.3 1.8-2.4-1.8-2.4 1.8-2.3-1.8z"/><path d="M9.5 10h.01M14.5 10h.01"/>',
+  thumb:'<path d="M7 11v10H4V11zM7 11l4-8a2.5 2.5 0 0 1 3 3l-1 4h6a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 17.6 21H7"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+  warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17.5v.01"/>',
+  copy:'<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
+  download:'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>', lock:'<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  school:'<path d="M2 10l10-6 10 6-10 6z"/><path d="M6 12.5V17c3.5 2.5 8.5 2.5 12 0v-4.5M22 10v6"/>',
+  sparkle:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>',
+  layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+  sliders:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+  move:'<path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/>'
+};
+const ic = (n, s = 20) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n] || ''}</svg>`;
+function btn(label, o = {}){
+  const cls = ['btn', o.cls || '', o.icon === false ? 'noi' : ''].join(' ').trim();
+  const inner = `<span>${label}</span>${o.icon === false ? '' : `<span class="bi">${ic(o.icon || 'arrow', 18)}</span>`}`;
+  const attrs = o.attrs || '';
+  if (o.href) return `<a class="${cls}" href="${o.href}" ${attrs}>${inner}</a>`;
+  return `<button class="${cls}" type="${o.type || 'button'}" ${o.act ? `data-act="${o.act}"` : ''} ${attrs}>${inner}</button>`;
+}
+function smallBtn(label, icon, act, cls = '', attrs = ''){
+  return `<button class="btn sm noi ${cls}" type="button" data-act="${act}" ${attrs}>${icon ? ic(icon, 18) : ''}<span>${label}</span></button>`;
+}
+
+/* Pickup pass symbols: a colored shape that's easy to draw on a bag */
+const SHAPES = {
+  star:'M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z',
+  heart:'M12 21s-8.5-5.4-8.5-11.2A4.6 4.6 0 0 1 12 7a4.6 4.6 0 0 1 8.5 2.8C20.5 15.6 12 21 12 21z',
+  circle:'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z',
+  triangle:'M12 3L22 20H2z',
+  bolt:'M13.5 2L4 14h7l-1.5 8L20 10h-7z',
+  diamond:'M12 2l9 10-9 10-9-10z',
+  moon:'M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z',
+  square:'M6 3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z'
+};
+const shapeSVG = (shape, color, size, stroke = '#fff') =>
+  `<svg width="${size}" height="${size}" viewBox="-3 -3 30 30" aria-hidden="true"><path d="${SHAPES[shape]}" fill="${color}" stroke="${stroke}" stroke-width="3" stroke-linejoin="round" paint-order="stroke"/></svg>`;
+
+let toastTimer;
+function toast(msg, undo){
+  const t = $('#toast');
+  t.innerHTML = `<span>${esc(msg)}</span>${undo ? '<button type="button" id="undoBtn">Undo</button>' : ''}`;
+  t.classList.add('show');
+  if (undo) $('#undoBtn').onclick = () => { undo(); t.classList.remove('show'); };
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), undo ? 5000 : 3000);
+}
+/* Two-tap confirm for risky buttons (no pop-up dialogs) */
+function armed(t, prompt){
+  if (t.dataset.armed === '1') return true;
+  t.dataset.armed = '1'; const old = t.innerHTML;
+  t.innerHTML = `<span>${prompt}</span>`;
+  setTimeout(() => { if (t.isConnected) { t.dataset.armed = ''; t.innerHTML = old; } }, 3500);
+  return false;
+}
+function friendlyError(e){
+  const m = String((e && (e.message || e.error_description)) || e || '');
+  if (m.includes('ACTIVE_ORDER')) return 'You already have an order in progress. Pick that one up first, then you can order again.';
+  if (m.includes('BLOCKED')) return 'Orders are paused for this name because of missed pickups. Talk to the seller to sort it out.';
+  if (m.includes('TOO_MANY_SHEETS')) return `You can order up to ${S.settings.maxSheets} sheets at a time.`;
+  if (m.includes('NOT_FOUND')) return "No order matches that code and nickname. Check both and try again.";
+  if (m.includes('BAD_INPUT')) return 'Some details are missing. Fill in every box and try again.';
+  if (m.includes('BUSY')) return 'Too many orders came in at once. Wait a few minutes and try again.';
+  if (m.toLowerCase().includes('invalid login')) return 'Wrong email or password.';
+  if (m.toLowerCase().includes('fetch')) return "Can't reach the server. Check your internet and try again.";
+  return m && m.length < 140 ? m : "Something didn't work. Check your internet and try again.";
+}
+function loadImg(src){
+  return new Promise((res, rej) => {
+    const i = new Image();
+    if (/^https?:/.test(src)) i.crossOrigin = 'anonymous';
+    i.onload = () => res(i); i.onerror = () => rej(new Error("Couldn't open that picture"));
+    i.src = src;
+  });
+}
+
+/* Sheet geometry in millimetres. The designer and the PDF both use this, so they match. */
+function geom(){
+  const s = CONFIG.sheet;
+  const availW = s.widthMm - 2 * s.marginMm, availH = s.heightMm - 2 * s.marginMm - 6;
+  const cell = Math.min((availW - s.gapMm * (s.cols - 1)) / s.cols, (availH - s.gapMm * (s.rows - 1)) / s.rows);
+  const gridW = s.cols * cell + (s.cols - 1) * s.gapMm, gridH = s.rows * cell + (s.rows - 1) * s.gapMm;
+  return { ...s, cell, offX: (s.widthMm - gridW) / 2, offY: s.marginMm + (availH - gridH) / 2 };
+}
+function rectMm(col, row, size){
+  const g = geom(), w = size * g.cell + (size - 1) * g.gapMm;
+  return { x: g.offX + col * (g.cell + g.gapMm), y: g.offY + row * (g.cell + g.gapMm), w, h: w };
+}
+function pctStyle(r){
+  const g = geom();
+  return `left:${r.x / g.widthMm * 100}%;top:${r.y / g.heightMm * 100}%;width:${r.w / g.widthMm * 100}%;height:${r.h / g.heightMm * 100}%`;
+}
+function fits(sheet, col, row, size, ignore){
+  const g = geom();
+  if (col < 0 || row < 0 || col + size > g.cols || row + size > g.rows) return false;
+  return !sheet.items.some(it => it.uid !== ignore && col < it.col + it.size && col + size > it.col && row < it.row + it.size && row + size > it.row);
+}
+function lowRes(img, size){ return !!img && Math.min(img.w, img.h) < rectMm(0, 0, size).w / 25.4 * 150; }
+
+/* Die-cut sticker: the picture plus a white border that follows its shape.
+   With cut = true it also draws a thin grey cutting line around the border (for printing). */
+function drawSticker(src, px, mm, fit, cut){
+  const mk = () => { const c = document.createElement('canvas'); c.width = px; c.height = px; return c; };
+  const b = Math.max(2, Math.round(px * CONFIG.outlineMm / mm));
+  const cl = cut ? Math.max(1, Math.round(px * 0.3 / mm)) : 0;
+  const pad = b + cl + 1, inner = px - 2 * pad;
+  const iw = src.naturalWidth || src.width, ih = src.naturalHeight || src.height;
+  const art = mk(), a = art.getContext('2d');
+  const s = fit === 'fit' ? Math.min(inner / iw, inner / ih) : Math.max(inner / iw, inner / ih);
+  const dw = iw * s, dh = ih * s;
+  a.save(); a.beginPath(); a.rect(pad, pad, inner, inner); a.clip();
+  a.drawImage(src, pad + (inner - dw) / 2, pad + (inner - dh) / 2, dw, dh); a.restore();
+  const sil = color => { const c = mk(), x = c.getContext('2d'); x.drawImage(art, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = color; x.fillRect(0, 0, px, px); return c; };
+  const out = mk(), o = out.getContext('2d');
+  const stamp = (c, r) => {
+    for (const rr of [r, r * 0.66, r * 0.33]) for (let i = 0; i < 28; i++) { const t = i / 28 * Math.PI * 2; o.drawImage(c, Math.cos(t) * rr, Math.sin(t) * rr); }
+    o.drawImage(c, 0, 0);
+  };
+  if (cut) stamp(sil('#8E8E98'), b + cl);
+  stamp(sil('#FFFFFF'), b);
+  o.drawImage(art, 0, 0);
+  return out;
+}
+const stickerCache = new Map();
+function stickerURL(it){
+  const im = S.images.find(i => i.id === it.imageId); if (!im) return '';
+  const key = `${it.imageId}|${it.size}|${it.fit}`;
+  if (!stickerCache.has(key)) {
+    const px = Math.min(640, 170 * it.size);
+    stickerCache.set(key, drawSticker(im.canvas, px, rectMm(0, 0, it.size).w, it.fit, false).toDataURL('image/png'));
+  }
+  return stickerCache.get(key);
+}
+function miniSheet(sheet, urlFor, deleted, outlined){
+  if (deleted) return `<div class="mini"><div class="gone">pictures cleaned up</div></div>`;
+  return `<div class="mini">${sheet.items.map(it => {
+    const u = urlFor(it);
+    return `<span class="${outlined ? 'o' : it.fit === 'fit' ? 'fit' : ''}" style="${pctStyle(rectMm(it.col, it.row, it.size))};${u ? `background-image:url('${u}')` : ''}"></span>`;
+  }).join('')}</div>`;
+}
+
+/* =====================================================================
+   Backend: Supabase
+   ===================================================================== */
+function SupaBackend(){
+  const sb = window.supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseAnonKey);
+  const B = CONFIG.bucket;
+  const rpc = async (fn, args) => { const { data, error } = await sb.rpc(fn, args); if (error) throw new Error(error.message); return data; };
+  async function wipeFolder(folder){
+    const { data: files } = await sb.storage.from(B).list(`orders/${folder}`, { limit: 100 });
+    if (files && files.length) await sb.storage.from(B).remove(files.map(f => `orders/${folder}/${f.name}`));
+  }
+  return {
+    async settings(){ const { data, error } = await sb.from('shop_settings').select('*').eq('id', 1).single(); if (error) throw error; return data; },
+    async saveSettings(patch){ const { error } = await sb.from('shop_settings').update(patch).eq('id', 1); if (error) throw error; },
+    async placeOrder(p){
+      const folder = Date.now() + '-' + uid();
+      const pathFor = {}; let i = 0;
+      for (const img of p.images) {
+        const path = `orders/${folder}/img${i++}.${img.ext}`;
+        const { error } = await sb.storage.from(B).upload(path, img.blob, { contentType: img.blob.type, upsert: false });
+        if (error) throw new Error('Upload failed: ' + error.message);
+        pathFor[img.id] = path;
+      }
+      const layout = { sheets: p.sheets.map(s => ({ items: s.items.map(it => ({ path: pathFor[it.imageId], col: it.col, row: it.row, size: it.size, fit: it.fit })) })) };
+      const code = await rpc('place_order', { p_nickname: p.nickname, p_grade_section: p.section, p_pickup: p.pickup, p_payment: p.payment,
+        p_gcash_ref: p.gcashRef || null, p_layout: layout, p_folder: folder, p_src: p.src || null, p_pickup_date: p.pickupDate, p_pickup_time: p.pickupTime });
+      return { code };
+    },
+    async getOrder(code, nick){ const d = await rpc('get_order', { p_code: code, p_nickname: nick }); if (!d) throw new Error('NOT_FOUND'); return d; },
+    async confirm(code, nick){ await rpc('confirm_order', { p_code: code, p_nickname: nick }); },
+    async cancel(code, nick){ await rpc('cancel_order', { p_code: code, p_nickname: nick }); },
+    async imHere(code, nick){ await rpc('mark_arrived', { p_code: code, p_nickname: nick }); },
+    async session(){ const { data } = await sb.auth.getSession(); return !!data.session; },
+    async login(email, pw){ const { error } = await sb.auth.signInWithPassword({ email, password: pw }); if (error) throw error; },
+    async logout(){ await sb.auth.signOut(); },
+    async listOrders(){ const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false }).limit(500); if (error) throw error; return data; },
+    async updateOrder(id, patch){ const { error } = await sb.from('orders').update(patch).eq('id', id); if (error) throw error; },
+    async imageUrls(paths){
+      if (!paths.length) return {};
+      const { data, error } = await sb.storage.from(B).createSignedUrls(paths, 3600);
+      if (error) throw error;
+      const m = {}; data.forEach(d => { if (d.signedUrl) m[d.path] = d.signedUrl; }); return m;
+    },
+    async cleanup(orders){
+      const cutoff = Date.now() - CONFIG.cleanupDays * 864e5; let n = 0;
+      for (const o of orders) {
+        if (['done','rejected','noshow','cancelled'].includes(o.status) && !o.images_deleted && new Date(o.updated_at).getTime() < cutoff) {
+          await wipeFolder(o.folder);
+          await sb.from('orders').update({ images_deleted: true }).eq('id', o.id); n++;
+        }
+      }
+      // Pictures uploaded for orders that never went through (older than a day)
+      const { data: all } = await sb.from('orders').select('folder');
+      const known = new Set((all || []).map(r => r.folder));
+      const { data: folders } = await sb.storage.from(B).list('orders', { limit: 1000 });
+      for (const f of folders || []) {
+        const ts = parseInt(f.name, 10);
+        if (!known.has(f.name) && ts && Date.now() - ts > 864e5) { await wipeFolder(f.name); n++; }
+      }
+      return n;
+    }
+  };
+}
+
+
+/* =====================================================================
+   App state + router
+   ===================================================================== */
+const S = {
+  settings: { price: CONFIG.pricePerSheet, maxSheets: CONFIG.maxSheets, signalVerb: CONFIG.signalVerb, signalItem: CONFIG.signalItem },
+  images: [], sheets: [{ items: [] }], cur: 0, selImage: null, selSize: 1, selItem: null, justPlaced: null,
+  lastOrder: null, statusResult: null, statusNick: '',
+  admin: { orders: [], filter: 'pending', tab: 'orders', urls: {}, cleaned: false, qr: null, rejecting: null }
+};
+const params = new URLSearchParams(location.search);
+let SRC = (params.get('src') || safeLS.get('sk_src') || '').replace(/[^a-z0-9-]/gi, '').slice(0, 40);
+if (params.get('src')) safeLS.set('sk_src', SRC);
+let api;
+
+function topbar(){
+  return `<header class="top"><a class="mark" href="#/" aria-label="${esc(CONFIG.shopName)} home">Stick<b>2</b>XU</a>
+  <a class="pilllink" href="#/status">${ic('box', 18)}My order</a></header>`;
+}
+function progress(step){
+  const names = ['Design', 'Details', 'Pickup pass'];
+  return `<nav class="prog" aria-label="Order steps">${names.map((n, i) => `${i ? '<span class="bar" aria-hidden="true"></span>' : ''}
+    <span class="${i + 1 === step ? 'on' : i + 1 < step ? 'done' : ''}" ${i + 1 === step ? 'aria-current="step"' : ''}><i>${i + 1 < step ? ic('check', 14) : i + 1}</i>${n}</span>`).join('')}</nav>`;
+}
+function route(){
+  const page = (location.hash.replace(/^#\/?/, '') || 'home').split('/')[0];
+  window.scrollTo(0, 0);
+  const views = { home: viewHome, design: viewDesign, checkout: viewCheckout, done: viewDone, status: viewStatus, admin: viewAdmin };
+  (views[page] || viewNotFound)();
+}
+window.addEventListener('hashchange', route);
+window.addEventListener('beforeunload', e => {
+  if (S.sheets.some(s => s.items.length) && !location.hash.includes('admin')) { e.preventDefault(); e.returnValue = ''; }
+});
+
+/* =====================================================================
+   Home
+   ===================================================================== */
+function heroArt(){
+  const shapes = [
+    { s:'star',    c:'#F2BC2E', x:7,  y:5,  w:34, r:-12, d:120 },
+    { s:'heart',   c:'#ec282a', x:56, y:4,  w:36, r:10,  d:240 },
+    { s:'bolt',    c:'#F2BC2E', x:44, y:31, w:26, r:-6,  d:360 },
+    { s:'moon',    c:'#3a52a3', x:70, y:40, w:24, r:18,  d:480 },
+    { s:'circle',  c:'#283971', x:8,  y:66, w:24, r:0,   d:720 },
+    { s:'diamond', c:'#3a52a3', x:72, y:74, w:20, r:-8,  d:840 }
+  ];
+  return `<div class="sheet-art" style="container-type:inline-size" aria-hidden="true">
+    ${shapes.map(p => `<span class="hs" style="left:${p.x}%;top:${p.y}%;width:${p.w}%;--r:${p.r}deg;--d:${p.d}ms">${shapeSVG(p.s, p.c, '100%')}</span>`).join('')}
+    <span class="hs txt" style="left:6%;top:37%;width:36%;--r:-7deg;--d:600ms;background:#fff;font-size:11cqw">${money(S.settings.price)}<span style="font-size:4.6cqw;font-family:var(--body);font-weight:700;margin-top:4px">per sheet</span></span>
+    <span class="hs txt peel" style="left:36%;top:64%;width:30%;aspect-ratio:1;--r:8deg;--d:960ms;background:var(--xu-blue1);color:#fff;font-size:10cqw">XU</span>
+  </div>`;
+}
+function viewHome(){
+  const g = geom();
+  $('#app').innerHTML = `${topbar()}<main id="main" class="wrap home" style="padding-bottom:24px">
+    <section class="hero">
+      <div>
+        <h1>Turn your pictures into a sticker sheet.</h1>
+        <p class="lead">Pick your pics, make them tiny or huge, and we print the whole sheet for you. You pick it up at school.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+          ${btn('Start designing', { href: '#/design' })}
+          <a class="pilllink" href="#/status">${ic('search', 18)}Check my order</a>
+        </div>
+        <ul class="facts">
+          <li>${ic('cash', 18)}<span><b class="num">${money(S.settings.price)}</b> a sheet</span></li>
+          <li>${ic('layers', 18)}<span>Up to ${g.cols * g.rows} small stickers</span></li>
+          <li>${ic('school', 18)}<span>Pickup inside campus only</span></li>
+        </ul>
+      </div>
+      ${heroArt()}
+    </section>
+    <footer><span>${esc(CONFIG.shopName)} is run by students. It isn't an official XU service.</span><a href="#/status">Check my order</a></footer>
+  </main>`;
+}
+
+function viewNotFound(){
+  $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow"><div class="empty" style="margin-top:30px">${ic('ghost', 40)}
+    <h2>This page doesn't exist</h2><p>The link might be old or typed wrong.</p>${btn('Go to the start', { href: '#/' })}</div></main>`;
+}
+
+/* =====================================================================
+   Designer
+   ===================================================================== */
+function viewDesign(){
+  $('#app').innerHTML = `${topbar()}<main id="main" class="wrap">${progress(1)}
+    <div class="designer"><aside class="panel tools" id="ctrl"></aside><section class="stage" id="sheetArea" aria-label="Your sticker sheet"></section></div></main>
+    <div class="bottombar"><div class="in" id="bottom"></div></div>`;
+  drawDesigner();
+}
+function drawDesigner(){ drawCtrl(); drawSheet(); drawBottom(); }
+const imgById = id => S.images.find(i => i.id === id);
+const selected = () => S.selItem && S.sheets[S.cur].items.find(i => i.uid === S.selItem);
+
+function drawCtrl(){
+  const g = geom(), sel = selected(), active = sel ? sel.size : S.selSize;
+  let hint;
+  if (sel) hint = [ 'move', 'Tap an empty spot to move this sticker. Pick a size to resize it.' ];
+  else if (S.selImage) hint = [ 'sparkle', 'Tap anywhere on the sheet to stick it there. Keep tapping to add more.' ];
+  else hint = [ 'image', 'Add a picture first, then it shows up here ready to use.' ];
+  $('#ctrl').innerHTML = `
+    <section>
+      <div class="stephead"><i>1</i>Add pictures</div>
+      <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose from your phone<small>PNG with a see-through background works best</small></span>
+        <input id="fileIn" type="file" accept="image/*" multiple hidden></label>
+      ${S.images.length ? `<div class="tray">${S.images.map(im => `
+        <button class="thumb ${S.selImage === im.id && !sel ? 'on' : ''}" type="button" data-act="pickImg" data-id="${im.id}" style="background-image:url('${im.url}')" aria-label="Use this picture" aria-pressed="${S.selImage === im.id && !sel}">
+          <span class="x" data-act="delImg" data-id="${im.id}" role="button" aria-label="Remove picture">${ic('x', 14)}</span></button>`).join('')}</div>` : ''}
+    </section>
+    <section>
+      <div class="stephead"><i>2</i>Pick a size</div>
+      <div class="sizes">${CONFIG.sizes.filter(z => z.n <= Math.min(g.cols, g.rows)).map(z => `
+        <button class="size ${active === z.n ? 'on' : ''}" type="button" data-act="pickSize" data-size="${z.n}" aria-pressed="${active === z.n}">
+          <span class="g" style="grid-template-columns:repeat(${z.n},1fr)">${'<b></b>'.repeat(z.n * z.n)}</span><span>${z.name}<small>${z.note}</small></span></button>`).join('')}</div>
+    </section>
+    <section class="tip">
+      <div class="stephead"><i>3</i>Tap the sheet</div>
+      <p class="hint">${ic(hint[0], 18)}<span>${hint[1]}</span></p>
+    </section>`;
+  $('#fileIn').addEventListener('change', onFiles);
+}
+
+function drawSheet(){
+  const g = geom(), sheet = S.sheets[S.cur], sel = selected();
+  let cells = '';
+  for (let r = 0; r < g.rows; r++) for (let c = 0; c < g.cols; c++)
+    cells += `<button class="cell" type="button" data-act="cell" data-col="${c}" data-row="${r}" style="${pctStyle(rectMm(c, r, 1))}" aria-label="Row ${r + 1}, spot ${c + 1}"></button>`;
+  const stickers = sheet.items.map(it => `<button class="stk ${it.uid === S.selItem ? 'sel' : ''} ${it.uid === S.justPlaced ? 'pop' : ''}" type="button" data-act="stk" data-uid="${it.uid}"
+      style="${pctStyle(rectMm(it.col, it.row, it.size))};background-image:url('${stickerURL(it)}')" aria-label="Sticker, tap to edit">
+      ${lowRes(imgById(it.imageId), it.size) ? `<span class="w">${ic('warn', 11)}blurry</span>` : ''}</button>`).join('');
+  S.justPlaced = null;
+  $('#sheetArea').innerHTML = `
+    <div class="tabs" role="tablist">${S.sheets.map((s, i) => `<button class="tab ${i === S.cur ? 'on' : ''}" type="button" role="tab" aria-selected="${i === S.cur}" data-act="tab" data-i="${i}">Sheet ${i + 1}</button>`).join('')}
+      ${S.sheets.length < S.settings.maxSheets ? `<button class="tab add" type="button" data-act="addSheet">${ic('plus', 16)}Add a sheet</button>` : ''}</div>
+    <p class="hint mob">${ic('sparkle', 18)}<span>${sel ? 'Tap an empty spot to move it.' : S.selImage ? 'Tap the sheet to stick your picture.' : 'Add a picture above first.'}</span></p>
+    <div class="page" id="page">${cells}${stickers}</div>
+    ${sel ? `<div class="selbar">
+        ${smallBtn(sel.fit === 'fit' ? 'Fill the square' : 'Show whole picture', sel.fit === 'fit' ? 'fill' : 'fit', 'fitToggle', 'plain')}
+        ${smallBtn('Remove', 'trash', 'removeItem', 'danger')}
+        ${smallBtn('Done', 'check', 'deselect', 'dark')}</div>`
+      : `<div class="under"><span>${sheet.items.length ? `${sheet.items.length} sticker${sheet.items.length > 1 ? 's' : ''} on this sheet. Tap one to move or change it.` : 'This sheet is empty. The white borders show where each sticker gets cut.'}</span>
+        ${S.sheets.length > 1 ? smallBtn('Remove this sheet', 'trash', 'delSheet', 'plain') : ''}</div>`}`;
+}
+
+function drawBottom(){
+  const used = S.sheets.filter(s => s.items.length).length;
+  const count = S.sheets.reduce((a, s) => a + s.items.length, 0);
+  $('#bottom').innerHTML = `<div><div class="tot num">${money(used * S.settings.price)}</div>
+      <div class="sub">${count} sticker${count === 1 ? '' : 's'} on ${used} sheet${used === 1 ? '' : 's'}</div></div>
+    ${btn('Next', { act: 'toCheckout', attrs: count ? '' : 'disabled' })}`;
+}
+
+async function onFiles(e){
+  const files = [...e.target.files]; e.target.value = '';
+  for (const f of files) {
+    if (S.images.length >= CONFIG.maxPictures) { toast(`You can add up to ${CONFIG.maxPictures} pictures.`); break; }
+    if (!f.type.startsWith('image/')) { toast('That file is not a picture.'); continue; }
+    try { const im = await processFile(f); S.images.push(im); S.selImage = im.id; S.selItem = null; }
+    catch { toast("That picture didn't open. Try a screenshot of it instead."); }
+  }
+  drawCtrl(); drawSheet();
+}
+async function processFile(file){
+  const u0 = URL.createObjectURL(file);
+  try {
+    const img = await loadImg(u0);
+    const k = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+    const w = Math.round(img.naturalWidth * k), h = Math.round(img.naturalHeight * k);
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    c.getContext('2d').drawImage(img, 0, 0, w, h);
+    let alpha = false;
+    if (/png|webp|gif/.test(file.type)) {
+      const t = document.createElement('canvas'); t.width = 48; t.height = 48; const tx = t.getContext('2d');
+      tx.drawImage(c, 0, 0, 48, 48); const d = tx.getImageData(0, 0, 48, 48).data;
+      for (let i = 3; i < d.length; i += 4) if (d[i] < 245) { alpha = true; break; }
+    }
+    const blob = await new Promise(r => c.toBlob(r, alpha ? 'image/png' : 'image/jpeg', 0.88));
+    if (!blob) throw new Error('convert failed');
+    return { id: uid(), blob, ext: alpha ? 'png' : 'jpg', url: URL.createObjectURL(blob), canvas: c, w, h, alpha };
+  } finally { revoke(u0); }
+}
+function shakePage(){ const p = $('#page'); if (!p) return; p.classList.remove('shake'); void p.offsetWidth; p.classList.add('shake'); }
+
+function tapCell(col, row){
+  const g = geom(), sheet = S.sheets[S.cur], sel = selected();
+  if (sel) {
+    const c = Math.min(col, g.cols - sel.size), r = Math.min(row, g.rows - sel.size);
+    if (fits(sheet, c, r, sel.size, sel.uid)) { sel.col = c; sel.row = r; S.selItem = null; S.justPlaced = sel.uid; drawDesigner(); }
+    else { shakePage(); toast("There's not enough room there."); }
+    return;
+  }
+  if (!S.selImage) { toast(S.images.length ? 'Tap one of your pictures first.' : 'Add a picture first.'); return; }
+  const size = S.selSize, c = Math.min(col, g.cols - size), r = Math.min(row, g.rows - size);
+  if (!fits(sheet, c, r, size)) { shakePage(); toast("That spot's taken. Try another one."); return; }
+  const it = { uid: uid(), imageId: S.selImage, col: c, row: r, size, fit: imgById(S.selImage).alpha ? 'fit' : 'fill' };
+  sheet.items.push(it); S.justPlaced = it.uid;
+  drawSheet(); drawBottom();
+}
+
+/* =====================================================================
+   Checkout
+   ===================================================================== */
+function viewCheckout(){
+  S.sheets = S.sheets.filter(s => s.items.length);
+  if (!S.sheets.length) { S.sheets = [{ items: [] }]; S.cur = 0; location.hash = '#/design'; return; }
+  S.cur = Math.min(S.cur, S.sheets.length - 1);
+  const total = S.sheets.length * S.settings.price;
+  const me = readJSON('sk_me') || {};
+  const m = String(me.section || '').match(/^(\d+)\s*-\s*(.+)$/), myGrade = m ? m[1] : '', mySec = m ? m[2] : '';
+  const dates = pickupDates();
+  $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">${progress(2)}
+    <a class="pilllink" href="#/design" style="margin-bottom:18px">${ic('back', 18)}Back to my design</a>
+    <form class="panel" id="orderForm" novalidate>
+      <h2>Almost done</h2>
+      <p class="muted">Tell us who you are and when you'll pick it up.</p>
+      <div class="summary">${S.sheets.map(s => miniSheet(s, stickerURL, false, true)).join('')}</div>
+
+      <div class="field"><label class="lab" for="nick">Nickname <span class="req">*</span></label>
+        <input class="inp" id="nick" maxlength="24" autocomplete="nickname" value="${esc(me.nickname || '')}" aria-describedby="e-nick">
+        <p class="ferr" id="e-nick" role="alert"></p></div>
+      <div class="field"><span class="lab" id="l-gs">Grade and section <span class="req">*</span></span>
+        <div class="gs" role="group" aria-labelledby="l-gs">
+          <select class="inp" id="grade" aria-label="Grade"><option value="">Grade</option>
+            ${CONFIG.grades.map(g => `<option value="${g}" ${String(g) === myGrade ? 'selected' : ''}>${g}</option>`).join('')}</select>
+          <span class="dash" aria-hidden="true">-</span>
+          <input class="inp" id="sec" maxlength="24" autocomplete="off" placeholder="Section" aria-label="Section" value="${esc(mySec)}" aria-describedby="e-sec">
+        </div>
+        <p class="ferr" id="e-sec" role="alert"></p></div>
+      <div class="hp" aria-hidden="true"><label>Leave this empty<input id="website" tabindex="-1" autocomplete="off"></label></div>
+
+      <fieldset><legend>When will you pick it up? <span class="req">*</span></legend>
+        ${dates.map((d, i) => `<label class="choice"><input type="radio" name="pdate" value="${d}" ${i === 0 ? 'checked' : ''}>${ic('calendar', 20)}<span><b>${fmtDate(d)}</b></span></label>`).join('')}
+        <p class="help">Pickups happen every ${pickupDaysText()}. The first date gives us time to check and print your stickers.</p>
+      </fieldset>
+
+      <fieldset><legend>What time? <span class="req">*</span></legend>
+        ${CONFIG.pickupTimes.map((t, i) => `<label class="choice"><input type="radio" name="ptime" value="${esc(timeLabel(t))}" ${i === 0 ? 'checked' : ''}>${ic('clock', 20)}<span><b>${esc(t.label)}</b><small>${esc(t.time)}</small></span></label>`).join('')}
+      </fieldset>
+
+      <fieldset><legend>Where? <span class="req">*</span></legend>
+        ${CONFIG.pickupOptions.map((o, i) => `<label class="choice"><input type="radio" name="pickup" value="${esc(o)}" ${i === 0 ? 'checked' : ''}>${ic('pin', 20)}<span>${esc(o)}</span></label>`).join('')}
+        ${CONFIG.allowCustomPickup ? `<label class="choice"><input type="radio" name="pickup" value="__other">${ic('school', 20)}<span>Somewhere else in school</span></label>
+        <div id="otherBox" hidden>
+          <label class="lab" for="otherPlace" style="display:block;margin:6px 0">Where in school?</label>
+          <input class="inp" id="otherPlace" maxlength="80" aria-describedby="e-place">
+          <p class="ferr" id="e-place" role="alert"></p>
+        </div>` : ''}
+        <p class="nudge">${ic('search', 18)}At the gate, look for ${esc(signal())}.</p>
+      </fieldset>
+
+      <fieldset><legend>How will you pay?</legend>
+        <label class="choice"><input type="radio" name="pay" value="cash" checked>${ic('cash', 20)}<span>Cash when I pick up</span></label>
+        ${CONFIG.gcash.enabled ? `<label class="choice"><input type="radio" name="pay" value="gcash">${ic('phone', 20)}<span>GCash</span></label>
+        <div class="gcashbox" id="gcashBox" hidden>Send <b class="num">${money(total)}</b> to <b>${esc(CONFIG.gcash.number)}</b> (${esc(CONFIG.gcash.name)}), then type the reference number. You can also send it later and show it at pickup.
+          <label class="lab" for="gref" style="display:block;margin:10px 0 6px">Reference number (optional)</label>
+          <input class="inp" id="gref" maxlength="40" inputmode="numeric"></div>` : ''}
+      </fieldset>
+
+      <label class="choice"><input type="checkbox" id="promise"><span id="promiseTxt"></span></label>
+      <p class="ferr" id="e-promise" role="alert"></p>
+      <div class="totalrow"><span>${S.sheets.length} sheet${S.sheets.length > 1 ? 's' : ''}</span><b class="num">${money(total)}</b></div>
+      <div class="formerr" id="formErr" role="alert"></div>
+      <div style="margin-top:18px">${btn('Place my order', { type: 'submit', cls: 'wide', icon: 'check', attrs: 'id="placeBtn"' })}</div>
+    </form></main>`;
+  const form = $('#orderForm');
+  const sync = () => {
+    if ($('#otherBox')) $('#otherBox').hidden = radio(form, 'pickup') !== '__other';
+    if ($('#gcashBox')) $('#gcashBox').hidden = radio(form, 'pay') !== 'gcash';
+    const place = radio(form, 'pickup') === '__other' ? 'my chosen spot' : radio(form, 'pickup');
+    if ($('#promise').checked) setErr(null, 'e-promise', '');
+    if ($('#e-sec').textContent) validate(false);
+    $('#promiseTxt').innerHTML = `I'll pick it up on <b>${esc(fmtDate(radio(form, 'pdate')))}</b>, <b>${esc(radio(form, 'ptime'))}</b>, at <b>${esc(place)}</b>`;
+  };
+  form.addEventListener('change', sync); sync();
+  ['nick','sec','grade','otherPlace'].forEach(id => $('#' + id) && $('#' + id).addEventListener('blur', () => validate(false)));
+  form.addEventListener('submit', submitOrder);
+}
+function setErr(inputId, errId, msg){
+  const el = $('#' + errId); if (el) el.innerHTML = msg ? `${ic('warn', 16)}${esc(msg)}` : '';
+  const inp = inputId && $('#' + inputId); if (inp) inp.setAttribute('aria-invalid', msg ? 'true' : 'false');
+  return !msg;
+}
+function validate(all){
+  const form = $('#orderForm'); if (!form) return false;
+  const nick = $('#nick').value.trim(), sec = $('#sec').value.trim(), grade = $('#grade').value, other = radio(form, 'pickup') === '__other';
+  let ok = true;
+  if (all || nick) ok = setErr('nick', 'e-nick', nick.length < 2 ? 'Type your nickname, at least 2 letters.' : '') && ok;
+  if (all || sec || grade) {
+    const msg = !grade && sec.length < 2 ? 'Pick your grade and type your section.' : !grade ? 'Pick your grade.' : sec.length < 2 ? 'Type your section.' : '';
+    ok = setErr('sec', 'e-sec', msg) && ok;
+    $('#grade').setAttribute('aria-invalid', grade ? 'false' : String(!!msg));
+    if (grade && sec.length >= 2) $('#sec').setAttribute('aria-invalid', 'false');
+  }
+  if (other && (all || $('#otherPlace').value)) ok = setErr('otherPlace', 'e-place', $('#otherPlace').value.trim().length < 3 ? 'Tell us where in school to meet.' : '') && ok;
+  if (all) ok = setErr(null, 'e-promise', !radio(form, 'pdate') ? 'Pick a pickup date.' : $('#promise').checked ? '' : 'Tick the box to promise you will pick it up.') && ok;
+  return ok;
+}
+async function submitOrder(e){
+  e.preventDefault();
+  const form = e.target; $('#formErr').textContent = '';
+  if ($('#website').value) return;
+  if (!validate(true)) { const bad = form.querySelector('[aria-invalid="true"]') || $('#promise'); bad.focus(); return; }
+  const nickname = $('#nick').value.trim(), section = `${$('#grade').value} - ${$('#sec').value.trim()}`;
+  let pickup = radio(form, 'pickup'); if (pickup === '__other') pickup = 'Other: ' + $('#otherPlace').value.trim();
+  const pickupDate = radio(form, 'pdate'), pickupTime = radio(form, 'ptime');
+  const payment = radio(form, 'pay'), gcashRef = $('#gref') ? $('#gref').value.trim() : '';
+  const b = $('#placeBtn'); b.disabled = true; b.innerHTML = '<span>Sending your order</span><span class="bi"><span class="spin"></span></span>';
+  try {
+    const used = new Set(S.sheets.flatMap(s => s.items.map(i => i.imageId)));
+    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: SRC, images: S.images.filter(i => used.has(i.id)), sheets: S.sheets });
+    S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: S.sheets.length * S.settings.price };
+    safeLS.set('sk_me', JSON.stringify({ nickname, section }));
+    safeLS.set('sk_last', JSON.stringify(S.lastOrder));
+    S.images.forEach(i => revoke(i.url)); stickerCache.clear();
+    Object.assign(S, { images: [], sheets: [{ items: [] }], cur: 0, selImage: null, selItem: null });
+    location.hash = '#/done';
+  } catch (ex) {
+    $('#formErr').textContent = friendlyError(ex);
+    b.disabled = false; b.innerHTML = `<span>Place my order</span><span class="bi">${ic('check', 18)}</span>`;
+  }
+}
+
+/* =====================================================================
+   Done + status
+   ===================================================================== */
+function passHTML(o){
+  const d = o.pickup_date;
+  return `<div class="pass">
+    <div class="side">${d ? `<span class="m">${fmtDate(d, { weekday: 'short' })}</span><span class="dd">${parseYmd(d).getDate()}</span><span class="m">${fmtDate(d, { month: 'short' })}</span>` : ic('box', 40)}</div>
+    <div class="body"><div class="k">Pickup pass</div><div class="code">${esc(o.code)}</div>
+      <div class="who">${esc(o.nickname)}${o.section ? ', ' + esc(o.section) : ''}</div>
+      <p class="tip">${ic('pin', 16)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span></p></div></div>`;
+}
+function viewDone(){
+  const o = S.lastOrder || readJSON('sk_last');
+  if (!o) { location.hash = '#/'; return; }
+  const gcash = o.payment === 'gcash';
+  $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">${progress(3)}
+    <h2 style="margin:4px 0 6px">You're all set.</h2><p class="muted" style="margin-bottom:18px">Take a screenshot so you have your code handy.</p>
+    ${passHTML(o)}
+    <section class="panel" style="margin-top:22px">
+      <h3>Your pickup</h3>
+      <div class="pgrid">
+        <div class="pt hi"><span class="k">${ic('calendar', 16)}When</span><b>${esc(fmtDate(o.pickup_date, { weekday: 'long', month: 'short', day: 'numeric' }))}</b><span>${esc(o.pickup_time || '')}</span></div>
+        <div class="pt"><span class="k">${ic('pin', 16)}Where</span><b>${esc(o.pickup)}</b><span>Inside campus</span></div>
+        <div class="pt"><span class="k">${ic('cash', 16)}Bring</span><b class="num">${money(o.total)}</b><span>${gcash ? 'If you already sent it by GCash, bring the reference number' : 'In cash, exact amount if you can'}</span></div>
+        <div class="pt"><span class="k">${ic('search', 16)}Look for</span><b>The person ${esc(S.settings.signalVerb)} ${esc(S.settings.signalItem)}</b><span>They'll be at the gate</span></div>
+      </div>
+      <h3>Before you go</h3>
+      <ol class="steps2">
+        <li><div><b>Wait for <mark>Ready</mark></b><span>We check your design, then print it. "My order" shows when it's ready.</span></div></li>
+        <li><div><b>Tap <mark>I'm here</mark> when you arrive</b><span>Open "My order" at the gate. Your name pops up on the seller's phone so they know you came.</span></div></li>
+        <li><div><b>Grab your stickers. That's it.</b><span>They'll match your code and hand them over.</span></div></li>
+      </ol>
+      <div class="notes">
+        <p>${ic('school', 20)}<span><b>Inside campus only.</b> Never meet anyone outside school for your order.</span></p>
+        <p>${ic('clock', 20)}<span><b>Can't make it?</b> Cancel in "My order" before it gets printed.</span></p>
+        <p>${ic('lock', 20)}<span>We only keep your nickname and section. Your pictures are deleted ${CONFIG.cleanupDays} days after your order is done.</span></p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:22px">${btn('Check my order', { href: '#/status', cls: 'dark' })}<a class="pilllink" href="#/">Back to start</a></div>
+    </section></main>`;
+}
+
+const STATUS = {
+  pending:['search','Checking your design'], approved:['check','Approved, waiting to print'], printing:['printer','Printing now'],
+  ready:['box','Ready for pickup'], done:['thumb','Picked up. Enjoy them.'], rejected:['x',"This design wasn't approved"],
+  cancelled:['x','This order was cancelled'], noshow:['ghost','This order was not picked up']
+};
+function viewStatus(){
+  const last = readJSON('sk_last') || {};
+  $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">
+    <form class="panel" id="lookForm" novalidate>
+      <h2 style="margin-bottom:18px">Check my order</h2>
+      <div class="field"><label class="lab" for="lc">Order code</label><input class="inp" id="lc" value="${esc(last.code || '')}" autocapitalize="characters" autocomplete="off" aria-describedby="h-lc">
+        <p class="help" id="h-lc">It starts with STK, like STK-7KQ4. It's on your pickup pass.</p></div>
+      <div class="field"><label class="lab" for="ln">Nickname</label><input class="inp" id="ln" value="${esc(last.nickname || '')}"></div>
+      ${btn('Find my order', { type: 'submit', cls: 'wide dark', icon: 'search' })}
+      <div class="formerr" id="lookErr" role="alert"></div>
+    </form>
+    <div id="statusOut" style="margin-top:24px" aria-live="polite"></div></main>`;
+  $('#lookForm').addEventListener('submit', e => { e.preventDefault(); lookup(); });
+  if (last.code && last.nickname) lookup();
+}
+async function lookup(){
+  const code = $('#lc').value.trim().toUpperCase(), nick = $('#ln').value.trim();
+  $('#lookErr').textContent = '';
+  if (!code || !nick) { $('#lookErr').textContent = 'Type your order code and nickname.'; return; }
+  $('#statusOut').innerHTML = `<div class="sk" style="height:150px;border-radius:28px"></div><div class="sk" style="height:220px;margin-top:20px;border-radius:28px"></div>`;
+  try { S.statusResult = await api.getOrder(code, nick); S.statusNick = nick; drawStatus(); }
+  catch (e) { $('#statusOut').innerHTML = ''; $('#lookErr').textContent = friendlyError(e); }
+}
+function drawStatus(){
+  const o = S.statusResult, [icon, msg] = STATUS[o.status] || ['clock', o.status];
+  const flow = ['pending','approved','printing','ready','done'], at = flow.indexOf(o.status);
+  const lbl = { pending:'Checking', approved:'Approved', printing:'Printing', ready:'Ready', done:'Done' };
+  $('#statusOut').innerHTML = `${passHTML(o)}
+    <div class="panel" style="margin-top:22px">
+      <div class="stmsg"><span class="ic">${ic(icon, 24)}</span>${esc(msg)}</div>
+      ${at >= 0 ? `<div class="track">${flow.map((s, i) => `<div class="${i <= at ? 'on' : ''} ${i === at ? 'now' : ''}"><i></i>${lbl[s]}</div>`).join('')}</div>` : ''}
+      ${o.status === 'rejected' && o.reject_reason ? `<p style="margin-top:14px"><b>Reason:</b> ${esc(o.reject_reason)}</p>${btn('Make a new design', { href: '#/design' })}` : ''}
+      ${o.status === 'ready' ? `<div class="pt hi" style="margin-top:16px">
+          <span class="k">${ic('search', 16)}At pickup</span>
+          <b>Look for ${esc(signal())} at ${esc(o.pickup)}</b>
+          <span>${o.paid ? "You've already paid, so just grab your stickers. That's it." : `Bring <b class="num" style="font-size:inherit;font-family:inherit">${money(o.total)}</b>, grab your stickers, and that's it.`}</span></div>
+        <div style="margin-top:14px">${o.arrived
+          ? `<span class="tag ok" style="font-size:15px;padding:8px 12px">${ic('check', 16)}They know you're here. Look for ${esc(signal())}.</span>`
+          : btn("I'm here", { act: 'imHere', icon: 'pin', cls: 'wide' })}</div>` : ''}
+      <dl class="kv">${o.pickup_date ? `<dt>Pickup</dt><dd>${esc(fmtDate(o.pickup_date))}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</dd>` : ''}<dt>Where</dt><dd>${esc(o.pickup)}</dd>
+        <dt>Total</dt><dd class="num">${money(o.total)}${o.paid ? ', paid' : ''}</dd>
+        <dt>Sheets</dt><dd>${o.sheet_count}</dd><dt>Ordered</dt><dd>${fmtTime(o.created_at)}</dd></dl>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:20px">
+        ${['approved','printing'].includes(o.status) ? (o.confirmed
+          ? `<span class="tag ok">${ic('check', 16)}You said you'll be there</span>`
+          : smallBtn("I'll be there", 'thumb', 'confirmComing', 'ok')) : ''}
+        ${['pending','approved'].includes(o.status) ? smallBtn('Cancel my order', 'x', 'cancelOrder', 'plain') : ''}
+      </div></div>`;
+}
+
+/* =====================================================================
+   Admin
+   ===================================================================== */
+async function viewAdmin(){
+  $('#app').innerHTML = `<main id="main" class="wrap narrow" style="padding-top:40px"><div class="sk" style="height:260px;border-radius:28px"></div></main>`;
+  if (!(await api.session())) return drawLogin();
+  $('#app').innerHTML = `<header class="top"><span class="mark">Stick<b>2</b>XU</span>
+      <button class="pilllink" type="button" data-act="logout">${ic('logout', 18)}Log out</button></header>
+    <main id="main" class="wrap">
+      <nav class="atabs" aria-label="Admin sections">
+        ${[['orders','list','Orders'],['money','chart','Earnings'],['posters','qr','Poster QR codes'],['settings','sliders','Settings']].map(([k, i, l]) =>
+          `<button class="tab ${S.admin.tab === k ? 'on' : ''}" type="button" data-act="admTab" data-tab="${k}" ${S.admin.tab === k ? 'aria-current="page"' : ''} style="display:inline-flex;gap:6px;align-items:center">${ic(i, 18)}${l}</button>`).join('')}
+        <button class="tab" type="button" data-act="admRefresh" style="display:inline-flex;gap:6px;align-items:center">${ic('refresh', 18)}Refresh</button>
+      </nav>
+      <div id="admBody">${'<div class="sk" style="height:180px;margin-bottom:16px;border-radius:18px"></div>'.repeat(3)}</div></main>`;
+  await adminLoad();
+}
+function drawLogin(){
+  $('#app').innerHTML = `<main id="main" class="wrap narrow" style="padding-top:40px">
+    <form class="panel" id="loginForm"><span class="mark" style="margin-bottom:14px">Stick<b>2</b>XU</span><h2 style="margin:10px 0 18px">Admin log in</h2>
+      <div class="field"><label class="lab" for="em">Email</label><input class="inp" id="em" type="email" autocomplete="username"></div>
+      <div class="field"><label class="lab" for="pw">Password</label><input class="inp" id="pw" type="password" autocomplete="current-password"></div>
+      ${btn('Log in', { type: 'submit', cls: 'wide dark', icon: 'lock' })}<div class="formerr" id="logErr" role="alert"></div>
+      <p class="small" style="margin-top:14px"><a href="#/">Back to shop</a></p></form></main>`;
+  $('#loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    try { await api.login($('#em').value.trim(), $('#pw').value); viewAdmin(); }
+    catch (ex) { $('#logErr').textContent = friendlyError(ex); }
+  });
+}
+async function adminLoad(){
+  try {
+    S.admin.orders = await api.listOrders();
+    if (!S.admin.cleaned) {
+      S.admin.cleaned = true;
+      api.cleanup(S.admin.orders).then(n => { if (n) toast(`Cleaned up pictures from ${n} old order${n > 1 ? 's' : ''}.`); }).catch(e => console.warn('cleanup', e));
+    }
+    await drawAdminBody();
+  } catch (e) { $('#admBody').innerHTML = `<div class="formerr">${esc(friendlyError(e))}</div>`; }
+}
+const FILTERS = [['pending','To review'],['approved','To print'],['printing','Printing'],['ready','Ready'],['done','Done'],['other','Other'],['all','All']];
+const inFilter = (o, f) => f === 'all' ? true : f === 'other' ? ['rejected','cancelled','noshow'].includes(o.status) : o.status === f;
+const personKey = o => norm(o.nickname) + '|' + norm(o.grade_section);
+const REJECT_REASONS = ["This picture isn't allowed", 'Picture is too blurry to print', 'Text is too small to read'];
+
+async function drawAdminBody(){
+  if (S.admin.tab === 'money') return drawMoney();
+  if (S.admin.tab === 'posters') return drawPosters();
+  if (S.admin.tab === 'settings') return drawSettings();
+  const all = S.admin.orders, f = S.admin.filter;
+  const list = all.filter(o => inFilter(o, f));
+  if (f === 'ready') list.sort((a, b) => (b.arrived_at ? 1 : 0) - (a.arrived_at ? 1 : 0) || String(a.pickup_date).localeCompare(String(b.pickup_date)) || String(a.pickup_time).localeCompare(String(b.pickup_time)) || a.pickup.localeCompare(b.pickup));
+  clearInterval(S.admin.poll);
+  if (f === 'ready') S.admin.poll = setInterval(pollReady, 15000);
+  if (f === 'approved') list.sort((a, b) => (b.confirmed ? 1 : 0) - (a.confirmed ? 1 : 0));
+  const need = [...new Set(list.filter(o => !o.images_deleted).flatMap(o => o.layout.sheets.flatMap(s => s.items.map(i => i.path))))].filter(p => !(p in S.admin.urls));
+  if (need.length) { try { Object.assign(S.admin.urls, await api.imageUrls(need)); } catch (e) { console.warn(e); } }
+  const strikes = {}; all.forEach(o => { if (o.status === 'noshow') strikes[personKey(o)] = (strikes[personKey(o)] || 0) + 1; });
+  const stCls = { pending:'warn', ready:'ok', done:'ok', rejected:'bad', noshow:'bad', cancelled:'bad' };
+  const emptyMsg = { pending:'No designs waiting for review.', approved:'Nothing to print right now.', printing:'Nothing is printing.', ready:'No orders waiting for pickup.' };
+
+  $('#admBody').innerHTML = `
+    <div class="chips">${FILTERS.map(([k, l]) => { const c = all.filter(o => inFilter(o, k)).length;
+      return `<button class="chip ${f === k ? 'on' : ''}" type="button" data-act="admFilter" data-f="${k}">${l}${c && ACTIVE.includes(k) ? `<span class="c num">${c}</span>` : ''}</button>`; }).join('')}</div>
+    ${f === 'ready' ? `<p class="hint" style="margin-bottom:16px">${ic('box', 18)}<span>Write the code and nickname on each bag. Keep this page open at pickup: when someone taps "I'm here", they jump to the top with a gold "Here now" tag. It updates every 15 seconds.</span></p>` : ''}
+    <div class="olist">${list.length ? list.map((o, idx) => {
+      const sk = strikes[personKey(o)] || 0, a = [];
+      const prev = list[idx - 1];
+      let head = '';
+      if (f === 'ready' && o.arrived_at && (!prev || !prev.arrived_at)) head = `<div class="dayhead"><span class="tag here">${ic('pin', 16)}Here now</span></div>`;
+      if (f === 'ready' && !o.arrived_at && (!prev || prev.arrived_at || prev.pickup_date !== o.pickup_date)) head = `<div class="dayhead">${o.pickup_date ? esc(dayLabel(o.pickup_date)) : 'No date'}</div>`;
+      if (o.status === 'pending') a.push(smallBtn('Approve', 'check', 'aApprove', 'ok', `data-id="${o.id}"`), smallBtn('Reject', 'x', 'aReject', 'plain', `data-id="${o.id}"`));
+      if (['approved','printing'].includes(o.status)) a.push(smallBtn('Download PDF', 'printer', 'aPdf', 'dark', `data-id="${o.id}"`), smallBtn('Mark ready', 'box', 'aReady', '', `data-id="${o.id}"`));
+      if (o.status === 'ready') a.push(smallBtn('Picked up and paid', 'check', 'aDone', 'ok', `data-id="${o.id}"`), smallBtn("Didn't show up", 'ghost', 'aNoshow', 'plain', `data-id="${o.id}"`), smallBtn('Reprint', 'printer', 'aPdf', 'plain', `data-id="${o.id}"`));
+      if (ACTIVE.includes(o.status)) a.push(smallBtn(o.paid ? 'Mark unpaid' : 'Mark paid', 'cash', 'aPaid', 'plain', `data-id="${o.id}"`));
+      return `${head}<article class="ocard">
+        <div class="ohead"><div class="pdot">${o.pickup_date ? `<small>${fmtDate(o.pickup_date, { month: 'short' })}</small><b>${parseYmd(o.pickup_date).getDate()}</b>` : ic('box', 24)}</div>
+          <div><div class="ocode">${esc(o.code)}</div><div class="muted small">Pickup ${o.pickup_date ? esc(fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' })) + (o.pickup_time ? `, ${esc(o.pickup_time)}` : '') : 'date not set'}, ordered ${fmtTime(o.created_at)}</div></div>
+          <span class="tag st ${stCls[o.status] || ''}">${ic(STATUS[o.status][0], 16)}${esc(o.status)}</span></div>
+        <div class="ometa">
+          <div><span><b>${esc(o.nickname)}</b>, ${esc(o.grade_section)}</span></div>
+          <div>${ic('pin', 18)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span></div>
+          <div>${ic('cash', 18)}<span class="num">${money(o.total)} for ${o.sheet_count} sheet${o.sheet_count > 1 ? 's' : ''}, ${o.payment === 'gcash' ? `GCash${o.gcash_ref ? ` (ref ${esc(o.gcash_ref)})` : ', no ref yet'}` : 'cash'}</span></div>
+          <div class="tags">
+            ${o.status === 'ready' && o.arrived_at ? `<span class="tag here">${ic('pin', 14)}Here now</span>` : ''}
+            ${o.paid ? `<span class="tag ok">${ic('check', 14)}Paid</span>` : ''}
+            ${o.confirmed ? `<span class="tag ok">${ic('thumb', 14)}Said they're coming</span>` : ''}
+            ${sk ? `<span class="tag bad">${ic('warn', 14)}${sk} missed pickup${sk > 1 ? 's' : ''} before</span>` : ''}
+            ${o.src ? `<span class="tag">${ic('qr', 14)}Poster: ${esc(o.src)}</span>` : ''}
+            ${o.reject_reason ? `<span class="tag bad">Reason: ${esc(o.reject_reason)}</span>` : ''}
+          </div></div>
+        <div class="summary" style="margin:6px 0 0">${o.layout.sheets.map(s => miniSheet(s, it => S.admin.urls[it.path], o.images_deleted)).join('')}</div>
+        ${S.admin.rejecting === o.id ? `<div class="rejbox">
+            <label class="lab" for="rejText">Why isn't it approved? The customer sees this.</label>
+            <div class="quick">${REJECT_REASONS.map((r, i) => `<button class="chip" type="button" data-act="rejQuick" data-i="${i}">${esc(r)}</button>`).join('')}</div>
+            <input class="inp" id="rejText" maxlength="140" value="${esc(REJECT_REASONS[0])}">
+            <div class="oacts">${smallBtn('Send rejection', 'x', 'rejSend', 'danger', `data-id="${o.id}"`)}${smallBtn('Cancel', '', 'rejCancel', 'plain')}</div></div>`
+          : `<div class="oacts">${a.join('')}</div>`}
+      </article>`; }).join('')
+      : `<div class="empty">${ic('box', 36)}<b>${emptyMsg[f] || 'Nothing here yet.'}</b><span>New orders show up under "To review".</span></div>`}</div>`;
+}
+async function pollReady(){
+  if (!location.hash.includes('admin') || S.admin.tab !== 'orders' || S.admin.filter !== 'ready' || S.admin.rejecting) { if (!location.hash.includes('admin')) clearInterval(S.admin.poll); return; }
+  try {
+    const fresh = await api.listOrders();
+    const before = new Set(S.admin.orders.filter(o => o.arrived_at).map(o => o.id));
+    const newly = fresh.filter(o => o.status === 'ready' && o.arrived_at && !before.has(o.id));
+    const changed = JSON.stringify(fresh.map(o => [o.id, o.status, o.arrived_at])) !== JSON.stringify(S.admin.orders.map(o => [o.id, o.status, o.arrived_at]));
+    S.admin.orders = fresh;
+    if (newly.length) toast(newly.map(o => `${o.nickname} (${o.grade_section}) is at ${o.pickup}`).join('. '));
+    if (changed) drawAdminBody();
+  } catch (e) { console.warn('poll', e); }
+}
+async function setStatus(id, patch, msg){
+  try {
+    await api.updateOrder(id, patch);
+    Object.assign(S.admin.orders.find(x => x.id === id), patch, { updated_at: new Date().toISOString() });
+    if (msg) toast(msg); drawAdminBody();
+  } catch (e) { toast(friendlyError(e)); }
+}
+
+async function makePdf(o){
+  if (!window.jspdf) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
+  if (o.images_deleted) { toast('The pictures for this order were already cleaned up.'); return; }
+  toast('Making the PDF. This takes a few seconds.');
+  const paths = [...new Set(o.layout.sheets.flatMap(s => s.items.map(i => i.path)))];
+  const urls = await api.imageUrls(paths), cache = {};
+  const g = geom();
+  const doc = new window.jspdf.jsPDF({ unit: 'mm', format: [g.widthMm, g.heightMm] });
+  for (let si = 0; si < o.layout.sheets.length; si++) {
+    if (si) doc.addPage([g.widthMm, g.heightMm]);
+    for (const it of o.layout.sheets[si].items) {
+      const r = rectMm(it.col, it.row, it.size);
+      try {
+        const img = cache[it.path] || (cache[it.path] = await loadImg(urls[it.path]));
+        const px = Math.min(1800, Math.round(r.w / 25.4 * 300));
+        doc.addImage(drawSticker(img, px, r.w, it.fit, true).toDataURL('image/png'), 'PNG', r.x, r.y, r.w, r.w);
+      } catch (e) { console.warn('image failed', it.path, e); }
+    }
+    doc.setFontSize(9); doc.setTextColor(90);
+    doc.text(`${o.code}   ${o.nickname}, ${o.grade_section}   pickup ${o.pickup_date ? fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' }) : ''} ${o.pickup_time || ''} at ${o.pickup}   sheet ${si + 1} of ${o.layout.sheets.length}`, g.marginMm, g.heightMm - g.marginMm + 2.6);
+  }
+  doc.save(`${o.code}.pdf`);
+  if (o.status === 'approved') setStatus(o.id, { status: 'printing' }, 'PDF downloaded. Print at 100% ("Actual size") and cut on the grey lines.');
+}
+
+function drawSettings(){
+  const st = S.settings;
+  $('#admBody').innerHTML = `<form class="panel" id="setForm" style="max-width:640px">
+    <h3 style="margin-bottom:6px">Pickup signal</h3>
+    <p class="help" style="margin-bottom:16px">What will the seller hold or wear at the gate? Customers see this on their order and when it's ready. Change it anytime.</p>
+    <div class="field"><span class="lab">The seller is…</span>
+      <div class="gs" style="grid-template-columns:150px 1fr">
+        <select class="inp" id="sVerb" aria-label="Holding or wearing">${['holding','wearing'].map(v => `<option value="${v}" ${st.signalVerb === v ? 'selected' : ''}>${v}</option>`).join('')}</select>
+        <input class="inp" id="sItem" maxlength="60" value="${esc(st.signalItem)}" aria-label="What" placeholder="a blue Stick2XU cap">
+      </div>
+      <p class="help">Start with "a" or "the", like "a yellow lanyard" or "the Stick2XU sign".</p></div>
+    <div class="pt hi" style="margin-bottom:18px"><span class="k">${ic('search', 16)}Customers will see</span><b id="sPrev"></b></div>
+    ${btn('Save', { type: 'submit', cls: 'dark', icon: 'check' })}
+  </form>`;
+  const prev = () => { $('#sPrev').textContent = `Look for the person ${$('#sVerb').value} ${$('#sItem').value.trim() || '…'}`; };
+  $('#setForm').addEventListener('input', prev); $('#setForm').addEventListener('change', prev); prev();
+  $('#setForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const signal_verb = $('#sVerb').value, signal_item = $('#sItem').value.trim();
+    if (signal_item.length < 3) { toast('Type what the seller will hold or wear.'); return; }
+    try { await api.saveSettings({ signal_verb, signal_item }); S.settings.signalVerb = signal_verb; S.settings.signalItem = signal_item; toast('Saved. Customers will see the new signal.'); }
+    catch (ex) { toast(friendlyError(ex)); }
+  });
+}
+
+function drawMoney(){
+  const all = S.admin.orders, done = all.filter(o => o.status === 'done');
+  const sum = a => a.reduce((t, o) => t + (o.total || 0), 0);
+  const week = done.filter(o => Date.now() - new Date(o.updated_at).getTime() < 7 * 864e5);
+  const waiting = all.filter(o => ACTIVE.includes(o.status) && !o.paid);
+  const src = {};
+  all.forEach(o => { const k = o.src || 'No poster (direct link)'; src[k] = src[k] || { n: 0, done: 0, rev: 0 }; src[k].n++; if (o.status === 'done') { src[k].done++; src[k].rev += o.total; } });
+  $('#admBody').innerHTML = `
+    <div class="stats">
+      <div class="panel hero-stat"><span class="small">Earned so far</span><b class="num">${money(sum(done))}</b><span class="small">${done.length} finished order${done.length === 1 ? '' : 's'}</span></div>
+      <div class="panel"><span class="small muted">Last 7 days</span><b class="num">${money(sum(week))}</b></div>
+      <div class="panel"><span class="small muted">Still to collect</span><b class="num">${money(sum(waiting))}</b><span class="small muted">${all.filter(o => o.status === 'noshow').length} no-shows so far</span></div>
+    </div>
+    <div class="panel"><h3 style="margin-bottom:10px">Which posters bring orders</h3>
+      <div class="tbl"><table><thead><tr><th>Poster</th><th>Orders</th><th>Finished</th><th>Earned</th></tr></thead><tbody>
+      ${Object.entries(src).sort((a, b) => b[1].n - a[1].n).map(([k, v]) => `<tr><td>${esc(k)}</td><td class="num">${v.n}</td><td class="num">${v.done}</td><td class="num">${money(v.rev)}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">No orders yet</td></tr>'}
+      </tbody></table></div></div>`;
+}
+function drawPosters(){
+  const base = CONFIG.siteUrl || (location.origin + location.pathname);
+  const bad = !CONFIG.siteUrl && !/^https?:/.test(location.origin);
+  const srcs = {}; S.admin.orders.forEach(o => { if (o.src) srcs[o.src] = (srcs[o.src] || 0) + 1; });
+  const q = S.admin.qr;
+  $('#admBody').innerHTML = `<div class="panel">
+    <h3 style="margin-bottom:6px">Make a QR code for a poster</h3>
+    <p class="help">Give each poster spot its own name. The Earnings tab then shows which spots bring in orders.</p>
+    ${bad ? `<div class="formerr">Set siteUrl in CONFIG to the real website address before printing QR codes.</div>` : ''}
+    <form id="qrForm" style="margin-top:18px">
+      <label class="lab" for="qrName" style="display:block;margin-bottom:8px">Poster spot</label>
+      <div class="qrrow"><input class="inp" id="qrName" value="${esc(q ? q.slug : '')}" aria-describedby="h-qr">
+        ${btn('Make QR code', { type: 'submit', cls: 'dark', icon: 'qr' })}</div>
+      <p class="help" id="h-qr" style="margin-top:8px">Like "gate-1" or "library-board".</p></form>
+    ${q ? `<div class="qrwrap"><div id="qrbox"></div>
+      <div><p class="lab">This poster links to</p><div class="url">${esc(q.url)}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn sm noi" id="qrDl" download="qr-${esc(q.slug)}.png" href="#">${ic('download', 18)}<span>Download PNG</span></a>
+        ${smallBtn('Copy link', 'copy', 'copyLink', 'plain')}</div>
+        <p class="help">Print it at least 4 cm wide, and scan it with a phone before putting the poster up.</p></div></div>` : ''}
+    ${Object.keys(srcs).length ? `<p class="lab" style="margin-top:22px">Spots that already brought orders</p><div class="tags">${Object.entries(srcs).map(([k, v]) => `<span class="tag">${esc(k)}: ${v}</span>`).join('')}</div>` : ''}
+  </div>`;
+  $('#qrForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const slug = $('#qrName').value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
+    if (!slug) { toast('Type a name for this poster spot.'); return; }
+    S.admin.qr = { slug, url: `${base}?src=${slug}` }; drawPosters();
+  });
+  if (q) {
+    if (!window.QRCode) { $('#qrbox').textContent = "The QR tool didn't load. Refresh the page."; return; }
+    new QRCode($('#qrbox'), { text: q.url, width: 480, height: 480, colorDark: '#283971', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+    setTimeout(() => { const c = $('#qrbox canvas'); if (c) $('#qrDl').href = c.toDataURL('image/png'); }, 150);
+  }
+}
+
+/* =====================================================================
+   Click + input handling
+   ===================================================================== */
+const ACTIONS = {
+  pickImg: t => { S.selImage = t.dataset.id; S.selItem = null; drawCtrl(); drawSheet(); },
+  delImg: (t, e) => {
+    e.stopPropagation();
+    const id = t.dataset.id, im = imgById(id), idx = S.images.indexOf(im);
+    const saved = S.sheets.map(s => s.items.slice());
+    S.sheets.forEach(s => s.items = s.items.filter(i => i.imageId !== id));
+    S.images = S.images.filter(i => i.id !== id);
+    if (S.selImage === id) S.selImage = S.images[0] ? S.images[0].id : null;
+    S.selItem = null; drawDesigner();
+    toast('Picture removed.', () => { S.images.splice(idx, 0, im); S.sheets.forEach((s, i) => s.items = saved[i]); S.selImage = id; drawDesigner(); });
+  },
+  pickSize: t => {
+    const size = +t.dataset.size, sheet = S.sheets[S.cur], g = geom(), sel = selected();
+    if (sel) {
+      const c = Math.min(sel.col, g.cols - size), r = Math.min(sel.row, g.rows - size);
+      if (fits(sheet, c, r, size, sel.uid)) Object.assign(sel, { col: c, row: r, size });
+      else { shakePage(); toast('Not enough room to make it that big here. Move it first.'); return; }
+    } else S.selSize = size;
+    drawDesigner();
+  },
+  cell: t => tapCell(+t.dataset.col, +t.dataset.row),
+  stk: t => { S.selItem = S.selItem === t.dataset.uid ? null : t.dataset.uid; drawCtrl(); drawSheet(); },
+  tab: t => { S.cur = +t.dataset.i; S.selItem = null; drawDesigner(); },
+  addSheet: () => { if (S.sheets.length < S.settings.maxSheets) { S.sheets.push({ items: [] }); S.cur = S.sheets.length - 1; S.selItem = null; drawDesigner(); } },
+  delSheet: () => {
+    const i = S.cur, removed = S.sheets.splice(i, 1)[0]; S.cur = Math.max(0, i - 1); drawDesigner();
+    toast('Sheet removed.', () => { S.sheets.splice(i, 0, removed); S.cur = i; drawDesigner(); });
+  },
+  fitToggle: () => { const it = selected(); if (it) { it.fit = it.fit === 'fit' ? 'fill' : 'fit'; drawSheet(); } },
+  removeItem: () => { const s = S.sheets[S.cur]; s.items = s.items.filter(i => i.uid !== S.selItem); S.selItem = null; drawDesigner(); },
+  deselect: () => { S.selItem = null; drawCtrl(); drawSheet(); },
+  toCheckout: () => { S.selItem = null; location.hash = '#/checkout'; },
+  imHere: async t => {
+    t.disabled = true;
+    try { await api.imHere(S.statusResult.code, S.statusNick); toast("The seller's been told you're here."); lookup(); }
+    catch (e) { t.disabled = false; toast(friendlyError(e)); }
+  },
+  confirmComing: async () => { try { await api.confirm(S.statusResult.code, S.statusNick); toast("Thanks. The seller knows you're coming."); lookup(); } catch (e) { toast(friendlyError(e)); } },
+  cancelOrder: async t => {
+    if (!armed(t, 'Tap again to cancel')) return;
+    try { await api.cancel(S.statusResult.code, S.statusNick); toast('Order cancelled.'); lookup(); } catch (e) { toast(friendlyError(e)); }
+  },
+  logout: async () => { await api.logout(); S.admin.cleaned = false; viewAdmin(); },
+  admTab: t => { S.admin.tab = t.dataset.tab; clearInterval(S.admin.poll); viewAdmin(); },
+  admRefresh: () => { S.admin.urls = {}; adminLoad(); },
+  admFilter: t => { S.admin.filter = t.dataset.f; S.admin.rejecting = null; clearInterval(S.admin.poll); drawAdminBody().then(() => { if (S.admin.filter === 'ready') pollReady(); }); },
+  aApprove: t => setStatus(t.dataset.id, { status: 'approved' }, 'Approved.'),
+  aReject: t => { S.admin.rejecting = t.dataset.id; drawAdminBody().then(() => $('#rejText') && $('#rejText').focus()); },
+  rejQuick: t => { $('#rejText').value = REJECT_REASONS[+t.dataset.i]; },
+  rejCancel: () => { S.admin.rejecting = null; drawAdminBody(); },
+  rejSend: t => {
+    const reason = $('#rejText').value.trim() || REJECT_REASONS[0];
+    S.admin.rejecting = null; setStatus(t.dataset.id, { status: 'rejected', reject_reason: reason.slice(0, 140) }, 'Rejected. The customer can see the reason.');
+  },
+  aPdf: t => makePdf(S.admin.orders.find(o => o.id === t.dataset.id)).catch(e => toast(friendlyError(e))),
+  aReady: t => setStatus(t.dataset.id, { status: 'ready' }, 'Marked ready.'),
+  aDone: t => setStatus(t.dataset.id, { status: 'done', paid: true }, 'Done.'),
+  aNoshow: t => { if (armed(t, `Tap again: counts as a strike (${CONFIG.maxNoShows} = blocked)`)) setStatus(t.dataset.id, { status: 'noshow' }, 'Marked as a no-show.'); },
+  aPaid: t => { const o = S.admin.orders.find(x => x.id === t.dataset.id); setStatus(o.id, { paid: !o.paid }, o.paid ? 'Marked unpaid.' : 'Marked paid.'); },
+  copyLink: async () => { try { await navigator.clipboard.writeText(S.admin.qr.url); toast('Link copied.'); } catch { toast("Copying didn't work. Select the link and copy it."); } }
+};
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-act]'); if (!t) return;
+  const fn = ACTIONS[t.dataset.act]; if (!fn) return;
+  e.preventDefault(); fn(t, e);
+});
+/* =====================================================================
+   Start
+   ===================================================================== */
+(async function init(){
+  if (!CONFIG.supabaseUrl || !CONFIG.supabaseAnonKey || !window.supabase) {
+    $('#app').innerHTML = `<main id="main" class="wrap narrow" style="padding-top:60px"><div class="panel">
+      <span class="mark">Stick<b>2</b>XU</span>
+      <h2 style="margin:16px 0 10px">${!window.supabase && CONFIG.supabaseUrl ? "Can't connect right now" : 'Not connected yet'}</h2>
+      <p class="muted">${!window.supabase && CONFIG.supabaseUrl ? 'Check your internet connection and refresh the page.' : 'Add the Supabase URL and anon key to CONFIG at the top of index.html. See SETUP.md.'}</p></div></main>`;
+    return;
+  }
+  api = SupaBackend();
+  try { const s = await api.settings(); S.settings.price = s.price_per_sheet; S.settings.maxSheets = s.max_sheets;
+    if (s.signal_verb) S.settings.signalVerb = s.signal_verb; if (s.signal_item) S.settings.signalItem = s.signal_item; }
+  catch (e) { console.warn('Could not load settings, using CONFIG values', e); }
+  route();
+})();
+</script>
+</body>
+</html>
