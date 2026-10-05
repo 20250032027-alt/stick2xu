@@ -311,6 +311,94 @@ th{color:var(--muted);font-weight:700}
 #toast button{border:2px solid #fff;background:transparent;color:#fff;border-radius:999px;padding:4px 12px;font-weight:700;cursor:pointer}
 .spin{width:18px;height:18px;border:3px solid rgba(40,57,113,.3);border-top-color:var(--ink);border-radius:50%;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
+
+/* drag to move stickers */
+.stk{touch-action:none}
+.stk.dragging{z-index:6;transition:none;cursor:grabbing;filter:drop-shadow(0 12px 14px rgba(40,57,113,.35))}
+.drop{position:absolute;border:3px dashed var(--accent);border-radius:12px;background:rgba(58,82,163,.14);pointer-events:none;z-index:5}
+.drop.bad{border-color:var(--bad);background:rgba(209,31,33,.12)}
+/* product picker */
+.pcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin:18px 0 26px}
+.pcard{display:grid;gap:8px;align-content:start;text-decoration:none;color:inherit;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-lg);padding:16px;box-shadow:var(--shadow);transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.pcard:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
+.pcard:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.pcard .illo{height:150px;border-radius:16px;background:var(--backing);display:grid;place-items:center;overflow:hidden;position:relative;margin-bottom:6px}
+.pcard h3{font-size:24px}
+.pcard p{margin:0;color:var(--muted)}
+.pcard .from{font-weight:700;color:var(--accent);margin-top:4px}
+/* picture editor (pins, posters, keychains) */
+.stage2{display:flex;flex-direction:column;align-items:center;gap:16px;padding-top:6px}
+.frame{position:relative;overflow:hidden;background:#fff;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.frame:active{cursor:grabbing}
+.frame img{position:absolute;max-width:none;pointer-events:none;user-select:none}
+.empty-f{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:8px;color:var(--muted);font-weight:700;text-align:center;padding:12px;font-size:15px;
+  background:repeating-linear-gradient(45deg,#F6F7FB 0 10px,#ECEEF6 10px 20px)}
+.pinwrap,.postwrap{width:100%;display:flex;justify-content:center}
+@media(max-width:900px){.designer .stage2{order:-1}}
+.pinwrap .frame{width:min(100%,380px);aspect-ratio:1;border-radius:50%;border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink)}
+.wrapzone{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle closest-side,transparent calc(var(--face) - .4%),rgba(40,57,113,.5) var(--face))}
+.facering{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);aspect-ratio:1;border-radius:50%;border:2px dashed rgba(255,255,255,.95);pointer-events:none}
+.postwrap .frame{border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink);border-radius:4px}
+.kc{display:flex;flex-direction:column;align-items:center}
+.kc .ring{width:70px;height:70px;border-radius:50%;border:7px solid #B6BECC;box-shadow:inset 0 1px 2px rgba(0,0,0,.15),0 2px 3px rgba(40,57,113,.25)}
+.kc .loop{width:16px;height:26px;border-radius:8px;border:4px solid #B6BECC;margin:-10px 0 -8px;position:relative;z-index:1}
+.kc .case{position:relative;z-index:2;padding:26px 22px 22px;border-radius:24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(212,222,240,.55) 55%,rgba(255,255,255,.8));border:2px solid rgba(118,136,170,.8);
+  box-shadow:inset 0 0 0 7px rgba(255,255,255,.6),inset 0 0 0 9px rgba(150,166,198,.35),0 16px 30px rgba(40,57,113,.2)}
+.kc .case::before{content:"";position:absolute;left:50%;top:7px;transform:translateX(-50%);width:16px;height:9px;border-radius:0 0 8px 8px;border:3px solid rgba(118,136,170,.8);border-top:0}
+.kc .case::after{content:"";position:absolute;left:14px;top:14px;width:34%;height:42%;border-radius:16px;background:linear-gradient(155deg,rgba(255,255,255,.8),transparent 70%);pointer-events:none;z-index:3}
+.kc .frame{width:min(58vw,250px);border-radius:4px;box-shadow:0 0 0 1px rgba(40,57,113,.18)}
+.kc.mini .ring{width:30px;height:30px;border-width:4px}
+.kc.mini .loop{width:8px;height:13px;border-width:2px;margin:-5px 0 -4px}
+.kc.mini .case{padding:12px 9px 9px;border-radius:12px;box-shadow:inset 0 0 0 3px rgba(255,255,255,.6),0 8px 14px rgba(40,57,113,.2)}
+.kc.mini .case::before{display:none}
+.kc.mini .case::after{left:7px;top:7px;border-radius:8px}
+.kc.mini .frame{width:58px}
+.kc .frame.clear{background:repeating-linear-gradient(45deg,rgba(255,255,255,.7) 0 8px,rgba(222,230,244,.7) 8px 16px);cursor:default}
+.zoomrow{display:flex;align-items:center;gap:10px}
+.zoomrow input[type=range]{flex:1;accent-color:var(--accent);height:34px}
+.seg{display:inline-flex;border:2px solid var(--ink);border-radius:999px;overflow:hidden;background:var(--paper)}
+.seg button{border:0;background:transparent;padding:8px 18px;font-weight:700;cursor:pointer;min-height:44px}
+.seg button.on{background:var(--ink);color:#fff}
+.qty{display:inline-flex;align-items:center;border:2px solid var(--ink);border-radius:999px;overflow:hidden;background:var(--paper)}
+.qty button{width:48px;height:48px;border:0;background:transparent;font-size:24px;font-weight:700;cursor:pointer;color:var(--ink)}
+.qty button:active{background:var(--accent-soft)}
+.qty span{min-width:44px;text-align:center;font-weight:800;font-family:var(--display);font-size:22px}
+.warnline{display:flex;gap:8px;align-items:center;background:var(--warn-soft);border-radius:12px;padding:8px 12px;font-size:14px;font-weight:700}
+.choice .note{display:block;color:var(--muted);font-weight:500;font-size:14px}
+/* cart */
+.cart{display:grid;gap:14px;margin:16px 0 22px}
+.cline{display:grid;grid-template-columns:96px 1fr auto;gap:16px;align-items:center;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:14px;box-shadow:var(--shadow)}
+.cline .th{display:grid;place-items:center}
+.cline h3{font-size:19px}
+.cline .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.cline .price{font-family:var(--display);font-weight:800;font-size:22px;text-align:right}
+@media(max-width:560px){.cline{grid-template-columns:76px 1fr}.cline .price{grid-column:2;text-align:left}}
+.fthumb{position:relative;overflow:hidden;background:#fff;border:2px solid var(--ink);width:80px;border-radius:6px;flex:none}
+.fthumb.round{border-radius:50%}
+.fthumb img{position:absolute;max-width:none}
+.clines{list-style:none;margin:10px 0 18px;padding:0;border-top:1px solid var(--line)}
+.clines li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.clines small{display:block;color:var(--muted)}
+.ilist{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:2px}
+.ilist li{display:flex;gap:8px;align-items:flex-start}
+/* admin: products */
+.prod{border:2px solid var(--line);border-radius:18px;padding:16px;margin:0 0 16px}
+.prod.off{background:#F7F8FB}
+.prodhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.switch{display:inline-flex;align-items:center;gap:8px;font-weight:700;cursor:pointer;font-size:15px}
+.switch input{appearance:none;-webkit-appearance:none;width:48px;height:28px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;margin:0;border:2px solid var(--ink);flex:none}
+.switch input::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid var(--ink);box-sizing:border-box;transition:transform .2s var(--ease)}
+.switch input:checked{background:var(--ok)}
+.switch input:checked::after{transform:translateX(20px)}
+.prod .sub{font-weight:700;font-size:13px;color:var(--muted);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.06em}
+.prow{display:grid;grid-template-columns:1fr 120px auto;gap:10px;align-items:center;margin-bottom:8px}
+.arow{display:grid;grid-template-columns:1fr 1.4fr 100px auto auto;gap:8px;align-items:center;margin-bottom:10px}
+@media(max-width:760px){.arow{grid-template-columns:1fr 100px}.arow .note-in{grid-column:1/-1;grid-row:2}}
+.prod .inp{min-height:44px;font-size:15px;padding:8px 10px}
+.pricein{position:relative}
+.pricein::before{content:"₱";position:absolute;left:10px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--muted)}
+.pricein .inp{padding-left:24px}
 </style>
 </head>
 <body>
@@ -329,16 +417,43 @@ const CONFIG = {
   shopName: 'Stick2XU',
 
   // Paste from Supabase → Project Settings → API.
-  supabaseUrl: 'https://afyniszezhjtycwdxhgh.supabase.co',
-  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmeW5pc3plemhqdHljd2R4aGdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwNDUwMDgsImV4cCI6MjEwNjYyMTAwOH0.JbQVH6ZtS4nxJ6cx29Xoi6h0VePSFZ9j9tBl3Hke5PA',
+  supabaseUrl: '',
+  supabaseAnonKey: '',
   bucket: 'sticker-uploads',
 
   // The real web address of the site. Set this BEFORE making poster QR codes.
-  siteUrl: 'https://stick2xu.vercel.app/',
+  siteUrl: '',
 
   currency: '₱',
-  pricePerSheet: 50,      // in Supabase mode the price comes from the shop_settings table
-  maxSheets: 3,
+  maxSheets: 3,            // sticker sheets per order
+  maxQty: 20,              // max pins / posters / keychains of one design
+
+  // What you sell. Prices, on/off switches, and extras here are only the starting values:
+  // change them anytime from the admin page under Settings.
+  products: {
+    stickers: {
+      name: 'Stickers', blurb: 'A full sheet of die-cut stickers', unit: 'sheet', enabled: true,
+      sizes: [{ id: 'a4', label: 'A4 sheet', price: 50 }],
+      addons: [{ id: 'inkjet', label: 'Inkjet print', note: 'brighter, more vivid colors', price: 30, enabled: true }]
+    },
+    pins: {
+      name: 'Pins', blurb: 'Round button pins with your picture', unit: 'pin', enabled: false,
+      // faceMm = the pin you hold. cutMm = the paper circle, which wraps around the edge. Match these to the pin machine.
+      sizes: [{ id: '58', label: '58 mm', price: 35, faceMm: 58, cutMm: 70 }, { id: '44', label: '44 mm', price: 25, faceMm: 44, cutMm: 55 }],
+      addons: []
+    },
+    posters: {
+      name: 'Posters', blurb: 'One big picture, printed on a full page', unit: 'poster', enabled: false,
+      sizes: [{ id: 'a4', label: 'A4', price: 40, wMm: 210, hMm: 297 }, { id: 'a3', label: 'A3', price: 80, wMm: 297, hMm: 420 }],
+      addons: []
+    },
+    keychains: {
+      name: 'Keychains', blurb: 'Your picture inside a clear acrylic keychain', unit: 'keychain', enabled: false,
+      // Size of the paper insert that slides into the case. Measure your cases and change these.
+      sizes: [{ id: 'std', label: 'Standard', price: 45, wMm: 35, hMm: 45 }],
+      addons: []
+    }
+  },
   maxNoShows: 2,
 
   // Match this to the sticker paper (A4 = 210 x 297 mm).
@@ -442,6 +557,10 @@ const ICONS = {
   sparkle:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>',
   layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
   sliders:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+  badge:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/>',
+  key:'<circle cx="12" cy="5" r="3"/><rect x="6" y="9" width="12" height="13" rx="2.5"/><path d="M12 8v1"/>',
+  sticker:'<path d="M15 3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h9l6-6V6a3 3 0 0 0-3-3z"/><path d="M15 21v-3a3 3 0 0 1 3-3h3"/>',
+  edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/>',
   move:'<path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/>'
 };
 const ic = (n, s = 20) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n] || ''}</svg>`;
@@ -493,8 +612,10 @@ function friendlyError(e){
   if (m.includes('TOO_MANY_SHEETS')) return `You can order up to ${S.settings.maxSheets} sheets at a time.`;
   if (m.includes('NOT_FOUND')) return "No order matches that code and nickname. Check both and try again.";
   if (m.includes('BAD_INPUT')) return 'Some details are missing. Fill in every box and try again.';
+  if (m.includes('NOT_AVAILABLE')) return "Something in your order isn't available right now. Go back to your order and remove it.";
   if (m.includes('BUSY')) return 'Too many orders came in at once. Wait a few minutes and try again.';
   if (m.toLowerCase().includes('invalid login')) return 'Wrong email or password.';
+  if (m.toLowerCase().includes('permission denied')) return 'The database blocked this. Run the latest schema.sql in Supabase → SQL Editor, then refresh.';
   if (m.toLowerCase().includes('fetch')) return "Can't reach the server. Check your internet and try again.";
   return m && m.length < 140 ? m : "Something didn't work. Check your internet and try again.";
 }
@@ -572,6 +693,109 @@ function miniSheet(sheet, urlFor, deleted, outlined){
   }).join('')}</div>`;
 }
 
+
+/* =====================================================================
+   Products, prices, and the order (cart)
+   ===================================================================== */
+const clone = o => JSON.parse(JSON.stringify(o));
+function mergeProducts(saved){
+  const out = {};
+  for (const [key, base] of Object.entries(CONFIG.products)) {
+    const d = (saved && saved[key]) || {};
+    out[key] = { ...base, key,
+      enabled: typeof d.enabled === 'boolean' ? d.enabled : base.enabled,
+      sizes: base.sizes.map(z => {
+        const ds = (d.sizes || []).find(x => x.id === z.id) || {};
+        return { ...z, price: ds.price !== undefined && Number.isFinite(+ds.price) ? +ds.price : z.price, enabled: typeof ds.enabled === 'boolean' ? ds.enabled : z.enabled !== false };
+      }),
+      addons: (Array.isArray(d.addons) ? d.addons : base.addons).map(a => ({ id: a.id, label: a.label || '', note: a.note || '', price: +a.price || 0, enabled: a.enabled !== false }))
+    };
+  }
+  return out;
+}
+const P = key => S.settings.products[key] || mergeProducts({})[key];
+const liveSizes = key => P(key).sizes.filter(z => z.enabled);
+const liveAddons = key => P(key).addons.filter(a => a.enabled && a.label);
+const isLive = key => !!P(key) && P(key).enabled && liveSizes(key).length > 0;
+const liveProducts = () => Object.keys(CONFIG.products).filter(isLive).map(P);
+const fromPrice = key => Math.min(...liveSizes(key).map(z => z.price));
+const designRoute = key => key === 'stickers' ? '#/design' : '#/make/' + key;
+function unitPrice(it){
+  const p = P(it.type), z = p.sizes.find(s => s.id === it.size) || p.sizes[0];
+  return (z ? z.price : 0) + (it.addons || []).reduce((t, id) => { const a = p.addons.find(x => x.id === id && x.enabled); return t + (a ? a.price : 0); }, 0);
+}
+const itemUnits = it => it.type === 'stickers' ? it.sheets.filter(s => s.items.length).length : it.qty;
+const itemTotal = it => itemUnits(it) * unitPrice(it);
+const cartTotal = () => S.cart.reduce((t, it) => t + itemTotal(it), 0);
+const cartUnits = () => S.cart.reduce((t, it) => t + itemUnits(it), 0);
+function itemTitle(it){
+  const p = CONFIG.products[it.type] || { name: it.type, sizes: [] }, n = it.type === 'stickers' ? (it.sheets || []).filter(s => (s.items || []).length).length : it.qty;
+  const sizeLabel = it.size_label || ((p.sizes.find(z => z.id === it.size) || {}).label) || '';
+  if (it.type === 'stickers') return `Stickers, ${n} sheet${n === 1 ? '' : 's'}`;
+  const extra = it.type === 'posters' ? `, ${it.orient || 'portrait'}` : '';
+  return `${p.name}${p.sizes.length > 1 ? ` (${sizeLabel}${extra})` : extra ? ` (${extra.slice(2)})` : ''} × ${n}`;
+}
+function itemDetails(it){
+  const bits = [];
+  const labels = it.addon_labels || (it.addons || []).map(id => (P(it.type).addons.find(a => a.id === id) || {}).label).filter(Boolean);
+  if (labels.length) bits.push(labels.join(', '));
+  if (it.type === 'keychains') { const m = it.back_mode || it.backMode; bits.push(m === 'different' ? 'different back' : m === 'blank' ? 'clear back' : 'same picture both sides'); }
+  return bits.join(' · ');
+}
+function frameMm(it){
+  if (it.mm) return it.mm;
+  const z = P(it.type).sizes.find(s => s.id === it.size) || P(it.type).sizes[0];
+  if (it.type === 'pins') return { w: z.cutMm, h: z.cutMm, face: z.faceMm, round: true };
+  if (it.type === 'posters') {
+    let w = z.wMm, h = z.hMm; if (it.orient === 'landscape') [w, h] = [h, w];
+    return { w: w - 10, h: h - 10, pageW: w, pageH: h, margin: 5 };
+  }
+  return { w: z.wMm, h: z.hMm };
+}
+/* Where the picture sits inside a frame. Offsets are fractions of the frame, so preview and print match. */
+function layoutFrac(im, d, W, H){
+  const s = Math.max(W / im.w, H / im.h) * (d.zoom || 1);
+  const dw = im.w * s / W, dh = im.h * s / H, mx = (dw - 1) / 2, my = (dh - 1) / 2;
+  d.ox = Math.max(-mx, Math.min(mx, d.ox || 0)); d.oy = Math.max(-my, Math.min(my, d.oy || 0));
+  return { dw, dh, left: (1 - dw) / 2 + d.ox, top: (1 - dh) / 2 + d.oy, dpi: 25.4 / s };
+}
+const fracStyle = L => `width:${L.dw * 100}%;height:${L.dh * 100}%;left:${L.left * 100}%;top:${L.top * 100}%`;
+function fitThumb(img){
+  try {
+    const d = JSON.parse(img.dataset.d), L = layoutFrac({ w: img.naturalWidth, h: img.naturalHeight }, d, +img.dataset.w, +img.dataset.h);
+    img.setAttribute('style', fracStyle(L));
+  } catch {}
+}
+function framedThumb(d, url, mm, width = 80){
+  return `<div class="fthumb ${mm.round ? 'round' : ''}" style="width:${width}px;aspect-ratio:${mm.w}/${mm.h}">${url
+    ? `<img src="${url}" alt="" data-d='${esc(JSON.stringify({ zoom: d.zoom, ox: d.ox, oy: d.oy }))}' data-w="${mm.w}" data-h="${mm.h}" onload="fitThumb(this)">` : ''}</div>`;
+}
+function itemThumb(it, urlFor){
+  if (it.type === 'stickers') return miniSheet(it.sheets.find(s => s.items.length) || it.sheets[0], urlFor.sticker, false, !!urlFor.outlined);
+  const mm = frameMm(it);
+  return framedThumb(it.front || {}, it.front ? urlFor.framed(it.front) : '', mm, it.type === 'posters' ? 64 : 76);
+}
+
+function cartImageIds(){
+  return S.cart.flatMap(it => it.type === 'stickers' ? it.sheets.flatMap(sh => sh.items.map(x => x.imageId))
+    : [it.front && it.front.imageId, it.type === 'keychains' && it.backMode === 'different' && it.back && it.back.imageId]).filter(Boolean);
+}
+function serializeItems(items, pathFor){
+  return items.map(it => {
+    const p = P(it.type), z = p.sizes.find(x => x.id === it.size) || p.sizes[0];
+    const base = { type: it.type, size: it.size, size_label: z.label, addons: it.addons || [],
+      addon_labels: (it.addons || []).map(id => (p.addons.find(a => a.id === id) || {}).label).filter(Boolean), unit_price: unitPrice(it) };
+    if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ items: sh.items.map(x => ({ path: pathFor[x.imageId], col: x.col, row: x.row, size: x.size, fit: x.fit })) })) };
+    const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy } : null;
+    const out = { ...base, qty: it.qty, mm: frameMm(it), front: d(it.front) };
+    if (it.type === 'posters') out.orient = it.orient;
+    if (it.type === 'keychains') { out.back_mode = it.backMode; out.back = it.backMode === 'different' ? d(it.back) : null; }
+    return out;
+  });
+}
+const orderItems = o => (o.layout && o.layout.items) || [{ type: 'stickers', size: 'a4', size_label: 'A4 sheet', addons: [], addon_labels: [], sheets: (o.layout && o.layout.sheets) || [] }];
+const orderPaths = o => orderItems(o).flatMap(it => it.type === 'stickers' ? (it.sheets || []).flatMap(sh => sh.items.map(x => x.path)) : [it.front && it.front.path, it.back && it.back.path]).filter(Boolean);
+
 /* =====================================================================
    Backend: Supabase
    ===================================================================== */
@@ -595,7 +819,7 @@ function SupaBackend(){
         if (error) throw new Error('Upload failed: ' + error.message);
         pathFor[img.id] = path;
       }
-      const layout = { sheets: p.sheets.map(s => ({ items: s.items.map(it => ({ path: pathFor[it.imageId], col: it.col, row: it.row, size: it.size, fit: it.fit })) })) };
+      const layout = { items: serializeItems(p.items, pathFor) };
       const code = await rpc('place_order', { p_nickname: p.nickname, p_grade_section: p.section, p_pickup: p.pickup, p_payment: p.payment,
         p_gcash_ref: p.gcashRef || null, p_layout: layout, p_folder: folder, p_src: p.src || null, p_pickup_date: p.pickupDate, p_pickup_time: p.pickupTime });
       return { code };
@@ -609,6 +833,10 @@ function SupaBackend(){
     async logout(){ await sb.auth.signOut(); },
     async listOrders(){ const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false }).limit(500); if (error) throw error; return data; },
     async updateOrder(id, patch){ const { error } = await sb.from('orders').update(patch).eq('id', id); if (error) throw error; },
+    async deleteOrder(o){
+      try { await wipeFolder(o.folder); } catch (e) { console.warn('could not remove pictures', e); }
+      const { error } = await sb.from('orders').delete().eq('id', o.id); if (error) throw error;
+    },
     async imageUrls(paths){
       if (!paths.length) return {};
       const { data, error } = await sb.storage.from(B).createSignedUrls(paths, 3600);
@@ -641,8 +869,9 @@ function SupaBackend(){
    App state + router
    ===================================================================== */
 const S = {
-  settings: { price: CONFIG.pricePerSheet, maxSheets: CONFIG.maxSheets, signalVerb: CONFIG.signalVerb, signalItem: CONFIG.signalItem },
+  settings: { maxSheets: CONFIG.maxSheets, signalVerb: CONFIG.signalVerb, signalItem: CONFIG.signalItem, products: mergeProducts({}) },
   images: [], sheets: [{ items: [] }], cur: 0, selImage: null, selSize: 1, selItem: null, justPlaced: null,
+  cart: [], editing: null, stickerAddons: [], fd: null, view: '',
   lastOrder: null, statusResult: null, statusNick: '',
   admin: { orders: [], filter: 'pending', tab: 'orders', urls: {}, cleaned: false, qr: null, rejecting: null }
 };
@@ -661,14 +890,14 @@ function progress(step){
     <span class="${i + 1 === step ? 'on' : i + 1 < step ? 'done' : ''}" ${i + 1 === step ? 'aria-current="step"' : ''}><i>${i + 1 < step ? ic('check', 14) : i + 1}</i>${n}</span>`).join('')}</nav>`;
 }
 function route(){
-  const page = (location.hash.replace(/^#\/?/, '') || 'home').split('/')[0];
+  const parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/'), page = parts[0];
   window.scrollTo(0, 0);
-  const views = { home: viewHome, design: viewDesign, checkout: viewCheckout, done: viewDone, status: viewStatus, admin: viewAdmin };
+  const views = { home: viewHome, shop: viewShop, design: viewDesign, make: () => viewMake(parts[1]), cart: viewCart, checkout: viewCheckout, done: viewDone, status: viewStatus, admin: viewAdmin };
   (views[page] || viewNotFound)();
 }
 window.addEventListener('hashchange', route);
 window.addEventListener('beforeunload', e => {
-  if (S.sheets.some(s => s.items.length) && !location.hash.includes('admin')) { e.preventDefault(); e.returnValue = ''; }
+  if ((S.cart.length || S.sheets.some(s => s.items.length) || (S.fd && S.fd.front.imageId)) && !location.hash.includes('admin')) { e.preventDefault(); e.returnValue = ''; }
 });
 
 /* =====================================================================
@@ -685,24 +914,26 @@ function heroArt(){
   ];
   return `<div class="sheet-art" style="container-type:inline-size" aria-hidden="true">
     ${shapes.map(p => `<span class="hs" style="left:${p.x}%;top:${p.y}%;width:${p.w}%;--r:${p.r}deg;--d:${p.d}ms">${shapeSVG(p.s, p.c, '100%')}</span>`).join('')}
-    <span class="hs txt" style="left:6%;top:37%;width:36%;--r:-7deg;--d:600ms;background:#fff;font-size:11cqw">${money(S.settings.price)}<span style="font-size:4.6cqw;font-family:var(--body);font-weight:700;margin-top:4px">per sheet</span></span>
+    <span class="hs txt" style="left:6%;top:37%;width:36%;--r:-7deg;--d:600ms;background:#fff;font-size:11cqw">${money(P('stickers').sizes[0].price)}<span style="font-size:4.6cqw;font-family:var(--body);font-weight:700;margin-top:4px">per sheet</span></span>
     <span class="hs txt peel" style="left:36%;top:64%;width:30%;aspect-ratio:1;--r:8deg;--d:960ms;background:var(--xu-blue1);color:#fff;font-size:10cqw">XU</span>
   </div>`;
 }
 function viewHome(){
-  const g = geom();
+  const g = geom(), live = liveProducts(), others = live.filter(p => p.key !== 'stickers').map(p => p.name.toLowerCase());
+  const list = others.length ? `stickers, ${others.slice(0, -1).join(', ')}${others.length > 1 ? ',' : ''} and ${others[others.length - 1]}` : '';
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap home" style="padding-bottom:24px">
     <section class="hero">
       <div>
-        <h1>Turn your pictures into a sticker sheet.</h1>
-        <p class="lead">Pick your pics, make them tiny or huge, and we print the whole sheet for you. You pick it up at school.</p>
+        <h1>${others.length ? 'Turn your pictures into stickers and more.' : 'Turn your pictures into a sticker sheet.'}</h1>
+        <p class="lead">${others.length ? `Make ${esc(list)} from your own pictures. We print them, and you pick them up at school.`
+          : 'Pick your pics, make them tiny or huge, and we print the whole sheet for you. You pick it up at school.'}</p>
         <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center">
-          ${btn('Start designing', { href: '#/design' })}
+          ${btn('Start designing', { href: '#/shop' })}
           <a class="pilllink" href="#/status">${ic('search', 18)}Check my order</a>
         </div>
         <ul class="facts">
-          <li>${ic('cash', 18)}<span><b class="num">${money(S.settings.price)}</b> a sheet</span></li>
-          <li>${ic('layers', 18)}<span>Up to ${g.cols * g.rows} small stickers</span></li>
+          ${isLive('stickers') ? `<li>${ic('cash', 18)}<span>Stickers <b class="num">${money(fromPrice('stickers'))}</b> a sheet</span></li>
+          <li>${ic('layers', 18)}<span>Up to ${g.cols * g.rows} small stickers</span></li>` : ''}
           <li>${ic('school', 18)}<span>Pickup inside campus only</span></li>
         </ul>
       </div>
@@ -717,10 +948,76 @@ function viewNotFound(){
     <h2>This page doesn't exist</h2><p>The link might be old or typed wrong.</p>${btn('Go to the start', { href: '#/' })}</div></main>`;
 }
 
+function productIllo(key){
+  if (key === 'stickers') return `<div style="position:relative;width:96px;aspect-ratio:210/297;background:#E9ECF4;border:2px solid var(--ink);border-radius:6px">
+    <span style="position:absolute;left:8%;top:6%;width:46%">${shapeSVG('star', '#F2BC2E', '100%')}</span>
+    <span style="position:absolute;left:52%;top:30%;width:42%">${shapeSVG('heart', '#ec282a', '100%')}</span>
+    <span style="position:absolute;left:10%;top:56%;width:40%">${shapeSVG('circle', '#3a52a3', '100%')}</span></div>`;
+  if (key === 'pins') return `<div style="width:108px;height:108px;border-radius:50%;border:2px solid var(--ink);background:radial-gradient(circle at 35% 30%,#fff 0 6%,transparent 30%),conic-gradient(from 30deg,#3a52a3,#283971,#3a52a3);display:grid;place-items:center;box-shadow:0 8px 14px rgba(40,57,113,.25)">
+    <span style="width:46%">${shapeSVG('star', '#F2BC2E', '100%')}</span></div>`;
+  if (key === 'posters') return `<div style="width:150px;aspect-ratio:297/210;border:2px solid var(--ink);border-radius:4px;background:linear-gradient(#9CC3F5 0 60%,#3BA55C 60%);position:relative;overflow:hidden">
+    <span style="position:absolute;right:14%;top:14%;width:20%;aspect-ratio:1;border-radius:50%;background:#F2BC2E"></span>
+    <span style="position:absolute;left:-10%;bottom:20%;width:70%;height:50%;border-radius:50% 50% 0 0;background:#2E8A4D"></span></div>`;
+  return `<div class="kc mini"><span class="ring"></span><span class="loop"></span><div class="case"><div class="frame" style="aspect-ratio:35/45;cursor:default;background:linear-gradient(#9CC3F5 0 55%,#3BA55C 55%)"></div></div></div>`;
+}
+function viewShop(){
+  S.editing = null;
+  const live = liveProducts();
+  if (live.length === 1 && !S.cart.length) { location.replace(designRoute(live[0].key)); return; }
+  $('#app').innerHTML = `${topbar()}<main id="main" class="wrap">${progress(1)}
+    <h2>What do you want to make?</h2>
+    ${live.length ? `<div class="pcards">${live.map(p => `<a class="pcard" href="${designRoute(p.key)}">
+        <div class="illo">${productIllo(p.key)}</div>
+        <h3>${esc(p.name)}</h3><p>${esc(p.blurb)}</p>
+        <span class="from num">${liveSizes(p.key).length > 1 ? 'From ' : ''}${money(fromPrice(p.key))} per ${esc(p.unit)}</span></a>`).join('')}</div>`
+      : `<div class="empty" style="margin-top:20px">${ic('box', 36)}<b>Nothing is available right now.</b><span>Check back soon.</span></div>`}
+    ${S.cart.length ? `<a class="pilllink" href="#/cart">${ic('box', 18)}Back to my order (${S.cart.length} item${S.cart.length > 1 ? 's' : ''})</a>` : ''}
+  </main>`;
+}
+function viewUnavailable(key){
+  $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow"><div class="empty" style="margin-top:30px">${ic('box', 40)}
+    <h2>${esc((CONFIG.products[key] || { name: 'This' }).name)} aren't available right now</h2><p>Check back soon, or make something else.</p>${btn('See what you can make', { href: '#/shop' })}</div></main>`;
+}
+function cartUrls(){
+  return { sticker: stickerURL, outlined: true, framed: d => { const im = imgById(d.imageId); return im ? im.url : ''; } };
+}
+function viewCart(){
+  if (!S.cart.length) { location.replace('#/shop'); return; }
+  S.editing = null;
+  const u = cartUrls();
+  $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">${progress(1)}
+    <h2>Your order</h2>
+    <div class="cart">${S.cart.map((it, i) => `<div class="cline">
+        <div class="th">${itemThumb(it, u)}</div>
+        <div><h3>${esc(itemTitle(it))}</h3>
+          ${itemDetails(it) ? `<p class="muted small" style="margin:2px 0 0">${esc(itemDetails(it))}</p>` : ''}
+          <p class="muted small num" style="margin:2px 0 0">${money(unitPrice(it))} each</p>
+          <div class="acts">${smallBtn('Edit', 'edit', 'cartEdit', 'plain', `data-i="${i}"`)}${smallBtn('Remove', 'trash', 'cartRemove', 'plain', `data-i="${i}"`)}</div></div>
+        <div class="price num">${money(itemTotal(it))}</div></div>`).join('')}</div>
+    <a class="pilllink" href="#/shop">${ic('plus', 18)}Add something else</a>
+    <div class="totalrow" style="margin-top:22px"><span>${cartUnits()} item${cartUnits() === 1 ? '' : 's'}</span><b class="num">${money(cartTotal())}</b></div>
+    <div style="margin-top:18px">${btn('Next: your details', { href: '#/checkout', cls: 'wide' })}</div>
+  </main>`;
+}
+function addonChecks(key, selected){
+  const p = P(key);
+  return liveAddons(key).map(a => `<label class="choice"><input type="checkbox" data-addon="${esc(a.id)}" ${selected.includes(a.id) ? 'checked' : ''}>
+    <span><b>${esc(a.label)}</b> <span class="num">+${money(a.price)}</span> per ${esc(p.unit)}${a.note ? `<span class="note">(${esc(a.note)})</span>` : ''}</span></label>`).join('');
+}
+function saveToCart(item){
+  if (S.editing !== null && S.cart[S.editing] && S.cart[S.editing].type === item.type) S.cart[S.editing] = item;
+  else S.cart.push(item);
+  S.editing = null;
+  location.hash = '#/cart';
+}
+
 /* =====================================================================
    Designer
    ===================================================================== */
 function viewDesign(){
+  if (!isLive('stickers')) return viewUnavailable('stickers');
+  S.view = 'stickers';
+  if (!S.sheets.length) S.sheets = [{ items: [] }];
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap">${progress(1)}
     <div class="designer"><aside class="panel tools" id="ctrl"></aside><section class="stage" id="sheetArea" aria-label="Your sticker sheet"></section></div></main>
     <div class="bottombar"><div class="in" id="bottom"></div></div>`;
@@ -733,8 +1030,8 @@ const selected = () => S.selItem && S.sheets[S.cur].items.find(i => i.uid === S.
 function drawCtrl(){
   const g = geom(), sel = selected(), active = sel ? sel.size : S.selSize;
   let hint;
-  if (sel) hint = [ 'move', 'Tap an empty spot to move this sticker. Pick a size to resize it.' ];
-  else if (S.selImage) hint = [ 'sparkle', 'Tap anywhere on the sheet to stick it there. Keep tapping to add more.' ];
+  if (sel) hint = [ 'move', 'Tap an empty spot to move this sticker, or drag it there. Pick a size to resize it.' ];
+  else if (S.selImage) hint = [ 'sparkle', 'Tap anywhere on the sheet to stick it there. Drag a sticker to move it.' ];
   else hint = [ 'image', 'Add a picture first, then it shows up here ready to use.' ];
   $('#ctrl').innerHTML = `
     <section>
@@ -754,7 +1051,10 @@ function drawCtrl(){
     <section class="tip">
       <div class="stephead"><i>3</i>Tap the sheet</div>
       <p class="hint">${ic(hint[0], 18)}<span>${hint[1]}</span></p>
-    </section>`;
+    </section>
+    ${liveAddons('stickers').length ? `<section>
+      <div class="stephead"><i>${ic('plus', 14)}</i>Extras</div>${addonChecks('stickers', S.stickerAddons)}
+    </section>` : ''}`;
   $('#fileIn').addEventListener('change', onFiles);
 }
 
@@ -770,22 +1070,64 @@ function drawSheet(){
   $('#sheetArea').innerHTML = `
     <div class="tabs" role="tablist">${S.sheets.map((s, i) => `<button class="tab ${i === S.cur ? 'on' : ''}" type="button" role="tab" aria-selected="${i === S.cur}" data-act="tab" data-i="${i}">Sheet ${i + 1}</button>`).join('')}
       ${S.sheets.length < S.settings.maxSheets ? `<button class="tab add" type="button" data-act="addSheet">${ic('plus', 16)}Add a sheet</button>` : ''}</div>
-    <p class="hint mob">${ic('sparkle', 18)}<span>${sel ? 'Tap an empty spot to move it.' : S.selImage ? 'Tap the sheet to stick your picture.' : 'Add a picture above first.'}</span></p>
+    <p class="hint mob">${ic('sparkle', 18)}<span>${sel ? 'Tap an empty spot to move it.' : S.selImage ? 'Tap the sheet to stick your picture. Drag a sticker to move it.' : 'Add a picture above first.'}</span></p>
     <div class="page" id="page">${cells}${stickers}</div>
     ${sel ? `<div class="selbar">
         ${smallBtn(sel.fit === 'fit' ? 'Fill the square' : 'Show whole picture', sel.fit === 'fit' ? 'fill' : 'fit', 'fitToggle', 'plain')}
         ${smallBtn('Remove', 'trash', 'removeItem', 'danger')}
         ${smallBtn('Done', 'check', 'deselect', 'dark')}</div>`
-      : `<div class="under"><span>${sheet.items.length ? `${sheet.items.length} sticker${sheet.items.length > 1 ? 's' : ''} on this sheet. Tap one to move or change it.` : 'This sheet is empty. The white borders show where each sticker gets cut.'}</span>
+      : `<div class="under"><span>${sheet.items.length ? `${sheet.items.length} sticker${sheet.items.length > 1 ? 's' : ''} on this sheet. Drag one to move it, or tap it to change it.` : 'This sheet is empty. The white borders show where each sticker gets cut.'}</span>
         ${S.sheets.length > 1 ? smallBtn('Remove this sheet', 'trash', 'delSheet', 'plain') : ''}</div>`}`;
+  $('#page').querySelectorAll('.stk').forEach(el => el.addEventListener('pointerdown', e => startStickerDrag(e, el)));
+}
+
+/* Press and drag a placed sticker to move it. It snaps to the grid when you let go. */
+let drag = null;
+function startStickerDrag(e, el){
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  const it = S.sheets[S.cur].items.find(i => i.uid === el.dataset.uid); if (!it) return;
+  const page = $('#page'), er = el.getBoundingClientRect();
+  drag = { it, el, page, pr: page.getBoundingClientRect(), sx: e.clientX, sy: e.clientY, gx: e.clientX - er.left, gy: e.clientY - er.top, moving: false, target: null };
+  try { el.setPointerCapture(e.pointerId); } catch {}
+  el.addEventListener('pointermove', onDragMove); el.addEventListener('pointerup', onDragEnd); el.addEventListener('pointercancel', onDragEnd);
+}
+function onDragMove(e){
+  if (!drag) return;
+  const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+  if (!drag.moving && Math.hypot(dx, dy) < 6) return;
+  if (!drag.moving) {
+    drag.moving = true; drag.el.classList.add('dragging');
+    drag.ghost = document.createElement('div'); drag.ghost.className = 'drop'; drag.page.appendChild(drag.ghost);
+  }
+  e.preventDefault();
+  drag.el.style.transform = `translate(${dx}px, ${dy}px) scale(1.06)`;
+  const g = geom(), pr = drag.pr, size = drag.it.size, step = g.cell + g.gapMm;
+  const xMm = (e.clientX - drag.gx - pr.left) / pr.width * g.widthMm, yMm = (e.clientY - drag.gy - pr.top) / pr.height * g.heightMm;
+  const col = Math.max(0, Math.min(g.cols - size, Math.round((xMm - g.offX) / step)));
+  const row = Math.max(0, Math.min(g.rows - size, Math.round((yMm - g.offY) / step)));
+  const ok = fits(S.sheets[S.cur], col, row, size, drag.it.uid);
+  drag.target = { col, row, ok };
+  drag.ghost.setAttribute('style', pctStyle(rectMm(col, row, size)));
+  drag.ghost.classList.toggle('bad', !ok);
+}
+function onDragEnd(){
+  if (!drag) return;
+  const d = drag; drag = null;
+  d.el.removeEventListener('pointermove', onDragMove); d.el.removeEventListener('pointerup', onDragEnd); d.el.removeEventListener('pointercancel', onDragEnd);
+  if (!d.moving) return;
+  S.suppressClick = true; setTimeout(() => { S.suppressClick = false; }, 80);
+  if (d.ghost) d.ghost.remove();
+  if (d.target && d.target.ok) { d.it.col = d.target.col; d.it.row = d.target.row; S.justPlaced = d.it.uid; S.selItem = null; drawDesigner(); }
+  else { d.el.style.transform = ''; d.el.classList.remove('dragging'); shakePage(); toast("That spot's taken, so it went back."); }
 }
 
 function drawBottom(){
   const used = S.sheets.filter(s => s.items.length).length;
   const count = S.sheets.reduce((a, s) => a + s.items.length, 0);
-  $('#bottom').innerHTML = `<div><div class="tot num">${money(used * S.settings.price)}</div>
+  const each = unitPrice({ type: 'stickers', size: 'a4', addons: S.stickerAddons });
+  $('#bottom').innerHTML = `<div><div class="tot num">${money(used * each)}</div>
       <div class="sub">${count} sticker${count === 1 ? '' : 's'} on ${used} sheet${used === 1 ? '' : 's'}</div></div>
-    ${btn('Next', { act: 'toCheckout', attrs: count ? '' : 'disabled' })}`;
+    ${btn(S.editing !== null ? 'Save changes' : 'Add to order', { act: 'addStickers', icon: S.editing !== null ? 'check' : 'arrow', attrs: count ? '' : 'disabled' })}`;
 }
 
 async function onFiles(e){
@@ -793,24 +1135,31 @@ async function onFiles(e){
   for (const f of files) {
     if (S.images.length >= CONFIG.maxPictures) { toast(`You can add up to ${CONFIG.maxPictures} pictures.`); break; }
     if (!f.type.startsWith('image/')) { toast('That file is not a picture.'); continue; }
-    try { const im = await processFile(f); S.images.push(im); S.selImage = im.id; S.selItem = null; }
-    catch { toast("That picture didn't open. Try a screenshot of it instead."); }
+    try {
+      const im = await processFile(f); S.images.push(im); S.selImage = im.id; S.selItem = null;
+      if (S.view === 'framed' && S.fd) { const d = activeDesign(); if (d) Object.assign(d, { imageId: im.id, zoom: 1, ox: 0, oy: 0 }); }
+    } catch { toast("That picture didn't open. Try a screenshot of it instead."); }
+    if (S.view === 'framed') break;
   }
-  drawCtrl(); drawSheet();
+  if (S.view === 'framed') drawFramed(); else { drawCtrl(); drawSheet(); }
 }
 async function processFile(file){
   const u0 = URL.createObjectURL(file);
   try {
     const img = await loadImg(u0);
-    const k = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
-    const w = Math.round(img.naturalWidth * k), h = Math.round(img.naturalHeight * k);
-    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    let k = Math.min(1, 2400 / Math.max(img.naturalWidth, img.naturalHeight));
+    let w = Math.round(img.naturalWidth * k), h = Math.round(img.naturalHeight * k);
+    let c = document.createElement('canvas'); c.width = w; c.height = h;
     c.getContext('2d').drawImage(img, 0, 0, w, h);
     let alpha = false;
     if (/png|webp|gif/.test(file.type)) {
       const t = document.createElement('canvas'); t.width = 48; t.height = 48; const tx = t.getContext('2d');
       tx.drawImage(c, 0, 0, 48, 48); const d = tx.getImageData(0, 0, 48, 48).data;
       for (let i = 3; i < d.length; i += 4) if (d[i] < 245) { alpha = true; break; }
+    }
+    if (alpha && Math.max(w, h) > 1600) {   // PNGs stay smaller so uploads stay under 5 MB
+      k = 1600 / Math.max(w, h); const c2 = document.createElement('canvas'); c2.width = Math.round(w * k); c2.height = Math.round(h * k);
+      c2.getContext('2d').drawImage(c, 0, 0, c2.width, c2.height); c = c2; w = c.width; h = c.height;
     }
     const blob = await new Promise(r => c.toBlob(r, alpha ? 'image/png' : 'image/jpeg', 0.88));
     if (!blob) throw new Error('convert failed');
@@ -836,22 +1185,157 @@ function tapCell(col, row){
 }
 
 /* =====================================================================
+   Picture designer for pins, posters, and keychains
+   ===================================================================== */
+const blankDesign = () => ({ imageId: null, zoom: 1, ox: 0, oy: 0 });
+function newFd(key){
+  const first = liveSizes(key)[0];
+  return { type: key, size: first ? first.id : P(key).sizes[0].id, qty: 1, addons: [], orient: 'portrait',
+    front: blankDesign(), back: blankDesign(), backMode: 'same', side: 'front' };
+}
+function activeDesign(){
+  const f = S.fd; if (!f) return null;
+  if (f.type === 'keychains' && f.side === 'back') return f.backMode === 'different' ? f.back : null;
+  return f.front;
+}
+function viewMake(key){
+  if (!CONFIG.products[key]) return viewNotFound();
+  if (!isLive(key)) return viewUnavailable(key);
+  S.view = 'framed';
+  if (!S.fd || S.fd.type !== key) { S.fd = newFd(key); if (S.editing !== null && (!S.cart[S.editing] || S.cart[S.editing].type !== key)) S.editing = null; }
+  if (!liveSizes(key).some(z => z.id === S.fd.size)) S.fd.size = liveSizes(key)[0].id;
+  $('#app').innerHTML = `${topbar()}<main id="main" class="wrap">${progress(1)}
+    <div class="designer"><aside class="panel tools" id="ctrl"></aside><section class="stage2" id="fstage" aria-label="Preview"></section></div></main>
+    <div class="bottombar"><div class="in" id="bottom"></div></div>`;
+  drawFramed();
+}
+function drawFramed(){ drawFramedCtrl(); drawFramedStage(); drawFramedBottom(); }
+function drawFramedCtrl(){
+  const f = S.fd, p = P(f.type), d = activeDesign(), sizes = liveSizes(f.type);
+  const kc = f.type === 'keychains', backSide = kc && f.side === 'back';
+  let n = 0; const step = t => `<div class="stephead"><i>${++n}</i>${t}</div>`;
+  $('#ctrl').innerHTML = `
+    <section>
+      <h2 style="font-size:26px;margin-bottom:4px">${esc(p.name)}</h2>
+      <p class="muted small" style="margin:0">${esc(p.blurb)}</p>
+    </section>
+    ${kc ? `<section>${step('Which side?')}
+      <div class="seg" role="tablist">${['front','back'].map(sd => `<button type="button" role="tab" aria-selected="${f.side === sd}" class="${f.side === sd ? 'on' : ''}" data-act="fdSide" data-side="${sd}">${sd === 'front' ? 'Front' : 'Back'}</button>`).join('')}</div>
+      ${backSide ? `<div style="margin-top:12px">${[['same','Same picture as the front'],['different','A different picture'],['blank','Leave it clear']].map(([v, l]) =>
+        `<label class="choice"><input type="radio" name="backMode" value="${v}" ${f.backMode === v ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>` : ''}
+    </section>` : ''}
+    ${!backSide || f.backMode === 'different' ? `<section>${step(backSide ? 'Back picture' : 'Add a picture')}
+      <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose from your phone<small>One picture fills the whole ${esc(p.unit)}</small></span>
+        <input id="fileIn" type="file" accept="image/*" hidden></label>
+      ${S.images.length ? `<div class="tray">${S.images.map(im => `
+        <button class="thumb ${d && d.imageId === im.id ? 'on' : ''}" type="button" data-act="fdImg" data-id="${im.id}" style="background-image:url('${im.url}')" aria-label="Use this picture" aria-pressed="${!!d && d.imageId === im.id}">
+          <span class="x" data-act="delImg" data-id="${im.id}" role="button" aria-label="Remove picture">${ic('x', 14)}</span></button>`).join('')}</div>` : ''}
+    </section>` : ''}
+    ${!backSide && (sizes.length > 1 || f.type === 'posters') ? `<section>${step('Pick a size')}
+      ${sizes.length > 1 ? `<div class="sizes">${sizes.map(z => `<button class="size ${f.size === z.id ? 'on' : ''}" type="button" data-act="fdSize" data-size="${esc(z.id)}" aria-pressed="${f.size === z.id}">
+        <span>${esc(z.label)}<small class="num">${money(z.price)}</small></span></button>`).join('')}</div>` : ''}
+      ${f.type === 'posters' ? `<div class="seg" style="margin-top:12px">${['portrait','landscape'].map(o => `<button type="button" class="${f.orient === o ? 'on' : ''}" data-act="fdOrient" data-o="${o}">${o === 'portrait' ? 'Tall' : 'Wide'}</button>`).join('')}</div>` : ''}
+    </section>` : ''}
+    ${d && d.imageId ? `<section>${step('Adjust')}
+      <div class="zoomrow">${ic('search', 18)}<input type="range" id="zoom" min="1" max="3" step="0.01" value="${d.zoom}" aria-label="Zoom">
+        ${smallBtn('Reset', '', 'fdReset', 'plain')}</div>
+      <p class="hint" style="margin-top:10px">${ic('move', 18)}<span>Drag the picture to move it. Zoom in to fill more of the ${esc(p.unit)}.</span></p>
+    </section>` : ''}
+    ${!backSide ? `<section>${step('How many?')}
+      <div class="qty"><button type="button" data-act="fdQty" data-d="-1" aria-label="One less">−</button><span class="num" aria-live="polite">${f.qty}</span><button type="button" data-act="fdQty" data-d="1" aria-label="One more">+</button></div>
+      ${liveAddons(f.type).length ? `<div style="margin-top:14px">${addonChecks(f.type, f.addons)}</div>` : ''}
+    </section>` : ''}`;
+  const fi = $('#fileIn'); if (fi) fi.addEventListener('change', onFiles);
+  const z = $('#zoom'); if (z) z.addEventListener('input', () => { const dd = activeDesign(); if (dd) { dd.zoom = +z.value; placeImg(); } });
+  $('#ctrl').querySelectorAll('input[name="backMode"]').forEach(r => r.addEventListener('change', () => {
+    f.backMode = r.value; if (f.backMode === 'different' && !f.back.imageId) Object.assign(f.back, blankDesign());
+    drawFramed();
+  }));
+}
+function frameInner(d, empty){
+  const im = d && d.imageId && imgById(d.imageId);
+  return im ? `<img id="fimg" src="${im.url}" alt="" draggable="false">` : `<div class="empty-f">${ic('image', 30)}<span>${empty}</span></div>`;
+}
+function drawFramedStage(){
+  const f = S.fd, mm = frameMm(f);
+  let html = '';
+  if (f.type === 'pins') {
+    html = `<div class="pinwrap"><div class="frame" id="frame">${frameInner(f.front, 'Add a picture')}
+        <span class="wrapzone" style="--face:${mm.face / mm.w * 100}%"></span><span class="facering" style="width:${mm.face / mm.w * 100}%"></span></div></div>
+      <p class="under" style="max-width:380px">The shaded edge wraps around the back of the pin. Keep faces and words inside the dashed circle.</p>`;
+  } else if (f.type === 'posters') {
+    const wide = mm.w > mm.h;
+    html = `<div class="postwrap"><div class="frame" id="frame" style="aspect-ratio:${mm.w}/${mm.h};width:${wide ? 'min(100%,560px)' : 'min(100%,400px)'}">${frameInner(f.front, 'Add a picture')}</div></div>
+      <p class="under">${esc((P('posters').sizes.find(z => z.id === f.size) || {}).label || '')}, printed with a thin white border.</p>`;
+  } else {
+    const showBack = f.side === 'back', d = showBack ? (f.backMode === 'same' ? f.front : f.backMode === 'different' ? f.back : null) : f.front;
+    const clear = showBack && f.backMode === 'blank';
+    html = `<div class="kc"><span class="ring"></span><span class="loop"></span><div class="case">
+        <div class="frame ${clear ? 'clear' : ''}" id="frame" style="aspect-ratio:${mm.w}/${mm.h}" data-locked="${showBack && f.backMode !== 'different'}">${clear ? '' : frameInner(d, showBack && f.backMode === 'different' ? 'Add the back picture' : 'Add a picture')}</div></div></div>
+      <p class="under">${showBack ? (f.backMode === 'same' ? 'The back shows the same picture.' : f.backMode === 'blank' ? 'The back stays clear.' : 'This is the back of the keychain.') : 'This is the front. Tap "Back" to choose the other side.'}</p>`;
+  }
+  $('#fstage').innerHTML = html + `<div id="reswarn"></div>`;
+  const img = $('#fimg'); if (img) { if (img.complete) placeImg(); else img.onload = placeImg; }
+  bindPan();
+}
+function shownDesign(){
+  const f = S.fd;
+  if (f.type === 'keychains' && f.side === 'back') return f.backMode === 'same' ? f.front : f.backMode === 'different' ? f.back : null;
+  return f.front;
+}
+function placeImg(){
+  const img = $('#fimg'), d = shownDesign(); if (!img || !d) return;
+  const im = imgById(d.imageId); if (!im) return;
+  const mm = frameMm(S.fd), L = layoutFrac(im, d, mm.w, mm.h);
+  img.setAttribute('style', fracStyle(L));
+  $('#reswarn').innerHTML = L.dpi < 150 ? `<p class="warnline">${ic('warn', 16)}This picture might print blurry at this size. Try a bigger picture or zoom out.</p>` : '';
+}
+function bindPan(){
+  const fr = $('#frame'); if (!fr || fr.dataset.locked === 'true') return;
+  let st = null;
+  fr.addEventListener('pointerdown', e => {
+    const d = activeDesign(); if (!d || !d.imageId) return;
+    st = { x: e.clientX, y: e.clientY, ox: d.ox, oy: d.oy, r: fr.getBoundingClientRect() };
+    try { fr.setPointerCapture(e.pointerId); } catch {}
+  });
+  fr.addEventListener('pointermove', e => {
+    if (!st) return; const d = activeDesign(); if (!d) return;
+    e.preventDefault();
+    d.ox = st.ox + (e.clientX - st.x) / st.r.width; d.oy = st.oy + (e.clientY - st.y) / st.r.height; placeImg();
+  });
+  const end = () => { st = null; };
+  fr.addEventListener('pointerup', end); fr.addEventListener('pointercancel', end);
+  fr.addEventListener('wheel', e => {
+    const d = activeDesign(); if (!d || !d.imageId) return;
+    e.preventDefault(); d.zoom = Math.max(1, Math.min(3, d.zoom - e.deltaY * 0.0015)); placeImg();
+    const z = $('#zoom'); if (z) z.value = d.zoom;
+  }, { passive: false });
+}
+function drawFramedBottom(){
+  const f = S.fd, p = P(f.type);
+  const ready = !!f.front.imageId && !(f.type === 'keychains' && f.backMode === 'different' && !f.back.imageId);
+  $('#bottom').innerHTML = `<div><div class="tot num">${money(f.qty * unitPrice(f))}</div>
+      <div class="sub">${f.qty} ${esc(p.unit)}${f.qty === 1 ? '' : 's'}</div></div>
+    ${btn(S.editing !== null ? 'Save changes' : 'Add to order', { act: 'addFramed', icon: S.editing !== null ? 'check' : 'arrow', attrs: ready ? '' : 'disabled' })}`;
+}
+
+/* =====================================================================
    Checkout
    ===================================================================== */
 function viewCheckout(){
-  S.sheets = S.sheets.filter(s => s.items.length);
-  if (!S.sheets.length) { S.sheets = [{ items: [] }]; S.cur = 0; location.hash = '#/design'; return; }
-  S.cur = Math.min(S.cur, S.sheets.length - 1);
-  const total = S.sheets.length * S.settings.price;
+  if (!S.cart.length) { location.replace('#/shop'); return; }
+  const gone = S.cart.filter(it => !isLive(it.type));
+  if (gone.length) { toast(`${CONFIG.products[gone[0].type].name} aren't available right now. Remove them to continue.`); location.replace('#/cart'); return; }
+  const total = cartTotal();
   const me = readJSON('sk_me') || {};
   const m = String(me.section || '').match(/^(\d+)\s*-\s*(.+)$/), myGrade = m ? m[1] : '', mySec = m ? m[2] : '';
   const dates = pickupDates();
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">${progress(2)}
-    <a class="pilllink" href="#/design" style="margin-bottom:18px">${ic('back', 18)}Back to my design</a>
+    <a class="pilllink" href="#/cart" style="margin-bottom:18px">${ic('back', 18)}Back to my order</a>
     <form class="panel" id="orderForm" novalidate>
       <h2>Almost done</h2>
       <p class="muted">Tell us who you are and when you'll pick it up.</p>
-      <div class="summary">${S.sheets.map(s => miniSheet(s, stickerURL, false, true)).join('')}</div>
+      <ul class="clines">${S.cart.map(it => `<li><span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `<small>${esc(itemDetails(it))}</small>` : ''}</span><b class="num">${money(itemTotal(it))}</b></li>`).join('')}</ul>
 
       <div class="field"><label class="lab" for="nick">Nickname <span class="req">*</span></label>
         <input class="inp" id="nick" maxlength="24" autocomplete="nickname" value="${esc(me.nickname || '')}" aria-describedby="e-nick">
@@ -896,7 +1380,7 @@ function viewCheckout(){
 
       <label class="choice"><input type="checkbox" id="promise"><span id="promiseTxt"></span></label>
       <p class="ferr" id="e-promise" role="alert"></p>
-      <div class="totalrow"><span>${S.sheets.length} sheet${S.sheets.length > 1 ? 's' : ''}</span><b class="num">${money(total)}</b></div>
+      <div class="totalrow"><span>Total</span><b class="num">${money(total)}</b></div>
       <div class="formerr" id="formErr" role="alert"></div>
       <div style="margin-top:18px">${btn('Place my order', { type: 'submit', cls: 'wide', icon: 'check', attrs: 'id="placeBtn"' })}</div>
     </form></main>`;
@@ -944,13 +1428,13 @@ async function submitOrder(e){
   const payment = radio(form, 'pay'), gcashRef = $('#gref') ? $('#gref').value.trim() : '';
   const b = $('#placeBtn'); b.disabled = true; b.innerHTML = '<span>Sending your order</span><span class="bi"><span class="spin"></span></span>';
   try {
-    const used = new Set(S.sheets.flatMap(s => s.items.map(i => i.imageId)));
-    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: SRC, images: S.images.filter(i => used.has(i.id)), sheets: S.sheets });
-    S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: S.sheets.length * S.settings.price };
+    const used = new Set(cartImageIds());
+    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: SRC, images: S.images.filter(i => used.has(i.id)), items: S.cart });
+    S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: cartTotal() };
     safeLS.set('sk_me', JSON.stringify({ nickname, section }));
     safeLS.set('sk_last', JSON.stringify(S.lastOrder));
     S.images.forEach(i => revoke(i.url)); stickerCache.clear();
-    Object.assign(S, { images: [], sheets: [{ items: [] }], cur: 0, selImage: null, selItem: null });
+    Object.assign(S, { images: [], sheets: [{ items: [] }], cur: 0, selImage: null, selItem: null, cart: [], editing: null, stickerAddons: [], fd: null });
     location.hash = '#/done';
   } catch (ex) {
     $('#formErr').textContent = friendlyError(ex);
@@ -1045,7 +1529,7 @@ function drawStatus(){
           : btn("I'm here", { act: 'imHere', icon: 'pin', cls: 'wide' })}</div>` : ''}
       <dl class="kv">${o.pickup_date ? `<dt>Pickup</dt><dd>${esc(fmtDate(o.pickup_date))}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</dd>` : ''}<dt>Where</dt><dd>${esc(o.pickup)}</dd>
         <dt>Total</dt><dd class="num">${money(o.total)}${o.paid ? ', paid' : ''}</dd>
-        <dt>Sheets</dt><dd>${o.sheet_count}</dd><dt>Ordered</dt><dd>${fmtTime(o.created_at)}</dd></dl>
+        <dt>Items</dt><dd>${o.sheet_count}</dd><dt>Ordered</dt><dd>${fmtTime(o.created_at)}</dd></dl>
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:20px">
         ${['approved','printing'].includes(o.status) ? (o.confirmed
           ? `<span class="tag ok">${ic('check', 16)}You said you'll be there</span>`
@@ -1109,7 +1593,7 @@ async function drawAdminBody(){
   clearInterval(S.admin.poll);
   if (f === 'ready') S.admin.poll = setInterval(pollReady, 15000);
   if (f === 'approved') list.sort((a, b) => (b.confirmed ? 1 : 0) - (a.confirmed ? 1 : 0));
-  const need = [...new Set(list.filter(o => !o.images_deleted).flatMap(o => o.layout.sheets.flatMap(s => s.items.map(i => i.path))))].filter(p => !(p in S.admin.urls));
+  const need = [...new Set(list.filter(o => !o.images_deleted).flatMap(orderPaths))].filter(p => !(p in S.admin.urls));
   if (need.length) { try { Object.assign(S.admin.urls, await api.imageUrls(need)); } catch (e) { console.warn(e); } }
   const strikes = {}; all.forEach(o => { if (o.status === 'noshow') strikes[personKey(o)] = (strikes[personKey(o)] || 0) + 1; });
   const stCls = { pending:'warn', ready:'ok', done:'ok', rejected:'bad', noshow:'bad', cancelled:'bad' };
@@ -1129,6 +1613,7 @@ async function drawAdminBody(){
       if (['approved','printing'].includes(o.status)) a.push(smallBtn('Download PDF', 'printer', 'aPdf', 'dark', `data-id="${o.id}"`), smallBtn('Mark ready', 'box', 'aReady', '', `data-id="${o.id}"`));
       if (o.status === 'ready') a.push(smallBtn('Picked up and paid', 'check', 'aDone', 'ok', `data-id="${o.id}"`), smallBtn("Didn't show up", 'ghost', 'aNoshow', 'plain', `data-id="${o.id}"`), smallBtn('Reprint', 'printer', 'aPdf', 'plain', `data-id="${o.id}"`));
       if (ACTIVE.includes(o.status)) a.push(smallBtn(o.paid ? 'Mark unpaid' : 'Mark paid', 'cash', 'aPaid', 'plain', `data-id="${o.id}"`));
+      a.push(smallBtn('Delete', 'trash', 'aDelete', 'plain', `data-id="${o.id}"`));
       return `${head}<article class="ocard">
         <div class="ohead"><div class="pdot">${o.pickup_date ? `<small>${fmtDate(o.pickup_date, { month: 'short' })}</small><b>${parseYmd(o.pickup_date).getDate()}</b>` : ic('box', 24)}</div>
           <div><div class="ocode">${esc(o.code)}</div><div class="muted small">Pickup ${o.pickup_date ? esc(fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' })) + (o.pickup_time ? `, ${esc(o.pickup_time)}` : '') : 'date not set'}, ordered ${fmtTime(o.created_at)}</div></div>
@@ -1136,7 +1621,8 @@ async function drawAdminBody(){
         <div class="ometa">
           <div><span><b>${esc(o.nickname)}</b>, ${esc(o.grade_section)}</span></div>
           <div>${ic('pin', 18)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span></div>
-          <div>${ic('cash', 18)}<span class="num">${money(o.total)} for ${o.sheet_count} sheet${o.sheet_count > 1 ? 's' : ''}, ${o.payment === 'gcash' ? `GCash${o.gcash_ref ? ` (ref ${esc(o.gcash_ref)})` : ', no ref yet'}` : 'cash'}</span></div>
+          <div>${ic('cash', 18)}<span class="num">${money(o.total)}, ${o.payment === 'gcash' ? `GCash${o.gcash_ref ? ` (ref ${esc(o.gcash_ref)})` : ', no ref yet'}` : 'cash'}</span></div>
+          <ul class="ilist">${orderItems(o).map(it => `<li>${ic(it.type === 'stickers' ? 'sticker' : it.type === 'pins' ? 'badge' : it.type === 'posters' ? 'image' : 'key', 18)}<span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `, ${esc(itemDetails(it))}` : ''}</span></li>`).join('')}</ul>
           <div class="tags">
             ${o.status === 'ready' && o.arrived_at ? `<span class="tag here">${ic('pin', 14)}Here now</span>` : ''}
             ${o.paid ? `<span class="tag ok">${ic('check', 14)}Paid</span>` : ''}
@@ -1145,7 +1631,9 @@ async function drawAdminBody(){
             ${o.src ? `<span class="tag">${ic('qr', 14)}Poster: ${esc(o.src)}</span>` : ''}
             ${o.reject_reason ? `<span class="tag bad">Reason: ${esc(o.reject_reason)}</span>` : ''}
           </div></div>
-        <div class="summary" style="margin:6px 0 0">${o.layout.sheets.map(s => miniSheet(s, it => S.admin.urls[it.path], o.images_deleted)).join('')}</div>
+        <div class="summary" style="margin:8px 0 0;align-items:center">${o.images_deleted ? miniSheet({ items: [] }, () => '', true) : orderItems(o).flatMap(it => it.type === 'stickers'
+          ? (it.sheets || []).map(sh => miniSheet(sh, x => S.admin.urls[x.path], false))
+          : [framedThumb(it.front || {}, it.front ? S.admin.urls[it.front.path] : '', frameMm(it), 64)].concat(it.back ? [framedThumb(it.back, S.admin.urls[it.back.path], frameMm(it), 64)] : [])).join('')}</div>
         ${S.admin.rejecting === o.id ? `<div class="rejbox">
             <label class="lab" for="rejText">Why isn't it approved? The customer sees this.</label>
             <div class="quick">${REJECT_REASONS.map((r, i) => `<button class="chip" type="button" data-act="rejQuick" data-i="${i}">${esc(r)}</button>`).join('')}</div>
@@ -1175,26 +1663,75 @@ async function setStatus(id, patch, msg){
   } catch (e) { toast(friendlyError(e)); }
 }
 
+function renderFramed(img, d, mm, dpi, round){
+  let pw = Math.round(mm.w / 25.4 * dpi), ph = Math.round(mm.h / 25.4 * dpi);
+  const k = Math.min(1, 3200 / Math.max(pw, ph)); pw = Math.round(pw * k); ph = Math.round(ph * k);
+  const c = document.createElement('canvas'); c.width = pw; c.height = ph;
+  const x = c.getContext('2d'), L = layoutFrac({ w: img.naturalWidth, h: img.naturalHeight }, { ...d }, mm.w, mm.h);
+  if (round) { x.beginPath(); x.arc(pw / 2, ph / 2, pw / 2, 0, Math.PI * 2); x.clip(); }
+  x.fillStyle = '#fff'; x.fillRect(0, 0, pw, ph);
+  x.drawImage(img, L.left * pw, L.top * ph, L.dw * pw, L.dh * ph);
+  return round ? { data: c.toDataURL('image/png'), fmt: 'PNG' } : { data: c.toDataURL('image/jpeg', 0.92), fmt: 'JPEG' };
+}
 async function makePdf(o){
   if (!window.jspdf) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
   if (o.images_deleted) { toast('The pictures for this order were already cleaned up.'); return; }
   toast('Making the PDF. This takes a few seconds.');
-  const paths = [...new Set(o.layout.sheets.flatMap(s => s.items.map(i => i.path)))];
-  const urls = await api.imageUrls(paths), cache = {};
-  const g = geom();
-  const doc = new window.jspdf.jsPDF({ unit: 'mm', format: [g.widthMm, g.heightMm] });
-  for (let si = 0; si < o.layout.sheets.length; si++) {
-    if (si) doc.addPage([g.widthMm, g.heightMm]);
-    for (const it of o.layout.sheets[si].items) {
-      const r = rectMm(it.col, it.row, it.size);
-      try {
-        const img = cache[it.path] || (cache[it.path] = await loadImg(urls[it.path]));
-        const px = Math.min(1800, Math.round(r.w / 25.4 * 300));
-        doc.addImage(drawSticker(img, px, r.w, it.fit, true).toDataURL('image/png'), 'PNG', r.x, r.y, r.w, r.w);
-      } catch (e) { console.warn('image failed', it.path, e); }
+  const items = orderItems(o), urls = await api.imageUrls([...new Set(orderPaths(o))]), cache = {};
+  const getImg = async path => cache[path] || (cache[path] = await loadImg(urls[path]));
+  const who = `${o.code}   ${o.nickname}, ${o.grade_section}   pickup ${o.pickup_date ? fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' }) : ''} ${o.pickup_time || ''} at ${o.pickup}`;
+  let doc = null;
+  const page = (w, h) => { const or = w > h ? 'landscape' : 'portrait'; if (!doc) doc = new window.jspdf.jsPDF({ unit: 'mm', format: [w, h], orientation: or }); else doc.addPage([w, h], or); };
+  const foot = (txt, w, h) => { doc.setFontSize(8); doc.setTextColor(90); doc.text(`${who}   ${txt}`, 8, h - 3.5); };
+  const cutLine = () => { doc.setDrawColor(160); doc.setLineWidth(0.2); };
+  const A4W = 210, A4H = 297, M = 10, GAP = 4;
+
+  for (let ii = 0; ii < items.length; ii++) {
+    const it = items[ii], label = `item ${ii + 1} of ${items.length}: ${itemTitle(it)}${itemDetails(it) ? ' (' + itemDetails(it) + ')' : ''}`;
+    if (it.type === 'stickers') {
+      const g = geom();
+      for (let si = 0; si < it.sheets.length; si++) {
+        page(g.widthMm, g.heightMm);
+        for (const x of it.sheets[si].items) {
+          const r = rectMm(x.col, x.row, x.size);
+          try { const img = await getImg(x.path); doc.addImage(drawSticker(img, Math.min(1800, Math.round(r.w / 25.4 * 300)), r.w, x.fit, true).toDataURL('image/png'), 'PNG', r.x, r.y, r.w, r.w); }
+          catch (e) { console.warn('image failed', x.path, e); }
+        }
+        foot(`${label}, sheet ${si + 1} of ${it.sheets.length}`, g.widthMm, g.heightMm);
+      }
+      continue;
     }
-    doc.setFontSize(9); doc.setTextColor(90);
-    doc.text(`${o.code}   ${o.nickname}, ${o.grade_section}   pickup ${o.pickup_date ? fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' }) : ''} ${o.pickup_time || ''} at ${o.pickup}   sheet ${si + 1} of ${o.layout.sheets.length}`, g.marginMm, g.heightMm - g.marginMm + 2.6);
+    const mm = it.mm || frameMm(it);
+    if (it.type === 'posters') {
+      const img = await getImg(it.front.path).catch(() => null), r = img ? renderFramed(img, it.front, mm, 200, false) : null;
+      for (let q = 0; q < it.qty; q++) {
+        page(mm.pageW, mm.pageH);
+        if (r) doc.addImage(r.data, r.fmt, mm.margin, mm.margin, mm.w, mm.h, `poster${ii}`, 'FAST');
+        foot(`${label}, copy ${q + 1} of ${it.qty}`, mm.pageW, mm.pageH);
+      }
+      continue;
+    }
+    // pins and keychains: fill A4 pages with copies
+    const pieces = [];
+    const front = await getImg(it.front.path).catch(() => null);
+    const fr = front ? renderFramed(front, it.front, mm, 300, !!mm.round) : null;
+    let bk = null;
+    if (it.type === 'keychains' && it.back_mode !== 'blank') {
+      if (it.back_mode === 'different' && it.back) { const b2 = await getImg(it.back.path).catch(() => null); bk = b2 ? renderFramed(b2, it.back, mm, 300, false) : null; }
+      else bk = fr;
+    }
+    for (let q = 0; q < it.qty; q++) { pieces.push(fr); if (bk) pieces.push(bk); }
+    const cols = Math.max(1, Math.floor((A4W - 2 * M + GAP) / (mm.w + GAP))), rows = Math.max(1, Math.floor((A4H - 2 * M - 6 + GAP) / (mm.h + GAP)));
+    const per = cols * rows, pages = Math.ceil(pieces.length / per);
+    for (let pg = 0; pg < pages; pg++) {
+      page(A4W, A4H); cutLine();
+      pieces.slice(pg * per, (pg + 1) * per).forEach((pc, i) => {
+        const x = M + (i % cols) * (mm.w + GAP), y = M + Math.floor(i / cols) * (mm.h + GAP);
+        if (pc) doc.addImage(pc.data, pc.fmt, x, y, mm.w, mm.h, `p${ii}_${pieces.indexOf(pc)}`, 'FAST');
+        if (mm.round) doc.circle(x + mm.w / 2, y + mm.h / 2, mm.w / 2, 'S'); else doc.rect(x, y, mm.w, mm.h, 'S');
+      });
+      foot(`${label}${bk ? ', front and back side by side' : ''}, page ${pg + 1} of ${pages}`, A4W, A4H);
+    }
   }
   doc.save(`${o.code}.pdf`);
   if (o.status === 'approved') setStatus(o.id, { status: 'printing' }, 'PDF downloaded. Print at 100% ("Actual size") and cut on the grey lines.');
@@ -1214,6 +1751,8 @@ function drawSettings(){
     <div class="pt hi" style="margin-bottom:18px"><span class="k">${ic('search', 16)}Customers will see</span><b id="sPrev"></b></div>
     ${btn('Save', { type: 'submit', cls: 'dark', icon: 'check' })}
   </form>`;
+  $('#admBody').insertAdjacentHTML('beforeend', `<form class="panel" id="prodForm" style="max-width:820px;margin-top:20px"></form>`);
+  S.admin.prodDraft = clone(S.settings.products); drawProducts();
   const prev = () => { $('#sPrev').textContent = `Look for the person ${$('#sVerb').value} ${$('#sItem').value.trim() || '…'}`; };
   $('#setForm').addEventListener('input', prev); $('#setForm').addEventListener('change', prev); prev();
   $('#setForm').addEventListener('submit', async e => {
@@ -1223,6 +1762,46 @@ function drawSettings(){
     try { await api.saveSettings({ signal_verb, signal_item }); S.settings.signalVerb = signal_verb; S.settings.signalItem = signal_item; toast('Saved. Customers will see the new signal.'); }
     catch (ex) { toast(friendlyError(ex)); }
   });
+}
+
+function drawProducts(){
+  const D = S.admin.prodDraft;
+  $('#prodForm').innerHTML = `<h3 style="margin-bottom:6px">Products and prices</h3>
+    <p class="help" style="margin-bottom:16px">Turn things on when you're ready to sell them. Changes show up for customers after you save. Orders already placed keep their price.</p>
+    ${Object.keys(CONFIG.products).map(key => { const p = D[key]; return `<fieldset class="prod ${p.enabled ? '' : 'off'}">
+      <div class="prodhead"><h3>${esc(p.name)}</h3>
+        <label class="switch"><input type="checkbox" data-k="${key}" data-kind="prod" data-f="enabled" ${p.enabled ? 'checked' : ''}><span>${p.enabled ? 'Available' : 'Hidden'}</span></label></div>
+      <div class="sub">${p.sizes.length > 1 ? 'Sizes' : 'Price'}</div>
+      ${p.sizes.map((z, i) => `<div class="prow"><span>${esc(z.label)}${key === 'pins' ? ` <small class="muted">(cut ${z.cutMm} mm)</small>` : ''}</span>
+        <span class="pricein"><input class="inp num" type="number" min="0" step="1" data-k="${key}" data-kind="size" data-i="${i}" data-f="price" value="${z.price}" aria-label="${esc(z.label)} price"></span>
+        ${p.sizes.length > 1 ? `<label class="switch"><input type="checkbox" data-k="${key}" data-kind="size" data-i="${i}" data-f="enabled" ${z.enabled ? 'checked' : ''} aria-label="${esc(z.label)} available"></label>` : '<span></span>'}</div>`).join('')}
+      <div class="sub">Extras</div>
+      ${p.addons.length ? p.addons.map((a, i) => `<div class="arow">
+        <input class="inp" data-k="${key}" data-kind="addon" data-i="${i}" data-f="label" value="${esc(a.label)}" placeholder="Name, like Inkjet print" aria-label="Extra name">
+        <input class="inp note-in" data-k="${key}" data-kind="addon" data-i="${i}" data-f="note" value="${esc(a.note)}" placeholder="Why pick it (shown in brackets)" aria-label="Why pick it">
+        <span class="pricein"><input class="inp num" type="number" min="0" step="1" data-k="${key}" data-kind="addon" data-i="${i}" data-f="price" value="${a.price}" aria-label="Extra price"></span>
+        <label class="switch"><input type="checkbox" data-k="${key}" data-kind="addon" data-i="${i}" data-f="enabled" ${a.enabled ? 'checked' : ''} aria-label="Extra available"></label>
+        ${smallBtn('', 'trash', 'prodDelAddon', 'plain', `data-k="${key}" data-i="${i}" aria-label="Remove extra"`)}</div>`).join('') : '<p class="help">No extras yet.</p>'}
+      ${smallBtn('Add an extra', 'plus', 'prodAddAddon', 'plain', `data-k="${key}"`)}
+    </fieldset>`; }).join('')}
+    ${btn('Save products', { type: 'submit', cls: 'dark', icon: 'check' })}`;
+  const form = $('#prodForm');
+  form.oninput = form.onchange = e => {
+    const t = e.target, p = D[t.dataset.k]; if (!p) return;
+    const obj = t.dataset.kind === 'prod' ? p : t.dataset.kind === 'size' ? p.sizes[+t.dataset.i] : p.addons[+t.dataset.i];
+    const f = t.dataset.f;
+    obj[f] = t.type === 'checkbox' ? t.checked : f === 'price' ? Math.max(0, Math.round(+t.value || 0)) : t.value;
+    if (t.dataset.kind === 'prod' && e.type === 'change') drawProducts();
+  };
+  form.onsubmit = async e => {
+    e.preventDefault();
+    for (const p of Object.values(D)) for (const a of p.addons) if (!a.label.trim()) { toast(`Give every extra under ${p.name} a name, or remove it.`); return; }
+    const compact = {};
+    for (const [k, p] of Object.entries(D)) compact[k] = { enabled: p.enabled, sizes: p.sizes.map(z => ({ id: z.id, price: z.price, enabled: z.enabled })),
+      addons: p.addons.map(a => ({ id: a.id, label: a.label.trim(), note: a.note.trim(), price: a.price, enabled: a.enabled })) };
+    try { await api.saveSettings({ products: compact }); S.settings.products = mergeProducts(compact); S.admin.prodDraft = clone(S.settings.products); toast('Saved. Customers will see the changes.'); drawProducts(); }
+    catch (ex) { toast(friendlyError(ex)); }
+  };
 }
 
 function drawMoney(){
@@ -1285,6 +1864,12 @@ const ACTIONS = {
   delImg: (t, e) => {
     e.stopPropagation();
     const id = t.dataset.id, im = imgById(id), idx = S.images.indexOf(im);
+    const inCart = S.cart.some((it, i) => i !== S.editing && (it.type === 'stickers' ? it.sheets.some(sh => sh.items.some(x => x.imageId === id)) : [it.front, it.back].some(d => d && d.imageId === id)));
+    if (inCart) { toast('This picture is used in your order. Remove that item first.'); return; }
+    if (S.view === 'framed') {
+      [S.fd.front, S.fd.back].forEach(d => { if (d.imageId === id) Object.assign(d, blankDesign()); });
+      S.images = S.images.filter(i => i.id !== id); revoke(im.url); drawFramed(); return;
+    }
     const saved = S.sheets.map(s => s.items.slice());
     S.sheets.forEach(s => s.items = s.items.filter(i => i.imageId !== id));
     S.images = S.images.filter(i => i.id !== id);
@@ -1302,7 +1887,7 @@ const ACTIONS = {
     drawDesigner();
   },
   cell: t => tapCell(+t.dataset.col, +t.dataset.row),
-  stk: t => { S.selItem = S.selItem === t.dataset.uid ? null : t.dataset.uid; drawCtrl(); drawSheet(); },
+  stk: t => { if (S.suppressClick) return; S.selItem = S.selItem === t.dataset.uid ? null : t.dataset.uid; drawCtrl(); drawSheet(); },
   tab: t => { S.cur = +t.dataset.i; S.selItem = null; drawDesigner(); },
   addSheet: () => { if (S.sheets.length < S.settings.maxSheets) { S.sheets.push({ items: [] }); S.cur = S.sheets.length - 1; S.selItem = null; drawDesigner(); } },
   delSheet: () => {
@@ -1312,7 +1897,44 @@ const ACTIONS = {
   fitToggle: () => { const it = selected(); if (it) { it.fit = it.fit === 'fit' ? 'fill' : 'fit'; drawSheet(); } },
   removeItem: () => { const s = S.sheets[S.cur]; s.items = s.items.filter(i => i.uid !== S.selItem); S.selItem = null; drawDesigner(); },
   deselect: () => { S.selItem = null; drawCtrl(); drawSheet(); },
-  toCheckout: () => { S.selItem = null; location.hash = '#/checkout'; },
+  addStickers: () => {
+    S.selItem = null;
+    const sheets = S.sheets.filter(sh => sh.items.length); if (!sheets.length) return;
+    const item = { type: 'stickers', size: 'a4', addons: S.stickerAddons.slice(), sheets: clone(sheets) };
+    S.sheets = [{ items: [] }]; S.cur = 0; S.stickerAddons = [];
+    saveToCart(item);
+  },
+  cartEdit: t => {
+    const i = +t.dataset.i, it = S.cart[i]; S.editing = i;
+    if (it.type === 'stickers') { S.sheets = clone(it.sheets); S.cur = 0; S.stickerAddons = it.addons.slice(); S.selItem = null; location.hash = '#/design'; }
+    else { S.fd = { ...clone(it), side: 'front' }; location.hash = designRoute(it.type); }
+  },
+  cartRemove: t => {
+    const i = +t.dataset.i, it = S.cart.splice(i, 1)[0];
+    if (S.cart.length) viewCart(); else location.hash = '#/shop';
+    toast('Removed from your order.', () => { S.cart.splice(i, 0, it); if (location.hash === '#/cart') viewCart(); else location.hash = '#/cart'; });
+  },
+  fdImg: t => { const d = activeDesign(); if (!d) return; Object.assign(d, { imageId: t.dataset.id, zoom: 1, ox: 0, oy: 0 }); drawFramed(); },
+  fdSide: t => { S.fd.side = t.dataset.side; drawFramed(); },
+  fdSize: t => { S.fd.size = t.dataset.size; drawFramed(); },
+  fdOrient: t => { S.fd.orient = t.dataset.o; drawFramed(); },
+  fdReset: () => { const d = activeDesign(); if (d) { Object.assign(d, { zoom: 1, ox: 0, oy: 0 }); drawFramed(); } },
+  fdQty: t => { S.fd.qty = Math.max(1, Math.min(CONFIG.maxQty, S.fd.qty + +t.dataset.d)); drawFramedCtrl(); drawFramedBottom(); },
+  addFramed: () => {
+    const f = S.fd; if (!f || !f.front.imageId) return;
+    const item = { type: f.type, size: f.size, qty: f.qty, addons: f.addons.slice(), front: { ...f.front } };
+    if (f.type === 'posters') item.orient = f.orient;
+    if (f.type === 'keychains') { item.backMode = f.backMode; item.back = { ...f.back }; }
+    S.fd = null; saveToCart(item);
+  },
+  aDelete: async t => {
+    if (!armed(t, 'Tap again to delete for good')) return;
+    const o = S.admin.orders.find(x => x.id === t.dataset.id); if (!o) return;
+    try { await api.deleteOrder(o); S.admin.orders = S.admin.orders.filter(x => x.id !== o.id); toast(`${o.code} deleted.`); drawAdminBody(); }
+    catch (e) { toast(friendlyError(e)); }
+  },
+  prodAddAddon: t => { S.admin.prodDraft[t.dataset.k].addons.push({ id: uid(), label: '', note: '', price: 0, enabled: true }); drawProducts(); },
+  prodDelAddon: t => { S.admin.prodDraft[t.dataset.k].addons.splice(+t.dataset.i, 1); drawProducts(); },
   imHere: async t => {
     t.disabled = true;
     try { await api.imHere(S.statusResult.code, S.statusNick); toast("The seller's been told you're here."); lookup(); }
@@ -1342,6 +1964,12 @@ const ACTIONS = {
   aPaid: t => { const o = S.admin.orders.find(x => x.id === t.dataset.id); setStatus(o.id, { paid: !o.paid }, o.paid ? 'Marked unpaid.' : 'Marked paid.'); },
   copyLink: async () => { try { await navigator.clipboard.writeText(S.admin.qr.url); toast('Link copied.'); } catch { toast("Copying didn't work. Select the link and copy it."); } }
 };
+document.addEventListener('change', e => {
+  const t = e.target; if (!t.dataset || !t.dataset.addon) return;
+  const list = S.view === 'framed' && S.fd ? S.fd.addons : S.stickerAddons, id = t.dataset.addon;
+  const i = list.indexOf(id); if (t.checked && i < 0) list.push(id); if (!t.checked && i >= 0) list.splice(i, 1);
+  if (S.view === 'framed') drawFramedBottom(); else drawBottom();
+});
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-act]'); if (!t) return;
   const fn = ACTIONS[t.dataset.act]; if (!fn) return;
@@ -1359,7 +1987,7 @@ document.addEventListener('click', e => {
     return;
   }
   api = SupaBackend();
-  try { const s = await api.settings(); S.settings.price = s.price_per_sheet; S.settings.maxSheets = s.max_sheets;
+  try { const s = await api.settings(); S.settings.maxSheets = s.max_sheets; S.settings.products = mergeProducts(s.products);
     if (s.signal_verb) S.settings.signalVerb = s.signal_verb; if (s.signal_item) S.settings.signalItem = s.signal_item; }
   catch (e) { console.warn('Could not load settings, using CONFIG values', e); }
   route();
