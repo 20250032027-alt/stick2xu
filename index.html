@@ -575,6 +575,27 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
   .hero-kc{right:-18%}
   .pass .code{letter-spacing:.02em}
 }
+
+/* ---------- calm deals: noticeable, never pushy ---------- */
+.cdeal{display:flex;gap:6px;align-items:flex-start;margin:8px 0 0;font-size:14px;font-weight:600;color:var(--muted);line-height:1.35}
+.cdeal svg{flex:none;color:#C9951A;margin-top:2px}
+.nudgebar{background:transparent;border:0;border-radius:0;padding:0;margin:2px 0 16px;font-weight:600;font-size:14px;color:var(--muted)}
+.nudgebar svg{color:#C9951A}
+.meter{height:4px;max-width:240px}
+.hintpill{background:transparent;border:0;padding:0;color:var(--muted);font-weight:600;font-size:12.5px}
+.hintpill svg{color:#C9951A}
+.savings{border:1px solid var(--line);background:var(--paper);border-radius:14px;gap:4px}
+.sv-row.deal{font-weight:600}
+.sv-save{font-family:var(--body);font-size:15px;font-weight:700;border-top:1px solid var(--line);justify-content:flex-end}
+.classpack{background:var(--paper);border:1px solid var(--line)}
+.cp-h{font-size:16px}
+.rung{border-width:1.5px}
+.rung.on{background:#F6F7FB;border-color:var(--line)}
+.rung.cur{background:var(--accent-soft);border-color:var(--accent);box-shadow:none}
+.cp-now{color:var(--muted);font-weight:600}
+/* gentle life on the home page */
+.hs{animation:stick .7s var(--ease) both,bob 7s ease-in-out calc(var(--d) + .9s) infinite}
+@keyframes bob{0%,100%{transform:rotate(var(--r)) translateY(0)}50%{transform:rotate(var(--r)) translateY(-5px)}}
 </style>
 </head>
 <body>
@@ -601,7 +622,7 @@ const CONFIG = {
   siteUrl: 'https://stick2xu.vercel.app/',
 
   currency: '₱',
-  maxSheets: 3,            // sticker sheets per order
+  maxSheets: 10,           // sticker sheets per order (the live limit is set in admin → Settings)
   maxQty: 20,              // max pins / posters / keychains of one design
 
   // What you sell. Prices, on/off switches, and extras here are only the starting values:
@@ -923,10 +944,10 @@ const unitWord = (key, n) => { const u = (CONFIG.products[key] || {}).unit || 'i
 function dealLabel(d){
   const name = k => (CONFIG.products[k] || { name: k }).name.toLowerCase();
   if (d.type === 'freebie') return `Buy ${d.buy} ${unitWord(d.product, d.buy)}, get ${d.free} free`;
-  if (d.type === 'bulk') return `${d.min}+ ${unitWord(d.product, 2)}: ${money(d.off)} off each`;
+  if (d.type === 'bulk') return `${d.min} or more ${unitWord(d.product, 2)}: ${money(d.off)} off each`;
   if (d.type === 'tiers') return `Class pack: up to ${money(Math.max(0, ...(d.tiers || []).map(t => t.off)))} off each ${unitWord(d.product, 1)}`;
   const ps = (d.products || []).map(name);
-  return `${ps.length ? ps[0][0].toUpperCase() + ps[0].slice(1) : ''}${ps.slice(1).map(x => ' + ' + x).join('')} combo: ${money(d.off)} off`;
+  return `${ps.length ? ps[0][0].toUpperCase() + ps[0].slice(1) : ''}${ps.length > 2 ? ps.slice(1, -1).map(x => ', ' + x).join('') + ',' : ''}${ps.length > 1 ? ' and ' + ps[ps.length - 1] : ''} together: ${money(d.off)} off`;
 }
 function computeDeals(items){
   const lines = items.map(it => ({ type: it.type, price: unitPrice(it), units: itemUnits(it) })).filter(l => l.units > 0);
@@ -942,12 +963,12 @@ function computeDeals(items){
       } else if (d.type === 'tiers') {
         save = n * Math.max(0, ...(d.tiers || []).filter(t => t.min <= n).map(t => t.off));
       } else save = n >= d.min ? n * d.off : 0;
-      if (save > 0 && (!best || save > best.amount)) best = { label: d.label, amount: save };
+      if (save > 0 && (!best || save > best.amount)) best = { label: dealLabel(d), amount: save };
     }
     if (best) applied.push(best);
   }
   for (const d of liveDeals().filter(d => d.type === 'combo'))
-    if ((d.products || []).every(k => lines.some(l => l.type === k))) applied.push({ label: d.label, amount: d.off });
+    if ((d.products || []).every(k => lines.some(l => l.type === k))) applied.push({ label: dealLabel(d), amount: d.off });
   const discount = Math.min(subtotal, applied.reduce((t, a) => t + a.amount, 0));
   return { subtotal, applied, discount, total: subtotal - discount };
 }
@@ -980,6 +1001,19 @@ function dealNudges(items){
   return out;
 }
 const shortDeal = d => d.type === 'tiers' ? 'Class pack deal' : d.type === 'freebie' ? `Buy ${d.buy}, get ${d.free} free` : d.type === 'bulk' ? `${d.min}+: ${money(d.off)} off each` : `Combo: ${money(d.off)} off`;
+/* One quiet line per product card. Class packs live in the pin designer instead. */
+function cardDeal(key){
+  const d = liveDeals().find(x => x.type !== 'tiers' && (x.product === key || (x.type === 'combo' && (x.products || []).includes(key))));
+  if (!d) return '';
+  let text;
+  if (d.type === 'freebie') text = `Buy ${d.buy} ${unitWord(key, d.buy)}, get ${d.free} free`;
+  else if (d.type === 'bulk') text = `${money(d.off)} off each when you get ${d.min} or more`;
+  else {
+    const others = d.products.filter(k => k !== key).map(k => (CONFIG.products[k] || { unit: k }).unit);
+    text = `${money(d.off)} off when you add ${others.map(u => 'a ' + u).join(' and ')}`;
+  }
+  return `<p class="cdeal">${ic('sparkle', 14)}<span>${esc(text)}</span></p>`;
+}
 const productDeals = key => liveDeals().filter(d => d.product === key || (d.type === 'combo' && (d.products || []).includes(key)));
 const cartUnits = () => S.cart.reduce((t, it) => t + itemUnits(it), 0);
 function itemTitle(it){
@@ -1335,11 +1369,9 @@ function viewShop(){
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap">${progress(1)}
     <h2>What do you want to make?</h2>
     <p class="muted" style="margin:8px 0 0">Pick one to start. You can add more to the same order after.</p>
-    ${liveDeals().length ? `<section class="deals" aria-label="Deals right now"><div class="deals-h">${ic('sparkle', 18)}<b>Deals right now</b><span class="muted small">They apply on their own when your order qualifies.</span></div>
-      <div class="dealrow">${liveDeals().map(dealTicket).join('')}</div></section>` : ''}
     ${live.length ? `<div class="pcards">${live.map(p => `<a class="pcard" href="${designRoute(p.key)}">
-        <div class="illo">${productIllo(p.key)}${productDeals(p.key).length ? `<span class="ribbon">${ic('sparkle', 14)}${esc(shortDeal(productDeals(p.key)[0]))}</span>` : ''}</div>
-        <h3>${esc(p.name)}</h3><p>${esc(p.blurb)}</p>
+        <div class="illo">${productIllo(p.key)}</div>
+        <h3>${esc(p.name)}</h3><p>${esc(p.blurb)}</p>${cardDeal(p.key)}
         <div class="pfoot"><span class="price"><small>${liveSizes(p.key).length > 1 ? 'from' : '&nbsp;'}</small><b class="num">${money(fromPrice(p.key))}</b><small>per ${esc(p.unit)}</small></span>
           <span class="go">${ic('arrow', 18)}</span></div></a>`).join('')}</div>`
       : `<div class="empty" style="margin-top:20px">${ic('box', 36)}<b>Nothing is available right now.</b><span>Check back soon.</span></div>`}
@@ -1382,7 +1414,7 @@ function savingsHTML(sum, promo){
     ${code ? `<div class="sv-row deal"><span>${ic('check', 16)}Code ${esc(promo.code)}</span><b class="num">−${money(code)}</b></div>` : ''}
     <div class="sv-save">${ic('sparkle', 16)}You save ${money(sum.discount + code)}</div></div>`;
 }
-const nudgeHTML = items => dealNudges(items).map(t => `<div class="nudgebar">${ic('sparkle', 16)}<div class="nb"><span>${esc(t.text)}</span><i class="meter"><b style="width:${Math.round(Math.min(1, t.pct) * 100)}%"></b></i></div></div>`).join('');
+const nudgeHTML = items => dealNudges(items).slice(0, 1).map(t => `<div class="nudgebar">${ic('sparkle', 16)}<div class="nb"><span>${esc(t.text)}</span><i class="meter"><b style="width:${Math.round(Math.min(1, t.pct) * 100)}%"></b></i></div></div>`).join('');
 function addonChecks(key, selected){
   const p = P(key);
   return liveAddons(key).map(a => `<label class="choice"><input type="checkbox" data-addon="${esc(a.id)}" ${selected.includes(a.id) ? 'checked' : ''}>
@@ -1463,7 +1495,7 @@ function drawSheet(){
   S.justPlaced = null;
   $('#sheetArea').innerHTML = `
     <div class="tabs" role="tablist">${S.sheets.map((s, i) => `<button class="tab ${i === S.cur ? 'on' : ''}" type="button" role="tab" aria-selected="${i === S.cur}" data-act="tab" data-i="${i}">Sheet ${i + 1}</button>`).join('')}
-      ${S.sheets.length < S.settings.maxSheets ? `<button class="tab add" type="button" data-act="addSheet">${ic('plus', 16)}Add a sheet</button>` : ''}</div>
+      ${S.sheets.length < S.settings.maxSheets ? `<button class="tab add" type="button" data-act="addSheet">${ic('plus', 16)}Add a sheet</button>` : `<span class="muted small" style="align-self:center">${S.settings.maxSheets} sheets max per order</span>`}</div>
     <p class="hint mob">${ic('sparkle', 18)}<span>${sel ? 'Tap an empty spot to move it.' : S.selImage ? 'Tap the sheet to stick your picture. Drag a sticker to move it.' : 'Add a picture above first.'}</span></p>
     <div class="page" id="page">${cells}${stickers}</div>
     ${sel ? `<div class="selbar">
@@ -1920,6 +1952,21 @@ function passHTML(o){
       <div class="who">${esc(o.nickname)}${o.section ? ', ' + esc(o.section) : ''}</div>
       <p class="tip">${ic('pin', 16)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span></p></div></div>`;
 }
+function icsFor(o){
+  if (!o.pickup_date) return '';
+  const m = String(o.pickup_time || '').match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  let h = m ? +m[1] % 12 + (/pm/i.test(m[3]) ? 12 : 0) : 12, mi = m ? +m[2] : 0;
+  const d = o.pickup_date.replace(/-/g, ''), t = (hh, mm) => `${d}T${pad2(hh)}${pad2(mm)}00`;
+  const end = h * 60 + mi + 30;
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Stick2XU//Pickup//EN', 'BEGIN:VEVENT',
+    `UID:${o.code}@stick2xu`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`,
+    `DTSTART:${t(h, mi)}`, `DTEND:${t(Math.floor(end / 60), end % 60)}`,
+    `SUMMARY:Pick up Stick2XU order ${o.code}`, `LOCATION:${o.pickup} (inside campus)`,
+    `DESCRIPTION:Look for ${signal()}. Tap I'm here in My order when you arrive.`,
+    'BEGIN:VALARM', 'TRIGGER:-PT30M', 'ACTION:DISPLAY', 'DESCRIPTION:Stick2XU pickup soon', 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR'];
+  return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(lines.join('\r\n'));
+}
 function viewDone(){
   const o = S.lastOrder || readJSON('sk_last');
   if (!o) { location.hash = '#/'; return; }
@@ -1947,7 +1994,9 @@ function viewDone(){
         <p>${ic('clock', 20)}<span><b>Can't make it?</b> Cancel in "My order" before it gets printed.</span></p>
         <p>${ic('lock', 20)}<span>We only keep your nickname and section. Your pictures are deleted ${CONFIG.cleanupDays} days after your order is done.</span></p>
       </div>
-      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:22px">${btn('Check my order', { href: '#/status', cls: 'dark' })}<a class="pilllink" href="#/">Back to start</a></div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:22px">${btn('Check my order', { href: '#/status', cls: 'dark' })}
+        ${icsFor(o) ? `<a class="pilllink" href="${icsFor(o)}" download="stick2xu-pickup-${esc(o.code)}.ics">${ic('calendar', 18)}Add to calendar</a>` : ''}
+        <a class="pilllink" href="#/">Back to start</a></div>
     </section></main>`;
 }
 
@@ -2244,6 +2293,7 @@ function drawProducts(){
       <div class="prodhead"><h3>${esc(p.name)}</h3>
         <label class="switch"><input type="checkbox" data-k="${key}" data-kind="prod" data-f="enabled" ${p.enabled ? 'checked' : ''}><span>${p.enabled ? 'Available' : 'Hidden'}</span></label></div>
       <div class="sub">${p.sizes.length > 1 ? 'Sizes' : 'Price'}</div>
+      ${key === 'stickers' ? `<div class="prow"><span>Max sheets in one order</span><input class="inp num" id="maxSheets" type="number" min="1" max="50" value="${S.settings.maxSheets}" aria-label="Max sheets in one order"><span></span></div>` : ''}
       ${p.sizes.map((z, i) => `<div class="prow"><span>${esc(z.label)}${key === 'pins' ? ` <small class="muted">(cut ${z.cutMm} mm)</small>` : ''}</span>
         <span class="pricein"><input class="inp num" type="number" min="0" step="1" data-k="${key}" data-kind="size" data-i="${i}" data-f="price" value="${z.price}" aria-label="${esc(z.label)} price"></span>
         ${p.sizes.length > 1 ? `<label class="switch"><input type="checkbox" data-k="${key}" data-kind="size" data-i="${i}" data-f="enabled" ${z.enabled ? 'checked' : ''} aria-label="${esc(z.label)} available"></label>` : '<span></span>'}</div>`).join('')}
@@ -2271,7 +2321,8 @@ function drawProducts(){
     const compact = {};
     for (const [k, p] of Object.entries(D)) compact[k] = { enabled: p.enabled, sizes: p.sizes.map(z => ({ id: z.id, price: z.price, enabled: z.enabled })),
       addons: p.addons.map(a => ({ id: a.id, label: a.label.trim(), note: a.note.trim(), price: a.price, enabled: a.enabled })) };
-    try { await api.saveSettings({ products: compact }); S.settings.products = mergeProducts(compact); S.admin.prodDraft = clone(S.settings.products); toast('Saved. Customers will see the changes.'); drawProducts(); }
+    const ms = Math.max(1, Math.min(50, Math.round(+($('#maxSheets') || {}).value || S.settings.maxSheets)));
+    try { await api.saveSettings({ products: compact, max_sheets: ms }); S.settings.maxSheets = ms; S.settings.products = mergeProducts(compact); S.admin.prodDraft = clone(S.settings.products); toast('Saved. Customers will see the changes.'); drawProducts(); }
     catch (ex) { toast(friendlyError(ex)); }
   };
 }

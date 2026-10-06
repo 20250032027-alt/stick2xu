@@ -51,7 +51,7 @@ After 2 no-shows, that nickname and section can't order anymore. You can change 
 - **Discount when buying more**, like "3+ sheets: ₱5 off each".
 - **Combo**, like "Stickers + keychain: ₱10 off" when both are in the order.
 
-If two deals fit the same product, the customer gets the bigger one. Combos add on top. Live deals show as tickets on the "What do you want to make?" page, ribbons on the product cards, and "add 1 more to save" hints with progress bars while designing and in the cart. The pin designer shows the class pack price ladder. The server always does the math, so customers can't fake a discount.
+If two deals fit the same product, the customer gets the bigger one. Combos add on top. Deals are shown quietly: one small line on each product card, a soft "add 1 more to save" hint while designing and in the cart, and the class pack price ladder inside the pin designer. The server always does the math, so customers can't fake a discount.
 
 **Promo codes:** codes customers type at checkout. Each can be % or ₱ off, with an optional minimum order, a max number of uses, and an end date. They're private, so only people you give a code to can use it. Turn a code off anytime with its switch.
 
@@ -63,7 +63,8 @@ If two deals fit the same product, the customer gets the bigger one. Combos add 
 |---|---|
 | Which products are available, prices, extras | Admin page → Settings |
 | Deals and promo codes | Admin page → Settings |
-| Max sticker sheets per order, no-show limit | Supabase → Table Editor → `shop_settings` |
+| Max sticker sheets per order | Admin page → Settings → Products (Stickers) |
+| No-show limit | Supabase → Table Editor → `shop_settings` |
 | Pickup signal | Admin page → Settings |
 | Pickup days, times, gates, grades, GCash details, holidays | `CONFIG` at the top of `index.html`, then push |
 | Pin sizes (pin size and paper circle size), keychain insert size, poster sizes | `CONFIG.products` in `index.html`, then push |
