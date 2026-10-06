@@ -345,7 +345,7 @@ th{color:var(--muted);font-weight:700}
 .pcard p{margin:0;color:var(--muted)}
 /* picture editor (pins, posters, keychains) */
 .stage2{display:flex;flex-direction:column;align-items:center;gap:16px;padding-top:6px}
-.frame{position:relative;overflow:hidden;background:#fff;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.frame{position:relative;overflow:hidden;background:#fff;touch-action:auto;cursor:default;user-select:none;-webkit-user-select:none}
 .frame:active{cursor:grabbing}
 .frame img{position:absolute;max-width:none;pointer-events:none;user-select:none}
 .empty-f{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:8px;color:var(--muted);font-weight:700;text-align:center;padding:12px;font-size:15px;
@@ -664,6 +664,20 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
 .sheet-empty b{font-family:var(--display);font-size:18px}
 .sheet-empty small{color:var(--muted);font-size:13px}
 .sheet-empty:active{transform:translate(-50%,-50%) scale(.97)}
+
+.frame.has-img{touch-action:none;cursor:grab}
+.frame.has-img:active{cursor:grabbing}
+label.empty-f{cursor:pointer;gap:6px;transition:background-color .2s var(--ease)}
+label.empty-f:hover{background:repeating-linear-gradient(45deg,#EEF1FA 0 10px,#E4E8F4 10px 20px)}
+label.empty-f .ui{width:44px;height:44px;border-radius:14px;background:var(--accent);color:#fff;border:2px solid var(--ink);display:grid;place-items:center;box-shadow:var(--shadow-sm)}
+label.empty-f b{font-family:var(--display);font-size:17px;color:var(--ink)}
+label.empty-f small{font-size:13px;color:var(--muted);font-weight:600}
+label.empty-f:active .ui{transform:scale(.94)}
+.pinwrap .frame label.empty-f{padding:20%}
+.pinwrap .frame label.empty-f b{font-size:15px;white-space:nowrap}
+.pinwrap .frame label.empty-f small{white-space:nowrap}
+.kc .frame label.empty-f{padding:8px}
+.kc .frame label.empty-f .ui{width:38px;height:38px}
 </style>
 </head>
 <body>
@@ -1085,7 +1099,7 @@ function dealNudges(items){
     } else if (d.type === 'tiers') {
       const next = (d.tiers || []).filter(t => t.min > n).sort((a, b) => a.min - b.min)[0];
       const cur = Math.max(0, ...(d.tiers || []).filter(t => t.min <= n).map(t => t.off));
-      if (next) out.push({ text: `${next.min - n} more ${unitWord(d.product, next.min - n)} to unlock ${money(next.off)} off each${cur ? ` (now ${money(cur)} off)` : ''}.`, pct: n / next.min, product: d.product });
+      if (next && next.min - n <= 5) out.push({ text: `${next.min - n} more ${unitWord(d.product, next.min - n)} to unlock ${money(next.off)} off each${cur ? ` (now ${money(cur)} off)` : ''}.`, pct: n / next.min, product: d.product });
     } else if (n < d.min && d.min - n <= 2) out.push({ text: `Add ${d.min - n} more ${unitWord(d.product, d.min - n)} and save ${money(d.off)} on each.`, pct: n / d.min, product: d.product });
   }
   return out;
@@ -1805,7 +1819,8 @@ function drawFramedCtrl(){
 }
 function frameInner(d, empty){
   const im = d && d.imageId && imgById(d.imageId);
-  return im ? `<img id="fimg" src="${im.url}" alt="" draggable="false">` : `<div class="empty-f">${ic('image', 30)}<span>${empty}</span></div>`;
+  return im ? `<img id="fimg" src="${im.url}" alt="" draggable="false">`
+    : `<label class="empty-f"><span class="ui">${ic('plus', 22)}</span><b>${empty}</b><small>Tap to choose one</small><input class="filePick" type="file" accept="image/*" hidden></label>`;
 }
 function drawFramedStage(){
   const f = S.fd, mm = frameMm(f), sd = shownDesign(), bg = (sd && sd.bg) || '#ffffff';
@@ -1814,7 +1829,7 @@ function drawFramedStage(){
     const k = mm.w / mm.face, off = -(k - 1) / 2 * 100;
     const im = f.front.imageId && imgById(f.front.imageId);
     html = `<div class="pinstage">
-        <div class="pinedit"><div class="pinwrap"><div class="frame" id="frame" style="background:${bg}">${frameInner(f.front, 'Add a picture')}
+        <div class="pinedit"><div class="pinwrap"><div class="frame" id="frame" style="background:${bg}">${frameInner(f.front, 'Choose a picture')}
           <span class="wrapzone" style="--face:${mm.face / mm.w * 100}%"></span><span class="facering" style="width:${mm.face / mm.w * 100}%"></span></div></div>
           <span class="cap">${ic('move', 14)}Drag to move</span></div>
         <div class="pinprev">
@@ -1825,17 +1840,19 @@ function drawFramedStage(){
       <p class="under" style="max-width:460px">The shaded ring wraps around the back of the pin, so it won't show. Keep faces and words inside the dashed circle.</p>`;
   } else if (f.type === 'posters') {
     const wide = mm.w > mm.h;
-    html = `<div class="postwrap"><div class="hang" style="width:${wide ? 'min(100%,560px)' : 'min(100%,400px)'};padding:${5 / mm.pageW * 100}%">
-        <div class="frame" id="frame" style="aspect-ratio:${mm.w}/${mm.h};background:${bg}">${frameInner(f.front, 'Add a picture')}</div></div></div>
+    html = `<div class="postwrap"><div class="hang" style="width:min(100%, ${wide ? 560 : 400}px, calc(50svh * ${(mm.pageW / mm.pageH).toFixed(4)}));padding:${5 / mm.pageW * 100}%">
+        <div class="frame" id="frame" style="aspect-ratio:${mm.w}/${mm.h};background:${bg}">${frameInner(f.front, 'Choose a picture')}</div></div></div>
       <p class="under">${esc((P('posters').sizes.find(z => z.id === f.size) || {}).label || '')} ${f.orient === 'landscape' ? 'wide' : 'tall'}, printed with a thin white border.</p>`;
   } else {
     const showBack = f.side === 'back', d = sd;
     const clear = showBack && f.backMode === 'blank';
     html = `<div class="kc"><span class="ring"></span><span class="loop"></span><div class="case">
-        <div class="frame ${clear ? 'clear' : ''}" id="frame" style="aspect-ratio:${mm.w}/${mm.h};${clear ? '' : `background:${bg}`}" data-locked="${showBack && f.backMode !== 'different'}">${clear ? '' : frameInner(d, showBack && f.backMode === 'different' ? 'Add the back picture' : 'Add a picture')}</div></div></div>
+        <div class="frame ${clear ? 'clear' : ''}" id="frame" style="aspect-ratio:${mm.w}/${mm.h};${clear ? '' : `background:${bg}`}" data-locked="${showBack && f.backMode !== 'different'}">${clear ? '' : frameInner(d, showBack && f.backMode === 'different' ? 'Choose the back picture' : 'Choose a picture')}</div></div></div>
       <p class="under">${showBack ? (f.backMode === 'same' ? 'The back shows the same picture.' : f.backMode === 'blank' ? 'The back stays clear.' : 'This is the back of the keychain.') : 'This is the front. Tap "Back" to choose the other side.'}</p>`;
   }
   $('#fstage').innerHTML = html + `<div id="reswarn"></div>`;
+  $('#fstage').querySelectorAll('.filePick').forEach(i => i.addEventListener('change', onFiles));
+  const frEl = $('#frame'); if (frEl) frEl.classList.toggle('has-img', !!$('#fimg'));
   const img = $('#fimg'); if (img) { if (img.complete) placeImg(); else img.onload = placeImg; }
   bindPan();
 }
@@ -1850,6 +1867,9 @@ function placeImg(){
   const mm = frameMm(S.fd), L = layoutFrac(im, d, mm.w, mm.h);
   img.setAttribute('style', fracStyle(L));
   const img2 = $('#fimg2'); if (img2) img2.setAttribute('style', fracStyle(L));
+  // Let the page scroll in any direction the picture can't move in (e.g. a wide photo in a tall poster)
+  const fr = $('#frame');
+  if (fr) { const mx = Math.abs(L.dw - 1) > .002, my = Math.abs(L.dh - 1) > .002; fr.style.touchAction = mx && my ? 'none' : mx ? 'pan-y' : my ? 'pan-x' : 'pan-y'; }
   $('#reswarn').innerHTML = L.dpi < 150 ? `<p class="warnline">${ic('warn', 16)}This picture might print blurry at this size. Try a bigger picture or zoom out.</p>` : '';
 }
 function syncZoomSlider(d){
@@ -1870,6 +1890,7 @@ function bindPan(){
     } else st = null;
   };
   fr.addEventListener('pointerdown', e => {
+    const d0 = activeDesign(); if (!d0 || !d0.imageId) return;   // nothing to move yet: let taps reach the "add a picture" button
     pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
     try { fr.setPointerCapture(e.pointerId); } catch {}
     begin();
