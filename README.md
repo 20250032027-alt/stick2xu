@@ -45,12 +45,13 @@ After 2 no-shows, that nickname and section can't order anymore. You can change 
 
 **Products and prices:** switch stickers, pins, posters, and keychains on or off. Anything switched off disappears from the site right away. Set the price of each size, and turn single sizes off (for example, hide A3 posters). Each product can also have **extras**, like "Inkjet print +₱30 (brighter, more vivid colors)". An extra has a name, a short reason shown in brackets, a price added per sheet or per item, and an on/off switch. Add as many as you want.
 
-**Deals:** discounts that apply by themselves when an order qualifies. There are three kinds:
+**Deals:** discounts that apply by themselves when an order qualifies. There are four kinds:
+- **Class pack**, where the price per pin drops in steps as the order grows, like 10+ ₱3 off, 20+ ₱5 off, 30+ ₱8 off, 40+ ₱10 off. It's made for one class rep ordering for the whole section (up to 60 pins in one order).
 - **Buy some, get some free**, like "Buy 5 pins, get 1 free". The cheapest ones are the free ones.
 - **Discount when buying more**, like "3+ sheets: ₱5 off each".
 - **Combo**, like "Stickers + keychain: ₱10 off" when both are in the order.
 
-If two deals fit the same product, the customer gets the bigger one. Combos add on top. Live deals show as a gold strip on the home page, ribbons on the product cards, and "add 1 more to save" hints while designing and in the cart. The server always does the math, so customers can't fake a discount.
+If two deals fit the same product, the customer gets the bigger one. Combos add on top. Live deals show as tickets on the "What do you want to make?" page, ribbons on the product cards, and "add 1 more to save" hints with progress bars while designing and in the cart. The pin designer shows the class pack price ladder. The server always does the math, so customers can't fake a discount.
 
 **Promo codes:** codes customers type at checkout. Each can be % or ₱ off, with an optional minimum order, a max number of uses, and an end date. They're private, so only people you give a code to can use it. Turn a code off anytime with its switch.
 

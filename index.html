@@ -380,7 +380,7 @@ th{color:var(--muted);font-weight:700}
 .qty{display:inline-flex;align-items:center;border:2px solid var(--ink);border-radius:999px;overflow:hidden;background:var(--paper)}
 .qty button{width:48px;height:48px;border:0;background:transparent;font-size:24px;font-weight:700;cursor:pointer;color:var(--ink)}
 .qty button:active{background:var(--accent-soft)}
-.qty span{min-width:44px;text-align:center;font-weight:800;font-family:var(--display);font-size:22px}
+
 .warnline{display:flex;gap:8px;align-items:center;background:var(--warn-soft);border-radius:12px;padding:8px 12px;font-size:14px;font-weight:700}
 .choice .note{display:block;color:var(--muted);font-weight:500;font-size:14px}
 .pinstage{display:flex;gap:30px;align-items:center;justify-content:center;flex-wrap:wrap;width:100%}
@@ -430,6 +430,47 @@ th{color:var(--muted);font-weight:700}
 .dfoot{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .pgrid2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 @media(max-width:600px){.dgrid,.pgrid2{grid-template-columns:1fr 1fr}.dgrid > select{grid-column:1/-1}}
+.deals{margin:22px 0 4px}
+.deals-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.deals-h svg{color:#C9951A}
+.deals-h b{font-family:var(--display);font-size:20px}
+.dealrow{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);gap:16px;overflow-x:auto;padding:4px 6px 12px 2px;scrollbar-width:thin}
+.ticket{position:relative;display:grid;align-content:start;gap:2px;text-decoration:none;color:var(--ink);background:var(--xu-gold);border:2px solid var(--ink);border-radius:18px;padding:16px 18px 14px;box-shadow:var(--shadow);transition:transform .25s var(--ease),box-shadow .25s var(--ease);
+  -webkit-mask:radial-gradient(circle 11px at 0 58%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 11px at 100% 58%,#0000 98%,#000) right/51% 100% no-repeat;
+          mask:radial-gradient(circle 11px at 0 58%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 11px at 100% 58%,#0000 98%,#000) right/51% 100% no-repeat}
+.ticket:hover{transform:translate(-2px,-3px) rotate(-.6deg)}
+.ticket.t-tiers{background:var(--ink);color:#fff}
+.ticket.t-combo{background:#fff}
+.ticket.t-bulk{background:var(--accent-soft)}
+.t-tag{justify-self:start;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;background:rgba(40,57,113,.12);padding:3px 9px;border-radius:999px;margin-bottom:6px}
+.t-tiers .t-tag{background:var(--xu-gold);color:var(--ink)}
+.t-pre{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;opacity:.8}
+.t-big{font-family:var(--display);font-weight:800;font-size:44px;line-height:.95;letter-spacing:-.02em}
+.t-tiers .t-big{color:var(--xu-gold)}
+.t-sub{font-size:14px;font-weight:600;margin-top:4px;padding-bottom:10px;border-bottom:2px dashed currentColor;opacity:.9}
+.t-steps{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.t-steps i{font-style:normal;font-size:12px;font-weight:700;background:rgba(255,255,255,.12);border-radius:8px;padding:3px 7px}
+.t-steps b{margin-right:4px;color:var(--xu-gold)}
+.t-go{display:inline-flex;gap:6px;align-items:center;font-weight:800;font-size:14px;margin-top:10px}
+.nudgebar .nb{flex:1;display:grid;gap:6px}
+.meter{display:block;height:8px;border-radius:99px;background:rgba(40,57,113,.12);overflow:hidden}
+.meter b{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--xu-gold),#E8A317);transition:width .5s var(--ease)}
+.classpack{margin-top:16px;border:2px solid var(--ink);border-radius:var(--r-md);padding:14px;background:linear-gradient(160deg,var(--gold-soft),#fff 70%)}
+.cp-h{display:flex;gap:8px;align-items:center;font-family:var(--display);font-size:18px}
+.cp-h svg{color:#C9951A}
+.ladder{display:grid;grid-template-columns:repeat(auto-fit,minmax(58px,1fr));gap:6px}
+.rung{display:grid;justify-items:center;gap:0;padding:8px 4px;border-radius:12px;border:2px solid var(--line);background:#fff;cursor:pointer;line-height:1.15;color:var(--ink)}
+.rung b{font-family:var(--display);font-size:17px}
+.rung span{font-weight:800;font-size:15px}
+.rung small{font-size:11px;color:var(--muted)}
+.rung.on{border-color:var(--ink);background:var(--accent-soft)}
+.rung.cur{border-color:var(--ink);background:var(--xu-gold);box-shadow:var(--shadow-sm)}
+.cp-now{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:10px 0 0;font-size:14px;color:#0F5F34;font-weight:700}
+.qty input{width:64px;border:0;background:transparent;text-align:center;font-family:var(--display);font-weight:800;font-size:22px;color:var(--ink);-moz-appearance:textfield;appearance:textfield}
+.qty input::-webkit-outer-spin-button,.qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.tiered{grid-column:span 2;display:grid;gap:8px}
+.tierrow{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end}
+@media(max-width:600px){.tiered{grid-column:1/-1}.dealrow{grid-auto-columns:78%}}
 /* cart */
 .cart{display:grid;gap:14px;margin:16px 0 22px}
 .cline{display:grid;grid-template-columns:96px 1fr auto;gap:16px;align-items:center;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:14px;box-shadow:var(--shadow)}
@@ -572,7 +613,7 @@ const CONFIG = {
       addons: [{ id: 'inkjet', label: 'Inkjet print', note: 'brighter, more vivid colors', price: 30, enabled: true }]
     },
     pins: {
-      name: 'Pins', blurb: 'Round button pins with your picture', unit: 'pin', enabled: false,
+      name: 'Pins', blurb: 'Round button pins with your picture', unit: 'pin', enabled: false, maxQty: 60,   // big enough for a whole class
       // faceMm = the pin you hold. cutMm = the paper circle, which wraps around the edge. Match these to the pin machine.
       sizes: [{ id: '58', label: '58 mm', price: 35, faceMm: 58, cutMm: 70 }, { id: '44', label: '44 mm', price: 25, faceMm: 44, cutMm: 55 }],
       addons: []
@@ -883,6 +924,7 @@ function dealLabel(d){
   const name = k => (CONFIG.products[k] || { name: k }).name.toLowerCase();
   if (d.type === 'freebie') return `Buy ${d.buy} ${unitWord(d.product, d.buy)}, get ${d.free} free`;
   if (d.type === 'bulk') return `${d.min}+ ${unitWord(d.product, 2)}: ${money(d.off)} off each`;
+  if (d.type === 'tiers') return `Class pack: up to ${money(Math.max(0, ...(d.tiers || []).map(t => t.off)))} off each ${unitWord(d.product, 1)}`;
   const ps = (d.products || []).map(name);
   return `${ps.length ? ps[0][0].toUpperCase() + ps[0].slice(1) : ''}${ps.slice(1).map(x => ' + ' + x).join('')} combo: ${money(d.off)} off`;
 }
@@ -892,11 +934,13 @@ function computeDeals(items){
   for (const p of [...new Set(lines.map(l => l.type))]) {
     const mine = lines.filter(l => l.type === p), n = mine.reduce((t, l) => t + l.units, 0);
     let best = null;
-    for (const d of liveDeals().filter(d => d.product === p && (d.type === 'freebie' || d.type === 'bulk'))) {
+    for (const d of liveDeals().filter(d => d.product === p && ['freebie', 'bulk', 'tiers'].includes(d.type))) {
       let save = 0;
       if (d.type === 'freebie') {
         const k = Math.floor(n / Math.max(1, d.buy + d.free)) * d.free;
         save = mine.flatMap(l => Array(l.units).fill(l.price)).sort((a, b) => a - b).slice(0, k).reduce((a, b) => a + b, 0);
+      } else if (d.type === 'tiers') {
+        save = n * Math.max(0, ...(d.tiers || []).filter(t => t.min <= n).map(t => t.off));
       } else save = n >= d.min ? n * d.off : 0;
       if (save > 0 && (!best || save > best.amount)) best = { label: d.label, amount: save };
     }
@@ -917,20 +961,25 @@ function dealNudges(items){
   for (const d of liveDeals()) {
     if (d.type === 'combo') {
       const missing = (d.products || []).filter(k => !has(k));
-      if (missing.length === 1 && (d.products || []).length > 1) out.push(`Add a ${(CONFIG.products[missing[0]] || {}).unit || 'item'} too and save ${money(d.off)} with the combo.`);
+      if (missing.length === 1 && (d.products || []).length > 1)
+        out.push({ text: `Add a ${(CONFIG.products[missing[0]] || {}).unit || 'item'} too and save ${money(d.off)} with the combo.`, pct: (d.products.length - 1) / d.products.length, product: missing[0], combo: true });
       continue;
     }
     const n = items.filter(it => it.type === d.product).reduce((t, it) => t + itemUnits(it), 0);
     if (!n) continue;
     if (d.type === 'freebie') {
       const g = d.buy + d.free, r = n % g;
-      if (r >= d.buy) out.push(`Add ${g - r} more ${unitWord(d.product, g - r)}. ${g - r === 1 ? "It's" : "They're"} free!`);
-      else if (d.buy - r <= 2 && r > 0) out.push(`Add ${d.buy - r} more ${unitWord(d.product, d.buy - r)} to get ${d.free} free.`);
-    } else if (n < d.min && d.min - n <= 2) out.push(`Add ${d.min - n} more ${unitWord(d.product, d.min - n)} and save ${money(d.off)} on each.`);
+      if (r >= d.buy) out.push({ text: `Add ${g - r} more ${unitWord(d.product, g - r)}. ${g - r === 1 ? "It's" : "They're"} free!`, pct: r / g, product: d.product });
+      else if (d.buy - r <= 2 && r > 0) out.push({ text: `Add ${d.buy - r} more ${unitWord(d.product, d.buy - r)} to get ${d.free} free.`, pct: r / g, product: d.product });
+    } else if (d.type === 'tiers') {
+      const next = (d.tiers || []).filter(t => t.min > n).sort((a, b) => a.min - b.min)[0];
+      const cur = Math.max(0, ...(d.tiers || []).filter(t => t.min <= n).map(t => t.off));
+      if (next) out.push({ text: `${next.min - n} more ${unitWord(d.product, next.min - n)} to unlock ${money(next.off)} off each${cur ? ` (now ${money(cur)} off)` : ''}.`, pct: n / next.min, product: d.product });
+    } else if (n < d.min && d.min - n <= 2) out.push({ text: `Add ${d.min - n} more ${unitWord(d.product, d.min - n)} and save ${money(d.off)} on each.`, pct: n / d.min, product: d.product });
   }
   return out;
 }
-const shortDeal = d => d.type === 'freebie' ? `Buy ${d.buy}, get ${d.free} free` : d.type === 'bulk' ? `${d.min}+: ${money(d.off)} off each` : `Combo: ${money(d.off)} off`;
+const shortDeal = d => d.type === 'tiers' ? 'Class pack deal' : d.type === 'freebie' ? `Buy ${d.buy}, get ${d.free} free` : d.type === 'bulk' ? `${d.min}+: ${money(d.off)} off each` : `Combo: ${money(d.off)} off`;
 const productDeals = key => liveDeals().filter(d => d.product === key || (d.type === 'combo' && (d.products || []).includes(key)));
 const cartUnits = () => S.cart.reduce((t, it) => t + itemUnits(it), 0);
 function itemTitle(it){
@@ -1140,7 +1189,6 @@ function viewHome(){
   const g = geom(), live = liveProducts(), others = live.filter(p => p.key !== 'stickers').map(p => p.name.toLowerCase());
   const list = others.length ? `stickers, ${others.slice(0, -1).join(', ')}${others.length > 1 ? ',' : ''} and ${others[others.length - 1]}` : '';
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap home" style="padding-bottom:24px">
-    ${liveDeals().length ? `<a class="dealstrip" href="#/shop">${ic('sparkle', 18)}<span><b>Deal:</b> ${esc(liveDeals()[0].label)}${liveDeals().length > 1 ? ` <span class="muted">+${liveDeals().length - 1} more</span>` : ''}</span>${ic('arrow', 18)}</a>` : ''}
     <section class="hero">
       <div>
         <h1>${others.length ? 'Turn your pictures into stickers and more.' : 'Turn your pictures into a sticker sheet.'}</h1>
@@ -1239,7 +1287,7 @@ function illoPosters(){
     <g transform="rotate(-4 120 74)">
       <g filter="url(#${id}f)"><rect x="78" y="14" width="84" height="120" fill="#fff"/>
         ${scene(id, 84, 20, 72, 108, '<rect x="84" y="20" width="72" height="108"/>')}
-        <text x="120" y="118" text-anchor="middle" font-family="Cabinet Grotesk, Arial Black, sans-serif" font-weight="800" font-size="12" fill="#fff" opacity=".95">HELLO XU</text></g>
+        </g>
     </g>
   </svg>`;
 }
@@ -1266,6 +1314,20 @@ function illoKeychains(){
 function productIllo(key){
   return { stickers: illoStickers, pins: illoPins, posters: illoPosters, keychains: illoKeychains }[key]();
 }
+function dealTicket(d){
+  const key = d.type === 'combo' ? (d.products || [])[0] : d.product, unit = k => unitWord(k, 2);
+  const names = (d.products || []).map(k => (CONFIG.products[k] || { name: k }).name).join(' + ');
+  const big = d.type === 'freebie' ? `${d.free} FREE` : d.type === 'tiers' ? `₱${Math.max(0, ...(d.tiers || []).map(t => t.off))} OFF` : `₱${d.off} OFF`;
+  const pre = d.type === 'tiers' ? 'up to' : d.type === 'freebie' ? 'get' : d.type === 'bulk' ? 'save' : 'combo';
+  const sub = d.type === 'freebie' ? `when you buy ${d.buy} ${unit(d.product)}` : d.type === 'tiers' ? `each pin when your class orders together` : d.type === 'bulk' ? `each, when you get ${d.min}+ ${unit(d.product)}` : `when you get ${names.toLowerCase()}`;
+  const tag = d.type === 'tiers' ? 'Class pack' : d.type === 'combo' ? 'Combo' : (CONFIG.products[key] || { name: '' }).name;
+  return `<a class="ticket t-${d.type}" href="${designRoute(key)}">
+    <span class="t-tag">${esc(tag)}</span>
+    <span class="t-pre">${pre}</span><b class="t-big">${esc(big)}</b>
+    <span class="t-sub">${esc(sub)}</span>
+    ${d.type === 'tiers' ? `<span class="t-steps">${(d.tiers || []).slice().sort((a, b) => a.min - b.min).map(t => `<i><b>${t.min}+</b>₱${t.off} off</i>`).join('')}</span>` : ''}
+    <span class="t-go">Start ${ic('arrow', 16)}</span></a>`;
+}
 function viewShop(){
   S.editing = null;
   const live = liveProducts();
@@ -1273,6 +1335,8 @@ function viewShop(){
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap">${progress(1)}
     <h2>What do you want to make?</h2>
     <p class="muted" style="margin:8px 0 0">Pick one to start. You can add more to the same order after.</p>
+    ${liveDeals().length ? `<section class="deals" aria-label="Deals right now"><div class="deals-h">${ic('sparkle', 18)}<b>Deals right now</b><span class="muted small">They apply on their own when your order qualifies.</span></div>
+      <div class="dealrow">${liveDeals().map(dealTicket).join('')}</div></section>` : ''}
     ${live.length ? `<div class="pcards">${live.map(p => `<a class="pcard" href="${designRoute(p.key)}">
         <div class="illo">${productIllo(p.key)}${productDeals(p.key).length ? `<span class="ribbon">${ic('sparkle', 14)}${esc(shortDeal(productDeals(p.key)[0]))}</span>` : ''}</div>
         <h3>${esc(p.name)}</h3><p>${esc(p.blurb)}</p>
@@ -1318,7 +1382,7 @@ function savingsHTML(sum, promo){
     ${code ? `<div class="sv-row deal"><span>${ic('check', 16)}Code ${esc(promo.code)}</span><b class="num">−${money(code)}</b></div>` : ''}
     <div class="sv-save">${ic('sparkle', 16)}You save ${money(sum.discount + code)}</div></div>`;
 }
-const nudgeHTML = items => dealNudges(items).map(t => `<p class="nudgebar">${ic('sparkle', 16)}<span>${esc(t)}</span></p>`).join('');
+const nudgeHTML = items => dealNudges(items).map(t => `<div class="nudgebar">${ic('sparkle', 16)}<div class="nb"><span>${esc(t.text)}</span><i class="meter"><b style="width:${Math.round(Math.min(1, t.pct) * 100)}%"></b></i></div></div>`).join('');
 function addonChecks(key, selected){
   const p = P(key);
   return liveAddons(key).map(a => `<label class="choice"><input type="checkbox" data-addon="${esc(a.id)}" ${selected.includes(a.id) ? 'checked' : ''}>
@@ -1462,9 +1526,9 @@ function drawBottom(){
   const count = S.sheets.reduce((a, s) => a + s.items.length, 0);
   const each = unitPrice({ type: 'stickers', size: 'a4', addons: S.stickerAddons });
   const draft = { type: 'stickers', size: 'a4', addons: S.stickerAddons, sheets: S.sheets };
-  const hint = used ? dealNudges(S.cart.filter((_, i) => i !== S.editing).concat([draft])).find(t => /sheet|combo/i.test(t)) : '';
+  const hint = used ? dealNudges(S.cart.filter((_, i) => i !== S.editing).concat([draft])).find(t => t.product === 'stickers') : null;
   $('#bottom').innerHTML = `<div><div class="tot num">${money(used * each)}</div>
-      <div class="sub">${hint ? `<span class="hintpill">${ic('sparkle', 13)}${esc(hint)}</span>` : `${count} sticker${count === 1 ? '' : 's'} on ${used} sheet${used === 1 ? '' : 's'}`}</div></div>
+      <div class="sub">${hint ? `<span class="hintpill">${ic('sparkle', 13)}${esc(hint.text)}</span>` : `${count} sticker${count === 1 ? '' : 's'} on ${used} sheet${used === 1 ? '' : 's'}`}</div></div>
     ${btn(S.editing !== null ? 'Save changes' : 'Add to order', { act: 'addStickers', icon: S.editing !== null ? 'check' : 'arrow', attrs: count ? '' : 'disabled' })}`;
   bumpTotal();
 }
@@ -1538,6 +1602,8 @@ function activeDesign(){
   if (f.type === 'keychains' && f.side === 'back') return f.backMode === 'different' ? f.back : null;
   return f.front;
 }
+const maxQtyFor = key => (CONFIG.products[key] || {}).maxQty || CONFIG.maxQty;
+function setQty(n){ S.fd.qty = Math.max(1, Math.min(maxQtyFor(S.fd.type), Math.round(+n || 1))); drawFramedCtrl(); drawFramedBottom(); }
 function viewMake(key){
   if (!CONFIG.products[key]) return viewNotFound();
   if (!isLive(key)) return viewUnavailable(key);
@@ -1588,10 +1654,18 @@ function drawFramedCtrl(){
         <span class="muted small">${custom ? 'Your color. Tap the rainbow to change it.' : 'White. Tap the rainbow to pick any color.'}</span></div>`; })()}
     </section>` : ''}
     ${!backSide ? `<section>${step('How many?')}
-      <div class="qty"><button type="button" data-act="fdQty" data-d="-1" aria-label="One less">−</button><span class="num" aria-live="polite">${f.qty}</span><button type="button" data-act="fdQty" data-d="1" aria-label="One more">+</button></div>
+      <div class="qty"><button type="button" data-act="fdQty" data-d="-1" aria-label="One less">−</button><input id="qtyIn" class="num" type="number" inputmode="numeric" min="1" max="${maxQtyFor(f.type)}" value="${f.qty}" aria-label="How many"><button type="button" data-act="fdQty" data-d="1" aria-label="One more">+</button></div>
+      ${(() => { const d = liveDeals().find(x => x.type === 'tiers' && x.product === f.type); if (!d) return '';
+        const tiers = (d.tiers || []).slice().sort((a, b) => a.min - b.min), base = unitPrice(f), cur = tiers.filter(t => t.min <= f.qty).pop();
+        return `<div class="classpack"><div class="cp-h">${ic('school', 18)}<b>Ordering for your class?</b></div>
+          <p class="help" style="margin:2px 0 10px">The more pins in one order, the cheaper each one gets.</p>
+          <div class="ladder">${tiers.map(t => `<button type="button" class="rung ${cur && cur.min === t.min ? 'cur' : f.qty >= t.min ? 'on' : ''}" data-act="fdQtySet" data-n="${Math.min(t.min, maxQtyFor(f.type))}">
+            <b>${t.min}+</b><span class="num">${money(base - t.off)}</span><small>each</small></button>`).join('')}</div>
+          ${cur ? `<p class="cp-now">${ic('check', 16)}Class pack price: <b class="num">${money(base - cur.off)}</b> each, you save <b class="num">${money(cur.off * f.qty)}</b></p>` : ''}</div>`; })()}
       ${liveAddons(f.type).length ? `<div style="margin-top:14px">${addonChecks(f.type, f.addons)}</div>` : ''}
     </section>` : ''}`;
   const fi = $('#fileIn'); if (fi) fi.addEventListener('change', onFiles);
+  const qi = $('#qtyIn'); if (qi) qi.addEventListener('change', () => setQty(qi.value));
   const bp = $('#bgPick');
   if (bp) {
     bp.addEventListener('input', () => { const dd = activeDesign(); if (!dd) return; dd.bg = bp.value;
@@ -1679,9 +1753,9 @@ function bindPan(){
 function drawFramedBottom(){
   const f = S.fd, p = P(f.type);
   const ready = !!f.front.imageId && !(f.type === 'keychains' && f.backMode === 'different' && !f.back.imageId);
-  const others = S.cart.filter((_, i) => i !== S.editing), hint = dealNudges(others.concat([f])).find(t => new RegExp(p.unit + '|combo', 'i').test(t));
+  const others = S.cart.filter((_, i) => i !== S.editing), hint = dealNudges(others.concat([f])).find(t => t.product === f.type);
   $('#bottom').innerHTML = `<div><div class="tot num">${money(f.qty * unitPrice(f))}</div>
-      <div class="sub">${hint ? `<span class="hintpill">${ic('sparkle', 13)}${esc(hint)}</span>` : `${f.qty} ${esc(p.unit)}${f.qty === 1 ? '' : 's'}`}</div></div>
+      <div class="sub">${hint ? `<span class="hintpill">${ic('sparkle', 13)}${esc(hint.text)}</span>` : `${f.qty} ${esc(p.unit)}${f.qty === 1 ? '' : 's'}`}</div></div>
     ${btn(S.editing !== null ? 'Save changes' : 'Add to order', { act: 'addFramed', icon: S.editing !== null ? 'check' : 'arrow', attrs: ready ? '' : 'disabled' })}`;
   bumpTotal();
 }
@@ -2202,7 +2276,7 @@ function drawProducts(){
   };
 }
 
-const DEAL_TYPES = [['freebie', 'Buy some, get some free'], ['bulk', 'Discount when buying more'], ['combo', 'Combo deal']];
+const DEAL_TYPES = [['tiers', 'Class pack (price drops as they buy more)'], ['freebie', 'Buy some, get some free'], ['bulk', 'Discount when buying more'], ['combo', 'Combo deal']];
 function drawDeals(){
   const D = S.admin.dealDraft, keys = Object.keys(CONFIG.products);
   const prodSel = (d, i) => `<select class="inp" data-di="${i}" data-f="product" aria-label="Product">${keys.map(k => `<option value="${k}" ${d.product === k ? 'selected' : ''}>${esc(CONFIG.products[k].name)}</option>`).join('')}</select>`;
@@ -2215,6 +2289,10 @@ function drawDeals(){
       <div class="dgrid">
         ${d.type === 'freebie' ? `${prodSel(d, i)}${num(d, i, 'buy', 'Buy')}${num(d, i, 'free', 'Get free')}` : ''}
         ${d.type === 'bulk' ? `${prodSel(d, i)}${num(d, i, 'min', 'When buying at least')}${num(d, i, 'off', 'Off each', '₱')}` : ''}
+        ${d.type === 'tiers' ? `${prodSel(d, i)}<div class="tiered">${(d.tiers || []).map((t, j) => `<div class="tierrow"><label class="dnum"><span>Buy at least</span><input class="inp num" type="number" min="2" data-di="${i}" data-tj="${j}" data-f="tmin" value="${t.min}"></label>
+            <label class="dnum"><span>Off each</span><span class="pricein"><input class="inp num" type="number" min="1" data-di="${i}" data-tj="${j}" data-f="toff" value="${t.off}"></span></label>
+            ${smallBtn('', 'x', 'tierDel', 'plain', `data-i="${i}" data-j="${j}" aria-label="Remove step"`)}</div>`).join('')}
+            ${smallBtn('Add a step', 'plus', 'tierAdd', 'plain', `data-i="${i}"`)}</div>` : ''}
         ${d.type === 'combo' ? `<div class="dchecks">${keys.map(k => `<label class="choice" style="margin:0"><input type="checkbox" data-di="${i}" data-f="products" data-v="${k}" ${(d.products || []).includes(k) ? 'checked' : ''}><span>${esc(CONFIG.products[k].name)}</span></label>`).join('')}</div>${num(d, i, 'off', 'Off the order', '₱')}` : ''}
       </div>
       <div class="dfoot"><span class="tag hot">${ic('sparkle', 14)}<span id="dl${i}">${esc(dealLabel(d))}</span></span>${smallBtn('', 'trash', 'dealDel', 'plain', `data-i="${i}" aria-label="Remove deal"`)}</div>
@@ -2224,6 +2302,7 @@ function drawDeals(){
   form.oninput = form.onchange = e => {
     const t = e.target, d = D[+t.dataset.di]; if (!d) return;
     const f = t.dataset.f;
+    if (f === 'tmin' || f === 'toff') { d.tiers[+t.dataset.tj][f === 'tmin' ? 'min' : 'off'] = Math.max(1, Math.round(+t.value || 0)); const l = $('#dl' + t.dataset.di); if (l) l.textContent = dealLabel(d); return; }
     if (f === 'products') { d.products = d.products || []; const j = d.products.indexOf(t.dataset.v); if (t.checked && j < 0) d.products.push(t.dataset.v); if (!t.checked && j >= 0) d.products.splice(j, 1); }
     else if (f === 'enabled') d.enabled = t.checked;
     else if (f === 'type' || f === 'product') { d[f] = t.value; if (f === 'type' && e.type === 'change') { Object.assign(d, newDeal(t.value), { id: d.id, enabled: d.enabled }); drawDeals(); return; } }
@@ -2237,6 +2316,7 @@ function drawDeals(){
       if (d.type === 'combo' && (d.products || []).length < 2) { toast('A combo needs at least 2 products.'); return; }
       if (d.type === 'freebie' && (!(d.buy >= 1) || !(d.free >= 1))) { toast('Fill in how many to buy and how many are free.'); return; }
       if (d.type === 'bulk' && (!(d.min >= 2) || !(d.off >= 1))) { toast('A bulk deal needs at least 2 items and a peso amount.'); return; }
+      if (d.type === 'tiers') { d.tiers = (d.tiers || []).filter(t => t.min >= 2 && t.off >= 1).sort((a, b) => a.min - b.min); if (!d.tiers.length) { toast('A class pack needs at least one step.'); return; } }
       d.label = dealLabel(d);
     }
     try { await api.saveSettings({ deals: D }); S.settings.deals = clone(D); toast('Deals saved. Customers see them right away.'); drawDeals(); }
@@ -2246,6 +2326,7 @@ function drawDeals(){
 function newDeal(type){
   if (type === 'bulk') return { id: 'd_' + uid(), type, product: 'stickers', min: 3, off: 5, enabled: true };
   if (type === 'combo') return { id: 'd_' + uid(), type, products: ['stickers', 'keychains'], off: 10, enabled: true };
+  if (type === 'tiers') return { id: 'd_' + uid(), type, product: 'pins', tiers: [{ min: 10, off: 3 }, { min: 20, off: 5 }, { min: 30, off: 8 }, { min: 40, off: 10 }], enabled: true };
   return { id: 'd_' + uid(), type: 'freebie', product: 'pins', buy: 5, free: 1, enabled: true };
 }
 async function drawPromos(){
@@ -2410,7 +2491,8 @@ const ACTIONS = {
   },
   promoRemove: () => { S.promo = null; viewCheckoutKeep(); },
   fdBg: t => { const d = activeDesign(); if (d) { d.bg = t.dataset.c; drawFramed(); } },
-  fdQty: t => { buzz(5); S.fd.qty = Math.max(1, Math.min(CONFIG.maxQty, S.fd.qty + +t.dataset.d)); drawFramedCtrl(); drawFramedBottom(); },
+  fdQty: t => { buzz(5); setQty(S.fd.qty + +t.dataset.d); },
+  fdQtySet: t => { buzz([6, 20, 6]); setQty(+t.dataset.n); },
   addFramed: () => {
     const f = S.fd; if (!f || !f.front.imageId) return;
     const item = { type: f.type, size: f.size, qty: f.qty, addons: f.addons.slice(), front: { ...f.front } };
@@ -2424,6 +2506,8 @@ const ACTIONS = {
     try { await api.deleteOrder(o); S.admin.orders = S.admin.orders.filter(x => x.id !== o.id); toast(`${o.code} deleted.`); drawAdminBody(); }
     catch (e) { toast(friendlyError(e)); }
   },
+  tierAdd: t => { const d = S.admin.dealDraft[+t.dataset.i]; const last = (d.tiers || []).slice(-1)[0] || { min: 0, off: 0 }; d.tiers = (d.tiers || []).concat([{ min: last.min + 10, off: last.off + 2 }]); drawDeals(); },
+  tierDel: t => { S.admin.dealDraft[+t.dataset.i].tiers.splice(+t.dataset.j, 1); drawDeals(); },
   dealAdd: () => { S.admin.dealDraft.push(newDeal('freebie')); drawDeals(); },
   dealDel: t => { S.admin.dealDraft.splice(+t.dataset.i, 1); drawDeals(); },
   promoDel: async t => {
