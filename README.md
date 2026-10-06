@@ -55,6 +55,8 @@ If two deals fit the same product, the customer gets the bigger one. Combos add 
 
 **Promo codes:** codes customers type at checkout. Each can be % or ₱ off, with an optional minimum order, a max number of uses, and an end date. They're private, so only people you give a code to can use it. Turn a code off anytime with its switch.
 
+**Shop details:** pickup days, pickup times, pickup places (gates), earliest pickup, how many dates to offer, dates to skip (holidays and exams), grades in the dropdown, GCash on/off with name and number, per-design limits for pins/posters/keychains, how many pictures a customer can add, no-shows before blocking, how long pictures are kept, and the pin paper-circle and keychain insert sizes in mm.
+
 **Pickup signal:**, meaning what customers look for at the gate: "the person **holding / wearing** ___", like "holding a Stick2XU sign" or "wearing a yellow lanyard". Changes show up for customers right away.
 
 ## Changing things
@@ -63,11 +65,10 @@ If two deals fit the same product, the customer gets the bigger one. Combos add 
 |---|---|
 | Which products are available, prices, extras | Admin page → Settings |
 | Deals and promo codes | Admin page → Settings |
+| Pickup days, times, gates, dates to skip, grades, GCash, limits, pin and keychain sizes | Admin page → Settings → Shop details |
+| Sticker sheet grid, poster paper sizes | `CONFIG` in `index.html`, then push |
 | Max sticker sheets per order | Admin page → Settings → Products (Stickers) |
-| No-show limit | Supabase → Table Editor → `shop_settings` |
 | Pickup signal | Admin page → Settings |
-| Pickup days, times, gates, grades, GCash details, holidays | `CONFIG` at the top of `index.html`, then push |
-| Pin sizes (pin size and paper circle size), keychain insert size, poster sizes | `CONFIG.products` in `index.html`, then push |
 | Colors | The `--xu-...` values at the top of the `<style>` in `index.html` |
 
 ## Keeping it running

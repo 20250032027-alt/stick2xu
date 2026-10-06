@@ -44,7 +44,7 @@ supabaseAnonKey: 'eyJhbGciOi...',
 siteUrl: '',   // fill this in at step 5
 ```
 
-While you're there, check these:
+These are only starting values. Almost all of them can be changed later from the admin page under Settings → Shop details, without touching code:
 
 | Setting | What it does |
 |---|---|
