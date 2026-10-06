@@ -655,6 +655,15 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
 .sv-row span{min-width:0}
 .promorow{flex-wrap:nowrap}
 .promorow .inp{min-width:0}
+
+/* stickers on phones: the sheet comes first, like the other designers */
+@media(max-width:900px){.designer .stage{order:-1}}
+.sheet-empty{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;display:grid;justify-items:center;gap:6px;text-align:center;
+  background:var(--paper);border:2px solid var(--ink);border-radius:18px;padding:18px 22px;box-shadow:var(--shadow);cursor:pointer;width:max-content;max-width:80%}
+.sheet-empty .ui{width:46px;height:46px;border-radius:14px;background:var(--accent);color:#fff;border:2px solid var(--ink);display:grid;place-items:center}
+.sheet-empty b{font-family:var(--display);font-size:18px}
+.sheet-empty small{color:var(--muted);font-size:13px}
+.sheet-empty:active{transform:translate(-50%,-50%) scale(.97)}
 </style>
 </head>
 <body>
@@ -1269,9 +1278,9 @@ function progress(step){
 }
 function route(){
   const parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/'), page = parts[0];
-  window.scrollTo(0, 0);
   const views = { home: viewHome, shop: viewShop, design: viewDesign, make: () => viewMake(parts[1]), cart: viewCart, checkout: viewCheckout, done: viewDone, status: viewStatus, admin: viewAdmin };
   (views[page] || viewNotFound)();
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 }
 window.addEventListener('hashchange', route);
 window.addEventListener('scroll', () => { const t = $('.topwrap'); if (t) t.classList.toggle('scrolled', scrollY > 4); }, { passive: true });
@@ -1577,8 +1586,8 @@ function drawSheet(){
   $('#sheetArea').innerHTML = `
     <div class="tabs" role="tablist">${S.sheets.map((s, i) => `<button class="tab ${i === S.cur ? 'on' : ''}" type="button" role="tab" aria-selected="${i === S.cur}" data-act="tab" data-i="${i}">Sheet ${i + 1}</button>`).join('')}
       ${S.sheets.length < S.settings.maxSheets ? `<button class="tab add" type="button" data-act="addSheet">${ic('plus', 16)}Add a sheet</button>` : `<span class="muted small" style="align-self:center">${S.settings.maxSheets} sheets max per order</span>`}</div>
-    <p class="hint mob">${ic('sparkle', 18)}<span>${sel ? 'Tap an empty spot to move it.' : S.selImage ? 'Tap the sheet to stick your picture. Drag a sticker to move it.' : 'Add a picture above first.'}</span></p>
-    <div class="page" id="page">${cells}${stickers}</div>
+    <p class="hint mob">${ic('sparkle', 18)}<span>${sel ? 'Tap an empty spot to move it.' : S.selImage ? 'Tap the sheet to stick your picture. Drag a sticker to move it.' : 'Choose pictures to start, then tap the sheet to place them.'}</span></p>
+    <div class="page" id="page">${cells}${stickers}${!S.images.length ? `<label class="sheet-empty"><span class="ui">${ic('plus', 22)}</span><b>Choose pictures</b><small>Then tap the sheet to place them</small><input id="fileIn2" type="file" accept="image/*" multiple hidden></label>` : ''}</div>
     ${sel ? `<div class="selbar">
         ${smallBtn(sel.fit === 'fit' ? 'Fill the square' : 'Show whole picture', sel.fit === 'fit' ? 'fill' : 'fit', 'fitToggle', 'plain')}
         ${smallBtn('Remove', 'trash', 'removeItem', 'danger')}
@@ -1586,6 +1595,7 @@ function drawSheet(){
       : `<div class="under"><span>${sheet.items.length ? `${sheet.items.length} sticker${sheet.items.length > 1 ? 's' : ''} on this sheet. Drag one to move it, or tap it to change it.` : 'This sheet is empty. The white borders show where each sticker gets cut.'}</span>
         ${S.sheets.length > 1 ? smallBtn('Remove this sheet', 'trash', 'delSheet', 'plain') : ''}</div>`}
     ${liveAddons('stickers').length ? `<div class="mob-only extras-mob"><div class="stephead"><i>${ic('plus', 14)}</i>Extras</div>${addonChecks('stickers', S.stickerAddons)}</div>` : ''}`;
+  const f2 = $('#fileIn2'); if (f2) f2.addEventListener('change', onFiles);
   $('#page').querySelectorAll('.stk').forEach(el => el.addEventListener('pointerdown', e => startStickerDrag(e, el)));
 }
 
@@ -1758,7 +1768,7 @@ function drawFramedCtrl(){
     ${d && d.imageId ? `<section>${step('Adjust')}
       <div class="zoomrow">${ic('search', 18)}<input type="range" id="zoom" min="0.4" max="3" step="0.01" value="${d.zoom}" aria-label="Zoom">
         ${smallBtn('Reset', '', 'fdReset', 'plain')}</div>
-      <p class="hint" style="margin-top:10px">${ic('move', 18)}<span>Drag the picture to move it. Slide left to zoom out and show more of it.</span></p>
+      <p class="hint" style="margin-top:10px">${ic('move', 18)}<span>Drag the picture to move it. Pinch with two fingers, or use the slider, to zoom in and out.</span></p>
       <p class="lab" style="margin:16px 0 8px">Background <span class="muted small" style="font-weight:500">shows when you zoom out</span></p>
       ${(() => { const bg = (d.bg || '#ffffff').toLowerCase(), custom = bg !== '#ffffff'; return `<div class="swatches">
         <button type="button" class="sw ${custom ? '' : 'on'}" style="background:#fff" data-act="fdBg" data-c="#ffffff" aria-label="White background" aria-pressed="${!custom}"></button>
@@ -1842,25 +1852,49 @@ function placeImg(){
   const img2 = $('#fimg2'); if (img2) img2.setAttribute('style', fracStyle(L));
   $('#reswarn').innerHTML = L.dpi < 150 ? `<p class="warnline">${ic('warn', 16)}This picture might print blurry at this size. Try a bigger picture or zoom out.</p>` : '';
 }
+function syncZoomSlider(d){
+  const z = $('#zoom'); if (!z) return;
+  z.value = d.zoom; z.style.setProperty('--p', `${(z.value - z.min) / (z.max - z.min) * 100}%`);
+}
+/* One finger (or mouse) drags the picture. Two fingers pinch to zoom, and moving both drags too. */
 function bindPan(){
   const fr = $('#frame'); if (!fr || fr.dataset.locked === 'true') return;
-  let st = null;
+  const pts = new Map(); let st = null;
+  const begin = () => {
+    const d = activeDesign(); if (!d || !d.imageId) { st = null; return; }
+    const p = [...pts.values()], r = fr.getBoundingClientRect();
+    if (p.length === 1) st = { mode: 'pan', x: p[0].x, y: p[0].y, ox: d.ox, oy: d.oy, r };
+    else if (p.length >= 2) {
+      const [a, b] = p;
+      st = { mode: 'pinch', dist: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)), zoom: d.zoom, mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2, ox: d.ox, oy: d.oy, r };
+    } else st = null;
+  };
   fr.addEventListener('pointerdown', e => {
-    const d = activeDesign(); if (!d || !d.imageId) return;
-    st = { x: e.clientX, y: e.clientY, ox: d.ox, oy: d.oy, r: fr.getBoundingClientRect() };
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
     try { fr.setPointerCapture(e.pointerId); } catch {}
+    begin();
   });
   fr.addEventListener('pointermove', e => {
-    if (!st) return; const d = activeDesign(); if (!d) return;
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const d = activeDesign(); if (!st || !d) return;
     e.preventDefault();
-    d.ox = st.ox + (e.clientX - st.x) / st.r.width; d.oy = st.oy + (e.clientY - st.y) / st.r.height; placeImg();
+    const p = [...pts.values()];
+    if (st.mode === 'pan' && p.length === 1) {
+      d.ox = st.ox + (p[0].x - st.x) / st.r.width; d.oy = st.oy + (p[0].y - st.y) / st.r.height;
+    } else if (st.mode === 'pinch' && p.length >= 2) {
+      const [a, b] = p, dist = Math.hypot(a.x - b.x, a.y - b.y);
+      d.zoom = Math.max(0.4, Math.min(3, st.zoom * dist / st.dist));
+      d.ox = st.ox + ((a.x + b.x) / 2 - st.mx) / st.r.width; d.oy = st.oy + ((a.y + b.y) / 2 - st.my) / st.r.height;
+      syncZoomSlider(d);
+    }
+    placeImg();
   });
-  const end = () => { st = null; };
+  const end = e => { pts.delete(e.pointerId); begin(); };
   fr.addEventListener('pointerup', end); fr.addEventListener('pointercancel', end);
   fr.addEventListener('wheel', e => {
     const d = activeDesign(); if (!d || !d.imageId) return;
-    e.preventDefault(); d.zoom = Math.max(0.4, Math.min(3, d.zoom - e.deltaY * 0.0015)); placeImg();
-    const z = $('#zoom'); if (z) { z.value = d.zoom; z.style.setProperty('--p', `${(z.value - z.min) / (z.max - z.min) * 100}%`); }
+    e.preventDefault(); d.zoom = Math.max(0.4, Math.min(3, d.zoom - e.deltaY * 0.0015)); placeImg(); syncZoomSlider(d);
   }, { passive: false });
 }
 function drawFramedBottom(){
