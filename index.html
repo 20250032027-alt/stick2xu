@@ -622,13 +622,19 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
 .pfoot{margin-top:12px!important}
 .gold{position:relative;display:inline-flex;max-width:100%}
 .gold-in{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:6px;max-width:100%;height:32px;padding:0 12px 0 10px;border-radius:999px;
-  background:linear-gradient(120deg,#FFF9EA 0%,#FBEFCB 45%,#FFF6DD 100%);border:1px solid #EED9A2;color:#6B4B00;font-weight:700;font-size:12.5px}
+  /* warm gold with a soft built-in highlight, so it looks shiny even when still */
+  background:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.12) 48%,rgba(255,255,255,0) 52%),
+             linear-gradient(115deg,#F3D68A 0%,#EFC965 30%,#F7E3A4 50%,#EBC25A 72%,#F4DA92 100%);
+  background-size:100% 100%,220% 100%;animation:goldDrift 8s ease-in-out infinite;
+  border:1px solid #D8B04F;color:#4E3500;font-weight:800;font-size:12.5px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(201,149,26,.22)}
 .gold-in .gt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative;z-index:2}
-.gold-in > svg{flex:none;position:relative;z-index:2;color:#C9951A}
+.gold-in > svg{flex:none;position:relative;z-index:2;color:#8A5E00}
 .gold-in::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(110deg,transparent 38%,rgba(255,255,255,.9) 50%,transparent 62%);transform:translateX(-130%);animation:sheen 6s ease-in-out infinite}
+  background:linear-gradient(110deg,transparent 36%,rgba(255,255,255,.85) 50%,transparent 64%);transform:translateX(-130%);animation:sheen 5s ease-in-out infinite}
+@keyframes goldDrift{0%,100%{background-position:0 0,0% 50%}50%{background-position:0 0,100% 50%}}
 /* little gold stars around the tag */
-.star{position:absolute;z-index:3;pointer-events:none;background:#E0A92E;
+.star{position:absolute;z-index:3;pointer-events:none;background:#D49A1E;
   clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);animation:starTwinkle 3.6s ease-in-out infinite}
 .star.s1{width:10px;height:10px;right:-4px;top:-5px}
 .star.s2{width:7px;height:7px;right:14px;top:-8px;animation-delay:1.2s}
