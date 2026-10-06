@@ -58,7 +58,7 @@ While you're there, check these:
 | `sheet` | Paper size and grid. Default is A4 with a 4 × 6 grid. Match it to the sticker paper. |
 | `products` | Physical sizes. Pins: `faceMm` is the pin size, `cutMm` is the paper circle that wraps around it (check your pin machine). Keychains: `wMm`/`hMm` is the paper insert, so measure your acrylic cases. |
 
-Prices, which products are available, extras (like inkjet), and the pickup signal are **not** in CONFIG. Change them from the admin page under **Settings**. Pins, posters, and keychains start switched off, so turn them on there when you're ready to sell them.
+Prices, which products are available, extras (like inkjet), deals, promo codes, and the pickup signal are **not** in CONFIG. Change them from the admin page under **Settings**. Pins, posters, and keychains start switched off, so turn them on there when you're ready to sell them.
 
 ---
 
@@ -128,6 +128,7 @@ Do this on a phone using mobile data, not just on a laptop:
 | "Upload failed" at checkout | The storage part of `schema.sql` didn't run; run the whole file again |
 | Error placing an order after updating the site | `schema.sql` is older than `index.html`; run the latest `schema.sql` |
 | "Permission denied for table orders" or "The database blocked this" | Run the latest `schema.sql` again; it includes the table permissions |
+| "That promo code doesn't work" for a code you made | The code is switched off, past its end date, or was typed differently |
 | "Something in your order isn't available right now" | A product, size, or extra in the order was switched off in Settings |
 | Admin logs in but sees no orders | That email isn't in the `admins` table, or it's spelled differently |
 | Admin can't log in | User wasn't created under Authentication → Users, or the password is wrong |

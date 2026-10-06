@@ -45,6 +45,15 @@ After 2 no-shows, that nickname and section can't order anymore. You can change 
 
 **Products and prices:** switch stickers, pins, posters, and keychains on or off. Anything switched off disappears from the site right away. Set the price of each size, and turn single sizes off (for example, hide A3 posters). Each product can also have **extras**, like "Inkjet print +₱30 (brighter, more vivid colors)". An extra has a name, a short reason shown in brackets, a price added per sheet or per item, and an on/off switch. Add as many as you want.
 
+**Deals:** discounts that apply by themselves when an order qualifies. There are three kinds:
+- **Buy some, get some free**, like "Buy 5 pins, get 1 free". The cheapest ones are the free ones.
+- **Discount when buying more**, like "3+ sheets: ₱5 off each".
+- **Combo**, like "Stickers + keychain: ₱10 off" when both are in the order.
+
+If two deals fit the same product, the customer gets the bigger one. Combos add on top. Live deals show as a gold strip on the home page, ribbons on the product cards, and "add 1 more to save" hints while designing and in the cart. The server always does the math, so customers can't fake a discount.
+
+**Promo codes:** codes customers type at checkout. Each can be % or ₱ off, with an optional minimum order, a max number of uses, and an end date. They're private, so only people you give a code to can use it. Turn a code off anytime with its switch.
+
 **Pickup signal:**, meaning what customers look for at the gate: "the person **holding / wearing** ___", like "holding a Stick2XU sign" or "wearing a yellow lanyard". Changes show up for customers right away.
 
 ## Changing things
@@ -52,6 +61,7 @@ After 2 no-shows, that nickname and section can't order anymore. You can change 
 | To change | Where |
 |---|---|
 | Which products are available, prices, extras | Admin page → Settings |
+| Deals and promo codes | Admin page → Settings |
 | Max sticker sheets per order, no-show limit | Supabase → Table Editor → `shop_settings` |
 | Pickup signal | Admin page → Settings |
 | Pickup days, times, gates, grades, GCash details, holidays | `CONFIG` at the top of `index.html`, then push |
