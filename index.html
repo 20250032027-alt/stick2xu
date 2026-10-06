@@ -616,6 +616,36 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
 .daypick{display:flex;flex-wrap:wrap;gap:6px}
 .daypick .choice{margin:0;min-height:44px;padding:6px 12px}
 .tagx{border:0;background:transparent;cursor:pointer;padding:0 0 0 4px;display:inline-grid;place-items:center;color:inherit}
+
+/* ---------- gold deal tag ---------- */
+.dealslot{margin-top:auto;padding-top:12px;min-height:46px;display:flex;align-items:flex-end}
+.pfoot{margin-top:12px!important}
+.gold{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:5px;max-width:100%;height:34px;padding:0 11px 0 9px;border-radius:999px;
+  background:linear-gradient(115deg,#A8761E 0%,#D9AC45 14%,#FFF0A6 27%,#E6BB4E 40%,#B9862B 55%,#F3D774 70%,#FFF6C9 78%,#C7922E 92%,#A8761E 100%);
+  background-size:260% 100%;animation:goldflow 7s ease-in-out infinite;
+  border:1px solid #9A6C17;color:#3B2700;font-weight:800;font-size:12.5px;letter-spacing:.01em;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65),inset 0 -1px 0 rgba(120,80,10,.35),0 3px 10px rgba(185,134,43,.35);text-shadow:0 1px 0 rgba(255,246,201,.55)}
+.gold .gt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative;z-index:2}
+.gold > svg{flex:none;position:relative;z-index:2;color:#5A3D00;animation:twinkle 2.6s ease-in-out infinite}
+.gold::after{content:"";position:absolute;inset:-2px;z-index:1;pointer-events:none;
+  background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.95) 50%,transparent 65%);transform:translateX(-130%);animation:sheen 4.5s ease-in-out infinite}
+.glint{position:absolute;z-index:3;width:9px;height:9px;background:#fff;pointer-events:none;opacity:0;
+  clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);filter:drop-shadow(0 0 2px rgba(255,255,255,.9));animation:glint 3.2s ease-in-out infinite}
+.glint.g1{right:12%;top:4px}.glint.g2{left:42%;bottom:4px;width:7px;height:7px;animation-delay:1.1s}.glint.g3{right:36%;top:6px;width:6px;height:6px;animation-delay:2.2s}
+@keyframes goldflow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes glint{0%,70%,100%{opacity:0;transform:scale(.2) rotate(0)}80%{opacity:1;transform:scale(1) rotate(45deg)}90%{opacity:.2;transform:scale(.5) rotate(90deg)}}
+.pcard:nth-child(2) .gold::after,.pcard:nth-child(2) .glint{animation-delay:1.4s}
+.pcard:nth-child(3) .gold::after,.pcard:nth-child(3) .glint{animation-delay:2.8s}
+.pcard:nth-child(4) .gold::after,.pcard:nth-child(4) .glint{animation-delay:.7s}
+/* ---------- bottom bar hint on its own line ---------- */
+.bottombar .in{flex-wrap:wrap;row-gap:6px}
+.bb-hint{flex-basis:100%;display:flex;gap:6px;align-items:center;font-size:13px;font-weight:700;color:#6B4B00}
+.bb-hint svg{flex:none;color:#C9951A}
+/* ---------- small formatting fixes ---------- */
+.sv-row b{white-space:nowrap;flex:none}
+.sv-row span{min-width:0}
+.promorow{flex-wrap:nowrap}
+.promorow .inp{min-width:0}
 </style>
 </head>
 <body>
@@ -989,7 +1019,7 @@ function dealLabel(d){
   if (d.type === 'bulk') return `${d.min} or more ${unitWord(d.product, 2)}: ${money(d.off)} off each`;
   if (d.type === 'tiers') return `Class pack: up to ${money(Math.max(0, ...(d.tiers || []).map(t => t.off)))} off each ${unitWord(d.product, 1)}`;
   const ps = (d.products || []).map(name);
-  return `${ps.length ? ps[0][0].toUpperCase() + ps[0].slice(1) : ''}${ps.length > 2 ? ps.slice(1, -1).map(x => ', ' + x).join('') + ',' : ''}${ps.length > 1 ? ' and ' + ps[ps.length - 1] : ''} together: ${money(d.off)} off`;
+  return `Combo: ${ps.join(' + ')}`;
 }
 function computeDeals(items){
   const lines = items.map(it => ({ type: it.type, price: unitPrice(it), units: itemUnits(it) })).filter(l => l.units > 0);
@@ -1048,13 +1078,13 @@ function cardDeal(key){
   const d = liveDeals().find(x => x.type !== 'tiers' && (x.product === key || (x.type === 'combo' && (x.products || []).includes(key))));
   if (!d) return '';
   let text;
-  if (d.type === 'freebie') text = `Buy ${d.buy} ${unitWord(key, d.buy)}, get ${d.free} free`;
-  else if (d.type === 'bulk') text = `${money(d.off)} off each when you get ${d.min} or more`;
+  if (d.type === 'freebie') text = `Buy ${d.buy}, get ${d.free} free`;
+  else if (d.type === 'bulk') text = `${money(d.off)} off each, ${d.min} or more`;
   else {
-    const others = d.products.filter(k => k !== key).map(k => (CONFIG.products[k] || { unit: k }).unit);
-    text = `${money(d.off)} off when you add ${others.map(u => 'a ' + u).join(' and ')}`;
+    const short = { stickers: 'stickers', pins: 'a pin', posters: 'a poster', keychains: 'a keychain' };
+    text = `${money(d.off)} off with ${d.products.filter(k => k !== key).map(k => short[k] || k).join(' + ')}`;
   }
-  return `<p class="cdeal">${ic('sparkle', 14)}<span>${esc(text)}</span></p>`;
+  return `<span class="gold" title="${esc(text)}">${ic('sparkle', 14)}<span class="gt">${esc(text)}</span><i class="glint g1"></i><i class="glint g2"></i><i class="glint g3"></i></span>`;
 }
 const productDeals = key => liveDeals().filter(d => d.product === key || (d.type === 'combo' && (d.products || []).includes(key)));
 const cartUnits = () => S.cart.reduce((t, it) => t + itemUnits(it), 0);
@@ -1217,7 +1247,7 @@ let api;
 function topbar(){
   const n = S.cart.length, onCart = location.hash.startsWith('#/cart');
   return `<div class="topwrap"><header class="top"><a class="mark" href="#/" aria-label="${esc(CONFIG.shopName)} home">Stick<b>2</b>XU</a>
-    <div class="topacts ${n ? 'has-cart' : ''}">
+    <div class="topacts ${n && !onCart ? 'has-cart' : ''}">
       ${n && !onCart ? `<a class="pilllink cartpill" href="#/cart" aria-label="Your order, ${n} item${n > 1 ? 's' : ''}">${ic('sticker', 18)}<span class="lbl">Cart</span><b class="badge-n num">${n}</b></a>` : ''}
       <a class="pilllink" href="#/status" aria-label="Check my order">${ic('box', 18)}<span class="lbl">My order</span></a>
     </div></header></div>`;
@@ -1413,7 +1443,7 @@ function viewShop(){
     <p class="muted" style="margin:8px 0 0">Pick one to start. You can add more to the same order after.</p>
     ${live.length ? `<div class="pcards">${live.map(p => `<a class="pcard" href="${designRoute(p.key)}">
         <div class="illo">${productIllo(p.key)}</div>
-        <h3>${esc(p.name)}</h3><p>${esc(p.blurb)}</p>${cardDeal(p.key)}
+        <h3>${esc(p.name)}</h3><p>${esc(p.blurb)}</p><div class="dealslot">${cardDeal(p.key)}</div>
         <div class="pfoot"><span class="price"><small>${liveSizes(p.key).length > 1 ? 'from' : '&nbsp;'}</small><b class="num">${money(fromPrice(p.key))}</b><small>per ${esc(p.unit)}</small></span>
           <span class="go">${ic('arrow', 18)}</span></div></a>`).join('')}</div>`
       : `<div class="empty" style="margin-top:20px">${ic('box', 36)}<b>Nothing is available right now.</b><span>Check back soon.</span></div>`}
@@ -1601,8 +1631,8 @@ function drawBottom(){
   const each = unitPrice({ type: 'stickers', size: 'a4', addons: S.stickerAddons });
   const draft = { type: 'stickers', size: 'a4', addons: S.stickerAddons, sheets: S.sheets };
   const hint = used ? dealNudges(S.cart.filter((_, i) => i !== S.editing).concat([draft])).find(t => t.product === 'stickers') : null;
-  $('#bottom').innerHTML = `<div><div class="tot num">${money(used * each)}</div>
-      <div class="sub">${hint ? `<span class="hintpill">${ic('sparkle', 13)}${esc(hint.text)}</span>` : `${count} sticker${count === 1 ? '' : 's'} on ${used} sheet${used === 1 ? '' : 's'}`}</div></div>
+  $('#bottom').innerHTML = `${hint ? `<div class="bb-hint">${ic('sparkle', 13)}<span>${esc(hint.text)}</span></div>` : ''}<div><div class="tot num">${money(used * each)}</div>
+      <div class="sub">${count} sticker${count === 1 ? '' : 's'} on ${used} sheet${used === 1 ? '' : 's'}</div></div>
     ${btn(S.editing !== null ? 'Save changes' : 'Add to order', { act: 'addStickers', icon: S.editing !== null ? 'check' : 'arrow', attrs: count ? '' : 'disabled' })}`;
   bumpTotal();
 }
@@ -1828,8 +1858,8 @@ function drawFramedBottom(){
   const f = S.fd, p = P(f.type);
   const ready = !!f.front.imageId && !(f.type === 'keychains' && f.backMode === 'different' && !f.back.imageId);
   const others = S.cart.filter((_, i) => i !== S.editing), hint = dealNudges(others.concat([f])).find(t => t.product === f.type);
-  $('#bottom').innerHTML = `<div><div class="tot num">${money(f.qty * unitPrice(f))}</div>
-      <div class="sub">${hint ? `<span class="hintpill">${ic('sparkle', 13)}${esc(hint.text)}</span>` : `${f.qty} ${esc(p.unit)}${f.qty === 1 ? '' : 's'}`}</div></div>
+  $('#bottom').innerHTML = `${hint ? `<div class="bb-hint">${ic('sparkle', 13)}<span>${esc(hint.text)}</span></div>` : ''}<div><div class="tot num">${money(f.qty * unitPrice(f))}</div>
+      <div class="sub">${f.qty} ${esc(p.unit)}${f.qty === 1 ? '' : 's'}</div></div>
     ${btn(S.editing !== null ? 'Save changes' : 'Add to order', { act: 'addFramed', icon: S.editing !== null ? 'check' : 'arrow', attrs: ready ? '' : 'disabled' })}`;
   bumpTotal();
 }
@@ -1896,7 +1926,7 @@ function viewCheckout(){
       <label class="choice"><input type="checkbox" id="promise"><span id="promiseTxt"></span></label>
       <p class="ferr" id="e-promise" role="alert"></p>
       <div class="field" style="margin:18px 0 0"><label class="lab" for="promo">Promo code <span class="muted small" style="font-weight:500">(if you have one)</span></label>
-        <div class="qrrow"><input class="inp" id="promo" maxlength="20" autocapitalize="characters" autocomplete="off" value="${esc(S.promo ? S.promo.code : '')}" style="text-transform:uppercase">
+        <div class="qrrow promorow"><input class="inp" id="promo" maxlength="20" autocapitalize="characters" autocomplete="off" value="${esc(S.promo ? S.promo.code : '')}" style="text-transform:uppercase">
           ${smallBtn(S.promo ? 'Remove' : 'Apply', S.promo ? 'x' : 'check', S.promo ? 'promoRemove' : 'promoApply', 'plain')}</div>
         <p class="ferr" id="e-promo" role="alert"></p></div>
       <div id="sumBox">${checkoutSummary()}</div>
@@ -2020,7 +2050,7 @@ function viewDone(){
     <section class="panel" style="margin-top:22px">
       <h3>Your pickup</h3>
       <div class="pgrid">
-        <div class="pt hi"><span class="k">${ic('calendar', 16)}When</span><b>${esc(fmtDate(o.pickup_date, { weekday: 'long', month: 'short', day: 'numeric' }))}</b><span>${esc(o.pickup_time || '')}</span></div>
+        <div class="pt hi"><span class="k">${ic('calendar', 16)}When</span><b>${esc(fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' }))}</b><span>${esc(o.pickup_time || '')}</span></div>
         <div class="pt"><span class="k">${ic('pin', 16)}Where</span><b>${esc(o.pickup)}</b><span>Inside campus</span></div>
         <div class="pt"><span class="k">${ic('cash', 16)}Bring</span><b class="num">${money(o.total)}</b><span>${gcash ? 'If you already sent it by GCash, bring the reference number' : 'In cash, exact amount if you can'}</span></div>
         <div class="pt"><span class="k">${ic('search', 16)}Look for</span><b>The person ${esc(S.settings.signalVerb)} ${esc(S.settings.signalItem)}</b><span>They'll be at the gate</span></div>
