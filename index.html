@@ -418,11 +418,6 @@ th{color:var(--muted);font-weight:700}
 .sv-save{display:flex;gap:6px;align-items:center;justify-content:center;margin-top:4px;padding-top:8px;border-top:1px dashed rgba(23,131,74,.4);font-family:var(--display);font-weight:800;font-size:20px;color:#0F5F34}
 .nudgebar{display:flex;gap:8px;align-items:center;background:var(--gold-soft);border:2px solid var(--xu-gold);border-radius:12px;padding:10px 12px;font-weight:700;font-size:15px;margin:0 0 14px}
 .nudgebar svg{flex:none;color:#B8860B}
-.hintpill{display:inline-flex;gap:5px;align-items:center;background:var(--gold-soft);border:1.5px solid var(--xu-gold);color:var(--ink);font-weight:700;border-radius:999px;padding:2px 9px;font-size:12.5px;line-height:1.3}
-.pcard .illo .ribbon svg{width:14px;height:14px;transform:none;flex:none}
-.ribbon{white-space:nowrap;position:absolute;left:10px;top:10px;z-index:2;display:inline-flex;gap:5px;align-items:center;background:var(--xu-gold);color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:4px 10px;font-weight:800;font-size:12.5px;box-shadow:2px 2px 0 var(--ink);max-width:calc(100% - 20px)}
-.dealstrip{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--xu-gold);color:var(--ink);border:2px solid var(--ink);border-radius:16px;padding:10px 14px;margin:6px 0 4px;text-decoration:none;box-shadow:var(--shadow-sm);font-size:15px}
-.dealstrip span{flex:1}
 .dgrid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;align-items:end;margin:6px 0 10px}
 .dnum{display:grid;gap:4px;font-size:13px;font-weight:700;color:var(--muted)}
 .dnum .inp{min-height:44px;font-size:16px;padding:8px 10px;color:var(--ink)}
@@ -430,28 +425,6 @@ th{color:var(--muted);font-weight:700}
 .dfoot{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .pgrid2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 @media(max-width:600px){.dgrid,.pgrid2{grid-template-columns:1fr 1fr}.dgrid > select{grid-column:1/-1}}
-.deals{margin:22px 0 4px}
-.deals-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
-.deals-h svg{color:#C9951A}
-.deals-h b{font-family:var(--display);font-size:20px}
-.dealrow{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);gap:16px;overflow-x:auto;padding:4px 6px 12px 2px;scrollbar-width:thin}
-.ticket{position:relative;display:grid;align-content:start;gap:2px;text-decoration:none;color:var(--ink);background:var(--xu-gold);border:2px solid var(--ink);border-radius:18px;padding:16px 18px 14px;box-shadow:var(--shadow);transition:transform .25s var(--ease),box-shadow .25s var(--ease);
-  -webkit-mask:radial-gradient(circle 11px at 0 58%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 11px at 100% 58%,#0000 98%,#000) right/51% 100% no-repeat;
-          mask:radial-gradient(circle 11px at 0 58%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 11px at 100% 58%,#0000 98%,#000) right/51% 100% no-repeat}
-.ticket:hover{transform:translate(-2px,-3px) rotate(-.6deg)}
-.ticket.t-tiers{background:var(--ink);color:#fff}
-.ticket.t-combo{background:#fff}
-.ticket.t-bulk{background:var(--accent-soft)}
-.t-tag{justify-self:start;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;background:rgba(40,57,113,.12);padding:3px 9px;border-radius:999px;margin-bottom:6px}
-.t-tiers .t-tag{background:var(--xu-gold);color:var(--ink)}
-.t-pre{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;opacity:.8}
-.t-big{font-family:var(--display);font-weight:800;font-size:44px;line-height:.95;letter-spacing:-.02em}
-.t-tiers .t-big{color:var(--xu-gold)}
-.t-sub{font-size:14px;font-weight:600;margin-top:4px;padding-bottom:10px;border-bottom:2px dashed currentColor;opacity:.9}
-.t-steps{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.t-steps i{font-style:normal;font-size:12px;font-weight:700;background:rgba(255,255,255,.12);border-radius:8px;padding:3px 7px}
-.t-steps b{margin-right:4px;color:var(--xu-gold)}
-.t-go{display:inline-flex;gap:6px;align-items:center;font-weight:800;font-size:14px;margin-top:10px}
 .nudgebar .nb{flex:1;display:grid;gap:6px}
 .meter{display:block;height:8px;border-radius:99px;background:rgba(40,57,113,.12);overflow:hidden}
 .meter b{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--xu-gold),#E8A317);transition:width .5s var(--ease)}
@@ -577,13 +550,9 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
 }
 
 /* ---------- calm deals: noticeable, never pushy ---------- */
-.cdeal{display:flex;gap:6px;align-items:flex-start;margin:8px 0 0;font-size:14px;font-weight:600;color:var(--muted);line-height:1.35}
-.cdeal svg{flex:none;color:#C9951A;margin-top:2px}
 .nudgebar{background:transparent;border:0;border-radius:0;padding:0;margin:2px 0 16px;font-weight:600;font-size:14px;color:var(--muted)}
 .nudgebar svg{color:#C9951A}
 .meter{height:4px;max-width:240px}
-.hintpill{background:transparent;border:0;padding:0;color:var(--muted);font-weight:600;font-size:12.5px}
-.hintpill svg{color:#C9951A}
 .savings{border:1px solid var(--line);background:var(--paper);border-radius:14px;gap:4px}
 .sv-row.deal{font-weight:600}
 .sv-save{font-family:var(--body);font-size:15px;font-weight:700;border-top:1px solid var(--line);justify-content:flex-end}
@@ -598,16 +567,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
 @keyframes bob{0%,100%{transform:rotate(var(--r)) translateY(0)}50%{transform:rotate(var(--r)) translateY(-5px)}}
 
 /* deal line: a soft gold shimmer that catches the eye, then lets it go */
-.cdeal{position:relative;overflow:hidden;align-self:start;display:inline-flex;gap:6px;align-items:flex-start;margin:10px 0 0;padding:5px 10px 5px 8px;border-radius:10px;
-  background:linear-gradient(100deg,#FFF6DA,#FFEFC2 50%,#FFF6DA);border:1px solid #F1D58A;color:#6B4B00;font-weight:700;font-size:13.5px}
-.cdeal::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.85) 48%,transparent 66%);transform:translateX(-120%);animation:sheen 5.5s ease-in-out infinite}
-.cdeal svg{color:#C9951A;animation:twinkle 2.8s ease-in-out infinite}
 @keyframes sheen{0%,62%{transform:translateX(-120%)}82%,100%{transform:translateX(120%)}}
-@keyframes twinkle{0%,100%{transform:scale(1) rotate(0);opacity:.9}50%{transform:scale(1.18) rotate(12deg);opacity:1}}
-.pcard:nth-child(2) .cdeal::after{animation-delay:1.2s}.pcard:nth-child(3) .cdeal::after{animation-delay:2.4s}.pcard:nth-child(4) .cdeal::after{animation-delay:3.6s}
-.pcard .cdeal{flex:none}
-.pcard .cdeal,.pcard .cdeal span{color:#6B4B00}
 .cfgsec{padding:14px 0;border-top:1px dashed var(--line)}
 .cfgsec .sub{font-weight:700;font-size:13px;color:var(--muted);margin:0 0 8px;text-transform:uppercase;letter-spacing:.06em}
 .cfgrow{display:grid;grid-template-columns:1fr 150px auto;gap:8px;margin-bottom:8px}
@@ -678,6 +638,51 @@ label.empty-f:active .ui{transform:scale(.94)}
 .pinwrap .frame label.empty-f small{white-space:nowrap}
 .kc .frame label.empty-f{padding:8px}
 .kc .frame label.empty-f .ui{width:38px;height:38px}
+
+/* ---------- handoff: notice, confirm, reschedule, expectations ---------- */
+.notice{background:var(--accent-soft);border-bottom:1px solid #C9D3EE;color:var(--ink)}
+.notice.alert{background:#FFF1D6;border-bottom-color:#EBCB7E}
+.notice .in{max-width:1120px;margin:0 auto;padding:10px 20px;display:flex;gap:10px;align-items:center;font-weight:600;font-size:15px}
+.notice .in > svg{flex:none;color:var(--accent)}
+.notice.alert .in > svg{color:#B07D10}
+.notice .in span{flex:1}
+.nx{flex:none;width:34px;height:34px;border-radius:50%;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--muted)}
+.nx:hover{background:rgba(40,57,113,.08)}
+.note{display:flex;gap:10px;align-items:flex-start;border-radius:14px;padding:14px;margin-top:16px;font-size:15px}
+.note svg{flex:none;margin-top:2px}
+.note.warn{background:#FFF4DC;border:1px solid #EED9A2}
+.note.warn svg{color:#B07D10}
+.note.gold{flex-direction:column;align-items:stretch;gap:12px;background:linear-gradient(160deg,#FFF8E6,#fff 70%);border:1px solid #EED9A2}
+.note.gold b{font-family:var(--display);font-size:20px}
+.note.gold > div > span{color:var(--muted)}
+.okline{display:flex;gap:8px;align-items:center;margin:16px 0 0;color:#0F5F34;font-weight:700;font-size:15px}
+.moveform{margin-top:18px;padding:16px;border:1px solid var(--line);border-radius:16px;display:grid;gap:10px;background:#FAFBFD}
+.moveform .mh{display:flex;gap:8px;align-items:center;font-family:var(--display);font-size:18px}
+.moveform .mh svg{color:#C9951A}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.mgrid .choice{margin:0}
+.mgrid small{color:var(--muted);font-weight:500;margin-left:4px}
+.gtk{margin:4px 0 16px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:#FAFBFD}
+.gtk > b{display:block;font-family:var(--display);font-size:17px;margin-bottom:8px}
+.gtk ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.gtk li{display:grid;grid-template-columns:20px 1fr;gap:8px;font-size:14px;color:var(--muted)}
+.gtk li svg{color:#C9951A;margin-top:2px}
+.gtk li b{color:var(--ink)}
+
+.pickupbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 14px;margin-bottom:16px;border:1px solid var(--line);border-radius:14px;background:#FAFBFD}
+.pickupbar > div{display:flex;gap:10px;align-items:flex-start;font-size:15px;flex:1;min-width:220px}
+.pickupbar svg{flex:none;margin-top:2px;color:var(--accent)}
+.pickupbar.on{background:var(--ok-soft);border-color:#9FD7B5}
+.pickupbar.on svg{color:var(--ok)}
+.tag.warn{background:#FFF1D6;color:#7A5600}
+
+.tghead{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.tgsteps{border:1px solid var(--line);border-radius:14px;padding:10px 14px;background:#FAFBFD;font-size:15px}
+.tgsteps summary{cursor:pointer;font-weight:700}
+.tgsteps ol{margin:10px 0 6px;padding-left:20px;display:grid;gap:8px}
+.tgsteps code{background:#EEF1F7;border-radius:6px;padding:1px 6px;font-size:13px}
+.tgevents{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.mgrid .choice small{display:block}
 </style>
 </head>
 <body>
@@ -765,6 +770,10 @@ const CONFIG = {
 
   gcash: { enabled: true, name: 'J. Dela Cruz', number: '0917 000 0000' },
 
+  confirmDaysBefore: 1,     // customers tap "I'll be there" by this many days before pickup; only confirmed orders get printed
+  maxReschedules: 2,        // how many times a customer can move their own pickup day
+  refundDays: 3,            // GCash refunds for cancelled orders go out within this many days
+  notice: { on: false, kind: 'info', text: '' },   // banner on every customer page (set in admin)
   maxPictures: 20,
   cleanupDays: 30
 };
@@ -785,8 +794,6 @@ const safeLS = {
 const readJSON = k => { try { return JSON.parse(safeLS.get(k) || 'null'); } catch { return null; } };
 const ACTIVE = ['pending','approved','printing','ready'];
 const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-const makeCode = () => 'STK-' + Array.from({ length: 4 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
-const blobToDataURL = b => new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); });
 const fmtTime = iso => new Date(iso).toLocaleString([], { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
 const radio = (form, name) => { const r = form.querySelector(`input[name="${name}"]:checked`); return r ? r.value : ''; };
 const revoke = u => { try { URL.revokeObjectURL(u); } catch {} };
@@ -801,6 +808,18 @@ const pickupDaysText = () => CONFIG.pickupWeekdays.map(n => DAY_NAMES[n]).join('
 function pickupDates(){
   const out = [], d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + CONFIG.leadDays);
   for (let i = 0; i < 42 && out.length < CONFIG.datesToShow; i++) {
+    if (CONFIG.pickupWeekdays.includes(d.getDay()) && !CONFIG.noPickupDates.includes(ymd(d))) out.push(ymd(d));
+    d.setDate(d.getDate() + 1);
+  }
+  return out;
+}
+function addDays(v, n){ const d = parseYmd(v); d.setDate(d.getDate() + n); return ymd(d); }
+const confirmBy = o => o.pickup_date ? addDays(o.pickup_date, -CONFIG.confirmDaysBefore) : null;
+const confirmMissed = o => !o.confirmed && ['pending', 'approved'].includes(o.status) && confirmBy(o) && ymd(new Date()) > confirmBy(o);
+/* Open pickup days; printed orders (ready) can be picked up as soon as today */
+function openDates(fromToday, count = CONFIG.datesToShow + 2){
+  const out = [], d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + (fromToday ? 0 : CONFIG.leadDays));
+  for (let i = 0; i < 60 && out.length < count; i++) {
     if (CONFIG.pickupWeekdays.includes(d.getDay()) && !CONFIG.noPickupDates.includes(ymd(d))) out.push(ymd(d));
     d.setDate(d.getDate() + 1);
   }
@@ -902,6 +921,9 @@ function friendlyError(e){
   if (m.includes('TOO_MANY_SHEETS')) return `You can order up to ${S.settings.maxSheets} sheets at a time.`;
   if (m.includes('NOT_FOUND')) return "No order matches that code and nickname. Check both and try again.";
   if (m.includes('BAD_INPUT')) return 'Some details are missing. Fill in every box and try again.';
+  if (m.includes('NO_PGNET')) return 'Turn on pg_net in Supabase first: Database → Extensions → search "pg_net" → enable. Then try again.';
+  if (m.includes('BAD_DATE')) return "That day isn't open for pickup anymore. Pick another one.";
+  if (m.includes('NO_RESCHEDULE')) return "This order can't be moved anymore. Talk to the seller at pickup.";
   if (m.includes('BAD_CODE')) return "That promo code doesn't work. Check the spelling, or it may have ended.";
   if (m.includes('CODE_MIN')) return 'Your order is too small for that promo code.';
   if (m.includes('CODE_USED_UP')) return 'That promo code has been used up.';
@@ -1022,6 +1044,10 @@ function applyShopConfig(c){
   CONFIG.gcash = { ...D.gcash, ...(c.gcash || {}) };
   CONFIG.cleanupDays = +c.cleanup_days > 0 ? +c.cleanup_days : D.cleanupDays;
   CONFIG.maxPictures = +c.max_pictures > 0 ? +c.max_pictures : D.maxPictures;
+  CONFIG.confirmDaysBefore = Number.isFinite(+c.confirm_days_before) && c.confirm_days_before !== null && c.confirm_days_before !== '' ? +c.confirm_days_before : D.confirmDaysBefore;
+  CONFIG.maxReschedules = Number.isFinite(+c.max_reschedules) && c.max_reschedules !== null && c.max_reschedules !== '' ? +c.max_reschedules : D.maxReschedules;
+  CONFIG.refundDays = +c.refund_days > 0 ? +c.refund_days : D.refundDays;
+  CONFIG.notice = { ...D.notice, ...(c.notice || {}) };
   for (const k of Object.keys(CONFIG.products)) {
     const base = D.products[k];
     CONFIG.products[k].maxQty = +((c.max_qty || {})[k]) > 0 ? +c.max_qty[k] : (base.maxQty || D.maxQty);
@@ -1041,7 +1067,6 @@ function unitPrice(it){
 }
 const itemUnits = it => it.type === 'stickers' ? it.sheets.filter(s => s.items.length).length : it.qty;
 const itemTotal = it => itemUnits(it) * unitPrice(it);
-const cartTotal = () => S.cart.reduce((t, it) => t + itemTotal(it), 0);
 /* Deals: per product, the better of "buy X get Y free" and "bulk discount"; combos on top; then a promo code. */
 const liveDeals = () => (S.settings.deals || []).filter(d => d.enabled && (d.type === 'combo' ? (d.products || []).every(isLive) : isLive(d.product)));
 const unitWord = (key, n) => { const u = (CONFIG.products[key] || {}).unit || 'item'; return n === 1 ? u : u + 's'; };
@@ -1104,7 +1129,6 @@ function dealNudges(items){
   }
   return out;
 }
-const shortDeal = d => d.type === 'tiers' ? 'Class pack deal' : d.type === 'freebie' ? `Buy ${d.buy}, get ${d.free} free` : d.type === 'bulk' ? `${d.min}+: ${money(d.off)} off each` : `Combo: ${money(d.off)} off`;
 /* One quiet line per product card. Class packs live in the pin designer instead. */
 function cardDeal(key){
   const d = liveDeals().find(x => x.type !== 'tiers' && (x.product === key || (x.type === 'combo' && (x.products || []).includes(key))));
@@ -1118,7 +1142,6 @@ function cardDeal(key){
   }
   return `<span class="gold" title="${esc(text)}"><span class="gold-in">${ic('sparkle', 14)}<span class="gt">${esc(text)}</span></span><i class="star s1"></i><i class="star s2"></i><i class="star s3"></i></span>`;
 }
-const productDeals = key => liveDeals().filter(d => d.product === key || (d.type === 'combo' && (d.products || []).includes(key)));
 const cartUnits = () => S.cart.reduce((t, it) => t + itemUnits(it), 0);
 function itemTitle(it){
   const p = CONFIG.products[it.type] || { name: it.type, sizes: [] }, n = it.type === 'stickers' ? (it.sheets || []).filter(s => (s.items || []).length).length : it.qty;
@@ -1201,6 +1224,9 @@ function SupaBackend(){
   }
   return {
     async settings(){ const { data, error } = await sb.from('shop_settings').select('*').eq('id', 1).single(); if (error) throw error; return data; },
+    async getTelegram(){ const { data, error } = await sb.from('telegram').select('*').eq('id', 1).maybeSingle(); if (error) throw error; return data || { enabled: false, notify: {} }; },
+    async saveTelegram(row){ const { error } = await sb.from('telegram').upsert({ id: 1, ...row }); if (error) throw error; },
+    async testTelegram(){ return await rpc('telegram_test', {}); },
     async checkPromo(code){ return await rpc('check_promo', { p_code: code }); },
     async listPromos(){ const { data, error } = await sb.from('promo_codes').select('*').order('created_at', { ascending: false }); if (error) throw error; return data; },
     async savePromo(row){ const { error } = await sb.from('promo_codes').upsert(row); if (error) throw error; },
@@ -1223,6 +1249,7 @@ function SupaBackend(){
     async getOrder(code, nick){ const d = await rpc('get_order', { p_code: code, p_nickname: nick }); if (!d) throw new Error('NOT_FOUND'); return d; },
     async confirm(code, nick){ await rpc('confirm_order', { p_code: code, p_nickname: nick }); },
     async cancel(code, nick){ await rpc('cancel_order', { p_code: code, p_nickname: nick }); },
+    async reschedule(code, nick, date, time){ await rpc('reschedule_order', { p_code: code, p_nickname: nick, p_date: date, p_time: time }); },
     async imHere(code, nick){ await rpc('mark_arrived', { p_code: code, p_nickname: nick }); },
     async session(){ const { data } = await sb.auth.getSession(); return !!data.session; },
     async login(email, pw){ const { error } = await sb.auth.signInWithPassword({ email, password: pw }); if (error) throw error; },
@@ -1276,13 +1303,20 @@ let SRC = (params.get('src') || safeLS.get('sk_src') || '').replace(/[^a-z0-9-]/
 if (params.get('src')) safeLS.set('sk_src', SRC);
 let api;
 
+function noticeHTML(){
+  const nt = CONFIG.notice; if (!nt || !nt.on || !String(nt.text || '').trim()) return '';
+  const key = 'sk_notice_' + nt.text.length + '_' + nt.text.slice(0, 24);
+  try { if (sessionStorage.getItem(key)) return ''; } catch {}
+  return `<div class="notice ${nt.kind === 'alert' ? 'alert' : ''}" role="status"><div class="in">${ic(nt.kind === 'alert' ? 'warn' : 'sparkle', 18)}<span>${esc(nt.text)}</span>
+    <button type="button" class="nx" data-act="noticeClose" data-k="${esc(key)}" aria-label="Hide this message">${ic('x', 16)}</button></div></div>`;
+}
 function topbar(){
   const n = S.cart.length, onCart = location.hash.startsWith('#/cart');
   return `<div class="topwrap"><header class="top"><a class="mark" href="#/" aria-label="${esc(CONFIG.shopName)} home">Stick<b>2</b>XU</a>
     <div class="topacts ${n && !onCart ? 'has-cart' : ''}">
       ${n && !onCart ? `<a class="pilllink cartpill" href="#/cart" aria-label="Your order, ${n} item${n > 1 ? 's' : ''}">${ic('sticker', 18)}<span class="lbl">Cart</span><b class="badge-n num">${n}</b></a>` : ''}
       <a class="pilllink" href="#/status" aria-label="Check my order">${ic('box', 18)}<span class="lbl">My order</span></a>
-    </div></header></div>`;
+    </div></header></div>${noticeHTML()}`;
 }
 function progress(step){
   const names = ['Design', 'Details', 'Pickup pass'];
@@ -1451,20 +1485,6 @@ function illoKeychains(){
 }
 function productIllo(key){
   return { stickers: illoStickers, pins: illoPins, posters: illoPosters, keychains: illoKeychains }[key]();
-}
-function dealTicket(d){
-  const key = d.type === 'combo' ? (d.products || [])[0] : d.product, unit = k => unitWord(k, 2);
-  const names = (d.products || []).map(k => (CONFIG.products[k] || { name: k }).name).join(' + ');
-  const big = d.type === 'freebie' ? `${d.free} FREE` : d.type === 'tiers' ? `₱${Math.max(0, ...(d.tiers || []).map(t => t.off))} OFF` : `₱${d.off} OFF`;
-  const pre = d.type === 'tiers' ? 'up to' : d.type === 'freebie' ? 'get' : d.type === 'bulk' ? 'save' : 'combo';
-  const sub = d.type === 'freebie' ? `when you buy ${d.buy} ${unit(d.product)}` : d.type === 'tiers' ? `each pin when your class orders together` : d.type === 'bulk' ? `each, when you get ${d.min}+ ${unit(d.product)}` : `when you get ${names.toLowerCase()}`;
-  const tag = d.type === 'tiers' ? 'Class pack' : d.type === 'combo' ? 'Combo' : (CONFIG.products[key] || { name: '' }).name;
-  return `<a class="ticket t-${d.type}" href="${designRoute(key)}">
-    <span class="t-tag">${esc(tag)}</span>
-    <span class="t-pre">${pre}</span><b class="t-big">${esc(big)}</b>
-    <span class="t-sub">${esc(sub)}</span>
-    ${d.type === 'tiers' ? `<span class="t-steps">${(d.tiers || []).slice().sort((a, b) => a.min - b.min).map(t => `<i><b>${t.min}+</b>₱${t.off} off</i>`).join('')}</span>` : ''}
-    <span class="t-go">Start ${ic('arrow', 16)}</span></a>`;
 }
 function viewShop(){
   S.editing = null;
@@ -1987,6 +2007,15 @@ function viewCheckout(){
           <input class="inp" id="gref" maxlength="40" inputmode="numeric"></div>` : ''}
       </fieldset>
 
+      <div class="gtk">
+        <b>Good to know</b>
+        <ul>
+          <li>${ic('check', 16)}<span>We print your order only after you tap <b>"I'll be there"</b> in My order, by the day before pickup. Nothing goes to waste.</span></li>
+          <li>${ic('calendar', 16)}<span>Miss your pickup? We hold it for one more pickup day. After that it's forfeited and counts as a missed pickup.</span></li>
+          <li>${ic('image', 16)}<span>Printed colors can look a little softer than on your screen.</span></li>
+          <li>${ic('cash', 16)}<span>Bring exact change if you can.${CONFIG.gcash.enabled ? ` Paid by GCash and the order gets cancelled? We send it back within ${CONFIG.refundDays} days.` : ''}</span></li>
+        </ul>
+      </div>
       <label class="choice"><input type="checkbox" id="promise"><span id="promiseTxt"></span></label>
       <p class="ferr" id="e-promise" role="alert"></p>
       <div class="field" style="margin:18px 0 0"><label class="lab" for="promo">Promo code <span class="muted small" style="font-weight:500">(if you have one)</span></label>
@@ -2100,7 +2129,11 @@ function icsFor(o){
     `SUMMARY:Pick up Stick2XU order ${o.code}`, `LOCATION:${o.pickup} (inside campus)`,
     `DESCRIPTION:Look for ${signal()}. Tap I'm here in My order when you arrive.`,
     'BEGIN:VALARM', 'TRIGGER:-PT30M', 'ACTION:DISPLAY', 'DESCRIPTION:Stick2XU pickup soon', 'END:VALARM',
-    'END:VEVENT', 'END:VCALENDAR'];
+    'END:VEVENT',
+    ...(confirmBy(o) ? ['BEGIN:VEVENT', `UID:${o.code}-confirm@stick2xu`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`,
+      `DTSTART:${confirmBy(o).replace(/-/g, '')}T180000`, `DTEND:${confirmBy(o).replace(/-/g, '')}T181500`,
+      `SUMMARY:Confirm your Stick2XU order ${o.code}`, `DESCRIPTION:Open My order and tap I'll be there so it gets printed.`, 'END:VEVENT'] : []),
+    'END:VCALENDAR'];
   return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(lines.join('\r\n'));
 }
 function viewDone(){
@@ -2121,9 +2154,9 @@ function viewDone(){
       </div>
       <h3>Before you go</h3>
       <ol class="steps2">
-        <li><div><b>Wait for <mark>Ready</mark></b><span>We check your design, then print it. "My order" shows when it's ready.</span></div></li>
-        <li><div><b>Tap <mark>I'm here</mark> when you arrive</b><span>Open "My order" at the gate. Your name pops up on the seller's phone so they know you came.</span></div></li>
-        <li><div><b>Grab your stickers. That's it.</b><span>They'll match your code and hand them over.</span></div></li>
+        <li><div><b>Tap <mark>I'll be there</mark> by ${esc(fmtDate(confirmBy(o), { weekday: 'short', month: 'short', day: 'numeric' }))}</b><span>Open "My order" and confirm. We only print confirmed orders, so if you don't confirm, your order is released and you don't owe anything.</span></div></li>
+        <li><div><b>Tap <mark>I'm here</mark> at the gate</b><span>The seller sees your name, matches your code, and hands over your order. Pay, grab it, and that's it.</span></div></li>
+        <li><div><b>Can't make it?</b><span>Change your pickup day in "My order" (up to ${CONFIG.maxReschedules} times).</span></div></li>
       </ol>
       <div class="notes">
         <p>${ic('school', 20)}<span><b>Inside campus only.</b> Never meet anyone outside school for your order.</span></p>
@@ -2168,27 +2201,57 @@ function drawStatus(){
   const o = S.statusResult, [icon, msg] = STATUS[o.status] || ['clock', o.status];
   const flow = ['pending','approved','printing','ready','done'], at = flow.indexOf(o.status);
   const lbl = { pending:'Checking', approved:'Approved', printing:'Printing', ready:'Ready', done:'Done' };
+  const active = ['pending','approved','printing','ready'].includes(o.status), lapsed = confirmMissed(o);
+  const canMove = active && !lapsed && (o.reschedules || 0) < CONFIG.maxReschedules;
+  const short = v => fmtDate(v, { weekday: 'short', month: 'short', day: 'numeric' });
+  let confirmBox = '';
+  if (lapsed) confirmBox = `<div class="note warn">${ic('clock', 18)}<span><b>Confirmation time passed.</b> Your order wasn't confirmed by ${esc(short(confirmBy(o)))}, so it was released. You don't owe anything. You can always order again.</span></div>`;
+  else if (['pending','approved','printing'].includes(o.status) && !o.confirmed) confirmBox = `<div class="note gold">
+      <div style="display:grid;gap:4px"><b>Confirm by ${esc(short(confirmBy(o)))}</b><span>We only print orders that are confirmed. Tap below to let us know you'll be at pickup.</span></div>
+      ${btn("I'll be there", { act: 'confirmComing', icon: 'thumb', cls: 'wide' })}</div>`;
+  else if (active && o.confirmed && o.status !== 'ready') confirmBox = `<p class="okline">${ic('check', 16)}You confirmed. We'll print it and see you on ${esc(short(o.pickup_date))}.</p>`;
+  const missedBox = o.status === 'ready' && o.missed ? `<div class="note warn">${ic('calendar', 18)}<span><b>You missed your pickup.</b> We're holding your order until ${esc(short(o.pickup_date))}. If you miss this one too, it's forfeited.</span></div>` : '';
   $('#statusOut').innerHTML = `${passHTML(o)}
     <div class="panel" style="margin-top:22px">
-      <div class="stmsg"><span class="ic">${ic(icon, 24)}</span>${esc(msg)}</div>
-      ${at >= 0 ? `<div class="track">${flow.map((s, i) => `<div class="${i <= at ? 'on' : ''} ${i === at ? 'now' : ''}"><i></i>${lbl[s]}</div>`).join('')}</div>` : ''}
+      <div class="stmsg"><span class="ic">${ic(lapsed ? 'clock' : icon, 24)}</span>${esc(lapsed ? 'Released' : msg)}</div>
+      ${at >= 0 && !lapsed ? `<div class="track">${flow.map((s, i) => `<div class="${i <= at ? 'on' : ''} ${i === at ? 'now' : ''}"><i></i>${lbl[s]}</div>`).join('')}</div>` : ''}
+      ${confirmBox}${missedBox}
       ${o.status === 'rejected' && o.reject_reason ? `<p style="margin-top:14px"><b>Reason:</b> ${esc(o.reject_reason)}</p>${btn('Make a new design', { href: '#/design' })}` : ''}
       ${o.status === 'ready' ? `<div class="pt hi" style="margin-top:16px">
           <span class="k">${ic('search', 16)}At pickup</span>
           <b>Look for ${esc(signal())} at ${esc(o.pickup)}</b>
-          <span>${o.paid ? "You've already paid, so just grab your stickers. That's it." : `Bring <b class="num" style="font-size:inherit;font-family:inherit">${money(o.total)}</b>, grab your stickers, and that's it.`}</span></div>
+          <span>${o.paid ? "You've already paid, so just grab your stickers. That's it." : `Bring <b class="num" style="font-size:inherit;font-family:inherit">${money(o.total)}</b>, exact change if you can. Grab your order, and that's it.`}</span></div>
         <div style="margin-top:14px">${o.arrived
           ? `<span class="tag ok" style="font-size:15px;padding:8px 12px">${ic('check', 16)}They know you're here. Look for ${esc(signal())}.</span>`
           : btn("I'm here", { act: 'imHere', icon: 'pin', cls: 'wide' })}</div>` : ''}
       <dl class="kv">${o.pickup_date ? `<dt>Pickup</dt><dd>${esc(fmtDate(o.pickup_date))}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</dd>` : ''}<dt>Where</dt><dd>${esc(o.pickup)}</dd>
         <dt>Total</dt><dd class="num">${money(o.total)}${o.paid ? ', paid' : ''}</dd>
         <dt>Items</dt><dd>${o.sheet_count}</dd><dt>Ordered</dt><dd>${fmtTime(o.created_at)}</dd></dl>
+      ${S.moving ? rescheduleHTML(o) : ''}
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:20px">
-        ${['approved','printing'].includes(o.status) ? (o.confirmed
-          ? `<span class="tag ok">${ic('check', 16)}You said you'll be there</span>`
-          : smallBtn("I'll be there", 'thumb', 'confirmComing', 'ok')) : ''}
-        ${['pending','approved'].includes(o.status) ? smallBtn('Cancel my order', 'x', 'cancelOrder', 'plain') : ''}
-      </div></div>`;
+        ${canMove && !S.moving ? smallBtn('Change pickup day', 'calendar', 'moveOpen', 'plain') : ''}
+        ${['pending','approved'].includes(o.status) && !lapsed ? smallBtn('Cancel my order', 'x', 'cancelOrder', 'plain') : ''}
+      </div>
+      ${active && !lapsed ? `<p class="help" style="margin-top:10px">${(o.reschedules || 0) >= CONFIG.maxReschedules ? "You've already changed your pickup day the most times allowed. Talk to the seller if you need to move it again." : `You can change your pickup day ${CONFIG.maxReschedules - (o.reschedules || 0)} more time${CONFIG.maxReschedules - (o.reschedules || 0) === 1 ? '' : 's'}.`}</p>` : ''}
+    </div>`;
+  const mf = $('#moveForm');
+  if (mf) mf.addEventListener('submit', async e => {
+    e.preventDefault();
+    const d = radio(mf, 'mdate'), t = radio(mf, 'mtime'); if (!d || !t) return toast('Pick a day and a time.');
+    const b = mf.querySelector('button[type=submit]'); b.disabled = true;
+    try { await api.reschedule(o.code, S.statusNick, d, t); S.moving = false; buzz([8, 30, 8]); toast(`Moved to ${short(d)}.`); lookup(); }
+    catch (ex) { b.disabled = false; toast(friendlyError(ex)); }
+  });
+}
+function rescheduleHTML(o){
+  const dates = openDates(o.status === 'ready' || o.status === 'printing').filter(d => d !== o.pickup_date).slice(0, CONFIG.datesToShow + 1);
+  return `<form class="moveform" id="moveForm">
+    <b class="mh">${ic('calendar', 18)}Pick a new pickup day</b>
+    <div class="mgrid">${dates.map((d, i) => `<label class="choice"><input type="radio" name="mdate" value="${d}" ${i === 0 ? 'checked' : ''}><span>${esc(fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' }))}</span></label>`).join('')}</div>
+    <div class="mgrid">${CONFIG.pickupTimes.map(t => `<label class="choice"><input type="radio" name="mtime" value="${esc(timeLabel(t))}" ${timeLabel(t) === o.pickup_time ? 'checked' : ''}><span>${esc(t.label)} <small>${esc(t.time)}</small></span></label>`).join('')}</div>
+    <p class="help">Same place: ${esc(o.pickup)}. Moving your pickup also counts as confirming.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">${btn('Move my pickup', { type: 'submit', cls: 'dark', icon: 'check' })}${smallBtn('Never mind', '', 'moveClose', 'plain')}</div>
+  </form>`;
 }
 
 /* =====================================================================
@@ -2225,6 +2288,9 @@ async function adminLoad(){
   try {
     S.admin.orders = await api.listOrders();
     if (!S.admin.cleaned) {
+      const lapsed = S.admin.orders.filter(confirmMissed);
+      for (const o of lapsed) { try { await api.updateOrder(o.id, { status: 'cancelled', reject_reason: 'Not confirmed in time' }); Object.assign(o, { status: 'cancelled', reject_reason: 'Not confirmed in time' }); } catch (e) { console.warn(e); } }
+      if (lapsed.length) toast(`Released ${lapsed.length} order${lapsed.length > 1 ? 's' : ''} that weren't confirmed in time. Nothing was printed.`);
       S.admin.cleaned = true;
       api.cleanup(S.admin.orders).then(n => { if (n) toast(`Cleaned up pictures from ${n} old order${n > 1 ? 's' : ''}.`); }).catch(e => console.warn('cleanup', e));
     }
@@ -2244,7 +2310,7 @@ async function drawAdminBody(){
   const list = all.filter(o => inFilter(o, f));
   if (f === 'ready') list.sort((a, b) => (b.arrived_at ? 1 : 0) - (a.arrived_at ? 1 : 0) || String(a.pickup_date).localeCompare(String(b.pickup_date)) || String(a.pickup_time).localeCompare(String(b.pickup_time)) || a.pickup.localeCompare(b.pickup));
   clearInterval(S.admin.poll);
-  if (f === 'ready') S.admin.poll = setInterval(pollReady, 15000);
+  if (f === 'ready') S.admin.poll = setInterval(pollReady, S.admin.pickupMode ? 8000 : 15000);
   if (f === 'approved') list.sort((a, b) => (b.confirmed ? 1 : 0) - (a.confirmed ? 1 : 0));
   const need = [...new Set(list.filter(o => !o.images_deleted).flatMap(orderPaths))].filter(p => !(p in S.admin.urls));
   if (need.length) { try { Object.assign(S.admin.urls, await api.imageUrls(need)); } catch (e) { console.warn(e); } }
@@ -2255,7 +2321,12 @@ async function drawAdminBody(){
   $('#admBody').innerHTML = `
     <div class="chips">${FILTERS.map(([k, l]) => { const c = all.filter(o => inFilter(o, k)).length;
       return `<button class="chip ${f === k ? 'on' : ''}" type="button" data-act="admFilter" data-f="${k}">${l}${c && ACTIVE.includes(k) ? `<span class="c num">${c}</span>` : ''}</button>`; }).join('')}</div>
-    ${f === 'ready' ? `<p class="hint" style="margin-bottom:16px">${ic('box', 18)}<span>Write the code and nickname on each bag. Keep this page open at pickup: when someone taps "I'm here", they jump to the top with a gold "Here now" tag. It updates every 15 seconds.</span></p>` : ''}
+    ${f === 'approved' ? `<p class="hint" style="margin-bottom:16px">${ic('printer', 18)}<span>Print only orders marked <b>Confirmed</b>. Unconfirmed ones are released by themselves after their confirm-by day, so nothing gets wasted.</span></p>` : ''}
+    ${f === 'ready' ? `<div class="pickupbar ${S.admin.pickupMode ? 'on' : ''}">
+        <div>${ic('box', 18)}<span>${S.admin.pickupMode
+          ? '<b>Pickup mode is on.</b> The screen stays awake, and your phone chimes and buzzes when someone taps "I\'m here". Keep this page open.'
+          : 'At the gate? Turn on <b>pickup mode</b> so your phone chimes when someone arrives. Write the code and nickname on each bag.'}</span></div>
+        ${smallBtn(S.admin.pickupMode ? 'Stop pickup mode' : 'Start pickup mode', S.admin.pickupMode ? 'x' : 'pin', 'pickupMode', S.admin.pickupMode ? 'plain' : 'dark')}</div>` : ''}
     <div class="olist">${list.length ? list.map((o, idx) => {
       const sk = strikes[personKey(o)] || 0, a = [];
       const prev = list[idx - 1];
@@ -2263,9 +2334,12 @@ async function drawAdminBody(){
       if (f === 'ready' && o.arrived_at && (!prev || !prev.arrived_at)) head = `<div class="dayhead"><span class="tag here">${ic('pin', 16)}Here now</span></div>`;
       if (f === 'ready' && !o.arrived_at && (!prev || prev.arrived_at || prev.pickup_date !== o.pickup_date)) head = `<div class="dayhead">${o.pickup_date ? esc(dayLabel(o.pickup_date)) : 'No date'}</div>`;
       if (o.status === 'pending') a.push(smallBtn('Approve', 'check', 'aApprove', 'ok', `data-id="${o.id}"`), smallBtn('Reject', 'x', 'aReject', 'plain', `data-id="${o.id}"`));
-      if (['approved','printing'].includes(o.status)) a.push(smallBtn('Download PDF', 'printer', 'aPdf', 'dark', `data-id="${o.id}"`), smallBtn('Mark ready', 'box', 'aReady', '', `data-id="${o.id}"`));
-      if (o.status === 'ready') a.push(smallBtn('Picked up and paid', 'check', 'aDone', 'ok', `data-id="${o.id}"`), smallBtn("Didn't show up", 'ghost', 'aNoshow', 'plain', `data-id="${o.id}"`), smallBtn('Reprint', 'printer', 'aPdf', 'plain', `data-id="${o.id}"`));
+      if (['approved','printing'].includes(o.status)) a.push(o.confirmed || o.status === 'printing'
+        ? smallBtn('Download PDF', 'printer', 'aPdf', 'dark', `data-id="${o.id}"`)
+        : smallBtn('Print anyway', 'printer', 'aPdfForce', 'plain', `data-id="${o.id}"`), smallBtn('Mark ready', 'box', 'aReady', '', `data-id="${o.id}"`));
+      if (o.status === 'ready') a.push(smallBtn('Picked up and paid', 'check', 'aDone', 'ok', `data-id="${o.id}"`), smallBtn(o.missed ? "Didn't show up again" : "Didn't show up", 'ghost', 'aNoshow', 'plain', `data-id="${o.id}"`), smallBtn('Reprint', 'printer', 'aPdf', 'plain', `data-id="${o.id}"`));
       if (ACTIVE.includes(o.status)) a.push(smallBtn(o.paid ? 'Mark unpaid' : 'Mark paid', 'cash', 'aPaid', 'plain', `data-id="${o.id}"`));
+      if (o.payment === 'gcash' && o.paid && ['rejected','cancelled'].includes(o.status) && !o.refunded) a.push(smallBtn('Mark refunded', 'check', 'aRefund', 'ok', `data-id="${o.id}"`));
       a.push(smallBtn('Delete', 'trash', 'aDelete', 'plain', `data-id="${o.id}"`));
       return `${head}<article class="ocard">
         <div class="ohead"><div class="pdot">${o.pickup_date ? `<small>${fmtDate(o.pickup_date, { month: 'short' })}</small><b>${parseYmd(o.pickup_date).getDate()}</b>` : ic('box', 24)}</div>
@@ -2279,7 +2353,10 @@ async function drawAdminBody(){
           <div class="tags">
             ${o.status === 'ready' && o.arrived_at ? `<span class="tag here">${ic('pin', 14)}Here now</span>` : ''}
             ${o.paid ? `<span class="tag ok">${ic('check', 14)}Paid</span>` : ''}
-            ${o.confirmed ? `<span class="tag ok">${ic('thumb', 14)}Said they're coming</span>` : ''}
+            ${o.confirmed ? `<span class="tag ok">${ic('thumb', 14)}Confirmed</span>` : ['pending','approved'].includes(o.status) && o.pickup_date ? `<span class="tag warn">${ic('clock', 14)}Not confirmed yet (by ${esc(fmtDate(confirmBy(o), { weekday: 'short', month: 'short', day: 'numeric' }))})</span>` : ''}
+            ${o.missed && o.status === 'ready' ? `<span class="tag warn">${ic('calendar', 14)}Missed once, held for this day</span>` : ''}
+            ${o.reschedules ? `<span class="tag">${ic('calendar', 14)}Moved ${o.reschedules}×</span>` : ''}
+            ${o.payment === 'gcash' && o.paid && ['rejected','cancelled'].includes(o.status) ? (o.refunded ? `<span class="tag ok">${ic('check', 14)}Refunded</span>` : `<span class="tag bad">${ic('cash', 14)}Refund ${money(o.total)} needed</span>`) : ''}
             ${sk ? `<span class="tag bad">${ic('warn', 14)}${sk} missed pickup${sk > 1 ? 's' : ''} before</span>` : ''}
             ${o.src ? `<span class="tag">${ic('qr', 14)}Poster: ${esc(o.src)}</span>` : ''}
             ${o.reject_reason ? `<span class="tag bad">Reason: ${esc(o.reject_reason)}</span>` : ''}
@@ -2297,6 +2374,22 @@ async function drawAdminBody(){
       </article>`; }).join('')
       : `<div class="empty">${ic('box', 36)}<b>${emptyMsg[f] || 'Nothing here yet.'}</b><span>New orders show up under "To review".</span></div>`}</div>`;
 }
+function chime(){
+  try {
+    const A = window.AudioContext || window.webkitAudioContext; if (!A) return;
+    const ctx = S.admin.audio || (S.admin.audio = new A()), now = ctx.currentTime;
+    [880, 1320].forEach((f, i) => { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, now + i * .18); g.gain.exponentialRampToValueAtTime(0.25, now + i * .18 + .02); g.gain.exponentialRampToValueAtTime(0.0001, now + i * .18 + .4);
+      o.connect(g).connect(ctx.destination); o.start(now + i * .18); o.stop(now + i * .18 + .45); });
+  } catch {}
+}
+async function keepAwake(on){
+  try {
+    if (on && 'wakeLock' in navigator) { S.admin.wake = await navigator.wakeLock.request('screen'); }
+    else if (!on && S.admin.wake) { await S.admin.wake.release(); S.admin.wake = null; }
+  } catch {}
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && S.admin && S.admin.pickupMode) keepAwake(true); });
 async function pollReady(){
   if (!location.hash.includes('admin') || S.admin.tab !== 'orders' || S.admin.filter !== 'ready' || S.admin.rejecting) { if (!location.hash.includes('admin')) clearInterval(S.admin.poll); return; }
   try {
@@ -2305,7 +2398,7 @@ async function pollReady(){
     const newly = fresh.filter(o => o.status === 'ready' && o.arrived_at && !before.has(o.id));
     const changed = JSON.stringify(fresh.map(o => [o.id, o.status, o.arrived_at])) !== JSON.stringify(S.admin.orders.map(o => [o.id, o.status, o.arrived_at]));
     S.admin.orders = fresh;
-    if (newly.length) toast(newly.map(o => `${o.nickname} (${o.grade_section}) is at ${o.pickup}`).join('. '));
+    if (newly.length) { toast(newly.map(o => `${o.nickname} (${o.grade_section}) is at ${o.pickup}`).join('. ')); if (S.admin.pickupMode) { chime(); buzz([200, 100, 200]); } }
     if (changed) drawAdminBody();
   } catch (e) { console.warn('poll', e); }
 }
@@ -2410,9 +2503,11 @@ function drawSettings(){
   $('#admBody').insertAdjacentHTML('beforeend', `<form class="panel" id="dealForm" style="max-width:820px;margin-top:20px"></form>
     <div class="panel" id="promoPanel" style="max-width:820px;margin-top:20px"></div>`);
   S.admin.dealDraft = clone(S.settings.deals || []); drawDeals(); drawPromos();
-  $('#admBody').insertAdjacentHTML('beforeend', `<form class="panel" id="shopForm" style="max-width:820px;margin-top:20px"></form>`);
+  $('#admBody').insertAdjacentHTML('beforeend', `<form class="panel" id="tgForm" style="max-width:820px;margin-top:20px"></form><form class="panel" id="noticeForm" style="max-width:820px;margin-top:20px"></form><form class="panel" id="shopForm" style="max-width:820px;margin-top:20px"></form>`);
+  drawNoticeForm(); loadTelegram();
   S.admin.cfg = {
     pickup_weekdays: CONFIG.pickupWeekdays.slice(), pickup_times: clone(CONFIG.pickupTimes), pickup_places: CONFIG.pickupOptions.slice(),
+    confirm_days_before: CONFIG.confirmDaysBefore, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
     grades: CONFIG.grades.slice(), gcash: { ...CONFIG.gcash }, cleanup_days: CONFIG.cleanupDays, max_pictures: CONFIG.maxPictures, max_noshows: CONFIG.maxNoShows,
     max_qty: Object.fromEntries(['pins', 'posters', 'keychains'].map(k => [k, maxQtyFor(k)])),
@@ -2519,6 +2614,13 @@ function drawShopForm(){
         <label class="dnum"><span>No-shows before a name is blocked</span>${n('max_noshows', c.max_noshows, 1, 20)}</label>
         <label class="dnum"><span>Delete pictures after (days)</span>${n('cleanup_days', c.cleanup_days, 1, 365)}</label></div></div>
 
+    <div class="cfgsec"><div class="sub">Pickup rules</div>
+      <div class="pgrid2">
+        <label class="dnum"><span>Customers confirm by (days before pickup)</span>${n('confirm_days_before', c.confirm_days_before, 0, 7)}</label>
+        <label class="dnum"><span>Times a customer can move their pickup</span>${n('max_reschedules', c.max_reschedules, 0, 5)}</label>
+        <label class="dnum"><span>GCash refunds sent within (days)</span>${n('refund_days', c.refund_days, 1, 30)}</label></div>
+      <p class="help" style="margin-top:6px">Orders are only printed after the customer confirms. Unconfirmed ones are released by themselves after their confirm-by day.</p></div>
+
     <div class="cfgsec"><div class="sub">Sizes (mm)</div>
       <div class="pgrid2">
         ${CONFIG.products.pins.sizes.map(z => `<label class="dnum"><span>${esc(z.label)} pin: paper circle</span>${n('sizes.pins.' + z.id + '.cutMm', c.sizes.pins[z.id].cutMm, 10, 150)}</label>`).join('')}
@@ -2550,9 +2652,85 @@ function drawShopForm(){
     if (c.gcash.enabled && (!c.gcash.name.trim() || !c.gcash.number.trim())) return toast('Fill in the GCash name and number, or turn GCash off.');
     const { max_noshows, ...config } = c;
     try {
-      await api.saveSettings({ config, max_noshows: Math.max(1, max_noshows || 2) });
+      await api.saveSettings({ config, max_noshows: Math.max(1, max_noshows || 2) }); S.settings.configRaw = config;
       applyShopConfig(config); CONFIG.maxNoShows = Math.max(1, max_noshows || 2); S.settings.products = mergeProducts(S.settings.productsRaw || {});
       toast('Shop details saved.'); drawShopForm();
+    } catch (ex) { toast(friendlyError(ex)); }
+  };
+}
+const TG_EVENTS = [['new', 'New orders'], ['arrived', 'Customer at the gate'], ['confirmed', 'Confirmed ("I\'ll be there")'], ['moved', 'Pickup day moved'], ['cancelled', 'Cancelled or released']];
+async function loadTelegram(){
+  const box = $('#tgForm'); if (!box) return;
+  try { const t = await api.getTelegram(); S.admin.tg = { enabled: !!t.enabled, bot_token: t.bot_token || '', chat_id: t.chat_id || '', notify: { new: true, arrived: true, confirmed: true, moved: true, cancelled: true, ...(t.notify || {}) } }; }
+  catch (e) { box.innerHTML = `<h3>Telegram alerts</h3><div class="formerr">${esc(friendlyError(e))} Run the latest schema.sql in Supabase.</div>`; return; }
+  S.admin.tgChats = null; drawTelegram();
+}
+function drawTelegram(){
+  const t = S.admin.tg, ready = t.bot_token && t.chat_id;
+  $('#tgForm').innerHTML = `<div class="tghead"><h3>Telegram alerts</h3><span class="tag ${t.enabled && ready ? 'ok' : ''}">${t.enabled && ready ? `${ic('check', 14)}On` : 'Off'}</span></div>
+    <p class="help" style="margin-bottom:14px">Get a Telegram message the moment there's a new order or a customer taps "I'm here". Works even with this page closed and your phone locked.</p>
+    <details class="tgsteps" ${ready ? '' : 'open'}><summary>How to set it up (5 minutes)</summary>
+      <ol>
+        <li>In Telegram, open <b>@BotFather</b>, send <b>/newbot</b>, and follow the steps. Name it something like "Stick2XU Orders". It gives you a <b>token</b>, a long code like <code>123456:ABC-xyz</code>.</li>
+        <li>Make a Telegram <b>group</b> with you and your friend, add your new bot to it, and send <b>/start</b> in the group. (Just you? Message the bot <b>/start</b> directly instead.)</li>
+        <li>Paste the token below and tap <b>Find my chat</b>. Pick your group, save, then tap <b>Send test</b>.</li>
+      </ol>
+      <p class="help">Only admins can see the token. It's never in the website code.</p></details>
+    <div class="field" style="margin:14px 0 10px"><label class="lab" for="tgToken">Bot token</label>
+      <div class="qrrow promorow"><input class="inp" id="tgToken" type="password" autocomplete="off" spellcheck="false" value="${esc(t.bot_token)}" placeholder="123456:ABC-xyz">
+        ${smallBtn('Show', 'search', 'tgShow', 'plain')}</div></div>
+    <div class="field" style="margin-bottom:10px"><span class="lab">Send alerts to</span>
+      <div class="qrrow promorow"><input class="inp" id="tgChat" value="${esc(t.chat_id)}" placeholder="Chat ID, filled in by Find my chat" spellcheck="false">
+        ${smallBtn('Find my chat', 'search', 'tgFind', 'dark')}</div>
+      ${S.admin.tgChats ? (S.admin.tgChats.length ? `<div class="mgrid" style="margin-top:10px">${S.admin.tgChats.map(c => `<label class="choice"><input type="radio" name="tgPick" value="${esc(c.id)}" ${String(c.id) === String(t.chat_id) ? 'checked' : ''}><span>${esc(c.name)}<small>${esc(c.kind)}</small></span></label>`).join('')}</div>`
+        : `<p class="help" style="margin-top:8px">No chats found yet. Send <b>/start</b> to your bot (or in the group with your bot), then tap Find my chat again.</p>`) : ''}</div>
+    <div class="sub" style="font-weight:700;font-size:13px;color:var(--muted);margin:12px 0 8px;text-transform:uppercase;letter-spacing:.06em">Send me a message for</div>
+    <div class="tgevents">${TG_EVENTS.map(([k, l]) => `<label class="switch"><input type="checkbox" data-tgn="${k}" ${t.notify[k] ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>
+    <label class="switch" style="margin-top:14px"><input type="checkbox" id="tgOn" ${t.enabled ? 'checked' : ''}><span><b>Turn Telegram alerts on</b></span></label>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">${btn('Save', { type: 'submit', cls: 'dark', icon: 'check' })}${smallBtn('Send test', 'sparkle', 'tgTest', 'plain')}</div>`;
+  const f = $('#tgForm');
+  f.oninput = f.onchange = e => {
+    const el = e.target;
+    if (el.id === 'tgToken') t.bot_token = el.value.trim();
+    else if (el.id === 'tgChat') t.chat_id = el.value.trim();
+    else if (el.name === 'tgPick') { t.chat_id = el.value; $('#tgChat').value = el.value; }
+    else if (el.dataset.tgn) t.notify[el.dataset.tgn] = el.checked;
+    else if (el.id === 'tgOn') t.enabled = el.checked;
+  };
+  f.onsubmit = async e => {
+    e.preventDefault();
+    if (t.enabled && (!t.bot_token || !t.chat_id)) return toast('Add the bot token and a chat first.');
+    if (t.bot_token && !/^\d+:[\w-]{20,}$/.test(t.bot_token)) return toast("That token doesn't look right. Copy it again from BotFather.");
+    try { await api.saveTelegram(t); toast(t.enabled ? 'Saved. Telegram alerts are on.' : 'Saved.'); drawTelegram(); } catch (ex) { toast(friendlyError(ex)); }
+  };
+}
+function drawNoticeForm(){
+  const nt = { ...CONFIG.notice }, active = S.admin.orders.filter(o => ACTIVE.includes(o.status) && o.pickup_date);
+  const days = [...new Set(active.map(o => o.pickup_date))].sort();
+  const short = v => fmtDate(v, { weekday: 'short', month: 'short', day: 'numeric' });
+  $('#noticeForm').innerHTML = `<h3 style="margin-bottom:6px">Notice to customers</h3>
+    <p class="help" style="margin-bottom:14px">A message at the top of every customer page. Use it for class suspensions, a moved pickup, or a holiday break.</p>
+    <label class="switch" style="margin-bottom:12px"><input type="checkbox" id="ntOn" ${nt.on ? 'checked' : ''}><span>Show the notice</span></label>
+    <div class="pgrid2" style="grid-template-columns:200px 1fr">
+      <label class="dnum"><span>Style</span><select class="inp" id="ntKind"><option value="info" ${nt.kind !== 'alert' ? 'selected' : ''}>Info (blue)</option><option value="alert" ${nt.kind === 'alert' ? 'selected' : ''}>Important (gold)</option></select></label>
+      <label class="dnum"><span>Message</span><input class="inp" id="ntText" maxlength="160" value="${esc(nt.text || '')}" placeholder="No pickup this Friday, classes are suspended. Your order moves to Tuesday."></label></div>
+    <div style="margin-top:12px">${btn('Save notice', { type: 'submit', cls: 'dark', icon: 'check' })}</div>
+
+    <div class="cfgsec" style="margin-top:18px"><div class="sub">Move a pickup day</div>
+      ${days.length ? `<div class="pgrid2" style="align-items:end">
+        <label class="dnum"><span>Move everyone picking up on</span><select class="inp" id="mvFrom">${days.map(d => `<option value="${d}">${esc(short(d))} (${active.filter(o => o.pickup_date === d).length})</option>`).join('')}</select></label>
+        <label class="dnum"><span>To</span><select class="inp" id="mvTo">${openDates(true, 8).map(d => `<option value="${d}">${esc(short(d))}</option>`).join('')}</select></label>
+        ${smallBtn('Move orders', 'calendar', 'moveDay', 'dark')}</div>
+        <p class="help" style="margin-top:6px">Their pickup day changes in My order right away. Moved orders don't need to confirm again.</p>`
+      : '<p class="help">No upcoming pickups to move.</p>'}</div>`;
+  $('#noticeForm').onsubmit = async e => {
+    e.preventDefault();
+    const notice = { on: $('#ntOn').checked, kind: $('#ntKind').value, text: $('#ntText').value.trim() };
+    if (notice.on && !notice.text) return toast('Type a message, or turn the notice off.');
+    try {
+      const cfg = { ...(S.settings.configRaw || {}), notice };
+      await api.saveSettings({ config: cfg }); S.settings.configRaw = cfg; CONFIG.notice = notice; if (S.admin.cfg) S.admin.cfg.notice = notice;
+      toast(notice.on ? 'Notice is live.' : 'Notice hidden.');
     } catch (ex) { toast(friendlyError(ex)); }
   };
 }
@@ -2793,6 +2971,36 @@ const ACTIONS = {
   cfgAddPlace: () => { S.admin.cfg.pickup_places.push(''); drawShopForm(); },
   cfgDelPlace: t => { S.admin.cfg.pickup_places.splice(+t.dataset.i, 1); drawShopForm(); },
   cfgDelSkip: t => { S.admin.cfg.no_pickup_dates.splice(+t.dataset.i, 1); drawShopForm(); },
+  tgShow: () => { const i = $('#tgToken'); if (i) i.type = i.type === 'password' ? 'text' : 'password'; },
+  tgFind: async t => {
+    const tok = S.admin.tg.bot_token; if (!tok) return toast('Paste the bot token first.');
+    t.disabled = true;
+    try {
+      const r = await fetch(`https://api.telegram.org/bot${encodeURIComponent(tok).replace('%3A', ':')}/getUpdates`).then(x => x.json());
+      if (!r.ok) throw new Error(r.description === 'Unauthorized' ? "That token doesn't work. Copy it again from BotFather." : (r.description || 'Telegram said no.'));
+      const seen = new Map();
+      for (const u of r.result || []) {
+        const c = (u.message || u.edited_message || u.channel_post || (u.my_chat_member || {}) || {}).chat; if (!c) continue;
+        seen.set(String(c.id), { id: String(c.id), name: c.title || [c.first_name, c.last_name].filter(Boolean).join(' ') || c.username || String(c.id), kind: c.type === 'private' ? 'Just you' : 'Group' });
+      }
+      S.admin.tgChats = [...seen.values()];
+      if (S.admin.tgChats.length === 1) S.admin.tg.chat_id = S.admin.tgChats[0].id;
+      drawTelegram();
+    } catch (e) { t.disabled = false; toast(friendlyError(e)); }
+  },
+  tgTest: async t => {
+    const st = S.admin.tg; if (!st.bot_token || !st.chat_id) return toast('Add the bot token and a chat, then save first.');
+    try { await api.saveTelegram(st); await api.testTelegram(); toast('Test sent. Check Telegram.'); } catch (e) { toast(friendlyError(e)); }
+  },
+  moveDay: async t => {
+    const from = $('#mvFrom').value, to = $('#mvTo').value; if (!from || !to || from === to) return toast('Pick two different days.');
+    const list = S.admin.orders.filter(o => ACTIVE.includes(o.status) && o.pickup_date === from);
+    if (!armed(t, `Tap again: move ${list.length} order${list.length === 1 ? '' : 's'}`)) return;
+    let n = 0; for (const o of list) { try { await api.updateOrder(o.id, { pickup_date: to, arrived_at: null, confirmed: true }); Object.assign(o, { pickup_date: to, arrived_at: null, confirmed: true }); n++; } catch (e) { console.warn(e); } }
+    toast(`Moved ${n} order${n === 1 ? '' : 's'} to ${fmtDate(to, { weekday: 'short', month: 'short', day: 'numeric' })}.`);
+    if (!CONFIG.notice.on) { $('#ntOn').checked = true; $('#ntKind').value = 'alert'; $('#ntText').value = `Pickup on ${fmtDate(from, { weekday: 'long', month: 'short', day: 'numeric' })} moved to ${fmtDate(to, { weekday: 'long', month: 'short', day: 'numeric' })}. Check My order.`; toast('Notice filled in for you. Tap Save notice to show it.'); }
+    else drawNoticeForm();
+  },
   dealAdd: () => { S.admin.dealDraft.push(newDeal('freebie')); drawDeals(); },
   dealDel: t => { S.admin.dealDraft.splice(+t.dataset.i, 1); drawDeals(); },
   promoDel: async t => {
@@ -2806,6 +3014,9 @@ const ACTIONS = {
     try { await api.imHere(S.statusResult.code, S.statusNick); toast("The seller's been told you're here."); lookup(); }
     catch (e) { t.disabled = false; toast(friendlyError(e)); }
   },
+  moveOpen: () => { S.moving = true; drawStatus(); },
+  moveClose: () => { S.moving = false; drawStatus(); },
+  noticeClose: t => { try { sessionStorage.setItem(t.dataset.k, '1'); } catch {} const n = t.closest('.notice'); if (n) n.remove(); },
   confirmComing: async () => { try { await api.confirm(S.statusResult.code, S.statusNick); toast("Thanks. The seller knows you're coming."); lookup(); } catch (e) { toast(friendlyError(e)); } },
   cancelOrder: async t => {
     if (!armed(t, 'Tap again to cancel')) return;
@@ -2814,7 +3025,7 @@ const ACTIONS = {
   logout: async () => { await api.logout(); S.admin.cleaned = false; viewAdmin(); },
   admTab: t => { S.admin.tab = t.dataset.tab; clearInterval(S.admin.poll); viewAdmin(); },
   admRefresh: () => { S.admin.urls = {}; adminLoad(); },
-  admFilter: t => { S.admin.filter = t.dataset.f; S.admin.rejecting = null; clearInterval(S.admin.poll); drawAdminBody().then(() => { if (S.admin.filter === 'ready') pollReady(); }); },
+  admFilter: t => { if (t.dataset.f !== 'ready' && S.admin.pickupMode) { S.admin.pickupMode = false; keepAwake(false); } S.admin.filter = t.dataset.f; S.admin.rejecting = null; clearInterval(S.admin.poll); drawAdminBody().then(() => { if (S.admin.filter === 'ready') pollReady(); }); },
   aApprove: t => setStatus(t.dataset.id, { status: 'approved' }, 'Approved.'),
   aReject: t => { S.admin.rejecting = t.dataset.id; drawAdminBody().then(() => $('#rejText') && $('#rejText').focus()); },
   rejQuick: t => { $('#rejText').value = REJECT_REASONS[+t.dataset.i]; },
@@ -2826,7 +3037,23 @@ const ACTIONS = {
   aPdf: t => makePdf(S.admin.orders.find(o => o.id === t.dataset.id)).catch(e => toast(friendlyError(e))),
   aReady: t => setStatus(t.dataset.id, { status: 'ready' }, 'Marked ready.'),
   aDone: t => setStatus(t.dataset.id, { status: 'done', paid: true }, 'Done.'),
-  aNoshow: t => { if (armed(t, `Tap again: counts as a strike (${CONFIG.maxNoShows} = blocked)`)) setStatus(t.dataset.id, { status: 'noshow' }, 'Marked as a no-show.'); },
+  aNoshow: t => {
+    const o = S.admin.orders.find(x => x.id === t.dataset.id); if (!o) return;
+    if (!o.missed) {
+      const next = openDates(true).find(d => d > ymd(new Date()) && d > (o.pickup_date || ''));
+      if (!next) return toast('No open pickup day to hold it for. Add pickup days in Settings.');
+      if (!armed(t, `Tap again: hold until ${fmtDate(next, { weekday: 'short', month: 'short', day: 'numeric' })}`)) return;
+      setStatus(o.id, { missed: 1, pickup_date: next, arrived_at: null }, `Held for ${fmtDate(next, { weekday: 'short', month: 'short', day: 'numeric' })}. They'll see it in My order.`);
+    } else if (armed(t, `Tap again: forfeit it (strike ${CONFIG.maxNoShows} = blocked)`)) setStatus(o.id, { status: 'noshow' }, 'Forfeited and counted as a missed pickup.');
+  },
+  aPdfForce: t => { if (armed(t, 'Not confirmed yet. Tap again to print')) makePdf(S.admin.orders.find(o => o.id === t.dataset.id)).catch(e => toast(friendlyError(e))); },
+  aRefund: t => { if (armed(t, 'Tap again once the GCash refund is sent')) setStatus(t.dataset.id, { refunded: true }, 'Marked as refunded.'); },
+  pickupMode: async () => {
+    S.admin.pickupMode = !S.admin.pickupMode;
+    if (S.admin.pickupMode) { chime(); buzz(30); await keepAwake(true); toast('Pickup mode on. Keep this page open.'); }
+    else { await keepAwake(false); toast('Pickup mode off.'); }
+    clearInterval(S.admin.poll); drawAdminBody();
+  },
   aPaid: t => { const o = S.admin.orders.find(x => x.id === t.dataset.id); setStatus(o.id, { paid: !o.paid }, o.paid ? 'Marked unpaid.' : 'Marked paid.'); },
   copyLink: async () => { try { await navigator.clipboard.writeText(S.admin.qr.url); toast('Link copied.'); } catch { toast("Copying didn't work. Select the link and copy it."); } }
 };
@@ -2855,7 +3082,7 @@ document.addEventListener('click', e => {
     return;
   }
   api = SupaBackend();
-  try { const s = await api.settings(); S.settings.maxSheets = s.max_sheets; S.settings.productsRaw = s.products || {}; applyShopConfig(s.config); CONFIG.maxNoShows = s.max_noshows || CONFIG.maxNoShows; S.settings.products = mergeProducts(s.products); S.settings.deals = Array.isArray(s.deals) ? s.deals : [];
+  try { const s = await api.settings(); S.settings.maxSheets = s.max_sheets; S.settings.productsRaw = s.products || {}; S.settings.configRaw = s.config || {}; applyShopConfig(s.config); CONFIG.maxNoShows = s.max_noshows || CONFIG.maxNoShows; S.settings.products = mergeProducts(s.products); S.settings.deals = Array.isArray(s.deals) ? s.deals : [];
     if (s.signal_verb) S.settings.signalVerb = s.signal_verb; if (s.signal_item) S.settings.signalItem = s.signal_item; }
   catch (e) { console.warn('Could not load settings, using CONFIG values', e); }
   route();
