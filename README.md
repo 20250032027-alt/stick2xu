@@ -79,13 +79,22 @@ Customers pick:
   - **Whole picture** (default, Rasterbator's way): nothing gets cut off. If the picture doesn't fill the last row or column of sheets, that sheet is partly blank and you trim off the blank part. A 2:1 picture at 4 across on tall sheets is 4 × 2 = 8 sheets, the same as Rasterbator.
   - **Fill the sheets:** every sheet is used edge to edge, and a little of the picture's edges may be cut off. The customer drags the picture to choose what stays.
 
+**Joining the sheets (overlap and glue):** sheets overlap by 10 mm. Each sheet repeats a 10 mm strip of picture along its right and bottom edges, where the next sheet goes on top. To put one together:
+1. Cut every sheet at its cut marks.
+2. Glue the strip between the gold tick marks.
+3. Lay the next sheet on top so the picture lines up, left to right, then each new row on top of the row above.
+
+The joins are firm, not just taped edges, and almost invisible. You can change the overlap, or set it to 0 for edge-to-edge taping, in Settings → Shop details → Big posters.
+
+If a picture would spill only a thin strip onto another row or column of sheets, the poster shrinks slightly instead of using a row of nearly empty sheets.
+
 The designer shows the poster size in cm, how many sheets it uses, and the price. For posters with more than one sheet, customers can switch between **Finished** (the taped-together poster) and **As printed** (each sheet with its white edge and dashed cut lines), so they know you trim the edges and tape the sheets. Most a poster can be: 24 sheets.
 
 Price = poster price + ₱30 for each extra sheet. In Settings → Shop details → Big posters you can also change:
 - **White border on each sheet:** default 5 mm. Raise it to 10 mm, like Rasterbator, if your printer leaves a wider blank edge.
-- **Overlap for taping:** default 0. For example, 5 mm prints a little extra picture past the cut line so neighboring sheets can overlap.
+- **Glue overlap between sheets:** default 10 mm. Set it to 0 to tape the edges from behind instead.
 
-The PDF puts one piece on each sheet, with cut marks and "Row 1, column 2" labels. Trim at the cut marks (and any blank part), then tape the sheets together from behind.
+The PDF puts one piece on each sheet, with cut marks, gold tick marks for the glue strips, and a short note on each sheet ("Row 1, column 2. Cut on all four marks. Glue the right 10 mm strip; the next sheet goes on top."). One-sheet posters also get cut marks: cut the extra paper off around the picture.
 
 ## Business tab (admin)
 

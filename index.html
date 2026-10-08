@@ -844,6 +844,28 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .hang.single{display:block;box-sizing:border-box}
 .pinner{width:100%;height:100%;display:grid;place-items:center}
 .pinner .frame{border:0;box-shadow:none;border-radius:0}
+
+/* cut lines: black dashed at the picture's edge; paper outside it is shaded (trimmed off) */
+.hang.single{background:repeating-linear-gradient(45deg,#fff 0 7px,#EEF0F5 7px 14px)}
+.cutwrap{position:relative}
+.cutwrap .frame{width:100%;height:100%}
+.cutline{position:absolute;inset:0;pointer-events:none;z-index:3;outline:1.5px dashed #111;outline-offset:0}
+.cuttag{position:absolute;right:0;top:-20px;z-index:3;font-size:11px;font-weight:700;color:#111;background:#fff;padding:1px 6px;border:1px dashed #111;border-radius:6px}
+.sht{background:repeating-linear-gradient(45deg,#fff 0 6px,#EEF0F5 6px 12px)}
+.sht .cut{outline:1.5px dashed #111}
+
+/* glue strips and assembly guide */
+.glue{position:absolute;z-index:2;pointer-events:none;background:repeating-linear-gradient(45deg,rgba(242,188,46,.75) 0 4px,rgba(242,188,46,.25) 4px 8px)}
+.glue.r{top:0;bottom:0;right:0}
+.glue.b{left:0;right:0;bottom:0}
+.howto{max-width:560px;margin:14px auto 0;font-size:14px;color:var(--muted)}
+.howto .legend{display:flex;gap:16px;justify-content:center;margin-bottom:8px;font-weight:700;color:var(--ink);font-size:13px}
+.howto .legend span{display:inline-flex;gap:6px;align-items:center}
+.lg-cut{width:22px;height:0;border-top:2px dashed #111}
+.lg-glue{width:22px;height:12px;border-radius:2px;background:repeating-linear-gradient(45deg,rgba(242,188,46,.85) 0 4px,rgba(242,188,46,.3) 4px 8px)}
+.howto ol{margin:0;padding-left:20px;display:grid;gap:4px}
+.howto b{color:var(--ink)}
+.howto .help{text-align:center;margin-top:8px}
 </style>
 </head>
 <body>
@@ -951,7 +973,7 @@ const CONFIG = {
   printCleanupDays: 3,              // documents are deleted this many days after pickup (privacy)
   posterExtraSheet: 30,             // each extra sheet on a big (multi-sheet) poster
   posterMarginMm: 5,                // white border on every poster sheet (printers can't print to the edge)
-  posterOverlapMm: 0,               // big posters: extra picture past the cut line, for gluing or taping (0 = none)
+  posterOverlapMm: 10,              // big posters: sheets overlap this much so they can be glued firmly (0 = edges just meet)
   maxPictures: 20,
   cleanupDays: 30
 };
@@ -1253,7 +1275,7 @@ function applyShopConfig(c){
   CONFIG.rushNextDay = numOr(c.rush_next_day, D.rushNextDay); CONFIG.printCleanupDays = numOr(c.print_cleanup_days, D.printCleanupDays);
   CONFIG.posterExtraSheet = numOr(c.poster_extra_sheet, D.posterExtraSheet);
   CONFIG.posterMarginMm = Math.max(3, Math.min(15, numOr(c.poster_margin_mm, D.posterMarginMm)));
-  CONFIG.posterOverlapMm = Math.max(0, Math.min(CONFIG.posterMarginMm, numOr(c.poster_overlap_mm, D.posterOverlapMm)));
+  CONFIG.posterOverlapMm = Math.max(0, Math.min(30, numOr(c.poster_overlap_mm, D.posterOverlapMm)));
   CONFIG.siteUrl = /^https?:\/\/\S+$/.test(c.site_url || '') ? c.site_url : D.siteUrl;
   for (const k of Object.keys(CONFIG.products)) {
     const base = D.products[k];
@@ -1367,30 +1389,38 @@ function itemDetails(it){
   return bits.join(' · ');
 }
 const TILE_GRID = { 1: [1, 1], 2: [1, 2], 4: [2, 2], 9: [3, 3] };   // [columns, rows] for a tall poster
-/* Poster size from the picture's shape.
+/* Poster size from the picture's shape. Sheets overlap by CONFIG.posterOverlapMm: each sheet repeats a strip of
+   picture where the next sheet is glued on top, so joins are strong and nearly invisible.
    Whole picture (default, like Rasterbator): nothing is cut off; the last row or column may be partly blank and gets trimmed.
    Fill the sheets: every sheet is used edge to edge; a little of the picture's edges may be cut off. */
 function posterRegrid(f){
   if (f.type !== 'posters') return;
-  const z = P('posters').sizes.find(x => x.id === f.size) || P('posters').sizes[0], m = CONFIG.posterMarginMm;
+  const z = P('posters').sizes.find(x => x.id === f.size) || P('posters').sizes[0], m = CONFIG.posterMarginMm, ov = CONFIG.posterOverlapMm;
   let sw = z.wMm, sh = z.hMm; if (f.orient === 'landscape') [sw, sh] = [sh, sw];
   const iw = sw - 2 * m, ih = sh - 2 * m, im = f.front.imageId && imgById(f.front.imageId);
-  const a = im ? im.w / im.h : iw / ih, lim = v => Math.max(1, Math.min(6, v));
+  const a = im ? im.w / im.h : iw / ih, lim = v => Math.max(1, Math.min(6, v)), high = f.sizeBy === 'high';
+  const span = (k, inner) => k * inner - (k - 1) * ov;                                        // length covered by k glued sheets
+  const need = (len, inner) => len <= inner + 1e-6 ? 1 : Math.ceil((len - ov) / (inner - ov) - 1e-6);
+  const frac = (len, inner) => len <= inner ? len / inner : 1 + (len - inner) / (inner - ov);  // sheets needed, as a decimal
   let n = Math.max(1, Math.min(4, +f.count || 1));
   for (;; n--) {
     if ((f.fit || 'fit') === 'fill') {
-      if (f.sizeBy === 'high') { f.rows = n; f.cols = lim(Math.round(n * ih * a / iw)); } else { f.cols = n; f.rows = lim(Math.round(n * iw / a / ih)); }
-      f.wMm = f.cols * iw; f.hMm = f.rows * ih;
+      if (high) { f.rows = n; f.cols = lim(Math.round(frac(span(n, ih) * a, iw))); } else { f.cols = n; f.rows = lim(Math.round(frac(span(n, iw) / a, ih))); }
+      f.wMm = span(f.cols, iw); f.hMm = span(f.rows, ih);
     } else {
-      let w, h; if (f.sizeBy === 'high') { h = n * ih; w = h * a; } else { w = n * iw; h = w / a; }
-      // "1 sheet" always means one sheet: the whole picture shrinks to fit on it
-      if (n === 1) { w = Math.min(iw, ih * a); h = w / a; }
-      const k = Math.min(1, 6 * iw / w, 6 * ih / h); w *= k; h *= k;
-      f.cols = lim(Math.ceil(w / iw - 1e-6)); f.rows = lim(Math.ceil(h / ih - 1e-6)); f.wMm = w; f.hMm = h;
+      let w, h; if (high) { h = span(n, ih); w = h * a; } else { w = span(n, iw); h = w / a; }
+      const k = Math.min(1, span(6, iw) / w, span(6, ih) / h); w *= k; h *= k;
+      if (n === 1) { w = Math.min(iw, ih * a); h = w / a; }             // "1 sheet" always means one sheet
+      else {
+        // a thin strip spilling onto another row (or column) of sheets wastes paper: shrink a little instead
+        const sp = high ? frac(w, iw) : frac(h, ih), whole = Math.floor(sp);
+        if (whole >= 1 && sp - whole > 1e-6 && sp - whole < 0.2) { if (high) { w = span(whole, iw); h = w / a; } else { h = span(whole, ih); w = h * a; } }
+      }
+      f.cols = lim(need(w, iw)); f.rows = lim(need(h, ih)); f.wMm = w; f.hMm = h;
     }
     if (f.cols * f.rows <= 24 || n === 1) break;     // 24 sheets at most
   }
-  f.count = n; f.tiles = f.cols * f.rows;
+  f.ovMm = f.cols * f.rows > 1 ? ov : 0; f.count = n; f.tiles = f.cols * f.rows;
 }
 const tileLabel = t => ({ 1: '1', 2: '2', 4: '2 × 2', 9: '3 × 3' })[t] || String(t);
 function frameMm(it){
@@ -1400,8 +1430,8 @@ function frameMm(it){
   if (it.type === 'posters' && +it.cols > 0 && +it.rows > 0) {
     // Like Rasterbator: sheets across x sheets down. orient is the direction of each sheet.
     const m = CONFIG.posterMarginMm; let sw = z.wMm, sh = z.hMm; if (it.orient === 'landscape') [sw, sh] = [sh, sw];
-    const iw = sw - 2 * m, ih = sh - 2 * m;
-    return { w: +it.wMm || it.cols * iw, h: +it.hMm || it.rows * ih, pageW: sw, pageH: sh, margin: m, cols: +it.cols, rows: +it.rows, iw, ih };
+    const iw = sw - 2 * m, ih = sh - 2 * m, ov = it.ovMm != null && it.cols * it.rows > 1 ? +it.ovMm : 0;   // older orders: no overlap
+    return { w: +it.wMm || it.cols * iw, h: +it.hMm || it.rows * ih, pageW: sw, pageH: sh, margin: m, cols: +it.cols, rows: +it.rows, iw, ih, ov };
   }
   if (it.type === 'posters') {
     // Older saved orders: a fixed number of sheets (1, 2, 4 or 9)
@@ -1451,7 +1481,7 @@ function serializeItems(items, pathFor){
     if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ items: sh.items.map(x => ({ path: pathFor[x.imageId], col: x.col, row: x.row, size: x.size, fit: x.fit })) })) };
     const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy, bg: x.bg || '#ffffff' } : null;
     const out = { ...base, qty: it.qty, mm: frameMm(it), front: d(it.front) };
-    if (it.type === 'posters') { out.orient = it.orient; out.cols = +it.cols || 1; out.rows = +it.rows || 1; out.tiles = out.cols * out.rows; out.fit = it.fit || 'fit'; out.wMm = +it.wMm || null; out.hMm = +it.hMm || null; }
+    if (it.type === 'posters') { out.orient = it.orient; out.cols = +it.cols || 1; out.rows = +it.rows || 1; out.tiles = out.cols * out.rows; out.fit = it.fit || 'fit'; out.wMm = +it.wMm || null; out.hMm = +it.hMm || null; out.ovMm = +it.ovMm || 0; }
     if (it.type === 'keychains') { out.back_mode = it.backMode; out.back = it.backMode === 'different' ? d(it.back) : null; }
     return out;
   });
@@ -2138,32 +2168,43 @@ function drawFramedStage(){
       <p class="under" style="max-width:460px">The shaded ring wraps around the back of the pin, so it won't show. Keep faces and words inside the dashed circle.</p>`;
   } else if (f.type === 'posters') {
     const multi = mm.cols * mm.rows > 1, view = multi ? (f.view || 'finished') : 'finished';
-    const iw = mm.iw || mm.w / mm.cols, ih = mm.ih || mm.h / mm.rows, im = f.front.imageId && imgById(f.front.imageId);
-    const L = im ? layoutFrac(im, f.front, mm.w, mm.h) : null, blank = mm.cols * iw - mm.w > 1 || mm.rows * ih - mm.h > 1;
-    const lines = multi ? Array.from({ length: mm.cols - 1 }, (_, c) => `<span class="tline v" style="left:${(c + 1) * iw / mm.w * 100}%"></span>`).join('')
-      + Array.from({ length: mm.rows - 1 }, (_, r) => `<span class="tline h" style="top:${(r + 1) * ih / mm.h * 100}%"></span>`).join('') : '';
+    const iw = mm.iw || mm.w / mm.cols, ih = mm.ih || mm.h / mm.rows, ov = mm.ov || 0, sx = iw - ov, sy = ih - ov;
+    const im = f.front.imageId && imgById(f.front.imageId), L = im ? layoutFrac(im, f.front, mm.w, mm.h) : null;
+    const blank = (mm.cols - 1) * sx + iw - mm.w > 1 || (mm.rows - 1) * sy + ih - mm.h > 1;
+    const lines = multi ? Array.from({ length: mm.cols - 1 }, (_, c) => `<span class="tline v" style="left:${(c + 1) * sx / mm.w * 100}%"></span>`).join('')
+      + Array.from({ length: mm.rows - 1 }, (_, r) => `<span class="tline h" style="top:${(r + 1) * sy / mm.h * 100}%"></span>`).join('') : '';
     const toggle = multi ? `<div class="seg viewseg">${[['finished', 'Finished'], ['printed', 'As printed']].map(([v, l]) => `<button type="button" class="${view === v ? 'on' : ''}" data-act="fdView" data-v="${v}">${l}</button>`).join('')}</div>` : '';
     if (view === 'printed') {
       const sheets = [];
       for (let r = 0; r < mm.rows; r++) for (let c = 0; c < mm.cols; c++) {
-        const tw = Math.max(0, Math.min(iw, mm.w - c * iw)), th = Math.max(0, Math.min(ih, mm.h - r * ih));
+        const x0 = c * sx, y0 = r * sy, tw = Math.max(0, Math.min(iw, mm.w - x0)), th = Math.max(0, Math.min(ih, mm.h - y0));
+        const gR = c < mm.cols - 1 && ov > 0, gB = r < mm.rows - 1 && ov > 0;
         sheets.push(`<div class="sht" style="aspect-ratio:${mm.pageW}/${mm.pageH}">
           ${tw > 0.5 && th > 0.5 ? `<div class="cut" style="left:${mm.margin / mm.pageW * 100}%;top:${mm.margin / mm.pageH * 100}%;width:${tw / mm.pageW * 100}%;height:${th / mm.pageH * 100}%;background:${bg}">
-            <div class="whole" style="width:${mm.w / tw * 100}%;height:${mm.h / th * 100}%;left:${-c * iw / tw * 100}%;top:${-r * ih / th * 100}%">${im ? `<img src="${im.url}" alt="" draggable="false" style="${fracStyle(L)}">` : ''}</div></div>` : ''}
+            <div class="whole" style="width:${mm.w / tw * 100}%;height:${mm.h / th * 100}%;left:${-x0 / tw * 100}%;top:${-y0 / th * 100}%">${im ? `<img src="${im.url}" alt="" draggable="false" style="${fracStyle(L)}">` : ''}</div>
+            ${gR ? `<span class="glue r" style="width:${ov / tw * 100}%"></span>` : ''}${gB ? `<span class="glue b" style="height:${ov / th * 100}%"></span>` : ''}</div>` : ''}
           <span class="shn">${r * mm.cols + c + 1}</span></div>`);
       }
       const ratio = mm.cols * mm.pageW / (mm.rows * mm.pageH);
       html = `${toggle}<div class="sheets" style="grid-template-columns:repeat(${mm.cols},1fr);width:min(100%, ${ratio >= 1 ? 600 : 420}px, calc(52svh * ${ratio.toFixed(4)}))">${sheets.join('')}</div>
-        <p class="under">This is how it prints: ${mm.cols * mm.rows} sheets, each with a ${mm.margin} mm white edge. We cut along the dashed lines${blank ? ', trim off the blank part,' : ''} and tape the sheets together, so the finished poster has no white gaps.</p>`;
+        <div class="howto">
+          <div class="legend"><span><i class="lg-cut"></i>Cut line</span>${ov ? '<span><i class="lg-glue"></i>Glue strip</span>' : ''}</div>
+          <ol><li><b>Cut</b> every sheet along the black dashed lines${blank ? '. The blank part is trimmed off' : ''}.</li>
+            ${ov ? `<li><b>Glue</b> the striped strips. Each one shows the same ${ov} mm of picture as the edge of the next sheet.</li>
+            <li><b>Lay the next sheet on top</b> so the picture lines up, left to right, then the next row on top of the one above. The joins are strong and almost invisible.</li>`
+              : '<li><b>Tape</b> the sheets together from behind, edge to edge.</li>'}</ol>
+          <p class="help">We do all of this for you: you pick up the finished poster.</p></div>`;
     } else if (multi) {
       html = `${toggle}<div class="postwrap"><div class="hang" style="width:min(100%, ${mm.w > mm.h ? 560 : 400}px, calc(50svh * ${(mm.w / mm.h).toFixed(4)}));padding:1.2%">
           <div class="frame" id="frame" style="aspect-ratio:${mm.w}/${mm.h};background:${bg}">${frameInner(f.front, 'Choose a picture')}${lines}</div></div></div>
-        <p class="under">${mm.cols} × ${mm.rows} sheets, about ${Math.round(mm.w / 10)} × ${Math.round(mm.h / 10)} cm once the white edges are trimmed and the sheets are taped together. The lines show where the sheets meet.</p>`;
+        <p class="under">${mm.cols} × ${mm.rows} sheets, about ${Math.round(mm.w / 10)} × ${Math.round(mm.h / 10)} cm once trimmed and glued together. The lines show where the sheets join. Tap "As printed" to see each sheet.</p>`;
     } else {
       // one sheet: the page with its white border, the picture centered inside
       html = `<div class="postwrap"><div class="hang single" style="width:min(100%, ${mm.pageW > mm.pageH ? 560 : 400}px, calc(50svh * ${(mm.pageW / mm.pageH).toFixed(4)}));aspect-ratio:${mm.pageW}/${mm.pageH};padding:${mm.margin / mm.pageW * 100}%">
-          <div class="pinner"><div class="frame" id="frame" style="aspect-ratio:${mm.w}/${mm.h};width:${Math.min(100, mm.w / iw * 100)}%;background:${bg}">${frameInner(f.front, 'Choose a picture')}</div></div></div></div>
-        <p class="under">${esc((P('posters').sizes.find(z => z.id === f.size) || {}).label || '')} ${f.orient === 'landscape' ? 'wide' : 'tall'}, printed with a thin white border.</p>`;
+          <div class="pinner"><div class="cutwrap" style="aspect-ratio:${mm.w}/${mm.h};width:${Math.min(100, mm.w / iw * 100)}%"><div class="frame" id="frame" style="background:${bg}">${frameInner(f.front, 'Choose a picture')}</div>
+            ${f.front.imageId ? '<span class="cutline" aria-hidden="true"></span><span class="cuttag">Cut line</span>' : ''}</div></div></div></div>
+        <p class="under">${f.front.imageId ? `Printed on one ${esc((P('posters').sizes.find(z => z.id === f.size) || {}).label || '')} sheet, then cut along the black dashed line. The shaded paper is trimmed off. Finished size: ${(mm.w / 10).toFixed(1)} × ${(mm.h / 10).toFixed(1)} cm.`
+          : `${esc((P('posters').sizes.find(z => z.id === f.size) || {}).label || '')} ${f.orient === 'landscape' ? 'wide' : 'tall'} sheet.`}</p>`;
     }
   } else {
     const showBack = f.side === 'back', d = sd;
@@ -2975,32 +3016,36 @@ async function makePdf(o){
     const mm = it.mm || frameMm(it);
     if (it.type === 'posters') {
       const pm = frameMm(it), img = await getImg(it.front.path).catch(() => null);
-      const cols = pm.cols || 1, rows = pm.rows || 1, iw = pm.iw || pm.w / cols, ih = pm.ih || pm.h / rows;
+      const cols = pm.cols || 1, rows = pm.rows || 1, iw = pm.iw || pm.w / cols, ih = pm.ih || pm.h / rows, ov = pm.ov || 0, sx = iw - ov, sy = ih - ov;
       // render the whole poster once, then cut it into one piece per sheet
       const dpi = Math.min(200, 7000 / (Math.max(pm.w, pm.h) / 25.4));
       const full = document.createElement('canvas'); full.width = Math.round(pm.w / 25.4 * dpi); full.height = Math.round(pm.h / 25.4 * dpi);
       const fx = full.getContext('2d'); fx.fillStyle = it.front.bg || '#ffffff'; fx.fillRect(0, 0, full.width, full.height);
       if (img) { const L = layoutFrac({ w: img.naturalWidth, h: img.naturalHeight }, { ...it.front }, pm.w, pm.h); fx.drawImage(img, L.left * full.width, L.top * full.height, L.dw * full.width, L.dh * full.height); }
-      const art = full;
-      // overlap: inner edges get a little extra picture past the cut line, for gluing or taping
-      const ov = cols * rows > 1 ? Math.min(CONFIG.posterOverlapMm, pm.margin) : 0, pxmm = art.width / pm.w, pieces = [];
+      const pxmm = full.width / pm.w, pieces = [];
       for (let r0 = 0; r0 < rows; r0++) for (let c0 = 0; c0 < cols; c0++) {
-        // the last row and column can be shorter (whole-picture posters): that sheet is partly blank and gets trimmed
-        const tw = Math.min(iw, pm.w - c0 * iw), th = Math.min(ih, pm.h - r0 * ih); if (tw <= 0.5 || th <= 0.5) continue;
-        const eL = c0 > 0 ? ov : 0, eR = c0 < cols - 1 ? ov : 0, eT = r0 > 0 ? ov : 0, eB = r0 < rows - 1 ? ov : 0;
-        const pc = document.createElement('canvas'); pc.width = Math.max(1, Math.round((tw + eL + eR) * pxmm)); pc.height = Math.max(1, Math.round((th + eT + eB) * pxmm));
-        pc.getContext('2d').drawImage(art, (c0 * iw - eL) * pxmm, (r0 * ih - eT) * pxmm, pc.width, pc.height, 0, 0, pc.width, pc.height);
-        pieces.push({ r0, c0, tw, th, eL, eR, eT, eB, data: pc.toDataURL('image/jpeg', 0.92) });
+        // sheets overlap by ov: each one repeats the strip the next sheet is glued onto. The last row/column can be shorter.
+        const x0 = c0 * sx, y0 = r0 * sy, tw = Math.min(iw, pm.w - x0), th = Math.min(ih, pm.h - y0); if (tw <= 0.5 || th <= 0.5) continue;
+        const pc = document.createElement('canvas'); pc.width = Math.max(1, Math.round(tw * pxmm)); pc.height = Math.max(1, Math.round(th * pxmm));
+        pc.getContext('2d').drawImage(full, x0 * pxmm, y0 * pxmm, pc.width, pc.height, 0, 0, pc.width, pc.height);
+        pieces.push({ r0, c0, tw, th, data: pc.toDataURL('image/jpeg', 0.92) });
       }
       for (let q = 0; q < it.qty; q++) for (const pc of pieces) {
         page(pm.pageW, pm.pageH);
         const one = cols * rows === 1, ox = one ? (iw - pc.tw) / 2 : 0, oy = one ? (ih - pc.th) / 2 : 0;   // one sheet: center the picture
-        doc.addImage(pc.data, 'JPEG', pm.margin + ox - pc.eL, pm.margin + oy - pc.eT, pc.tw + pc.eL + pc.eR, pc.th + pc.eT + pc.eB, `poster${ii}_${pc.r0}_${pc.c0}`, 'FAST');
-        if (cols * rows > 1) {
-          // cut marks at the picture's corners, so the white border can be trimmed before taping
-          cutLine(); const x0 = pm.margin, y0 = pm.margin, x1 = x0 + pc.tw, y1 = y0 + pc.th, L2 = 3;
-          [[x0, y0, -1, -1], [x1, y0, 1, -1], [x0, y1, -1, 1], [x1, y1, 1, 1]].forEach(([x, y, sx, sy]) => { doc.line(x, y + sy * 1, x, y + sy * (1 + L2)); doc.line(x + sx * 1, y, x + sx * (1 + L2), y); });
-          doc.setFontSize(8); doc.setTextColor(120); doc.text(`Row ${pc.r0 + 1} of ${rows}, column ${pc.c0 + 1} of ${cols}`, pm.pageW - pm.margin, pm.margin - 1.2, { align: 'right' });
+        const X0 = pm.margin + ox, Y0 = pm.margin + oy, X1 = X0 + pc.tw, Y1 = Y0 + pc.th;
+        doc.addImage(pc.data, 'JPEG', X0, Y0, pc.tw, pc.th, `poster${ii}_${pc.r0}_${pc.c0}`, 'FAST');
+        // cut marks at the picture's corners: cut every sheet right at the picture's edge
+        cutLine(); const L2 = 3;
+        [[X0, Y0, -1, -1], [X1, Y0, 1, -1], [X0, Y1, -1, 1], [X1, Y1, 1, 1]].forEach(([x, y, sx2, sy2]) => { doc.line(x, y + sy2 * 1, x, y + sy2 * (1 + L2)); doc.line(x + sx2 * 1, y, x + sx2 * (1 + L2), y); });
+        if (!one) {
+          // glue strips: ticks in the margin where the next sheet's edge goes
+          doc.setDrawColor(201, 149, 26); doc.setLineWidth(0.4);
+          if (ov && pc.c0 < cols - 1) { const gx = X1 - ov; doc.line(gx, Y0 - 1, gx, Y0 - 4); doc.line(gx, Y1 + 1, gx, Y1 + 4); }
+          if (ov && pc.r0 < rows - 1) { const gy = Y1 - ov; doc.line(X0 - 1, gy, X0 - 4, gy); doc.line(X1 + 1, gy, X1 + 4, gy); }
+          doc.setFontSize(7.5); doc.setTextColor(110);
+          const glue = ov ? [pc.c0 < cols - 1 ? 'right' : '', pc.r0 < rows - 1 ? 'bottom' : ''].filter(Boolean).join(' and ') : '';
+          doc.text(`Row ${pc.r0 + 1} of ${rows}, column ${pc.c0 + 1} of ${cols}. Cut on all four marks.${glue ? ` Glue the ${glue} ${ov} mm strip (gold ticks); the next sheet goes on top.` : ''}`, X0, Y0 - 1.4);
         }
         foot(`${label}, copy ${q + 1} of ${it.qty}${cols * rows > 1 ? `, sheet ${pc.r0 * cols + pc.c0 + 1} of ${cols * rows}` : ''}`, pm.pageW, pm.pageH);
       }
@@ -3162,8 +3207,8 @@ function drawShopForm(){
     <div class="cfgsec"><div class="sub">Big posters</div>
       <div class="pgrid2"><label class="dnum"><span>Each extra sheet (₱)</span>${n('poster_extra_sheet', c.poster_extra_sheet, 0, 500)}</label>
         <label class="dnum"><span>White border on each sheet (mm)</span>${n('poster_margin_mm', c.poster_margin_mm, 3, 15)}</label>
-        <label class="dnum"><span>Overlap for taping (mm, 0 = none)</span>${n('poster_overlap_mm', c.poster_overlap_mm, 0, 15)}</label></div>
-      <p class="help" style="margin-top:6px">A 2 × 2 poster is the poster price plus 3 extra sheets. If your printer leaves a wider blank edge, raise the border (Rasterbator uses 10 mm). Overlap prints a strip of extra picture past the cut line so sheets can overlap a little when taping.</p></div>
+        <label class="dnum"><span>Glue overlap between sheets (mm)</span>${n('poster_overlap_mm', c.poster_overlap_mm, 0, 30)}</label></div>
+      <p class="help" style="margin-top:6px">A 2 × 2 poster is the poster price plus 3 extra sheets. If your printer leaves a wider blank edge, raise the border (Rasterbator uses 10 mm). Glue overlap: each sheet repeats this much picture where the next sheet goes on top, so the sheets can be glued firmly (10 mm is a good start). 0 means the edges just meet and you tape from behind.</p></div>
 
     <div class="cfgsec"><div class="sub">Website address</div>
       <input class="inp" id="cfgSite" inputmode="url" value="${esc(c.site_url || '')}" placeholder="https://stick2xu.vercel.app/">
@@ -3755,7 +3800,7 @@ const ACTIONS = {
   addFramed: () => {
     const f = S.fd; if (!f || !f.front.imageId) return;
     const item = { type: f.type, size: f.size, qty: f.qty, addons: f.addons.slice(), front: { ...f.front } };
-    if (f.type === 'posters') { item.orient = f.orient; item.cols = f.cols; item.rows = f.rows; item.tiles = f.cols * f.rows; item.count = f.count; item.sizeBy = f.sizeBy; item.fit = f.fit || 'fit'; item.wMm = f.wMm; item.hMm = f.hMm; }
+    if (f.type === 'posters') { item.orient = f.orient; item.cols = f.cols; item.rows = f.rows; item.tiles = f.cols * f.rows; item.count = f.count; item.sizeBy = f.sizeBy; item.fit = f.fit || 'fit'; item.wMm = f.wMm; item.hMm = f.hMm; item.ovMm = f.ovMm || 0; }
     if (f.type === 'keychains') { item.backMode = f.backMode; item.back = { ...f.back }; }
     S.fd = null; saveToCart(item);
   },
