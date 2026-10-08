@@ -74,16 +74,18 @@ Customers upload PDFs or pictures. The site counts the pages, and they pick pape
 
 Customers pick:
 - **Each sheet:** tall or wide paper.
-- **How many sheets:** a number, **across** or **down**. The other side is worked out from the picture's shape and rounded to whole sheets, so no half-blank pages. A 2:1 picture at 4 across on tall sheets is 4 × 1. On wide sheets it's 4 × 3, because wide sheets are shorter.
-- **Look:** Photo, Dots (color halftone), or Black dots (classic halftone). Dots hide blur on small pictures and look best from a few steps back.
+- **How many sheets:** a number, **across** or **down**. The other side comes from the picture's shape.
+- **Fit:**
+  - **Whole picture** (default, Rasterbator's way): nothing gets cut off. If the picture doesn't fill the last row or column of sheets, that sheet is partly blank and you trim off the blank part. A 2:1 picture at 4 across on tall sheets is 4 × 2 = 8 sheets, the same as Rasterbator.
+  - **Fill the sheets:** every sheet is used edge to edge, and a little of the picture's edges may be cut off. The customer drags the picture to choose what stays.
 
-The designer shows the poster size in cm, how many sheets it uses, the price, and a small picture of the poster next to a 165 cm person. The most a poster can be is 6 × 6 sheets, up to 24.
+The designer shows the poster size in cm, how many sheets it uses, and the price. For posters with more than one sheet, customers can switch between **Finished** (the taped-together poster) and **As printed** (each sheet with its white edge and dashed cut lines), so they know you trim the edges and tape the sheets. Most a poster can be: 24 sheets.
 
 Price = poster price + ₱30 for each extra sheet. In Settings → Shop details → Big posters you can also change:
 - **White border on each sheet:** default 5 mm. Raise it to 10 mm, like Rasterbator, if your printer leaves a wider blank edge.
 - **Overlap for taping:** default 0. For example, 5 mm prints a little extra picture past the cut line so neighboring sheets can overlap.
 
-The PDF puts one piece on each sheet, with cut marks and "Row 1, column 2" labels. Trim the white border at the cut marks and tape the sheets together from behind.
+The PDF puts one piece on each sheet, with cut marks and "Row 1, column 2" labels. Trim at the cut marks (and any blank part), then tape the sheets together from behind.
 
 ## Business tab (admin)
 

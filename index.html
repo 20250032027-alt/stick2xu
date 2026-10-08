@@ -763,12 +763,6 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 @media(max-width:600px){.equip{grid-template-columns:1fr 1fr}.equip > input:first-child{grid-column:1/-1}.wchart{gap:4px}.wv{font-size:9px}}
 
 /* ---------- prints + big posters ---------- */
-.tilegrid{position:absolute;inset:0;pointer-events:none;z-index:2}
-.tilegrid::before,.tilegrid::after{content:"";position:absolute;inset:0;background-size:calc(100% / var(--c)) 100%;
-  background-image:linear-gradient(to right,transparent calc(100% - 1px),rgba(255,255,255,.95) 0,rgba(255,255,255,.95) 100%);filter:drop-shadow(0 0 1px rgba(40,57,113,.55))}
-.tilegrid::after{background-size:100% calc(100% / var(--r));background-image:linear-gradient(to bottom,transparent calc(100% - 1px),rgba(255,255,255,.95) 0,rgba(255,255,255,.95) 100%)}
-  background-image:linear-gradient(to right,transparent calc(100% - 2px),rgba(255,255,255,.95) 0);background-size:calc(100% / var(--c)) 100%}
-.tilegrid::after{background-image:linear-gradient(to bottom,transparent calc(100% - 2px),rgba(255,255,255,.95) 0);background-size:100% calc(100% / var(--r))}
 .docs{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
 .docs li{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:12px;background:#fff}
 .docs .dt{width:44px;height:56px;border-radius:6px;border:1px solid var(--line);display:grid;place-items:center;overflow:hidden;background:#FAFBFD;color:var(--muted)}
@@ -821,18 +815,7 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .sizeinfo > div{display:grid;gap:2px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:#FAFBFD}
 .sizeinfo span{font-size:12px;color:var(--muted);font-weight:700}
 .sizeinfo b{font-size:15px}
-.looks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.look{display:grid;justify-items:center;gap:4px;padding:10px 6px;border:1.5px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;color:var(--ink);text-align:center}
-.look.on{border-color:var(--ink);background:var(--gold-soft);box-shadow:var(--shadow-sm)}
-.look b{font-size:14px}.look small{font-size:11.5px;color:var(--muted);line-height:1.2}
-.lk{width:46px;height:34px;border-radius:6px;border:1px solid var(--line)}
-.lk-photo{background:linear-gradient(180deg,#6FA6EE,#C9DEFA 55%,#45A266 56%,#2E7A4C)}
-.lk-dots{background:radial-gradient(circle,#3E7FD9 0 38%,transparent 42%) 0 0/8px 8px,radial-gradient(circle,#2E8A50 0 46%,transparent 50%) 0 22px/8px 8px #fff;background-repeat:repeat,repeat-x}
-.lk-dots-bw{background:radial-gradient(circle,#111 0 30%,transparent 34%) 0 0/8px 8px,radial-gradient(circle,#111 0 48%,transparent 52%) 0 20px/8px 8px #fff;background-repeat:repeat,repeat-x}
-.dotprev{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
 .postwrap{display:flex;align-items:flex-end;justify-content:center;gap:18px;flex-wrap:wrap}
-.scalefig{margin:0;display:grid;justify-items:center;gap:4px}
-.scalefig figcaption{font-size:11.5px;color:var(--muted);font-weight:600}
 @media(max-width:600px){.sizeinfo{grid-template-columns:1fr 1fr}.sizeinfo > div:last-child{grid-column:1/-1}}
 
 /* prints: page editor, black and white preview */
@@ -846,6 +829,21 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 #pframe{position:relative;overflow:hidden;background:#fff;outline:1px dashed #C9D1E3;touch-action:none;cursor:grab}
 #pframe img{position:absolute;max-width:none;user-select:none;-webkit-user-drag:none}
 .pgctl{display:grid;gap:10px;justify-items:start;width:min(100%,420px)}
+
+/* posters: sheet lines, as-printed view, one-sheet page */
+.tline{position:absolute;z-index:2;pointer-events:none;background:rgba(255,255,255,.95);box-shadow:0 0 0 .5px rgba(40,57,113,.45)}
+.tline.v{top:0;bottom:0;width:1.5px;margin-left:-.75px}
+.tline.h{left:0;right:0;height:1.5px;margin-top:-.75px}
+.viewseg{margin:0 auto 14px;width:max-content}
+.sheets{display:grid;gap:10px;margin:0 auto}
+.sht{position:relative;background:#fff;border:1px solid #C9D1E3;border-radius:2px;box-shadow:var(--shadow-sm)}
+.sht .cut{position:absolute;overflow:hidden;outline:1.5px dashed rgba(40,57,113,.6)}
+.sht .whole{position:absolute}
+.sht .whole img{position:absolute;max-width:none}
+.shn{position:absolute;right:4px;bottom:2px;font-size:10px;font-weight:700;color:var(--muted)}
+.hang.single{display:block;box-sizing:border-box}
+.pinner{width:100%;height:100%;display:grid;place-items:center}
+.pinner .frame{border:0;box-shadow:none;border-radius:0}
 </style>
 </head>
 <body>
@@ -1357,7 +1355,7 @@ function itemTitle(it){
   const sizeLabel = it.size_label || ((p.sizes.find(z => z.id === it.size) || {}).label) || '';
   if (it.type === 'stickers') return `Stickers, ${n} sheet${n === 1 ? '' : 's'}`;
   if (it.type === 'prints') return `Prints (${sizeLabel}), ${it.pages} page${+it.pages === 1 ? '' : 's'} × ${n} cop${+n === 1 ? 'y' : 'ies'}`;
-  const extra = it.type === 'posters' ? `, ${(+it.tiles || 1) > 1 ? (it.cols ? `${it.cols} × ${it.rows}` : tileLabel(+it.tiles)) + ' sheets, ' : ''}${it.orient === 'landscape' ? 'wide' : 'tall'}${it.style && it.style !== 'photo' ? (it.style === 'dots' ? ', dots' : ', black dots') : ''}` : '';
+  const extra = it.type === 'posters' ? `, ${(+it.tiles || 1) > 1 ? (it.cols ? `${it.cols} × ${it.rows}` : tileLabel(+it.tiles)) + ' sheets, ' : ''}${it.orient === 'landscape' ? 'wide' : 'tall'}${it.fit === 'fill' ? ', fill' : ''}` : '';
   return `${p.name}${p.sizes.length > 1 ? ` (${sizeLabel}${extra})` : extra ? ` (${extra.slice(2)})` : ''} × ${n}`;
 }
 function itemDetails(it){
@@ -1369,24 +1367,30 @@ function itemDetails(it){
   return bits.join(' · ');
 }
 const TILE_GRID = { 1: [1, 1], 2: [1, 2], 4: [2, 2], 9: [3, 3] };   // [columns, rows] for a tall poster
-/* Work out sheets down (or across) from the picture's shape, rounded to whole sheets so no paper is wasted */
-/* A small side view: a 165 cm person next to the poster, both to scale */
-function scaleFigure(mm){
-  const H = 120, k = H / Math.max(1650, mm.h), pw = mm.w * k, ph = mm.h * k, person = 1650 * k, W = Math.max(60, pw + 40);
-  return `<figure class="scalefig" aria-label="Poster compared to a 165 cm person"><svg viewBox="0 0 ${W} ${H + 4}" width="${W}" height="${H + 4}">
-    <g fill="var(--muted)" opacity=".55" transform="translate(4 ${H + 2 - person}) scale(${person / 165})"><circle cx="11" cy="10" r="9"/><path d="M2 26 q9-6 18 0 l2 60 h-6 l-2 79 h-5 l-1-64 -1 64 h-5 l-2-79 h-6z"/></g>
-    <rect x="34" y="${Math.max(2, H + 2 - 1500 * k - ph / 2)}" width="${pw}" height="${ph}" fill="var(--accent-soft)" stroke="var(--ink)" stroke-width="1.2" rx="1"/></svg>
-    <figcaption>Next to a 165 cm person</figcaption></figure>`;
-}
+/* Poster size from the picture's shape.
+   Whole picture (default, like Rasterbator): nothing is cut off; the last row or column may be partly blank and gets trimmed.
+   Fill the sheets: every sheet is used edge to edge; a little of the picture's edges may be cut off. */
 function posterRegrid(f){
   if (f.type !== 'posters') return;
   const z = P('posters').sizes.find(x => x.id === f.size) || P('posters').sizes[0], m = CONFIG.posterMarginMm;
   let sw = z.wMm, sh = z.hMm; if (f.orient === 'landscape') [sw, sh] = [sh, sw];
-  const iw = sw - 2 * m, ih = sh - 2 * m, n = Math.max(1, Math.min(4, +f.count || 1)), im = f.front.imageId && imgById(f.front.imageId);
-  const a = im ? im.w / im.h : iw / ih, clamp = v => Math.max(1, Math.min(6, Math.round(v)));
-  if (f.sizeBy === 'high') { f.rows = n; f.cols = clamp(n * ih * a / iw); }
-  else { f.cols = n; f.rows = clamp(n * iw / a / ih); }
-  f.tiles = f.cols * f.rows;
+  const iw = sw - 2 * m, ih = sh - 2 * m, im = f.front.imageId && imgById(f.front.imageId);
+  const a = im ? im.w / im.h : iw / ih, lim = v => Math.max(1, Math.min(6, v));
+  let n = Math.max(1, Math.min(4, +f.count || 1));
+  for (;; n--) {
+    if ((f.fit || 'fit') === 'fill') {
+      if (f.sizeBy === 'high') { f.rows = n; f.cols = lim(Math.round(n * ih * a / iw)); } else { f.cols = n; f.rows = lim(Math.round(n * iw / a / ih)); }
+      f.wMm = f.cols * iw; f.hMm = f.rows * ih;
+    } else {
+      let w, h; if (f.sizeBy === 'high') { h = n * ih; w = h * a; } else { w = n * iw; h = w / a; }
+      // "1 sheet" always means one sheet: the whole picture shrinks to fit on it
+      if (n === 1) { w = Math.min(iw, ih * a); h = w / a; }
+      const k = Math.min(1, 6 * iw / w, 6 * ih / h); w *= k; h *= k;
+      f.cols = lim(Math.ceil(w / iw - 1e-6)); f.rows = lim(Math.ceil(h / ih - 1e-6)); f.wMm = w; f.hMm = h;
+    }
+    if (f.cols * f.rows <= 24 || n === 1) break;     // 24 sheets at most
+  }
+  f.count = n; f.tiles = f.cols * f.rows;
 }
 const tileLabel = t => ({ 1: '1', 2: '2', 4: '2 × 2', 9: '3 × 3' })[t] || String(t);
 function frameMm(it){
@@ -1396,7 +1400,8 @@ function frameMm(it){
   if (it.type === 'posters' && +it.cols > 0 && +it.rows > 0) {
     // Like Rasterbator: sheets across x sheets down. orient is the direction of each sheet.
     const m = CONFIG.posterMarginMm; let sw = z.wMm, sh = z.hMm; if (it.orient === 'landscape') [sw, sh] = [sh, sw];
-    return { w: it.cols * (sw - 2 * m), h: it.rows * (sh - 2 * m), pageW: sw, pageH: sh, margin: m, cols: +it.cols, rows: +it.rows };
+    const iw = sw - 2 * m, ih = sh - 2 * m;
+    return { w: +it.wMm || it.cols * iw, h: +it.hMm || it.rows * ih, pageW: sw, pageH: sh, margin: m, cols: +it.cols, rows: +it.rows, iw, ih };
   }
   if (it.type === 'posters') {
     // Older saved orders: a fixed number of sheets (1, 2, 4 or 9)
@@ -1446,7 +1451,7 @@ function serializeItems(items, pathFor){
     if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ items: sh.items.map(x => ({ path: pathFor[x.imageId], col: x.col, row: x.row, size: x.size, fit: x.fit })) })) };
     const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy, bg: x.bg || '#ffffff' } : null;
     const out = { ...base, qty: it.qty, mm: frameMm(it), front: d(it.front) };
-    if (it.type === 'posters') { out.orient = it.orient; out.cols = +it.cols || 1; out.rows = +it.rows || 1; out.tiles = out.cols * out.rows; out.style = it.style || 'photo'; }
+    if (it.type === 'posters') { out.orient = it.orient; out.cols = +it.cols || 1; out.rows = +it.rows || 1; out.tiles = out.cols * out.rows; out.fit = it.fit || 'fit'; out.wMm = +it.wMm || null; out.hMm = +it.hMm || null; }
     if (it.type === 'keychains') { out.back_mode = it.backMode; out.back = it.backMode === 'different' ? d(it.back) : null; }
     return out;
   });
@@ -2008,7 +2013,7 @@ function tapCell(col, row){
 const blankDesign = () => ({ imageId: null, zoom: 1, ox: 0, oy: 0, bg: '#ffffff' });
 function newFd(key){
   const first = liveSizes(key)[0];
-  return { type: key, size: first ? first.id : P(key).sizes[0].id, qty: 1, addons: [], orient: 'portrait', tiles: 1, cols: 1, rows: 1, count: 1, sizeBy: 'wide', style: 'photo',
+  return { type: key, size: first ? first.id : P(key).sizes[0].id, qty: 1, addons: [], orient: 'portrait', tiles: 1, cols: 1, rows: 1, count: 1, sizeBy: 'wide', fit: 'fit', view: 'finished',
     front: blankDesign(), back: blankDesign(), backMode: 'same', side: 'front' };
 }
 function activeDesign(){
@@ -2065,11 +2070,12 @@ function drawFramedCtrl(){
           <div><span>Poster size</span><b class="num">${Math.round(mm.w / 10)} × ${Math.round(mm.h / 10)} cm</b></div>
           <div><span>Paper</span><b class="num">${t} sheet${t === 1 ? '' : 's'}${t > 1 ? ` (${mm.cols} × ${mm.rows})` : ''}</b></div>
           <div><span>Price</span><b class="num">${money(base + (t - 1) * CONFIG.posterExtraSheet)}</b></div></div>
-        <p class="help" style="margin-top:6px">${f.front.imageId ? 'The other side is worked out from your picture\'s shape, rounded to whole sheets.' : 'Add a picture and the poster takes its shape.'}${t > 1 ? ' We tape the sheets together for you.' : ''}</p>
-        <p class="lab" style="margin:16px 0 8px">Look</p>
-        <div class="looks">${[['photo', 'Photo', 'Just bigger'], ['dots', 'Dots', 'Halftone in color'], ['dots-bw', 'Black dots', 'Classic halftone']].map(([v, l, n]) =>
-          `<button type="button" class="look ${f.style === v ? 'on' : ''}" data-act="fdStyle" data-v="${v}" aria-pressed="${f.style === v}"><span class="lk lk-${v}"></span><b>${l}</b><small>${n}</small></button>`).join('')}</div>
-        ${f.style !== 'photo' ? '<p class="help" style="margin-top:6px">Dots look best from a few steps back, and hide blur on small pictures.</p>' : ''}`; })() : ''}
+        <p class="lab" style="margin:16px 0 8px">Fit</p>
+        <div class="seg">${[['fit', 'Whole picture'], ['fill', 'Fill the sheets']].map(([v, l]) => `<button type="button" class="${(f.fit || 'fit') === v ? 'on' : ''}" data-act="fdFit" data-v="${v}">${l}</button>`).join('')}</div>
+        <p class="help" style="margin-top:6px">${(f.fit || 'fit') === 'fit'
+          ? `Nothing gets cut off.${t > 1 ? " If the picture doesn't fill the last sheets, we trim off the blank part." : ''}`
+          : "Uses every sheet edge to edge. A little of the picture's edges may be cut off. Drag the picture to choose what stays."}${t > 1 ? ' We tape the sheets together for you.' : ''}</p>`; })() : ''}
+
     </section>` : ''}
     ${d && d.imageId ? `<section>${step('Adjust')}
       <div class="zoomrow">${ic('search', 18)}<input type="range" id="zoom" min="0.4" max="3" step="0.01" value="${d.zoom}" aria-label="Zoom">
@@ -2131,15 +2137,34 @@ function drawFramedStage(){
       </div>
       <p class="under" style="max-width:460px">The shaded ring wraps around the back of the pin, so it won't show. Keep faces and words inside the dashed circle.</p>`;
   } else if (f.type === 'posters') {
-    const wide = mm.w > mm.h;
-    const multi = mm.cols * mm.rows > 1;
-    html = `<div class="postwrap"><div class="hang" style="width:min(100%, ${wide ? 560 : 400}px, calc(50svh * ${(mm.w / mm.h).toFixed(4)}));padding:${multi ? 1.2 : 5 / mm.pageW * 100}%">
-        <div class="frame" id="frame" style="aspect-ratio:${mm.w}/${mm.h};background:${bg}">${frameInner(f.front, 'Choose a picture')}
-          ${f.style !== 'photo' && f.front.imageId ? '<canvas class="dotprev" id="dotprev" aria-hidden="true"></canvas>' : ''}
-          ${multi ? `<span class="tilegrid" style="--c:${mm.cols};--r:${mm.rows}" aria-hidden="true"></span>` : ''}</div></div>
-        ${multi ? scaleFigure(mm) : ''}</div>
-      <p class="under">${multi ? `${mm.cols} × ${mm.rows} sheets, about ${Math.round(mm.w / 10)} × ${Math.round(mm.h / 10)} cm taped together. The white lines show where the sheets meet.`
-        : `${esc((P('posters').sizes.find(z => z.id === f.size) || {}).label || '')} ${f.orient === 'landscape' ? 'wide' : 'tall'}, printed with a thin white border.`}</p>`;
+    const multi = mm.cols * mm.rows > 1, view = multi ? (f.view || 'finished') : 'finished';
+    const iw = mm.iw || mm.w / mm.cols, ih = mm.ih || mm.h / mm.rows, im = f.front.imageId && imgById(f.front.imageId);
+    const L = im ? layoutFrac(im, f.front, mm.w, mm.h) : null, blank = mm.cols * iw - mm.w > 1 || mm.rows * ih - mm.h > 1;
+    const lines = multi ? Array.from({ length: mm.cols - 1 }, (_, c) => `<span class="tline v" style="left:${(c + 1) * iw / mm.w * 100}%"></span>`).join('')
+      + Array.from({ length: mm.rows - 1 }, (_, r) => `<span class="tline h" style="top:${(r + 1) * ih / mm.h * 100}%"></span>`).join('') : '';
+    const toggle = multi ? `<div class="seg viewseg">${[['finished', 'Finished'], ['printed', 'As printed']].map(([v, l]) => `<button type="button" class="${view === v ? 'on' : ''}" data-act="fdView" data-v="${v}">${l}</button>`).join('')}</div>` : '';
+    if (view === 'printed') {
+      const sheets = [];
+      for (let r = 0; r < mm.rows; r++) for (let c = 0; c < mm.cols; c++) {
+        const tw = Math.max(0, Math.min(iw, mm.w - c * iw)), th = Math.max(0, Math.min(ih, mm.h - r * ih));
+        sheets.push(`<div class="sht" style="aspect-ratio:${mm.pageW}/${mm.pageH}">
+          ${tw > 0.5 && th > 0.5 ? `<div class="cut" style="left:${mm.margin / mm.pageW * 100}%;top:${mm.margin / mm.pageH * 100}%;width:${tw / mm.pageW * 100}%;height:${th / mm.pageH * 100}%;background:${bg}">
+            <div class="whole" style="width:${mm.w / tw * 100}%;height:${mm.h / th * 100}%;left:${-c * iw / tw * 100}%;top:${-r * ih / th * 100}%">${im ? `<img src="${im.url}" alt="" draggable="false" style="${fracStyle(L)}">` : ''}</div></div>` : ''}
+          <span class="shn">${r * mm.cols + c + 1}</span></div>`);
+      }
+      const ratio = mm.cols * mm.pageW / (mm.rows * mm.pageH);
+      html = `${toggle}<div class="sheets" style="grid-template-columns:repeat(${mm.cols},1fr);width:min(100%, ${ratio >= 1 ? 600 : 420}px, calc(52svh * ${ratio.toFixed(4)}))">${sheets.join('')}</div>
+        <p class="under">This is how it prints: ${mm.cols * mm.rows} sheets, each with a ${mm.margin} mm white edge. We cut along the dashed lines${blank ? ', trim off the blank part,' : ''} and tape the sheets together, so the finished poster has no white gaps.</p>`;
+    } else if (multi) {
+      html = `${toggle}<div class="postwrap"><div class="hang" style="width:min(100%, ${mm.w > mm.h ? 560 : 400}px, calc(50svh * ${(mm.w / mm.h).toFixed(4)}));padding:1.2%">
+          <div class="frame" id="frame" style="aspect-ratio:${mm.w}/${mm.h};background:${bg}">${frameInner(f.front, 'Choose a picture')}${lines}</div></div></div>
+        <p class="under">${mm.cols} × ${mm.rows} sheets, about ${Math.round(mm.w / 10)} × ${Math.round(mm.h / 10)} cm once the white edges are trimmed and the sheets are taped together. The lines show where the sheets meet.</p>`;
+    } else {
+      // one sheet: the page with its white border, the picture centered inside
+      html = `<div class="postwrap"><div class="hang single" style="width:min(100%, ${mm.pageW > mm.pageH ? 560 : 400}px, calc(50svh * ${(mm.pageW / mm.pageH).toFixed(4)}));aspect-ratio:${mm.pageW}/${mm.pageH};padding:${mm.margin / mm.pageW * 100}%">
+          <div class="pinner"><div class="frame" id="frame" style="aspect-ratio:${mm.w}/${mm.h};width:${Math.min(100, mm.w / iw * 100)}%;background:${bg}">${frameInner(f.front, 'Choose a picture')}</div></div></div></div>
+        <p class="under">${esc((P('posters').sizes.find(z => z.id === f.size) || {}).label || '')} ${f.orient === 'landscape' ? 'wide' : 'tall'}, printed with a thin white border.</p>`;
+    }
   } else {
     const showBack = f.side === 'back', d = sd;
     const clear = showBack && f.backMode === 'blank';
@@ -2167,42 +2192,10 @@ function placeImg(){
   // Let the page scroll in any direction the picture can't move in (e.g. a wide photo in a tall poster)
   const fr = $('#frame');
   if (fr) { const mx = Math.abs(L.dw - 1) > .002, my = Math.abs(L.dh - 1) > .002; fr.style.touchAction = mx && my ? 'none' : mx ? 'pan-y' : my ? 'pan-x' : 'pan-y'; }
-  if (S.fd.type === 'posters' && S.fd.style !== 'photo') drawDots(im, d, mm);
   const big = S.fd.type === 'posters' && (+S.fd.tiles || 1) > 1;   // big posters are seen from farther away
   $('#reswarn').innerHTML = L.dpi < (big ? 90 : 150) ? `<p class="warnline">${ic('warn', 16)}${big
     ? `This picture is ${im.w} pixels wide, which may look soft this big. Try a bigger picture or fewer sheets.`
     : 'This picture might print blurry at this size. Try a bigger picture or zoom out.'}</p>` : '';
-}
-/* Halftone: one dot per cell, bigger where the picture is darker. Sampling a shrunk copy keeps it fast. */
-const dotCellMm = mm => Math.max(3, mm.w / 110);
-function halftone(src, cellPx, bw){
-  const w = src.width, h = src.height, gw = Math.max(1, Math.ceil(w / cellPx)), gh = Math.max(1, Math.ceil(h / cellPx));
-  const small = document.createElement('canvas'); small.width = gw; small.height = gh;
-  const sx = small.getContext('2d'); sx.imageSmoothingQuality = 'high'; sx.drawImage(src, 0, 0, gw, gh);
-  const px = sx.getImageData(0, 0, gw, gh).data;
-  const out = document.createElement('canvas'); out.width = w; out.height = h;
-  const o = out.getContext('2d'); o.fillStyle = '#fff'; o.fillRect(0, 0, w, h);
-  for (let y = 0; y < gh; y++) for (let x = 0; x < gw; x++) {
-    const i = (y * gw + x) * 4, r = px[i], g = px[i + 1], b = px[i + 2], lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    const rad = cellPx * 0.5 * Math.sqrt(1 - lum) * 1.38; if (rad < 0.35) continue;
-    o.fillStyle = bw ? '#111' : `rgb(${r * .82 | 0},${g * .82 | 0},${b * .82 | 0})`;
-    o.beginPath(); o.arc((x + .5) * cellPx, (y + .5) * cellPx, Math.min(rad, cellPx * .72), 0, Math.PI * 2); o.fill();
-  }
-  return out;
-}
-let dotRaf = 0;
-function drawDots(im, d, mm){
-  cancelAnimationFrame(dotRaf);
-  dotRaf = requestAnimationFrame(() => {
-    const cv = $('#dotprev'), fr = $('#frame'); if (!cv || !fr) return;
-    const fw = fr.clientWidth, fh = fr.clientHeight, dpr = Math.min(2, devicePixelRatio || 1);
-    const tmp = document.createElement('canvas'); tmp.width = Math.round(fw * dpr); tmp.height = Math.round(fh * dpr);
-    const tx = tmp.getContext('2d'), L = layoutFrac(im, d, mm.w, mm.h);
-    tx.fillStyle = d.bg || '#fff'; tx.fillRect(0, 0, tmp.width, tmp.height);
-    tx.drawImage(im.canvas, L.left * tmp.width, L.top * tmp.height, L.dw * tmp.width, L.dh * tmp.height);
-    const out = halftone(tmp, dotCellMm(mm) / mm.w * tmp.width, S.fd.style === 'dots-bw');
-    cv.width = out.width; cv.height = out.height; cv.getContext('2d').drawImage(out, 0, 0);
-  });
 }
 function syncZoomSlider(d){
   const z = $('#zoom'); if (!z) return;
@@ -2982,27 +2975,30 @@ async function makePdf(o){
     const mm = it.mm || frameMm(it);
     if (it.type === 'posters') {
       const pm = frameMm(it), img = await getImg(it.front.path).catch(() => null);
-      const cols = pm.cols || 1, rows = pm.rows || 1, tw = pm.w / cols, th = pm.h / rows;
+      const cols = pm.cols || 1, rows = pm.rows || 1, iw = pm.iw || pm.w / cols, ih = pm.ih || pm.h / rows;
       // render the whole poster once, then cut it into one piece per sheet
       const dpi = Math.min(200, 7000 / (Math.max(pm.w, pm.h) / 25.4));
       const full = document.createElement('canvas'); full.width = Math.round(pm.w / 25.4 * dpi); full.height = Math.round(pm.h / 25.4 * dpi);
       const fx = full.getContext('2d'); fx.fillStyle = it.front.bg || '#ffffff'; fx.fillRect(0, 0, full.width, full.height);
       if (img) { const L = layoutFrac({ w: img.naturalWidth, h: img.naturalHeight }, { ...it.front }, pm.w, pm.h); fx.drawImage(img, L.left * full.width, L.top * full.height, L.dw * full.width, L.dh * full.height); }
-      const art = it.style && it.style !== 'photo' ? halftone(full, dotCellMm(pm) / pm.w * full.width, it.style === 'dots-bw') : full;
+      const art = full;
       // overlap: inner edges get a little extra picture past the cut line, for gluing or taping
       const ov = cols * rows > 1 ? Math.min(CONFIG.posterOverlapMm, pm.margin) : 0, pxmm = art.width / pm.w, pieces = [];
       for (let r0 = 0; r0 < rows; r0++) for (let c0 = 0; c0 < cols; c0++) {
+        // the last row and column can be shorter (whole-picture posters): that sheet is partly blank and gets trimmed
+        const tw = Math.min(iw, pm.w - c0 * iw), th = Math.min(ih, pm.h - r0 * ih); if (tw <= 0.5 || th <= 0.5) continue;
         const eL = c0 > 0 ? ov : 0, eR = c0 < cols - 1 ? ov : 0, eT = r0 > 0 ? ov : 0, eB = r0 < rows - 1 ? ov : 0;
-        const pc = document.createElement('canvas'); pc.width = Math.round((tw + eL + eR) * pxmm); pc.height = Math.round((th + eT + eB) * pxmm);
-        pc.getContext('2d').drawImage(art, (c0 * tw - eL) * pxmm, (r0 * th - eT) * pxmm, pc.width, pc.height, 0, 0, pc.width, pc.height);
-        pieces.push({ r0, c0, eL, eR, eT, eB, data: pc.toDataURL('image/jpeg', 0.92) });
+        const pc = document.createElement('canvas'); pc.width = Math.max(1, Math.round((tw + eL + eR) * pxmm)); pc.height = Math.max(1, Math.round((th + eT + eB) * pxmm));
+        pc.getContext('2d').drawImage(art, (c0 * iw - eL) * pxmm, (r0 * ih - eT) * pxmm, pc.width, pc.height, 0, 0, pc.width, pc.height);
+        pieces.push({ r0, c0, tw, th, eL, eR, eT, eB, data: pc.toDataURL('image/jpeg', 0.92) });
       }
       for (let q = 0; q < it.qty; q++) for (const pc of pieces) {
         page(pm.pageW, pm.pageH);
-        doc.addImage(pc.data, 'JPEG', pm.margin - pc.eL, pm.margin - pc.eT, tw + pc.eL + pc.eR, th + pc.eT + pc.eB, `poster${ii}_${pc.r0}_${pc.c0}`, 'FAST');
+        const one = cols * rows === 1, ox = one ? (iw - pc.tw) / 2 : 0, oy = one ? (ih - pc.th) / 2 : 0;   // one sheet: center the picture
+        doc.addImage(pc.data, 'JPEG', pm.margin + ox - pc.eL, pm.margin + oy - pc.eT, pc.tw + pc.eL + pc.eR, pc.th + pc.eT + pc.eB, `poster${ii}_${pc.r0}_${pc.c0}`, 'FAST');
         if (cols * rows > 1) {
           // cut marks at the picture's corners, so the white border can be trimmed before taping
-          cutLine(); const x0 = pm.margin, y0 = pm.margin, x1 = x0 + tw, y1 = y0 + th, L2 = 3;
+          cutLine(); const x0 = pm.margin, y0 = pm.margin, x1 = x0 + pc.tw, y1 = y0 + pc.th, L2 = 3;
           [[x0, y0, -1, -1], [x1, y0, 1, -1], [x0, y1, -1, 1], [x1, y1, 1, 1]].forEach(([x, y, sx, sy]) => { doc.line(x, y + sy * 1, x, y + sy * (1 + L2)); doc.line(x + sx * 1, y, x + sx * (1 + L2), y); });
           doc.setFontSize(8); doc.setTextColor(120); doc.text(`Row ${pc.r0 + 1} of ${rows}, column ${pc.c0 + 1} of ${cols}`, pm.pageW - pm.margin, pm.margin - 1.2, { align: 'right' });
         }
@@ -3750,15 +3746,16 @@ const ACTIONS = {
     S.prSel = null;
     S.pr = null; saveToCart(item);
   },
+  fdFit: t => { const f = S.fd; f.fit = t.dataset.v; Object.assign(f.front, { zoom: 1, ox: 0, oy: 0 }); posterRegrid(f); drawFramed(); },
+  fdView: t => { S.fd.view = t.dataset.v; drawFramed(); },
   fdCount: t => { const f = S.fd; f.count = Math.max(1, Math.min(4, (+f.count || 1) + +t.dataset.d)); buzz(5); posterRegrid(f); drawFramed(); },
   fdSizeBy: t => { const f = S.fd; f.sizeBy = t.dataset.v; posterRegrid(f); drawFramed(); },
-  fdStyle: t => { S.fd.style = t.dataset.v; drawFramed(); },
   fdQty: t => { buzz(5); setQty(S.fd.qty + +t.dataset.d); },
   fdQtySet: t => { buzz([6, 20, 6]); setQty(+t.dataset.n); },
   addFramed: () => {
     const f = S.fd; if (!f || !f.front.imageId) return;
     const item = { type: f.type, size: f.size, qty: f.qty, addons: f.addons.slice(), front: { ...f.front } };
-    if (f.type === 'posters') { item.orient = f.orient; item.cols = f.cols; item.rows = f.rows; item.tiles = f.cols * f.rows; item.count = f.count; item.sizeBy = f.sizeBy; item.style = f.style; }
+    if (f.type === 'posters') { item.orient = f.orient; item.cols = f.cols; item.rows = f.rows; item.tiles = f.cols * f.rows; item.count = f.count; item.sizeBy = f.sizeBy; item.fit = f.fit || 'fit'; item.wMm = f.wMm; item.hMm = f.hMm; }
     if (f.type === 'keychains') { item.backMode = f.backMode; item.back = { ...f.back }; }
     S.fd = null; saveToCart(item);
   },
