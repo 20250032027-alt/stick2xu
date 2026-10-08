@@ -96,6 +96,22 @@ Price = poster price + ₱30 for each extra sheet. In Settings → Shop details 
 
 The PDF puts one piece on each sheet, with cut marks, gold tick marks for the glue strips, and a short note on each sheet ("Row 1, column 2. Cut on all four marks. Glue the right 10 mm strip; the next sheet goes on top."). One-sheet posters also get cut marks: cut the extra paper off around the picture.
 
+### Posters from a PDF
+
+Customers can upload a PDF in the poster designer:
+- **A one-page PDF** (a design saved as a PDF) becomes the poster picture and works like any other picture.
+- **A PDF with several pages** (like a Rasterbator download) is printed **exactly as it is**, one sheet per page, up to 24 pages. The customer sets how many pages go across, only so the preview shows the finished layout. Price = poster price + ₱30 for each extra page.
+
+In admin, these orders show a download button for the PDF instead of a print PDF. Print every page, then cut and join them along the PDF's own cut marks.
+
+## Pickup capacity (busy days)
+
+So one person never has to be at two gates at once, and a day never gets more orders than you can print:
+- **People at pickup at the same time** (default 1): with 1, each pickup time uses **one gate**. The first order for, say, Friday lunch picks the gate. After that, customers choosing Friday lunch see the other gates greyed out with "At this time we'll be at Gate 1". They pick that gate or another time. Set 2 if two of you can cover two gates at once.
+- **Most orders per pickup time** (default 8) and **per pickup day** (default 15): when one fills up, checkout shows "Full" and customers pick another time or day. 0 means no limit.
+
+The server enforces these rules, so two people ordering at the same moment can't both take the last spot. Customers moving their pickup follow the same rules. Change all three in Settings → Shop details → Pickup rules. The Orders tab has an **Upcoming pickups** box with the next pickup days, each time slot, its gate, and how many orders, so you can plan who goes where and how much to print the night before.
+
 ## Business tab (admin)
 
 - **Profit:** this week and so far. Profit = sales minus the supplies each picked-up order used.

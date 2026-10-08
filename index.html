@@ -806,7 +806,8 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .filechip.off{opacity:.6;border-style:dashed}
 .rushtag{color:#8A5E00!important;font-weight:700}
 .sv-row.rushrow{margin-top:14px;padding:10px 14px;border:1px solid #EED9A2;border-radius:12px;background:#FFF8E6;color:#6B4B00;font-weight:700}
-.choice.off{opacity:.45}
+.choice.off{opacity:1;cursor:not-allowed}
+.choice.off > *{opacity:.45}
 
 /* ---------- rasterbator-style posters ---------- */
 .bigrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -866,6 +867,26 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .howto ol{margin:0;padding-left:20px;display:grid;gap:4px}
 .howto b{color:var(--ink)}
 .howto .help{text-align:center;margin-top:8px}
+
+/* poster from a ready-made PDF */
+.ppgrid{display:grid;gap:6px;margin:0 auto}
+.ppage{position:relative;background:#fff;border:1px solid #C9D1E3;border-radius:2px;box-shadow:var(--shadow-sm);overflow:hidden;display:grid;place-items:center}
+.ppage img{width:100%;height:100%;object-fit:contain;display:block}
+.ppage span{display:grid;justify-items:center;gap:4px;color:var(--muted)}
+.ppage i{position:absolute;right:4px;bottom:2px;font-style:normal;font-size:10px;font-weight:700;color:var(--muted);background:rgba(255,255,255,.85);padding:0 3px;border-radius:3px}
+
+/* pickup capacity */
+.choice[data-note]{position:relative}
+.choice[data-note]::after{content:attr(data-note);margin-left:auto;font-size:12px;font-weight:700;color:#8A5E00;background:#FFF4DC;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.upc{margin-bottom:14px;padding:12px 16px}
+.upc summary{cursor:pointer;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.upcgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:12px}
+.upcday{border:1px solid var(--line);border-radius:12px;padding:10px;display:grid;gap:6px}
+.upch{display:flex;justify-content:space-between}
+.upcslot{display:grid;gap:2px;font-size:14px;padding:6px 8px;border-radius:8px;background:#FAFBFD}
+.upcslot > span:first-child{color:var(--muted);font-size:12.5px;font-weight:700}
+.upcslot.clash{background:#FFF4DC}
+.upcslot small{display:flex;gap:4px;align-items:center;color:#8A5E00;font-weight:700}
 </style>
 </head>
 <body>
@@ -961,6 +982,9 @@ const CONFIG = {
 
   gcash: { enabled: true, name: 'J. Dela Cruz', number: '0917 000 0000' },
 
+  sellersAtPickup: 1,       // how many of you can be at pickup at the same time (= gates per time slot)
+  maxPerSlot: 8,            // most orders for one pickup time (0 = no limit)
+  maxPerDay: 15,            // most orders for one pickup day (0 = no limit)
   confirmDaysBefore: 1,     // customers tap "I'll be there" by this many days before pickup; only confirmed orders get printed
   maxReschedules: 2,        // how many times a customer can move their own pickup day
   refundDays: 3,            // GCash refunds for cancelled orders go out within this many days
@@ -1140,6 +1164,9 @@ function friendlyError(e){
   if (m.includes('NOT_FOUND')) return "No order matches that code and nickname. Check both and try again.";
   if (m.includes('BAD_INPUT')) return 'Some details are missing. Fill in every box and try again.';
   if (m.includes('NO_PGNET')) return 'Turn on pg_net in Supabase first: Database → Extensions → search "pg_net" → enable. Then try again.';
+  if (m.includes('GATE_TAKEN')) return "At that time we'll be at a different gate. Pick the other gate, or another time.";
+  if (m.includes('SLOT_FULL')) return 'That pickup time just filled up. Pick another time or day.';
+  if (m.includes('DAY_FULL')) return 'That pickup day just filled up. Pick another day.';
   if (m.includes('TOO_SOON')) return 'That pickup time is too soon to get it ready. Pick a later time or another day.';
   if (m.includes('BAD_DATE')) return "That day isn't open for pickup anymore. Pick another one.";
   if (m.includes('NO_RESCHEDULE')) return "This order can't be moved anymore. Talk to the seller at pickup.";
@@ -1271,6 +1298,9 @@ function applyShopConfig(c){
   CONFIG.notice = { ...D.notice, ...(c.notice || {}) };
   CONFIG.printWeekdays = arr(c.print_weekdays, D.printWeekdays).map(Number);
   const numOr = (v, d) => v !== undefined && v !== null && v !== '' && Number.isFinite(+v) ? +v : d;
+  CONFIG.sellersAtPickup = Math.max(0, numOr(c.sellers_at_pickup, D.sellersAtPickup));
+  CONFIG.maxPerSlot = Math.max(0, numOr(c.max_per_slot, D.maxPerSlot));
+  CONFIG.maxPerDay = Math.max(0, numOr(c.max_per_day, D.maxPerDay));
   CONFIG.prepHours = numOr(c.prep_hours, D.prepHours); CONFIG.rushSameDay = numOr(c.rush_same_day, D.rushSameDay);
   CONFIG.rushNextDay = numOr(c.rush_next_day, D.rushNextDay); CONFIG.printCleanupDays = numOr(c.print_cleanup_days, D.printCleanupDays);
   CONFIG.posterExtraSheet = numOr(c.poster_extra_sheet, D.posterExtraSheet);
@@ -1376,6 +1406,7 @@ function itemTitle(it){
   const p = CONFIG.products[it.type] || { name: it.type, sizes: [] }, n = it.type === 'stickers' ? (it.sheets || []).filter(s => (s.items || []).length).length : it.qty;
   const sizeLabel = it.size_label || ((p.sizes.find(z => z.id === it.size) || {}).label) || '';
   if (it.type === 'stickers') return `Stickers, ${n} sheet${n === 1 ? '' : 's'}`;
+  if (it.type === 'posters' && it.mode === 'pages') return `Poster from your PDF, ${it.pages} page${+it.pages === 1 ? '' : 's'}${+it.qty > 1 ? ` × ${it.qty}` : ''}`;
   if (it.type === 'prints') return `Prints (${sizeLabel}), ${it.pages} page${+it.pages === 1 ? '' : 's'} × ${n} cop${+n === 1 ? 'y' : 'ies'}`;
   const extra = it.type === 'posters' ? `, ${(+it.tiles || 1) > 1 ? (it.cols ? `${it.cols} × ${it.rows}` : tileLabel(+it.tiles)) + ' sheets, ' : ''}${it.orient === 'landscape' ? 'wide' : 'tall'}${it.fit === 'fill' ? ', fill' : ''}` : '';
   return `${p.name}${p.sizes.length > 1 ? ` (${sizeLabel}${extra})` : extra ? ` (${extra.slice(2)})` : ''} × ${n}`;
@@ -1461,6 +1492,7 @@ function framedThumb(d, url, mm, width = 80){
     ? `<img src="${url}" alt="" data-d='${esc(JSON.stringify({ zoom: d.zoom, ox: d.ox, oy: d.oy }))}' data-w="${mm.w}" data-h="${mm.h}" onload="fitThumb(this)">` : ''}</div>`;
 }
 function itemThumb(it, urlFor){
+  if (it.type === 'posters' && it.mode === 'pages') return `<div class="docthumb">${ic('doc', 26)}<b class="num">${it.pages}</b><small>PDF pages</small></div>`;
   if (it.type === 'prints') return `<div class="docthumb">${ic('doc', 26)}<b class="num">${it.pages}</b><small>page${+it.pages === 1 ? '' : 's'}</small></div>`;
   if (it.type === 'stickers') return miniSheet(it.sheets.find(s => s.items.length) || it.sheets[0], urlFor.sticker, false, !!urlFor.outlined);
   const mm = frameMm(it);
@@ -1468,7 +1500,7 @@ function itemThumb(it, urlFor){
 }
 
 function cartImageIds(){
-  return S.cart.flatMap(it => it.type === 'prints' ? (it.files || []).map(f => f.id) : it.type === 'stickers' ? it.sheets.flatMap(sh => sh.items.map(x => x.imageId))
+  return S.cart.flatMap(it => it.mode === 'pages' && it.pdf ? [it.pdf.id] : it.type === 'prints' ? (it.files || []).map(f => f.id) : it.type === 'stickers' ? it.sheets.flatMap(sh => sh.items.map(x => x.imageId))
     : [it.front && it.front.imageId, it.type === 'keychains' && it.backMode === 'different' && it.back && it.back.imageId]).filter(Boolean);
 }
 function serializeItems(items, pathFor){
@@ -1480,6 +1512,8 @@ function serializeItems(items, pathFor){
       files: (it.files || []).map(f => ({ path: pathFor[f.id], name: f.name, pages: f.pages, kind: f.kind, orient: f.orient || null })) };
     if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ items: sh.items.map(x => ({ path: pathFor[x.imageId], col: x.col, row: x.row, size: x.size, fit: x.fit })) })) };
     const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy, bg: x.bg || '#ffffff' } : null;
+    if (it.type === 'posters' && it.mode === 'pages') return { ...base, qty: it.qty, mode: 'pages', pages: it.pages, across: it.across, tiles: it.pages,
+      pdf: { path: pathFor[it.pdf.id], name: it.pdf.name, pages: it.pages } };
     const out = { ...base, qty: it.qty, mm: frameMm(it), front: d(it.front) };
     if (it.type === 'posters') { out.orient = it.orient; out.cols = +it.cols || 1; out.rows = +it.rows || 1; out.tiles = out.cols * out.rows; out.fit = it.fit || 'fit'; out.wMm = +it.wMm || null; out.hMm = +it.hMm || null; out.ovMm = +it.ovMm || 0; }
     if (it.type === 'keychains') { out.back_mode = it.backMode; out.back = it.backMode === 'different' ? d(it.back) : null; }
@@ -1487,7 +1521,7 @@ function serializeItems(items, pathFor){
   });
 }
 const orderItems = o => (o.layout && o.layout.items) || [{ type: 'stickers', size: 'a4', size_label: 'A4 sheet', addons: [], addon_labels: [], sheets: (o.layout && o.layout.sheets) || [] }];
-const orderPaths = o => orderItems(o).flatMap(it => it.type === 'prints' ? (it.files || []).map(f => f.path) : it.type === 'stickers' ? (it.sheets || []).flatMap(sh => sh.items.map(x => x.path)) : [it.front && it.front.path, it.back && it.back.path]).filter(Boolean);
+const orderPaths = o => orderItems(o).flatMap(it => it.mode === 'pages' && it.pdf ? [it.pdf.path] : it.type === 'prints' ? (it.files || []).map(f => f.path) : it.type === 'stickers' ? (it.sheets || []).flatMap(sh => sh.items.map(x => x.path)) : [it.front && it.front.path, it.back && it.back.path]).filter(Boolean);
 
 /* =====================================================================
    Backend: Supabase
@@ -1530,6 +1564,7 @@ function SupaBackend(){
     async getOrder(code, nick){ const d = await rpc('get_order', { p_code: code, p_nickname: nick }); if (!d) throw new Error('NOT_FOUND'); return d; },
     async confirm(code, nick){ await rpc('confirm_order', { p_code: code, p_nickname: nick }); },
     async cancel(code, nick){ await rpc('cancel_order', { p_code: code, p_nickname: nick }); },
+    async availability(from, to){ const { data, error } = await sb.rpc('pickup_availability', { p_from: from, p_to: to }); if (error) throw error; return data || []; },
     async reschedule(code, nick, date, time){ await rpc('reschedule_order', { p_code: code, p_nickname: nick, p_date: date, p_time: time }); },
     async imHere(code, nick){ await rpc('mark_arrived', { p_code: code, p_nickname: nick }); },
     async session(){ const { data } = await sb.auth.getSession(); return !!data.session; },
@@ -1982,11 +2017,75 @@ function drawBottom(){
   bumpTotal();
 }
 
+/* Posters from a PDF.
+   One page: it becomes a picture and goes through the normal designer.
+   Several pages (like a Rasterbator PDF): printed as they are, one sheet per page. */
+async function posterPdf(file){
+  const f = S.fd; toast('Reading your PDF…');
+  let pdf = null, pages = null;
+  try { const lib = await loadPdfJs(); pdf = await lib.getDocument({ data: await file.arrayBuffer() }).promise; pages = pdf.numPages; }
+  catch (err) { console.warn('poster pdf', err); }
+  if (pages === 1) {
+    try {
+      const pg = await pdf.getPage(1), v = pg.getViewport({ scale: 1 }), vp = pg.getViewport({ scale: 4000 / Math.max(v.width, v.height) });
+      const c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+      const cx = c.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, c.width, c.height);
+      await pg.render({ canvasContext: cx, viewport: vp }).promise;
+      const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.92));
+      const im = await processFile(new File([blob], file.name.replace(/\.pdf$/i, '.jpg'), { type: 'image/jpeg' }), 6000);
+      S.images.push(im); f.mode = 'design'; f.pdf = null; Object.assign(f.front, { imageId: im.id, zoom: 1, ox: 0, oy: 0 }); posterRegrid(f);
+      toast('Your PDF page is ready to use as the poster picture.'); return;
+    } catch (err) { console.warn('poster pdf page', err); toast("That PDF didn't open. Try saving it again, or use a picture."); return; }
+  }
+  if (pages > 24) { toast(`That PDF has ${pages} pages. Posters can be up to 24 sheets.`); return; }
+  const doc = { id: uid(), blob: file.type ? file : new Blob([file], { type: 'application/pdf' }), ext: 'pdf', name: file.name, kind: 'pdf', pages, thumbs: [] };
+  S.docs = (S.docs || []).concat([doc]);
+  f.mode = 'pages'; f.pdf = { id: doc.id, name: file.name, pages }; f.across = Math.max(1, Math.min(6, Math.ceil(Math.sqrt(pages || 1)))); f.tiles = pages || 0;
+  // page previews fill in one by one, so big PDFs never look stuck
+  if (pdf) (async () => {
+    for (let i = 1; i <= pages; i++) {
+      try {
+        const pg = await pdf.getPage(i), v = pg.getViewport({ scale: 1 }), vp = pg.getViewport({ scale: 150 / v.width });
+        const c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+        const cx = c.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, c.width, c.height);
+        await pg.render({ canvasContext: cx, viewport: vp }).promise; doc.thumbs[i - 1] = { url: c.toDataURL('image/jpeg', .8), w: v.width, h: v.height };
+      } catch { doc.thumbs[i - 1] = null; }
+      if (S.view === 'framed' && S.fd && S.fd.pdf && S.fd.pdf.id === doc.id) { const st = $('#fstage'); if (st) st.innerHTML = posterPagesStage(S.fd); }
+    }
+  })();
+}
+function drawPosterPagesCtrl(){
+  const f = S.fd, p = P('posters'), base = (p.sizes.find(z => z.id === f.size) || p.sizes[0]).price, n = f.pdf.pages || 0;
+  $('#ctrl').innerHTML = `
+    <section class="phead"><h2>${esc(p.name)}</h2><p class="muted small">Your PDF, printed page by page</p></section>
+    <section><div class="stephead"><i>1</i>Your PDF</div>
+      <ul class="docs"><li><span class="dt">${ic('doc', 22)}</span><span class="dn"><b title="${esc(f.pdf.name)}">${esc(f.pdf.name)}</b>${n ? `<small>${n} page${n === 1 ? '' : 's'}</small>`
+        : `<small class="ask">How many pages? <input class="inp num" type="number" min="1" max="24" id="ppPages" aria-label="Pages in your PDF"></small>`}</span></li></ul>
+      <button type="button" class="pilllink" data-act="ppUsePicture" style="margin-top:10px">${ic('image', 16)}Use a picture instead</button></section>
+    <section><div class="stephead"><i>2</i>How the pages go together</div>
+      <p class="lab" style="margin:0 0 8px">Pages across</p>
+      <div class="qty"><button type="button" data-act="ppAcross" data-d="-1" aria-label="Fewer">−</button><span class="num cnt" style="min-width:40px;text-align:center;font-family:var(--display);font-weight:800;font-size:22px">${f.across}</span><button type="button" data-act="ppAcross" data-d="1" aria-label="More">+</button></div>
+      <p class="help" style="margin-top:8px">Rasterbator calls this "sheets wide". It's only for the preview; we print every page exactly as it is.</p>
+      <div class="sizeinfo"><div><span>Pages</span><b class="num">${n || '?'}</b></div><div><span>Layout</span><b class="num">${n ? `${f.across} × ${Math.ceil(n / f.across)}` : '?'}</b></div><div><span>Price</span><b class="num">${n ? money(base + (n - 1) * CONFIG.posterExtraSheet) : '?'}</b></div></div>
+    </section>
+    <section><div class="stephead"><i>3</i>How many?</div>
+      <div class="qty"><button type="button" data-act="fdQty" data-d="-1" aria-label="One less">−</button><input id="qtyIn" class="num" type="number" inputmode="numeric" min="1" max="${maxQtyFor('posters')}" value="${f.qty}" aria-label="How many"><button type="button" data-act="fdQty" data-d="1" aria-label="One more">+</button></div></section>`;
+  const pp = $('#ppPages'); if (pp) pp.addEventListener('change', () => { const v = Math.max(1, Math.min(24, Math.round(+pp.value || 0))); f.pdf.pages = v; f.tiles = v; drawFramed(); });
+  const qi = $('#qtyIn'); if (qi) qi.addEventListener('change', () => setQty(qi.value));
+}
+function posterPagesStage(f){
+  const doc = (S.docs || []).find(d => d.id === f.pdf.id) || {}, n = f.pdf.pages || 0, thumbs = doc.thumbs || [];
+  const t0 = thumbs[0], ratio = t0 ? t0.w / t0.h : 210 / 297, rows = n ? Math.ceil(n / f.across) : 1;
+  const cells = Array.from({ length: n || 1 }, (_, i) => `<div class="ppage" style="aspect-ratio:${thumbs[i] ? thumbs[i].w / thumbs[i].h : ratio}">${thumbs[i] ? `<img src="${thumbs[i].url}" alt="">` : `<span>${ic('doc', 22)}<b>${i + 1}</b></span>`}<i>${i + 1}</i></div>`).join('');
+  return `<div class="ppgrid" style="grid-template-columns:repeat(${f.across},1fr);width:min(100%, ${Math.round(Math.min(620, 160 * f.across))}px, calc(52svh * ${(f.across * ratio / rows).toFixed(4)}))">${cells}</div>
+    <p class="under">${n ? `${n} pages, laid out ${f.across} across and ${rows} down.` : 'Type the page count to see the layout.'}${n && thumbs.filter(Boolean).length < n ? ` Loading previews (${thumbs.filter(Boolean).length} of ${n})…` : ''} We print every page exactly as it is, then cut along your PDF's own cut marks and put the poster together for you.</p>`;
+}
 async function onFiles(e){
   const files = [...e.target.files]; e.target.value = '';
   const up = e.target.closest('.upload'); if (up && files.length) up.classList.add('busy');
   for (const f of files) {
     if (S.images.length >= CONFIG.maxPictures) { toast(`You can add up to ${CONFIG.maxPictures} pictures.`); break; }
+    if ((f.type === 'application/pdf' || /\.pdf$/i.test(f.name)) && S.view === 'framed' && S.fd && S.fd.type === 'posters') { await posterPdf(f); break; }
     if (!f.type.startsWith('image/')) { toast('That file is not a picture.'); continue; }
     try {
       const im = await processFile(f, S.view === 'framed' && S.fd && S.fd.type === 'posters' ? 6000 : 2400); S.images.push(im); S.selImage = im.id; S.selItem = null;
@@ -2067,6 +2166,7 @@ function viewMake(key){
 }
 function drawFramed(){ drawFramedCtrl(); drawFramedStage(); drawFramedBottom(); }
 function drawFramedCtrl(){
+  if (S.fd.type === 'posters' && S.fd.mode === 'pages' && S.fd.pdf) return drawPosterPagesCtrl();
   const f = S.fd, p = P(f.type), d = activeDesign(), sizes = liveSizes(f.type);
   const kc = f.type === 'keychains', backSide = kc && f.side === 'back';
   let n = 0; const step = t => `<div class="stephead"><i>${++n}</i>${t}</div>`;
@@ -2081,8 +2181,8 @@ function drawFramedCtrl(){
         `<label class="choice"><input type="radio" name="backMode" value="${v}" ${f.backMode === v ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>` : ''}
     </section>` : ''}
     ${!backSide || f.backMode === 'different' ? `<section>${step(backSide ? 'Back picture' : 'Add a picture')}
-      <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose a picture<small>From your phone, tablet, or computer. One picture fills the whole ${esc(p.unit)}</small></span>
-        <input id="fileIn" type="file" accept="image/*" hidden></label>
+      <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>${f.type === 'posters' ? 'Choose a picture or PDF' : 'Choose a picture'}<small>${f.type === 'posters' ? 'A picture, or a PDF. Got a Rasterbator PDF? Upload it and we print its pages as they are.' : `From your phone, tablet, or computer. One picture fills the whole ${esc(p.unit)}`}</small></span>
+        <input id="fileIn" type="file" accept="${f.type === 'posters' ? 'image/*,application/pdf' : 'image/*'}" hidden></label>
       ${S.images.length ? `<div class="tray">${S.images.map(im => `
         <button class="thumb ${d && d.imageId === im.id ? 'on' : ''}" type="button" data-act="fdImg" data-id="${im.id}" style="background-image:url('${im.url}')" aria-label="Use this picture" aria-pressed="${!!d && d.imageId === im.id}">
           <span class="x" data-act="delImg" data-id="${im.id}" role="button" aria-label="Remove picture">${ic('x', 14)}</span></button>`).join('')}</div>` : ''}
@@ -2148,7 +2248,7 @@ function drawFramedCtrl(){
 function frameInner(d, empty){
   const im = d && d.imageId && imgById(d.imageId);
   return im ? `<img id="fimg" src="${im.url}" alt="" draggable="false">`
-    : `<label class="empty-f"><span class="ui">${ic('plus', 22)}</span><b>${empty}</b><small>Tap to choose one</small><input class="filePick" type="file" accept="image/*" hidden></label>`;
+    : `<label class="empty-f"><span class="ui">${ic('plus', 22)}</span><b>${empty}</b><small>Tap to choose one</small><input class="filePick" type="file" accept="${S.fd && S.fd.type === 'posters' ? 'image/*,application/pdf' : 'image/*'}" hidden></label>`;
 }
 function drawFramedStage(){
   const f = S.fd, mm = frameMm(f), sd = shownDesign(), bg = (sd && sd.bg) || '#ffffff';
@@ -2166,6 +2266,8 @@ function drawFramedStage(){
           <span class="cap">How it looks</span></div>
       </div>
       <p class="under" style="max-width:460px">The shaded ring wraps around the back of the pin, so it won't show. Keep faces and words inside the dashed circle.</p>`;
+  } else if (f.type === 'posters' && f.mode === 'pages' && f.pdf) {
+    html = posterPagesStage(f);
   } else if (f.type === 'posters') {
     const multi = mm.cols * mm.rows > 1, view = multi ? (f.view || 'finished') : 'finished';
     const iw = mm.iw || mm.w / mm.cols, ih = mm.ih || mm.h / mm.rows, ov = mm.ov || 0, sx = iw - ov, sy = ih - ov;
@@ -2286,7 +2388,8 @@ function bindPan(){
 }
 function drawFramedBottom(){
   const f = S.fd, p = P(f.type);
-  const ready = !!f.front.imageId && !(f.type === 'keychains' && f.backMode === 'different' && !f.back.imageId);
+  const ready = f.type === 'posters' && f.mode === 'pages' ? !!(f.pdf && f.pdf.pages > 0)
+    : !!f.front.imageId && !(f.type === 'keychains' && f.backMode === 'different' && !f.back.imageId);
   const others = S.cart.filter((_, i) => i !== S.editing), hint = dealNudges(others.concat([f])).find(t => t.product === f.type);
   $('#bottom').innerHTML = `${hint ? `<div class="bb-hint">${ic('sparkle', 13)}<span>${esc(hint.text)}</span></div>` : ''}<div><div class="tot num">${money(f.qty * unitPrice(f))}</div>
       <div class="sub">${f.qty} ${esc(p.unit)}${f.qty === 1 ? '' : 's'}</div></div>
@@ -2465,6 +2568,21 @@ function drawPrints(){
   bumpTotal();
 }
 
+/* Pickup capacity: one gate per time slot for each person on pickup duty, and limits per slot and per day.
+   skip = the customer's own order (when moving it), so it doesn't count against itself. */
+function slotState(ds, time, gate, skip){
+  const av = (S.avail || []).map(x => ({ ...x, n: skip && x.pickup_date === skip.date && x.pickup_time === skip.time && x.pickup === skip.gate ? x.n - 1 : x.n })).filter(x => x.n > 0);
+  const day = av.filter(x => x.pickup_date === ds), slot = day.filter(x => x.pickup_time === time);
+  const dayFull = CONFIG.maxPerDay > 0 && day.reduce((t, x) => t + x.n, 0) >= CONFIG.maxPerDay;
+  const slotFull = CONFIG.maxPerSlot > 0 && slot.reduce((t, x) => t + x.n, 0) >= CONFIG.maxPerSlot;
+  const gates = [...new Set(slot.map(x => x.pickup))];
+  const gateTaken = !!gate && CONFIG.sellersAtPickup > 0 && !gates.includes(gate) && gates.length >= CONFIG.sellersAtPickup;
+  return { dayFull, slotFull, gateTaken, gates };
+}
+async function loadAvail(dates){
+  if (!dates.length) return;
+  try { S.avail = await api.availability(dates[0], dates[dates.length - 1]); } catch (e) { console.warn('availability', e); S.avail = null; }
+}
 /* Pickup dates for checkout. Prints-only orders can be picked up any school day, even today. */
 const timeMins = t => { const m = String(t).match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i); return m ? (+m[1] % 12 + (/pm/i.test(m[3]) ? 12 : 0)) * 60 + +m[2] : null; };
 const printsOnly = () => S.cart.length > 0 && S.cart.every(it => it.type === 'prints');
@@ -2576,16 +2694,28 @@ function viewCheckout(){
     const place = radio(form, 'pickup') === '__other' ? 'my chosen spot' : radio(form, 'pickup');
     if ($('#promise').checked) setErr(null, 'e-promise', '');
     if ($('#e-sec').textContent) validate(false);
-    // same-day pickups: only times with enough prep time
+    const mark = (r, ok, note) => { r.disabled = !ok; const c = r.closest('.choice'); c.classList.toggle('off', !ok); if (note && !ok) c.dataset.note = note; else delete c.dataset.note; if (!ok && r.checked) r.checked = false; };
+    const pickFirst = name => { if (!radio(form, name)) { const first = form.querySelector(`input[name="${name}"]:not(:disabled)`); if (first) first.checked = true; } };
+    // full days
+    form.querySelectorAll('input[name="pdate"]').forEach(r => mark(r, !slotState(r.value).dayFull, 'Full'));
+    pickFirst('pdate');
+    // same-day pickups need prep time; full time slots
     const ds = radio(form, 'pdate');
-    form.querySelectorAll('input[name="ptime"]').forEach(r => { const t = CONFIG.pickupTimes.find(x => timeLabel(x) === r.value); const ok = !t || timeOk(ds, t);
-      r.disabled = !ok; r.closest('.choice').classList.toggle('off', !ok); if (!ok && r.checked) r.checked = false; });
-    if (!radio(form, 'ptime')) { const first = form.querySelector('input[name="ptime"]:not(:disabled)'); if (first) first.checked = true; }
+    form.querySelectorAll('input[name="ptime"]').forEach(r => { const t = CONFIG.pickupTimes.find(x => timeLabel(x) === r.value);
+      const st = slotState(ds, r.value); mark(r, (!t || timeOk(ds, t)) && !st.slotFull, st.slotFull ? 'Full' : 'Too soon'); });
+    pickFirst('ptime');
+    // one gate per time slot for each person on pickup duty
+    const ts = radio(form, 'ptime'), st2 = slotState(ds, ts);
+    form.querySelectorAll('input[name="pickup"]').forEach(r => { const gate = r.value === '__other' ? null : r.value;
+      const taken = r.value === '__other' ? CONFIG.sellersAtPickup > 0 && st2.gates.length >= CONFIG.sellersAtPickup : slotState(ds, ts, gate).gateTaken;
+      mark(r, !taken, `At this time we'll be at ${st2.gates.join(' or ')}`); });
+    pickFirst('pickup');
     $('#sumBox').innerHTML = checkoutSummary(ds);
     if ($('#gcashAmt')) $('#gcashAmt').textContent = money(checkoutTotal(ds));
     $('#promiseTxt').innerHTML = `I'll pick it up on <b>${esc(fmtDate(radio(form, 'pdate')))}</b>, <b>${esc(radio(form, 'ptime'))}</b>, at <b>${esc(place)}</b>`;
   };
   form.addEventListener('change', sync); sync();
+  loadAvail(dates).then(() => { if (document.body.contains(form)) sync(); });
   $('#promo').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ACTIONS.promoApply(); } });
   ['nick','sec','grade','otherPlace'].forEach(id => $('#' + id) && $('#' + id).addEventListener('blur', () => validate(false)));
   form.addEventListener('submit', submitOrder);
@@ -2796,6 +2926,16 @@ function drawStatus(){
       ${active && !lapsed ? `<p class="help" style="margin-top:10px">${(o.reschedules || 0) >= CONFIG.maxReschedules ? "You've already changed your pickup day the most times allowed. Talk to the seller if you need to move it again." : `You can change your pickup day ${CONFIG.maxReschedules - (o.reschedules || 0)} more time${CONFIG.maxReschedules - (o.reschedules || 0) === 1 ? '' : 's'}.`}</p>` : ''}
     </div>`;
   const mf = $('#moveForm');
+  if (mf) {
+    // on the chosen day, times that are full or where we'll be at another gate can't be picked
+    const syncMove = () => { const d = radio(mf, 'mdate'), skip = { date: o.pickup_date, time: o.pickup_time, gate: o.pickup }; let note = '';
+      mf.querySelectorAll('input[name="mtime"]').forEach(r => { const t = CONFIG.pickupTimes.find(x => timeLabel(x) === r.value), st = slotState(d, r.value, o.pickup, skip);
+        const ok = !st.slotFull && !st.gateTaken && (!t || timeOk(d, t)); r.disabled = !ok; r.closest('.choice').classList.toggle('off', !ok); if (!ok && r.checked) r.checked = false;
+        if (st.gateTaken) note = `Some times are greyed out because we'll be at ${st.gates.join(' or ')} then, not ${o.pickup}.`; });
+      if (!radio(mf, 'mtime')) { const first = mf.querySelector('input[name="mtime"]:not(:disabled)'); if (first) first.checked = true; }
+      const mn = $('#mnote'); if (mn) mn.textContent = note; };
+    mf.addEventListener('change', syncMove); syncMove();
+  }
   if (mf) mf.addEventListener('submit', async e => {
     e.preventDefault();
     const d = radio(mf, 'mdate'), t = radio(mf, 'mtime'); if (!d || !t) return toast('Pick a day and a time.');
@@ -2805,11 +2945,14 @@ function drawStatus(){
   });
 }
 function rescheduleHTML(o){
-  const dates = openDates(o.status === 'ready' || o.status === 'printing').filter(d => d !== o.pickup_date).slice(0, CONFIG.datesToShow + 1);
+  const skip = { date: o.pickup_date, time: o.pickup_time, gate: o.pickup };
+  const dates = openDates(o.status === 'ready' || o.status === 'printing').filter(d => d !== o.pickup_date && !slotState(d, null, null, skip).dayFull
+    && CONFIG.pickupTimes.some(t => { const st = slotState(d, timeLabel(t), o.pickup, skip); return !st.slotFull && !st.gateTaken && timeOk(d, t); })).slice(0, CONFIG.datesToShow + 1);
   return `<form class="moveform" id="moveForm">
     <b class="mh">${ic('calendar', 18)}Pick a new pickup day</b>
     <div class="mgrid">${dates.map((d, i) => `<label class="choice"><input type="radio" name="mdate" value="${d}" ${i === 0 ? 'checked' : ''}><span>${esc(fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' }))}</span></label>`).join('')}</div>
     <div class="mgrid">${CONFIG.pickupTimes.map(t => `<label class="choice"><input type="radio" name="mtime" value="${esc(timeLabel(t))}" ${timeLabel(t) === o.pickup_time ? 'checked' : ''}><span>${esc(t.label)} <small>${esc(t.time)}</small></span></label>`).join('')}</div>
+    <p class="help" id="mnote"></p>
     <p class="help">Same place: ${esc(o.pickup)}. Moving your pickup also counts as confirming.</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap">${btn('Move my pickup', { type: 'submit', cls: 'dark', icon: 'check' })}${smallBtn('Never mind', '', 'moveClose', 'plain')}</div>
   </form>`;
@@ -2858,6 +3001,18 @@ async function adminLoad(){
     await drawAdminBody();
   } catch (e) { $('#admBody').innerHTML = `<div class="formerr">${esc(friendlyError(e))}</div>`; }
 }
+/* Admin: the next few pickup days, each time slot with its gate and how many orders */
+function upcomingHTML(all){
+  const today = ymd(new Date()), act = all.filter(o => ACTIVE.includes(o.status) && o.pickup_date && o.pickup_date >= today);
+  const days = [...new Set(act.map(o => o.pickup_date))].sort().slice(0, 3);
+  if (!days.length) return '';
+  return `<details class="panel upc" ${S.admin.upcOpen ? 'open' : ''} ontoggle="S.admin.upcOpen=this.open"><summary><b>Upcoming pickups</b><span class="muted small">${act.length} order${act.length === 1 ? '' : 's'} on the next ${days.length} pickup day${days.length === 1 ? '' : 's'}</span></summary>
+    <div class="upcgrid">${days.map(d => { const list = act.filter(o => o.pickup_date === d), slots = {};
+      list.forEach(o => { const k = o.pickup_time || 'No time'; (slots[k] = slots[k] || {})[o.pickup] = (slots[k][o.pickup] || 0) + 1; });
+      return `<div class="upcday"><div class="upch"><b>${esc(fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' }))}</b><span class="num">${list.length}${CONFIG.maxPerDay ? ` / ${CONFIG.maxPerDay}` : ''}</span></div>
+        ${Object.entries(slots).sort((a, b) => (timeMins(a[0]) || 0) - (timeMins(b[0]) || 0)).map(([t, g]) => { const gates = Object.keys(g), clash = CONFIG.sellersAtPickup > 0 && gates.length > CONFIG.sellersAtPickup;
+          return `<div class="upcslot ${clash ? 'clash' : ''}"><span>${esc(t)}</span><span>${gates.map(x => `${esc(x)} <b class="num">${g[x]}</b>`).join(' · ')}</span>${clash ? `<small>${ic('warn', 13)}More gates than people on duty</small>` : ''}</div>`; }).join('')}</div>`; }).join('')}</div></details>`;
+}
 const FILTERS = [['pending','To review'],['approved','To print'],['printing','Printing'],['ready','Ready'],['done','Done'],['other','Other'],['all','All']];
 const inFilter = (o, f) => f === 'all' ? true : f === 'other' ? ['rejected','cancelled','noshow'].includes(o.status) : o.status === f;
 const personKey = o => norm(o.nickname) + '|' + norm(o.grade_section);
@@ -2880,6 +3035,7 @@ async function drawAdminBody(){
   const emptyMsg = { pending:'No designs waiting for review.', approved:'Nothing to print right now.', printing:'Nothing is printing.', ready:'No orders waiting for pickup.' };
 
   $('#admBody').innerHTML = `
+    ${upcomingHTML(all)}
     <div class="chips">${FILTERS.map(([k, l]) => { const c = all.filter(o => inFilter(o, k)).length;
       return `<button class="chip ${f === k ? 'on' : ''}" type="button" data-act="admFilter" data-f="${k}">${l}${c && ACTIVE.includes(k) ? `<span class="c num">${c}</span>` : ''}</button>`; }).join('')}</div>
     ${f === 'approved' ? `<p class="hint" style="margin-bottom:16px">${ic('printer', 18)}<span>Print only orders marked <b>Confirmed</b>. Unconfirmed ones are released by themselves after their confirm-by day, so nothing gets wasted.</span></p>` : ''}
@@ -2925,6 +3081,9 @@ async function drawAdminBody(){
           </div></div>
         <div class="summary" style="margin:8px 0 0;align-items:center">${o.images_deleted ? miniSheet({ items: [] }, () => '', true) : orderItems(o).flatMap(it => it.type === 'stickers'
           ? (it.sheets || []).map(sh => miniSheet(sh, x => S.admin.urls[x.path], false))
+          : it.mode === 'pages' && it.pdf ? (S.admin.urls[it.pdf.path]
+              ? `<a class="filechip" href="${S.admin.urls[it.pdf.path]}" target="_blank" rel="noopener" download="${esc(o.code + '-' + (it.pdf.name || 'poster.pdf'))}">${ic('download', 16)}<span>${esc(it.pdf.name || 'poster.pdf')}<small>${it.pages} pages, print as it is</small></span></a>`
+              : `<span class="filechip off">${ic('doc', 16)}<span>${esc(it.pdf.name || 'poster.pdf')}<small>loading</small></span></span>`)
           : it.type === 'prints' ? (it.files || []).map(f => S.admin.urls[f.path]
               ? `<a class="filechip" href="${S.admin.urls[f.path]}" target="_blank" rel="noopener" download="${esc(o.code + '-' + (f.name || 'file'))}">${ic('download', 16)}<span>${esc(f.name || 'file')}<small>${f.pages || '?'} page${+f.pages === 1 ? '' : 's'}</small></span></a>`
               : `<span class="filechip off">${ic('doc', 16)}<span>${esc(f.name || 'file')}<small>loading</small></span></span>`)
@@ -2987,9 +3146,10 @@ function renderFramed(img, d, mm, dpi, round){
 async function makePdf(o){
   if (!window.jspdf) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
   if (o.images_deleted) { toast('The pictures for this order were already cleaned up.'); return; }
-  if (orderItems(o).every(it => it.type === 'prints')) { toast('This order is files to print. Open them with the file buttons on the order.'); return; }
-  toast('Making the PDF. This takes a few seconds. Prints files are separate: use the file buttons.');
-  const items = orderItems(o).filter(it => it.type !== 'prints'), urls = await api.imageUrls([...new Set(orderPaths(o))]), cache = {};
+  const asIs = it => it.type === 'prints' || it.mode === 'pages';   // customer files we print exactly as they are
+  if (orderItems(o).every(asIs)) { toast('This order is files to print as they are. Open them with the file buttons on the order.'); return; }
+  toast('Making the PDF. This takes a few seconds. Customer PDFs are separate: use the file buttons.');
+  const items = orderItems(o).filter(it => !asIs(it)), urls = await api.imageUrls([...new Set(orderPaths(o))]), cache = {};
   const getImg = async path => cache[path] || (cache[path] = await loadImg(urls[path]));
   const who = `${o.code}   ${o.nickname}, ${o.grade_section}   pickup ${o.pickup_date ? fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' }) : ''} ${o.pickup_time || ''} at ${o.pickup}`;
   let doc = null;
@@ -3100,7 +3260,7 @@ function drawSettings(){
   drawNoticeForm(); loadTelegram();
   S.admin.cfg = {
     pickup_weekdays: CONFIG.pickupWeekdays.slice(), pickup_times: clone(CONFIG.pickupTimes), pickup_places: CONFIG.pickupOptions.slice(),
-    site_url: CONFIG.siteUrl, confirm_days_before: CONFIG.confirmDaysBefore,
+    site_url: CONFIG.siteUrl, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
     print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
@@ -3234,10 +3394,13 @@ function drawShopForm(){
 
     <div class="cfgsec"><div class="sub">Pickup rules</div>
       <div class="pgrid2">
+        <label class="dnum"><span>People at pickup at the same time</span>${n('sellers_at_pickup', c.sellers_at_pickup, 0, 5)}</label>
+        <label class="dnum"><span>Most orders per pickup time (0 = no limit)</span>${n('max_per_slot', c.max_per_slot, 0, 200)}</label>
+        <label class="dnum"><span>Most orders per pickup day (0 = no limit)</span>${n('max_per_day', c.max_per_day, 0, 500)}</label>
         <label class="dnum"><span>Customers confirm by (days before pickup)</span>${n('confirm_days_before', c.confirm_days_before, 0, 7)}</label>
         <label class="dnum"><span>Times a customer can move their pickup</span>${n('max_reschedules', c.max_reschedules, 0, 5)}</label>
         <label class="dnum"><span>GCash refunds sent within (days)</span>${n('refund_days', c.refund_days, 1, 30)}</label></div>
-      <p class="help" style="margin-top:6px">Orders are only printed after the customer confirms. Unconfirmed ones are released by themselves after their confirm-by day.</p></div>
+      <p class="help" style="margin-top:6px">People at pickup: with 1, each pickup time uses one gate. The first order picks it, and customers see the other gates greyed out for that time. Set 2 if two of you can be at two gates at once. Orders are only printed after the customer confirms. Unconfirmed ones are released by themselves after their confirm-by day.</p></div>
 
     <div class="cfgsec"><div class="sub">Sizes (mm)</div>
       <div class="pgrid2">
@@ -3793,12 +3956,19 @@ const ACTIONS = {
   },
   fdFit: t => { const f = S.fd; f.fit = t.dataset.v; Object.assign(f.front, { zoom: 1, ox: 0, oy: 0 }); posterRegrid(f); drawFramed(); },
   fdView: t => { S.fd.view = t.dataset.v; drawFramed(); },
+  ppAcross: t => { const f = S.fd; f.across = Math.max(1, Math.min(6, (+f.across || 1) + +t.dataset.d)); drawFramed(); },
+  ppUsePicture: () => { const f = S.fd; f.mode = 'design'; f.pdf = null; f.tiles = f.cols * f.rows; posterRegrid(f); drawFramed(); },
   fdCount: t => { const f = S.fd; f.count = Math.max(1, Math.min(4, (+f.count || 1) + +t.dataset.d)); buzz(5); posterRegrid(f); drawFramed(); },
   fdSizeBy: t => { const f = S.fd; f.sizeBy = t.dataset.v; posterRegrid(f); drawFramed(); },
   fdQty: t => { buzz(5); setQty(S.fd.qty + +t.dataset.d); },
   fdQtySet: t => { buzz([6, 20, 6]); setQty(+t.dataset.n); },
   addFramed: () => {
-    const f = S.fd; if (!f || !f.front.imageId) return;
+    const f = S.fd; if (!f) return;
+    if (f.type === 'posters' && f.mode === 'pages' && f.pdf) {
+      if (!(f.pdf.pages > 0)) return;
+      S.fd = null; saveToCart({ type: 'posters', size: f.size, qty: f.qty, addons: [], mode: 'pages', pages: f.pdf.pages, across: f.across, tiles: f.pdf.pages, pdf: { ...f.pdf } }); return;
+    }
+    if (!f.front.imageId) return;
     const item = { type: f.type, size: f.size, qty: f.qty, addons: f.addons.slice(), front: { ...f.front } };
     if (f.type === 'posters') { item.orient = f.orient; item.cols = f.cols; item.rows = f.rows; item.tiles = f.cols * f.rows; item.count = f.count; item.sizeBy = f.sizeBy; item.fit = f.fit || 'fit'; item.wMm = f.wMm; item.hMm = f.hMm; item.ovMm = f.ovMm || 0; }
     if (f.type === 'keychains') { item.backMode = f.backMode; item.back = { ...f.back }; }
@@ -3882,7 +4052,7 @@ const ACTIONS = {
     try { await api.imHere(S.statusResult.code, S.statusNick); toast("The seller's been told you're here."); lookup(); }
     catch (e) { t.disabled = false; toast(friendlyError(e)); }
   },
-  moveOpen: () => { S.moving = true; drawStatus(); },
+  moveOpen: async () => { S.moving = true; drawStatus(); const o = S.statusResult; await loadAvail(openDates(true, 40).slice(0, 12)); if (S.moving && S.statusResult === o) drawStatus(); },
   moveClose: () => { S.moving = false; drawStatus(); },
   noticeClose: t => { try { sessionStorage.setItem(t.dataset.k, '1'); } catch {} const n = t.closest('.notice'); if (n) n.remove(); },
   confirmComing: async () => { try { await api.confirm(S.statusResult.code, S.statusNick); toast("Thanks. The seller knows you're coming."); lookup(); } catch (e) { toast(friendlyError(e)); } },

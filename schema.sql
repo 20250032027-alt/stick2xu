@@ -160,6 +160,43 @@ create policy "admins edit settings" on public.shop_settings
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text);
+-- =====================================================================
+-- Pickup capacity: one gate per time slot for each person on pickup duty, and limits per slot and per day.
+-- Settings (admin → Shop details → Pickup rules): sellers_at_pickup, max_per_slot, max_per_day (0 = no limit).
+-- =====================================================================
+create or replace function public.check_pickup(p_date date, p_time text, p_pickup text, p_skip_code text default null) returns void
+language plpgsql security definer set search_path = public as $$
+declare s public.shop_settings; v_sellers int; v_slot int; v_day int; v_gates int;
+begin
+  -- one booking at a time per day, so two people ordering at the same moment can't both take the last spot
+  perform pg_advisory_xact_lock(hashtext('stick2xu-pickup-' || p_date::text));
+  select * into s from public.shop_settings where id = 1;
+  v_sellers := coalesce((s.config->>'sellers_at_pickup')::int, 1);
+  v_slot := coalesce((s.config->>'max_per_slot')::int, 8);
+  v_day := coalesce((s.config->>'max_per_day')::int, 15);
+  if v_day > 0 and (select count(*) from public.orders where pickup_date = p_date and status in ('pending','approved','printing','ready')
+                    and code is distinct from p_skip_code) >= v_day then raise exception 'DAY_FULL'; end if;
+  if v_slot > 0 and (select count(*) from public.orders where pickup_date = p_date and pickup_time = trim(p_time)
+                     and status in ('pending','approved','printing','ready') and code is distinct from p_skip_code) >= v_slot then raise exception 'SLOT_FULL'; end if;
+  if v_sellers > 0 and not exists (select 1 from public.orders where pickup_date = p_date and pickup_time = trim(p_time) and pickup = trim(p_pickup)
+                                   and status in ('pending','approved','printing','ready') and code is distinct from p_skip_code) then
+    select count(distinct pickup) into v_gates from public.orders where pickup_date = p_date and pickup_time = trim(p_time)
+      and status in ('pending','approved','printing','ready') and code is distinct from p_skip_code;
+    if v_gates >= v_sellers then raise exception 'GATE_TAKEN'; end if;
+  end if;
+end $$;
+revoke all on function public.check_pickup(date, text, text, text) from public, anon, authenticated;
+
+-- What's already booked (counts only, no names), so checkout can grey out full slots and taken gates
+create or replace function public.pickup_availability(p_from date, p_to date)
+returns table (pickup_date date, pickup_time text, pickup text, n int)
+language sql stable security definer set search_path = public as $$
+  select o.pickup_date, o.pickup_time, o.pickup, count(*)::int from public.orders o
+  where o.pickup_date between p_from and least(p_to, p_from + 60) and o.status in ('pending','approved','printing','ready')
+  group by 1, 2, 3
+$$;
+grant execute on function public.pickup_availability(date, date) to anon, authenticated;
+
 create or replace function public.place_order(
   p_nickname text, p_grade_section text, p_pickup text, p_payment text,
   p_gcash_ref text, p_layout jsonb, p_folder text, p_src text, p_pickup_date date, p_pickup_time text,
@@ -221,6 +258,9 @@ begin
         if v_pages < 1 or v_pages > 500 or jsonb_array_length(coalesce(v_item->'files', '[]'::jsonb)) < 1 then raise exception 'BAD_INPUT'; end if;
         v_units := v_units * v_pages;      -- copies x pages
         v_has_prints := true;
+      elsif v_item->>'type' = 'posters' and v_item->>'mode' = 'pages' then
+        -- a ready-made PDF (like Rasterbator's): printed page by page as it is
+        if v_item->'pdf'->>'path' is null then raise exception 'BAD_INPUT'; end if;
       elsif v_item->'front'->>'path' is null then raise exception 'BAD_INPUT';
       end if;
     end if;
@@ -229,8 +269,15 @@ begin
     v_unit := coalesce((v_size->>'price')::int, 0);
     -- big posters: first sheet at the size price, each extra sheet costs extra
     if v_item->>'type' = 'posters' then
-      v_tiles := coalesce((v_item->>'tiles')::int, 1);
-      if v_tiles not in (1, 2, 4, 9) then raise exception 'BAD_INPUT'; end if;
+      -- sheets across x sheets down (each 1 to 6), or an older fixed sheet count
+      if v_item->>'mode' = 'pages' then
+        v_tiles := coalesce((v_item->>'pages')::int, 0);      -- one sheet per page of their PDF
+        if v_tiles < 1 or v_tiles > 24 then raise exception 'BAD_INPUT'; end if;
+      else
+        v_tiles := coalesce((v_item->>'cols')::int * (v_item->>'rows')::int, (v_item->>'tiles')::int, 1);
+        if v_tiles < 1 or v_tiles > 24 or coalesce((v_item->>'cols')::int, 1) not between 1 and 6
+           or coalesce((v_item->>'rows')::int, 1) not between 1 and 6 then raise exception 'BAD_INPUT'; end if;
+      end if;
       v_unit := v_unit + (v_tiles - 1) * coalesce((s.config->>'poster_extra_sheet')::int, 30);
     end if;
     for v_addon_id in select jsonb_array_elements_text(coalesce(v_item->'addons', '[]'::jsonb)) loop
@@ -341,6 +388,8 @@ begin
     exit when not exists (select 1 from public.orders where code = v_code);
   end loop;
 
+  perform public.check_pickup(p_pickup_date, p_pickup_time, p_pickup, null);
+
   -- sheet_count holds the number of things in the order (sheets + pins + posters + keychains)
   insert into public.orders (code, nickname, grade_section, pickup, pickup_date, pickup_time, payment, gcash_ref,
                              layout, folder, sheet_count, total, src, subtotal, discount, promo_code, deal_labels, rush_fee, confirmed)
@@ -378,7 +427,7 @@ end $$;
 -- Customer moves their own pickup to another open pickup day (limited number of times)
 create or replace function public.reschedule_order(p_code text, p_nickname text, p_date date, p_time text) returns boolean
 language plpgsql security definer set search_path = public as $$
-declare s public.shop_settings; v_days jsonb; v_max int;
+declare s public.shop_settings; v_days jsonb; v_max int; v_pick text;
 begin
   select * into s from public.shop_settings where id = 1;
   v_days := coalesce(s.config->'pickup_weekdays', '[2,5]'::jsonb) || coalesce(s.config->'print_weekdays', '[1,2,3,4,5]'::jsonb);
@@ -389,6 +438,8 @@ begin
      or length(trim(coalesce(p_time, ''))) < 3 or length(p_time) > 40 then
     raise exception 'BAD_DATE';
   end if;
+  select pickup into v_pick from public.orders where code = upper(trim(p_code)) and public.norm_text(nickname) = public.norm_text(p_nickname);
+  if v_pick is not null then perform public.check_pickup(p_date, p_time, v_pick, upper(trim(p_code))); end if;
   update public.orders
      set pickup_date = p_date, pickup_time = trim(p_time), reschedules = reschedules + 1, arrived_at = null, confirmed = true
    where code = upper(trim(p_code)) and public.norm_text(nickname) = public.norm_text(p_nickname)
