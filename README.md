@@ -65,13 +65,25 @@ Customers upload PDFs or pictures. The site counts the pages, and they pick pape
 
 - **Pickup any school day**, even the same day if they order at least 2 hours before the pickup time.
 - **Rush fee:** same day +₱20, next school day +₱10. Change these in Settings → Shop details → Prints and rush orders.
+- **Pictures:** tap **Adjust** to place a picture on the page. Choose a tall or wide page, "Whole picture" or "Fill the page", and drag or pinch to zoom. With black and white chosen, the preview shows it in grey. The page is sent to you exactly as they set it up, already in black and white, ready to print.
 - **Paper sizes:** A4 is on. Turn on Short or Long, or change prices, in Settings → Products → Prints.
 - **Printing them:** each prints order shows a button for every file. Open it and print from your phone or computer. These orders aren't in the PDF button.
 - **Privacy:** print files are deleted 3 days after pickup (changeable).
 
-## Big posters
+## Big posters (like Rasterbator)
 
-Customers can make a poster from 1, 2, 4 (2 × 2), or 9 (3 × 3) A4 sheets. Price = poster price + ₱30 for each extra sheet (changeable in Settings → Shop details → Big posters). The PDF puts one piece on each sheet, with cut marks and "Row 1, column 2" labels. Trim the white border at the cut marks and tape the sheets together from behind.
+Customers pick:
+- **Each sheet:** tall or wide paper.
+- **How many sheets:** a number, **across** or **down**. The other side is worked out from the picture's shape and rounded to whole sheets, so no half-blank pages. A 2:1 picture at 4 across on tall sheets is 4 × 1. On wide sheets it's 4 × 3, because wide sheets are shorter.
+- **Look:** Photo, Dots (color halftone), or Black dots (classic halftone). Dots hide blur on small pictures and look best from a few steps back.
+
+The designer shows the poster size in cm, how many sheets it uses, the price, and a small picture of the poster next to a 165 cm person. The most a poster can be is 6 × 6 sheets, up to 24.
+
+Price = poster price + ₱30 for each extra sheet. In Settings → Shop details → Big posters you can also change:
+- **White border on each sheet:** default 5 mm. Raise it to 10 mm, like Rasterbator, if your printer leaves a wider blank edge.
+- **Overlap for taping:** default 0. For example, 5 mm prints a little extra picture past the cut line so neighboring sheets can overlap.
+
+The PDF puts one piece on each sheet, with cut marks and "Row 1, column 2" labels. Trim the white border at the cut marks and tape the sheets together from behind.
 
 ## Business tab (admin)
 

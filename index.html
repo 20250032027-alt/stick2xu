@@ -763,11 +763,6 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 @media(max-width:600px){.equip{grid-template-columns:1fr 1fr}.equip > input:first-child{grid-column:1/-1}.wchart{gap:4px}.wv{font-size:9px}}
 
 /* ---------- prints + big posters ---------- */
-.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.size.tile{align-items:center}
-.size.tile .tg{display:grid;gap:2px;width:30px;flex:none;padding:2px;border:1.5px solid var(--ink);border-radius:4px;background:#fff}
-.size.tile .tg i{background:var(--accent-soft);border-radius:1px}
-.size.tile.on .tg i{background:var(--xu-gold)}
 .tilegrid{position:absolute;inset:0;pointer-events:none;z-index:2}
 .tilegrid::before,.tilegrid::after{content:"";position:absolute;inset:0;background-size:calc(100% / var(--c)) 100%;
   background-image:linear-gradient(to right,transparent calc(100% - 1px),rgba(255,255,255,.95) 0,rgba(255,255,255,.95) 100%);filter:drop-shadow(0 0 1px rgba(40,57,113,.55))}
@@ -818,6 +813,39 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .rushtag{color:#8A5E00!important;font-weight:700}
 .sv-row.rushrow{margin-top:14px;padding:10px 14px;border:1px solid #EED9A2;border-radius:12px;background:#FFF8E6;color:#6B4B00;font-weight:700}
 .choice.off{opacity:.45}
+
+/* ---------- rasterbator-style posters ---------- */
+.bigrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.bigrow .cnt{min-width:40px;text-align:center;font-family:var(--display);font-weight:800;font-size:22px}
+.sizeinfo{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.sizeinfo > div{display:grid;gap:2px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:#FAFBFD}
+.sizeinfo span{font-size:12px;color:var(--muted);font-weight:700}
+.sizeinfo b{font-size:15px}
+.looks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.look{display:grid;justify-items:center;gap:4px;padding:10px 6px;border:1.5px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;color:var(--ink);text-align:center}
+.look.on{border-color:var(--ink);background:var(--gold-soft);box-shadow:var(--shadow-sm)}
+.look b{font-size:14px}.look small{font-size:11.5px;color:var(--muted);line-height:1.2}
+.lk{width:46px;height:34px;border-radius:6px;border:1px solid var(--line)}
+.lk-photo{background:linear-gradient(180deg,#6FA6EE,#C9DEFA 55%,#45A266 56%,#2E7A4C)}
+.lk-dots{background:radial-gradient(circle,#3E7FD9 0 38%,transparent 42%) 0 0/8px 8px,radial-gradient(circle,#2E8A50 0 46%,transparent 50%) 0 22px/8px 8px #fff;background-repeat:repeat,repeat-x}
+.lk-dots-bw{background:radial-gradient(circle,#111 0 30%,transparent 34%) 0 0/8px 8px,radial-gradient(circle,#111 0 48%,transparent 52%) 0 20px/8px 8px #fff;background-repeat:repeat,repeat-x}
+.dotprev{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.postwrap{display:flex;align-items:flex-end;justify-content:center;gap:18px;flex-wrap:wrap}
+.scalefig{margin:0;display:grid;justify-items:center;gap:4px}
+.scalefig figcaption{font-size:11.5px;color:var(--muted);font-weight:600}
+@media(max-width:600px){.sizeinfo{grid-template-columns:1fr 1fr}.sizeinfo > div:last-child{grid-column:1/-1}}
+
+/* prints: page editor, black and white preview */
+.bw img,.dt.bw img,.pstack.bw img,#pframe.bw img{filter:grayscale(1)}
+.dacts{display:flex;gap:4px;align-items:center}
+.dadj{display:inline-flex;gap:4px;align-items:center;padding:6px 10px;border-radius:999px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-weight:700;font-size:12.5px;cursor:pointer}
+.dadj.on{border-color:var(--ink);background:var(--gold-soft)}
+.docs li{grid-template-columns:44px 1fr auto}
+.pagewrap{margin:6px auto 0}
+.paper{background:#fff;border:1.5px solid var(--ink);border-radius:4px;box-shadow:var(--shadow);box-sizing:border-box}
+#pframe{position:relative;overflow:hidden;background:#fff;outline:1px dashed #C9D1E3;touch-action:none;cursor:grab}
+#pframe img{position:absolute;max-width:none;user-select:none;-webkit-user-drag:none}
+.pgctl{display:grid;gap:10px;justify-items:start;width:min(100%,420px)}
 </style>
 </head>
 <body>
@@ -924,6 +952,8 @@ const CONFIG = {
   rushNextDay: 10,                  // extra for picking up prints the next school day
   printCleanupDays: 3,              // documents are deleted this many days after pickup (privacy)
   posterExtraSheet: 30,             // each extra sheet on a big (multi-sheet) poster
+  posterMarginMm: 5,                // white border on every poster sheet (printers can't print to the edge)
+  posterOverlapMm: 0,               // big posters: extra picture past the cut line, for gluing or taping (0 = none)
   maxPictures: 20,
   cleanupDays: 30
 };
@@ -1224,6 +1254,8 @@ function applyShopConfig(c){
   CONFIG.prepHours = numOr(c.prep_hours, D.prepHours); CONFIG.rushSameDay = numOr(c.rush_same_day, D.rushSameDay);
   CONFIG.rushNextDay = numOr(c.rush_next_day, D.rushNextDay); CONFIG.printCleanupDays = numOr(c.print_cleanup_days, D.printCleanupDays);
   CONFIG.posterExtraSheet = numOr(c.poster_extra_sheet, D.posterExtraSheet);
+  CONFIG.posterMarginMm = Math.max(3, Math.min(15, numOr(c.poster_margin_mm, D.posterMarginMm)));
+  CONFIG.posterOverlapMm = Math.max(0, Math.min(CONFIG.posterMarginMm, numOr(c.poster_overlap_mm, D.posterOverlapMm)));
   CONFIG.siteUrl = /^https?:\/\/\S+$/.test(c.site_url || '') ? c.site_url : D.siteUrl;
   for (const k of Object.keys(CONFIG.products)) {
     const base = D.products[k];
@@ -1325,7 +1357,7 @@ function itemTitle(it){
   const sizeLabel = it.size_label || ((p.sizes.find(z => z.id === it.size) || {}).label) || '';
   if (it.type === 'stickers') return `Stickers, ${n} sheet${n === 1 ? '' : 's'}`;
   if (it.type === 'prints') return `Prints (${sizeLabel}), ${it.pages} page${+it.pages === 1 ? '' : 's'} × ${n} cop${+n === 1 ? 'y' : 'ies'}`;
-  const extra = it.type === 'posters' ? `, ${(+it.tiles || 1) > 1 ? tileLabel(+it.tiles) + ' sheets, ' : ''}${it.orient === 'landscape' ? 'wide' : 'tall'}` : '';
+  const extra = it.type === 'posters' ? `, ${(+it.tiles || 1) > 1 ? (it.cols ? `${it.cols} × ${it.rows}` : tileLabel(+it.tiles)) + ' sheets, ' : ''}${it.orient === 'landscape' ? 'wide' : 'tall'}${it.style && it.style !== 'photo' ? (it.style === 'dots' ? ', dots' : ', black dots') : ''}` : '';
   return `${p.name}${p.sizes.length > 1 ? ` (${sizeLabel}${extra})` : extra ? ` (${extra.slice(2)})` : ''} × ${n}`;
 }
 function itemDetails(it){
@@ -1337,13 +1369,37 @@ function itemDetails(it){
   return bits.join(' · ');
 }
 const TILE_GRID = { 1: [1, 1], 2: [1, 2], 4: [2, 2], 9: [3, 3] };   // [columns, rows] for a tall poster
+/* Work out sheets down (or across) from the picture's shape, rounded to whole sheets so no paper is wasted */
+/* A small side view: a 165 cm person next to the poster, both to scale */
+function scaleFigure(mm){
+  const H = 120, k = H / Math.max(1650, mm.h), pw = mm.w * k, ph = mm.h * k, person = 1650 * k, W = Math.max(60, pw + 40);
+  return `<figure class="scalefig" aria-label="Poster compared to a 165 cm person"><svg viewBox="0 0 ${W} ${H + 4}" width="${W}" height="${H + 4}">
+    <g fill="var(--muted)" opacity=".55" transform="translate(4 ${H + 2 - person}) scale(${person / 165})"><circle cx="11" cy="10" r="9"/><path d="M2 26 q9-6 18 0 l2 60 h-6 l-2 79 h-5 l-1-64 -1 64 h-5 l-2-79 h-6z"/></g>
+    <rect x="34" y="${Math.max(2, H + 2 - 1500 * k - ph / 2)}" width="${pw}" height="${ph}" fill="var(--accent-soft)" stroke="var(--ink)" stroke-width="1.2" rx="1"/></svg>
+    <figcaption>Next to a 165 cm person</figcaption></figure>`;
+}
+function posterRegrid(f){
+  if (f.type !== 'posters') return;
+  const z = P('posters').sizes.find(x => x.id === f.size) || P('posters').sizes[0], m = CONFIG.posterMarginMm;
+  let sw = z.wMm, sh = z.hMm; if (f.orient === 'landscape') [sw, sh] = [sh, sw];
+  const iw = sw - 2 * m, ih = sh - 2 * m, n = Math.max(1, Math.min(4, +f.count || 1)), im = f.front.imageId && imgById(f.front.imageId);
+  const a = im ? im.w / im.h : iw / ih, clamp = v => Math.max(1, Math.min(6, Math.round(v)));
+  if (f.sizeBy === 'high') { f.rows = n; f.cols = clamp(n * ih * a / iw); }
+  else { f.cols = n; f.rows = clamp(n * iw / a / ih); }
+  f.tiles = f.cols * f.rows;
+}
 const tileLabel = t => ({ 1: '1', 2: '2', 4: '2 × 2', 9: '3 × 3' })[t] || String(t);
 function frameMm(it){
   if (it.mm) return it.mm;
   const z = P(it.type).sizes.find(s => s.id === it.size) || P(it.type).sizes[0];
   if (it.type === 'pins') return { w: z.cutMm, h: z.cutMm, face: z.faceMm, round: true };
+  if (it.type === 'posters' && +it.cols > 0 && +it.rows > 0) {
+    // Like Rasterbator: sheets across x sheets down. orient is the direction of each sheet.
+    const m = CONFIG.posterMarginMm; let sw = z.wMm, sh = z.hMm; if (it.orient === 'landscape') [sw, sh] = [sh, sw];
+    return { w: it.cols * (sw - 2 * m), h: it.rows * (sh - 2 * m), pageW: sw, pageH: sh, margin: m, cols: +it.cols, rows: +it.rows };
+  }
   if (it.type === 'posters') {
-    // Big posters are several sheets taped together. 2 sheets turn sideways and stack, 4 and 9 make a grid.
+    // Older saved orders: a fixed number of sheets (1, 2, 4 or 9)
     const t = +it.tiles || 1, wide = it.orient === 'landscape', g = TILE_GRID[t] || TILE_GRID[1];
     let sw = z.wMm, sh = z.hMm; if (wide !== (t === 2)) [sw, sh] = [sh, sw];
     const cols = wide ? g[1] : g[0], rows = wide ? g[0] : g[1];
@@ -1386,11 +1442,11 @@ function serializeItems(items, pathFor){
     const base = { type: it.type, size: it.size, size_label: z.label, addons: it.addons || [],
       addon_labels: (it.addons || []).map(id => (p.addons.find(a => a.id === id) || {}).label).filter(Boolean), unit_price: unitPrice(it) };
     if (it.type === 'prints') return { ...base, qty: it.qty, pages: it.pages, duplex: !!it.duplex,
-      files: (it.files || []).map(f => ({ path: pathFor[f.id], name: f.name, pages: f.pages, kind: f.kind })) };
+      files: (it.files || []).map(f => ({ path: pathFor[f.id], name: f.name, pages: f.pages, kind: f.kind, orient: f.orient || null })) };
     if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ items: sh.items.map(x => ({ path: pathFor[x.imageId], col: x.col, row: x.row, size: x.size, fit: x.fit })) })) };
     const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy, bg: x.bg || '#ffffff' } : null;
     const out = { ...base, qty: it.qty, mm: frameMm(it), front: d(it.front) };
-    if (it.type === 'posters') { out.orient = it.orient; out.tiles = +it.tiles || 1; }
+    if (it.type === 'posters') { out.orient = it.orient; out.cols = +it.cols || 1; out.rows = +it.rows || 1; out.tiles = out.cols * out.rows; out.style = it.style || 'photo'; }
     if (it.type === 'keychains') { out.back_mode = it.backMode; out.back = it.backMode === 'different' ? d(it.back) : null; }
     return out;
   });
@@ -1899,7 +1955,7 @@ async function onFiles(e){
     if (!f.type.startsWith('image/')) { toast('That file is not a picture.'); continue; }
     try {
       const im = await processFile(f, S.view === 'framed' && S.fd && S.fd.type === 'posters' ? 6000 : 2400); S.images.push(im); S.selImage = im.id; S.selItem = null;
-      if (S.view === 'framed' && S.fd) { const d = activeDesign(); if (d) Object.assign(d, { imageId: im.id, zoom: 1, ox: 0, oy: 0 }); }
+      if (S.view === 'framed' && S.fd) { const d = activeDesign(); if (d) Object.assign(d, { imageId: im.id, zoom: 1, ox: 0, oy: 0 }); posterRegrid(S.fd); }
     } catch { toast("That picture didn't open. Try a screenshot of it instead."); }
     if (S.view === 'framed') break;
   }
@@ -1952,7 +2008,7 @@ function tapCell(col, row){
 const blankDesign = () => ({ imageId: null, zoom: 1, ox: 0, oy: 0, bg: '#ffffff' });
 function newFd(key){
   const first = liveSizes(key)[0];
-  return { type: key, size: first ? first.id : P(key).sizes[0].id, qty: 1, addons: [], orient: 'portrait', tiles: 1,
+  return { type: key, size: first ? first.id : P(key).sizes[0].id, qty: 1, addons: [], orient: 'portrait', tiles: 1, cols: 1, rows: 1, count: 1, sizeBy: 'wide', style: 'photo',
     front: blankDesign(), back: blankDesign(), backMode: 'same', side: 'front' };
 }
 function activeDesign(){
@@ -1999,13 +2055,21 @@ function drawFramedCtrl(){
     ${!backSide && (sizes.length > 1 || f.type === 'posters') ? `<section>${step('Pick a size')}
       ${sizes.length > 1 ? `<div class="sizes">${sizes.map(z => `<button class="size ${f.size === z.id ? 'on' : ''}" type="button" data-act="fdSize" data-size="${esc(z.id)}" aria-pressed="${f.size === z.id}">
         ${f.type === 'pins' ? `<span class="szc" style="width:${Math.round(z.faceMm / 58 * 34)}px"></span>` : ''}<span>${esc(z.label)}<small class="num">${money(z.price)}</small></span></button>`).join('')}</div>` : ''}
-      ${f.type === 'posters' ? `<div class="seg" style="margin-top:12px">${['portrait','landscape'].map(o => `<button type="button" class="${f.orient === o ? 'on' : ''}" data-act="fdOrient" data-o="${o}">${o === 'portrait' ? 'Tall' : 'Wide'}</button>`).join('')}</div>
-        <p class="lab" style="margin:16px 0 8px">How many sheets?</p>
-        <div class="tiles">${[1, 2, 4, 9].map(t => { const mm = frameMm({ ...f, tiles: t }); const base = (P('posters').sizes.find(z => z.id === f.size) || {}).price || 0;
-          return `<button type="button" class="size tile ${(+f.tiles || 1) === t ? 'on' : ''}" data-act="fdTiles" data-t="${t}" aria-pressed="${(+f.tiles || 1) === t}">
-            <span class="tg" style="grid-template-columns:repeat(${mm.cols},1fr);aspect-ratio:${mm.w}/${mm.h}">${'<i></i>'.repeat(mm.cols * mm.rows)}</span>
-            <span>${tileLabel(t)} sheet${t > 1 ? 's' : ''}<small class="num">${Math.round(mm.w / 10)} × ${Math.round(mm.h / 10)} cm, ${money(base + (t - 1) * CONFIG.posterExtraSheet)}</small></span></button>`; }).join('')}</div>
-        ${(+f.tiles || 1) > 1 ? `<p class="help" style="margin-top:8px">We print it on ${f.tiles} sheets and tape them together for you.</p>` : ''}` : ''}
+      ${f.type === 'posters' ? (() => { const mm = frameMm(f), base = (P('posters').sizes.find(z => z.id === f.size) || {}).price || 0, t = f.cols * f.rows;
+        return `<p class="lab" style="margin:14px 0 8px">Each sheet</p>
+        <div class="seg">${['portrait','landscape'].map(o => `<button type="button" class="${f.orient === o ? 'on' : ''}" data-act="fdOrient" data-o="${o}">${o === 'portrait' ? 'Tall' : 'Wide'}</button>`).join('')}</div>
+        <p class="lab" style="margin:14px 0 8px">How many sheets?</p>
+        <div class="bigrow"><div class="qty"><button type="button" data-act="fdCount" data-d="-1" aria-label="Smaller">−</button><span class="num cnt">${f.count}</span><button type="button" data-act="fdCount" data-d="1" aria-label="Bigger">+</button></div>
+          <div class="seg">${[['wide', 'across'], ['high', 'down']].map(([v, l]) => `<button type="button" class="${f.sizeBy === v ? 'on' : ''}" data-act="fdSizeBy" data-v="${v}">${l}</button>`).join('')}</div></div>
+        <div class="sizeinfo">
+          <div><span>Poster size</span><b class="num">${Math.round(mm.w / 10)} × ${Math.round(mm.h / 10)} cm</b></div>
+          <div><span>Paper</span><b class="num">${t} sheet${t === 1 ? '' : 's'}${t > 1 ? ` (${mm.cols} × ${mm.rows})` : ''}</b></div>
+          <div><span>Price</span><b class="num">${money(base + (t - 1) * CONFIG.posterExtraSheet)}</b></div></div>
+        <p class="help" style="margin-top:6px">${f.front.imageId ? 'The other side is worked out from your picture\'s shape, rounded to whole sheets.' : 'Add a picture and the poster takes its shape.'}${t > 1 ? ' We tape the sheets together for you.' : ''}</p>
+        <p class="lab" style="margin:16px 0 8px">Look</p>
+        <div class="looks">${[['photo', 'Photo', 'Just bigger'], ['dots', 'Dots', 'Halftone in color'], ['dots-bw', 'Black dots', 'Classic halftone']].map(([v, l, n]) =>
+          `<button type="button" class="look ${f.style === v ? 'on' : ''}" data-act="fdStyle" data-v="${v}" aria-pressed="${f.style === v}"><span class="lk lk-${v}"></span><b>${l}</b><small>${n}</small></button>`).join('')}</div>
+        ${f.style !== 'photo' ? '<p class="help" style="margin-top:6px">Dots look best from a few steps back, and hide blur on small pictures.</p>' : ''}`; })() : ''}
     </section>` : ''}
     ${d && d.imageId ? `<section>${step('Adjust')}
       <div class="zoomrow">${ic('search', 18)}<input type="range" id="zoom" min="0.4" max="3" step="0.01" value="${d.zoom}" aria-label="Zoom">
@@ -2071,8 +2135,10 @@ function drawFramedStage(){
     const multi = mm.cols * mm.rows > 1;
     html = `<div class="postwrap"><div class="hang" style="width:min(100%, ${wide ? 560 : 400}px, calc(50svh * ${(mm.w / mm.h).toFixed(4)}));padding:${multi ? 1.2 : 5 / mm.pageW * 100}%">
         <div class="frame" id="frame" style="aspect-ratio:${mm.w}/${mm.h};background:${bg}">${frameInner(f.front, 'Choose a picture')}
-          ${multi ? `<span class="tilegrid" style="--c:${mm.cols};--r:${mm.rows}" aria-hidden="true"></span>` : ''}</div></div></div>
-      <p class="under">${multi ? `${tileLabel(+f.tiles)} sheets, about ${Math.round(mm.w / 10)} × ${Math.round(mm.h / 10)} cm taped together. The white lines show where the sheets meet.`
+          ${f.style !== 'photo' && f.front.imageId ? '<canvas class="dotprev" id="dotprev" aria-hidden="true"></canvas>' : ''}
+          ${multi ? `<span class="tilegrid" style="--c:${mm.cols};--r:${mm.rows}" aria-hidden="true"></span>` : ''}</div></div>
+        ${multi ? scaleFigure(mm) : ''}</div>
+      <p class="under">${multi ? `${mm.cols} × ${mm.rows} sheets, about ${Math.round(mm.w / 10)} × ${Math.round(mm.h / 10)} cm taped together. The white lines show where the sheets meet.`
         : `${esc((P('posters').sizes.find(z => z.id === f.size) || {}).label || '')} ${f.orient === 'landscape' ? 'wide' : 'tall'}, printed with a thin white border.`}</p>`;
   } else {
     const showBack = f.side === 'back', d = sd;
@@ -2101,10 +2167,42 @@ function placeImg(){
   // Let the page scroll in any direction the picture can't move in (e.g. a wide photo in a tall poster)
   const fr = $('#frame');
   if (fr) { const mx = Math.abs(L.dw - 1) > .002, my = Math.abs(L.dh - 1) > .002; fr.style.touchAction = mx && my ? 'none' : mx ? 'pan-y' : my ? 'pan-x' : 'pan-y'; }
+  if (S.fd.type === 'posters' && S.fd.style !== 'photo') drawDots(im, d, mm);
   const big = S.fd.type === 'posters' && (+S.fd.tiles || 1) > 1;   // big posters are seen from farther away
   $('#reswarn').innerHTML = L.dpi < (big ? 90 : 150) ? `<p class="warnline">${ic('warn', 16)}${big
     ? `This picture is ${im.w} pixels wide, which may look soft this big. Try a bigger picture or fewer sheets.`
     : 'This picture might print blurry at this size. Try a bigger picture or zoom out.'}</p>` : '';
+}
+/* Halftone: one dot per cell, bigger where the picture is darker. Sampling a shrunk copy keeps it fast. */
+const dotCellMm = mm => Math.max(3, mm.w / 110);
+function halftone(src, cellPx, bw){
+  const w = src.width, h = src.height, gw = Math.max(1, Math.ceil(w / cellPx)), gh = Math.max(1, Math.ceil(h / cellPx));
+  const small = document.createElement('canvas'); small.width = gw; small.height = gh;
+  const sx = small.getContext('2d'); sx.imageSmoothingQuality = 'high'; sx.drawImage(src, 0, 0, gw, gh);
+  const px = sx.getImageData(0, 0, gw, gh).data;
+  const out = document.createElement('canvas'); out.width = w; out.height = h;
+  const o = out.getContext('2d'); o.fillStyle = '#fff'; o.fillRect(0, 0, w, h);
+  for (let y = 0; y < gh; y++) for (let x = 0; x < gw; x++) {
+    const i = (y * gw + x) * 4, r = px[i], g = px[i + 1], b = px[i + 2], lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    const rad = cellPx * 0.5 * Math.sqrt(1 - lum) * 1.38; if (rad < 0.35) continue;
+    o.fillStyle = bw ? '#111' : `rgb(${r * .82 | 0},${g * .82 | 0},${b * .82 | 0})`;
+    o.beginPath(); o.arc((x + .5) * cellPx, (y + .5) * cellPx, Math.min(rad, cellPx * .72), 0, Math.PI * 2); o.fill();
+  }
+  return out;
+}
+let dotRaf = 0;
+function drawDots(im, d, mm){
+  cancelAnimationFrame(dotRaf);
+  dotRaf = requestAnimationFrame(() => {
+    const cv = $('#dotprev'), fr = $('#frame'); if (!cv || !fr) return;
+    const fw = fr.clientWidth, fh = fr.clientHeight, dpr = Math.min(2, devicePixelRatio || 1);
+    const tmp = document.createElement('canvas'); tmp.width = Math.round(fw * dpr); tmp.height = Math.round(fh * dpr);
+    const tx = tmp.getContext('2d'), L = layoutFrac(im, d, mm.w, mm.h);
+    tx.fillStyle = d.bg || '#fff'; tx.fillRect(0, 0, tmp.width, tmp.height);
+    tx.drawImage(im.canvas, L.left * tmp.width, L.top * tmp.height, L.dw * tmp.width, L.dh * tmp.height);
+    const out = halftone(tmp, dotCellMm(mm) / mm.w * tmp.width, S.fd.style === 'dots-bw');
+    cv.width = out.width; cv.height = out.height; cv.getContext('2d').drawImage(out, 0, 0);
+  });
 }
 function syncZoomSlider(d){
   const z = $('#zoom'); if (!z) return;
@@ -2205,14 +2303,77 @@ async function onDocs(e){
         try { Object.assign(doc, await readPdf(f)); } catch (err) { console.warn('pdf count', err); }
       } else if (f.type.startsWith('image/')) {
         const im = await processFile(f, 3500);
-        doc = { id: im.id, blob: im.blob, ext: im.ext, name: f.name, kind: 'image', pages: 1, thumb: im.url };
+        doc = { id: im.id, blob: im.blob, ext: im.ext, name: f.name, kind: 'image', pages: 1, thumb: im.url, w: im.w, h: im.h, canvas: im.canvas };
       } else { toast(`${f.name} isn't a PDF or a picture.`); continue; }
-      S.docs.push(doc); S.pr.files.push({ id: doc.id, name: doc.name, kind: doc.kind, pages: doc.pages });
+      S.docs.push(doc);
+      const pf = { id: doc.id, name: doc.name, kind: doc.kind, pages: doc.pages };
+      if (doc.kind === 'image') { pf.orient = doc.w > doc.h ? 'landscape' : 'portrait'; Object.assign(pf, { zoom: 1, ox: 0, oy: 0 }); pf.zoom = fitZoom(doc, pageMm(pf)); }
+      S.pr.files.push(pf);
     } catch { toast(`${f.name} didn't open. Try saving it as a PDF again.`); }
   }
   drawPrints();
 }
+/* A printed page for one picture: the area inside the white border, tall or wide */
+function pageMm(f){
+  const z = P('prints').sizes.find(x => x.id === (S.pr && S.pr.size)) || P('prints').sizes[0], m = 5;
+  let w = z.wMm, h = z.hMm; if (f.orient === 'landscape') [w, h] = [h, w];
+  return { w: w - 2 * m, h: h - 2 * m, pageW: w, pageH: h, margin: m };
+}
+/* Zoom that shows the whole picture (no cropping), in the same units layoutFrac uses */
+const fitZoom = (im, mm) => Math.min(mm.w / im.w, mm.h / im.h) / Math.max(mm.w / im.w, mm.h / im.h);
+const prsDoc = id => (S.docs || []).find(d => d.id === id);
 const prPages = pr => pr.files.reduce((t, f) => t + (+f.pages || 0), 0);
+function pageEditorHTML(f, pr){
+  const mm = pageMm(f), doc = prsDoc(f.id);
+  return `<div class="docstage">
+    <div class="pagewrap" style="width:min(100%, ${f.orient === 'landscape' ? 520 : 380}px, calc(56svh * ${(mm.pageW / mm.pageH).toFixed(4)}))">
+      <div class="paper" style="aspect-ratio:${mm.pageW}/${mm.pageH};padding:${mm.margin / mm.pageW * 100}%">
+        <div class="frame has-img ${pr.addons.includes('color') ? '' : 'bw'}" id="pframe" style="aspect-ratio:${mm.w}/${mm.h}">
+          ${doc ? `<img id="pimg" src="${doc.thumb}" alt="" draggable="false">` : ''}</div></div></div>
+    <div class="pgctl">
+      <div class="seg">${['portrait','landscape'].map(o => `<button type="button" class="${f.orient === o ? 'on' : ''}" data-act="pgOrient" data-o="${o}">${o === 'portrait' ? 'Tall page' : 'Wide page'}</button>`).join('')}</div>
+      <div class="seg">${[['fit', 'Whole picture'], ['fill', 'Fill the page']].map(([v, l]) => `<button type="button" data-act="pgFit" data-v="${v}">${l}</button>`).join('')}</div>
+      <div class="zoomrow" style="width:100%">${ic('search', 18)}<input type="range" id="pzoom" min="0.2" max="3" step="0.01" value="${f.zoom}" aria-label="Zoom"></div>
+      <p class="help" style="margin:0">Drag to move, pinch or use the slider to zoom. ${pr.addons.includes('color') ? '' : 'Shown in black and white, the way it will print.'}</p>
+      ${btn('Done', { act: 'prDone', icon: 'check', cls: 'dark' })}
+    </div></div>`;
+}
+function placePageImg(f){
+  const img = $('#pimg'), doc = prsDoc(f.id); if (!img || !doc) return;
+  const L = layoutFrac(doc, f, pageMm(f).w, pageMm(f).h); img.setAttribute('style', fracStyle(L));
+  const z = $('#pzoom'); if (z) { z.value = f.zoom; z.style.setProperty('--p', `${(z.value - z.min) / (z.max - z.min) * 100}%`); }
+}
+function bindPagePan(f){
+  const fr = $('#pframe'); if (!fr) return;
+  const pts = new Map(); let st = null;
+  const begin = () => { const p = [...pts.values()], r = fr.getBoundingClientRect();
+    st = p.length === 1 ? { mode: 'pan', x: p[0].x, y: p[0].y, ox: f.ox, oy: f.oy, r }
+      : p.length >= 2 ? { mode: 'pinch', dist: Math.max(1, Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y)), zoom: f.zoom, r } : null; };
+  fr.addEventListener('pointerdown', e => { pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); try { fr.setPointerCapture(e.pointerId); } catch {} begin(); });
+  fr.addEventListener('pointermove', e => {
+    if (!pts.has(e.pointerId) || !st) return; pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); e.preventDefault();
+    const p = [...pts.values()];
+    if (st.mode === 'pan' && p.length === 1) { f.ox = st.ox + (p[0].x - st.x) / st.r.width; f.oy = st.oy + (p[0].y - st.y) / st.r.height; }
+    else if (st.mode === 'pinch' && p.length >= 2) f.zoom = Math.max(0.2, Math.min(3, st.zoom * Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) / st.dist));
+    placePageImg(f);
+  });
+  const end = e => { pts.delete(e.pointerId); begin(); };
+  fr.addEventListener('pointerup', end); fr.addEventListener('pointercancel', end);
+  const z = $('#pzoom'); if (z) z.addEventListener('input', () => { f.zoom = +z.value; placePageImg(f); });
+}
+/* At checkout, each adjusted picture becomes a finished page: placed as shown, grey if black and white */
+async function renderPrintPage(f, doc, color){
+  const mm = pageMm(f), dpi = 200, pw = Math.round(mm.pageW / 25.4 * dpi), ph = Math.round(mm.pageH / 25.4 * dpi);
+  const c = document.createElement('canvas'); c.width = pw; c.height = ph; const x = c.getContext('2d');
+  x.fillStyle = '#fff'; x.fillRect(0, 0, pw, ph);
+  const ix = mm.margin / mm.pageW * pw, iy = mm.margin / mm.pageH * ph, iw = mm.w / mm.pageW * pw, ih = mm.h / mm.pageH * ph;
+  const L = layoutFrac(doc, { ...f }, mm.w, mm.h);
+  x.save(); x.beginPath(); x.rect(ix, iy, iw, ih); x.clip();
+  x.drawImage(doc.canvas, ix + L.left * iw, iy + L.top * ih, L.dw * iw, L.dh * ih); x.restore();
+  if (!color) { const d = x.getImageData(0, 0, pw, ph), a = d.data; for (let i = 0; i < a.length; i += 4) { const g = a[i] * .299 + a[i + 1] * .587 + a[i + 2] * .114; a[i] = a[i + 1] = a[i + 2] = g; } x.putImageData(d, 0, 0); }
+  const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.9));
+  return { id: f.id, blob, ext: 'jpg' };
+}
 function viewPrints(){
   S.view = 'prints';
   if (!S.pr) S.pr = newPr();
@@ -2233,10 +2394,11 @@ function drawPrints(){
       <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose files<small>PDFs or pictures, from your phone, tablet, or computer. We count the pages for you.</small></span>
         <input id="docIn" type="file" accept="application/pdf,image/*" multiple hidden></label>
       ${pr.files.length ? `<ul class="docs">${pr.files.map((f, i) => `<li>
-          <span class="dt">${docById(f.id).thumb ? `<img src="${docById(f.id).thumb}" alt="">` : ic('doc', 22)}</span>
+          <span class="dt ${pr.addons.includes('color') ? '' : 'bw'}">${docById(f.id).thumb ? `<img src="${docById(f.id).thumb}" alt="">` : ic('doc', 22)}</span>
           <span class="dn"><b title="${esc(f.name)}">${esc(f.name)}</b>${f.pages ? `<small>${f.pages} page${f.pages === 1 ? '' : 's'}</small>`
             : `<small class="ask">How many pages? <input class="inp num" type="number" min="1" max="500" data-pages="${i}" aria-label="Pages in ${esc(f.name)}"></small>`}</span>
-          <button type="button" class="dx" data-act="prDel" data-i="${i}" aria-label="Remove ${esc(f.name)}">${ic('x', 16)}</button></li>`).join('')}</ul>` : ''}
+          <span class="dacts">${f.kind === 'image' ? `<button type="button" class="dadj ${S.prSel === f.id ? 'on' : ''}" data-act="prAdjust" data-id="${esc(f.id)}">${ic('move', 14)}${S.prSel === f.id ? 'Adjusting' : 'Adjust'}</button>` : ''}
+          <button type="button" class="dx" data-act="prDel" data-i="${i}" aria-label="Remove ${esc(f.name)}">${ic('x', 16)}</button></span></li>`).join('')}</ul>` : ''}
     </section>
     <section>${step('Paper and color')}
       ${sizes.length > 1 ? `<div class="sizes" style="margin-bottom:12px">${sizes.map(z => `<button class="size ${pr.size === z.id ? 'on' : ''}" type="button" data-act="prSize" data-size="${esc(z.id)}" aria-pressed="${pr.size === z.id}"><span>${esc(z.label)}<small class="num">${money(z.price)} a page</small></span></button>`).join('')}</div>` : ''}
@@ -2247,8 +2409,10 @@ function drawPrints(){
     <section>${step('Copies')}
       <div class="qty"><button type="button" data-act="prQty" data-d="-1" aria-label="One less">−</button><input id="prQtyIn" class="num" type="number" inputmode="numeric" min="1" max="${maxQtyFor('prints')}" value="${pr.qty}" aria-label="Copies"><button type="button" data-act="prQty" data-d="1" aria-label="One more">+</button></div>
     </section>`;
-  $('#fstage').innerHTML = pr.files.length ? `<div class="docstage">
-      <div class="pstack">${pr.files.slice(0, 3).map((f, i) => `<div class="psheet" style="--i:${i}">${docById(f.id).thumb ? `<img src="${docById(f.id).thumb}" alt="">` : `<span>${ic('doc', 40)}<b>${esc(f.name)}</b></span>`}</div>`).join('')}</div>
+  const sel = pr.files.find(f => f.id === S.prSel && f.kind === 'image');
+  if (!sel) S.prSel = null;
+  $('#fstage').innerHTML = sel ? pageEditorHTML(sel, pr) : pr.files.length ? `<div class="docstage">
+      <div class="pstack ${pr.addons.includes('color') ? '' : 'bw'}">${pr.files.slice(0, 3).map((f, i) => `<div class="psheet" style="--i:${i}">${docById(f.id).thumb ? `<img src="${docById(f.id).thumb}" alt="">` : `<span>${ic('doc', 40)}<b>${esc(f.name)}</b></span>`}</div>`).join('')}</div>
       <div class="pmath">
         <div><b class="num">${pages || '?'}</b><span>page${pages === 1 ? '' : 's'}</span></div><i>×</i>
         <div><b class="num">${pr.qty}</b><span>cop${pr.qty === 1 ? 'y' : 'ies'}</span></div><i>=</i>
@@ -2258,6 +2422,7 @@ function drawPrints(){
     </div>`
     : `<label class="docempty"><span class="ui">${ic('plus', 26)}</span><b>Choose files to print</b><small>PDFs or pictures. Homework, reviewers, photos, anything.</small><input class="docPick" type="file" accept="application/pdf,image/*" multiple hidden></label>`;
   document.querySelectorAll('#docIn,.docPick').forEach(i => i.addEventListener('change', onDocs));
+  if (sel) { placePageImg(sel); bindPagePan(sel); }
   $('#ctrl').querySelectorAll('[data-pages]').forEach(i => i.addEventListener('change', () => { const f = pr.files[+i.dataset.pages]; f.pages = Math.max(1, Math.min(500, Math.round(+i.value || 0))) || null; drawPrints(); }));
   const qi = $('#prQtyIn'); if (qi) qi.addEventListener('change', () => { pr.qty = Math.max(1, Math.min(maxQtyFor('prints'), Math.round(+qi.value || 1))); drawPrints(); });
   const ready = pr.files.length && pr.files.every(f => f.pages > 0);
@@ -2445,7 +2610,12 @@ async function submitOrder(e){
   try {
     const used = new Set(cartImageIds());
     const sum = computeDeals(S.cart), finalTotal = checkoutTotal(pickupDate);
-    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: SRC, promo: S.promo && sum.total >= S.promo.min_total ? S.promo.code : null, images: S.images.concat(S.docs || []).filter(i => used.has(i.id)), items: S.cart });
+    const pages = {};
+    for (const it of S.cart.filter(x => x.type === 'prints')) for (const f of it.files) {
+      const d = prsDoc(f.id); if (d && d.kind === 'image' && d.canvas) pages[f.id] = await renderPrintPage(f, d, (it.addons || []).includes('color'));
+    }
+    const uploads = S.images.concat((S.docs || []).map(d => pages[d.id] || d)).filter(i => used.has(i.id));
+    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: SRC, promo: S.promo && sum.total >= S.promo.min_total ? S.promo.code : null, images: uploads, items: S.cart });
     S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal };
     S.promo = null;
     S.celebrate = true; buzz([12, 40, 18]);
@@ -2818,15 +2988,18 @@ async function makePdf(o){
       const full = document.createElement('canvas'); full.width = Math.round(pm.w / 25.4 * dpi); full.height = Math.round(pm.h / 25.4 * dpi);
       const fx = full.getContext('2d'); fx.fillStyle = it.front.bg || '#ffffff'; fx.fillRect(0, 0, full.width, full.height);
       if (img) { const L = layoutFrac({ w: img.naturalWidth, h: img.naturalHeight }, { ...it.front }, pm.w, pm.h); fx.drawImage(img, L.left * full.width, L.top * full.height, L.dw * full.width, L.dh * full.height); }
-      const pieces = [];
+      const art = it.style && it.style !== 'photo' ? halftone(full, dotCellMm(pm) / pm.w * full.width, it.style === 'dots-bw') : full;
+      // overlap: inner edges get a little extra picture past the cut line, for gluing or taping
+      const ov = cols * rows > 1 ? Math.min(CONFIG.posterOverlapMm, pm.margin) : 0, pxmm = art.width / pm.w, pieces = [];
       for (let r0 = 0; r0 < rows; r0++) for (let c0 = 0; c0 < cols; c0++) {
-        const pc = document.createElement('canvas'); pc.width = Math.round(full.width / cols); pc.height = Math.round(full.height / rows);
-        pc.getContext('2d').drawImage(full, c0 * pc.width, r0 * pc.height, pc.width, pc.height, 0, 0, pc.width, pc.height);
-        pieces.push({ r0, c0, data: pc.toDataURL('image/jpeg', 0.92) });
+        const eL = c0 > 0 ? ov : 0, eR = c0 < cols - 1 ? ov : 0, eT = r0 > 0 ? ov : 0, eB = r0 < rows - 1 ? ov : 0;
+        const pc = document.createElement('canvas'); pc.width = Math.round((tw + eL + eR) * pxmm); pc.height = Math.round((th + eT + eB) * pxmm);
+        pc.getContext('2d').drawImage(art, (c0 * tw - eL) * pxmm, (r0 * th - eT) * pxmm, pc.width, pc.height, 0, 0, pc.width, pc.height);
+        pieces.push({ r0, c0, eL, eR, eT, eB, data: pc.toDataURL('image/jpeg', 0.92) });
       }
       for (let q = 0; q < it.qty; q++) for (const pc of pieces) {
         page(pm.pageW, pm.pageH);
-        doc.addImage(pc.data, 'JPEG', pm.margin, pm.margin, tw, th, `poster${ii}_${pc.r0}_${pc.c0}`, 'FAST');
+        doc.addImage(pc.data, 'JPEG', pm.margin - pc.eL, pm.margin - pc.eT, tw + pc.eL + pc.eR, th + pc.eT + pc.eB, `poster${ii}_${pc.r0}_${pc.c0}`, 'FAST');
         if (cols * rows > 1) {
           // cut marks at the picture's corners, so the white border can be trimmed before taping
           cutLine(); const x0 = pm.margin, y0 = pm.margin, x1 = x0 + tw, y1 = y0 + th, L2 = 3;
@@ -2888,7 +3061,7 @@ function drawSettings(){
     pickup_weekdays: CONFIG.pickupWeekdays.slice(), pickup_times: clone(CONFIG.pickupTimes), pickup_places: CONFIG.pickupOptions.slice(),
     site_url: CONFIG.siteUrl, confirm_days_before: CONFIG.confirmDaysBefore,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
-    print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
+    print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
     grades: CONFIG.grades.slice(), gcash: { ...CONFIG.gcash }, cleanup_days: CONFIG.cleanupDays, max_pictures: CONFIG.maxPictures, max_noshows: CONFIG.maxNoShows,
     max_qty: Object.fromEntries(['pins', 'posters', 'keychains'].map(k => [k, maxQtyFor(k)])),
@@ -2991,8 +3164,10 @@ function drawShopForm(){
       <p class="help" style="margin-top:6px">Per-page prices and paper sizes are under Products → Prints. Color is the "Color" extra there.</p></div>
 
     <div class="cfgsec"><div class="sub">Big posters</div>
-      <div class="pgrid2"><label class="dnum"><span>Each extra sheet (₱)</span>${n('poster_extra_sheet', c.poster_extra_sheet, 0, 500)}</label></div>
-      <p class="help" style="margin-top:6px">A 2 × 2 poster is the poster price plus 3 extra sheets.</p></div>
+      <div class="pgrid2"><label class="dnum"><span>Each extra sheet (₱)</span>${n('poster_extra_sheet', c.poster_extra_sheet, 0, 500)}</label>
+        <label class="dnum"><span>White border on each sheet (mm)</span>${n('poster_margin_mm', c.poster_margin_mm, 3, 15)}</label>
+        <label class="dnum"><span>Overlap for taping (mm, 0 = none)</span>${n('poster_overlap_mm', c.poster_overlap_mm, 0, 15)}</label></div>
+      <p class="help" style="margin-top:6px">A 2 × 2 poster is the poster price plus 3 extra sheets. If your printer leaves a wider blank edge, raise the border (Rasterbator uses 10 mm). Overlap prints a strip of extra picture past the cut line so sheets can overlap a little when taping.</p></div>
 
     <div class="cfgsec"><div class="sub">Website address</div>
       <input class="inp" id="cfgSite" inputmode="url" value="${esc(c.site_url || '')}" placeholder="https://stick2xu.vercel.app/">
@@ -3543,10 +3718,10 @@ const ACTIONS = {
     if (S.cart.length) viewCart(); else location.hash = '#/shop';
     toast('Removed from your order.', () => { S.cart.splice(i, 0, it); if (location.hash === '#/cart') viewCart(); else location.hash = '#/cart'; });
   },
-  fdImg: t => { const d = activeDesign(); if (!d) return; Object.assign(d, { imageId: t.dataset.id, zoom: 1, ox: 0, oy: 0 }); drawFramed(); },
+  fdImg: t => { setTimeout(() => { if (S.fd) { posterRegrid(S.fd); drawFramed(); } }, 0); const d = activeDesign(); if (!d) return; Object.assign(d, { imageId: t.dataset.id, zoom: 1, ox: 0, oy: 0 }); drawFramed(); },
   fdSide: t => { S.fd.side = t.dataset.side; drawFramed(); },
-  fdSize: t => { S.fd.size = t.dataset.size; drawFramed(); },
-  fdOrient: t => { S.fd.orient = t.dataset.o; drawFramed(); },
+  fdSize: t => { S.fd.size = t.dataset.size; posterRegrid(S.fd); drawFramed(); },
+  fdOrient: t => { S.fd.orient = t.dataset.o; posterRegrid(S.fd); drawFramed(); },
   fdReset: () => { const d = activeDesign(); if (d) { Object.assign(d, { zoom: 1, ox: 0, oy: 0 }); drawFramed(); } },
   promoApply: async () => {
     const v = $('#promo').value.trim().toUpperCase(); setErr('promo', 'e-promo', '');
@@ -3560,6 +3735,10 @@ const ACTIONS = {
   },
   promoRemove: () => { S.promo = null; viewCheckoutKeep(); },
   fdBg: t => { const d = activeDesign(); if (d) { d.bg = t.dataset.c; drawFramed(); } },
+  prAdjust: t => { S.prSel = S.prSel === t.dataset.id ? null : t.dataset.id; drawPrints(); },
+  prDone: () => { S.prSel = null; drawPrints(); },
+  pgOrient: t => { const f = S.pr.files.find(x => x.id === S.prSel); if (!f) return; f.orient = t.dataset.o; f.ox = f.oy = 0; f.zoom = fitZoom(prsDoc(f.id), pageMm(f)); drawPrints(); },
+  pgFit: t => { const f = S.pr.files.find(x => x.id === S.prSel); if (!f) return; f.ox = f.oy = 0; f.zoom = t.dataset.v === 'fit' ? fitZoom(prsDoc(f.id), pageMm(f)) : 1; placePageImg(f); },
   prDel: t => { S.pr.files.splice(+t.dataset.i, 1); drawPrints(); },
   prSize: t => { S.pr.size = t.dataset.size; drawPrints(); },
   prColor: t => { S.pr.addons = t.dataset.v === 'color' ? ['color'] : []; drawPrints(); },
@@ -3568,15 +3747,18 @@ const ACTIONS = {
   addPrints: () => {
     const pr = S.pr; if (!pr.files.length || !pr.files.every(f => f.pages > 0)) return;
     const item = { type: 'prints', size: pr.size, addons: pr.addons.slice(), qty: pr.qty, duplex: pr.duplex, pages: prPages(pr), files: pr.files.map(f => ({ ...f })) };
+    S.prSel = null;
     S.pr = null; saveToCart(item);
   },
-  fdTiles: t => { S.fd.tiles = +t.dataset.t; buzz(5); drawFramed(); },
+  fdCount: t => { const f = S.fd; f.count = Math.max(1, Math.min(4, (+f.count || 1) + +t.dataset.d)); buzz(5); posterRegrid(f); drawFramed(); },
+  fdSizeBy: t => { const f = S.fd; f.sizeBy = t.dataset.v; posterRegrid(f); drawFramed(); },
+  fdStyle: t => { S.fd.style = t.dataset.v; drawFramed(); },
   fdQty: t => { buzz(5); setQty(S.fd.qty + +t.dataset.d); },
   fdQtySet: t => { buzz([6, 20, 6]); setQty(+t.dataset.n); },
   addFramed: () => {
     const f = S.fd; if (!f || !f.front.imageId) return;
     const item = { type: f.type, size: f.size, qty: f.qty, addons: f.addons.slice(), front: { ...f.front } };
-    if (f.type === 'posters') { item.orient = f.orient; item.tiles = +f.tiles || 1; }
+    if (f.type === 'posters') { item.orient = f.orient; item.cols = f.cols; item.rows = f.rows; item.tiles = f.cols * f.rows; item.count = f.count; item.sizeBy = f.sizeBy; item.style = f.style; }
     if (f.type === 'keychains') { item.backMode = f.backMode; item.back = { ...f.back }; }
     S.fd = null; saveToCart(item);
   },
