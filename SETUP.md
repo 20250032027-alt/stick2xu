@@ -6,7 +6,10 @@ The repo only needs three files:
 
 ```
 stick2xu/
-├── index.html    the whole website (customer pages + admin page)
+├── index.html             the whole website (customer pages + admin page)
+├── manifest.webmanifest   lets phones save the site like an app
+├── sw.js                  small helper for "Add to home screen"
+├── icon-192.png, icon-512.png, apple-touch-icon.png   the app icon
 ├── schema.sql    the database setup, run once in Supabase
 └── README.md     how to run the shop day to day
 ```
@@ -115,7 +118,18 @@ Do this on a phone using mobile data, not just on a laptop:
 5. On the phone, open **My order** and tap **I'm here**. Within 15 seconds, it should jump to the top of the admin **Ready** list with a gold "Here now" tag.
 6. Print one PDF page at **100% / "Actual size"** on plain paper, and hold it over the sticker paper to check the grid lines up.
 7. In admin, go to **Poster QR codes**, make one, print it, and scan it with a different phone.
-8. Clean up: tap **Delete** twice on each test order in the admin page. That removes them and their pictures, so they don't show in Earnings or count as a no-show strike.
+8. Clean up: tap **Delete** twice on each test order in the admin page. That removes them and their pictures, so they don't show in the Business tab or count as a no-show strike.
+
+---
+
+## 7. Telegram alerts (optional, recommended)
+
+1. In Supabase, open **Database → Extensions**, search **pg_net**, and turn it on. (Running `schema.sql` tries to do this for you.)
+2. In Telegram, open **@BotFather**, send `/newbot`, and follow the steps. Copy the **token** it gives you.
+3. Make a Telegram group with everyone who should get alerts, add the bot, and send `/start` in the group.
+4. In the admin page: **Settings → Telegram alerts**. Paste the token, tap **Find my chat**, pick the group, turn alerts on, **Save**, then **Send test**.
+
+If **Find my chat** shows nothing, send `/start` again in the group and retry. As a backup, open `https://api.telegram.org/bot<YOUR-TOKEN>/getUpdates` in a browser and copy the `"chat":{"id": ...}` number (group IDs start with a minus sign) into **Send alerts to**.
 
 ---
 
@@ -128,6 +142,8 @@ Do this on a phone using mobile data, not just on a laptop:
 | "Upload failed" at checkout | The storage part of `schema.sql` didn't run; run the whole file again |
 | Error placing an order after updating the site | `schema.sql` is older than `index.html`; run the latest `schema.sql` |
 | "Permission denied for table orders" or "The database blocked this" | Run the latest `schema.sql` again; it includes the table permissions |
+| Telegram test says to turn on pg_net | Supabase → Database → Extensions → enable **pg_net**, then try again |
+| Telegram test "sent" but nothing arrives | Wrong chat picked, or the bot was removed from the group. Use Find my chat again |
 | "That promo code doesn't work" for a code you made | The code is switched off, past its end date, or was typed differently |
 | "Something in your order isn't available right now" | A product, size, or extra in the order was switched off in Settings |
 | Admin logs in but sees no orders | That email isn't in the `admins` table, or it's spelled differently |

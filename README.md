@@ -33,13 +33,13 @@ Open `your-site/#/admin` and log in.
 - **Ready:** grouped by pickup date. Keep this open on your phone at the gate. When someone taps "I'm here", they jump to the top with a gold **Here now** tag and a pop-up with their name, section, and gate. It checks every 15 seconds. Then tap **Picked up and paid**, or **Didn't show up**.
 - **Done / Other:** finished, rejected, cancelled, and no-show orders.
 
-Every order has a **Delete** button (tap it twice). Deleting removes the order and its pictures for good, as if it never happened, so it no longer counts in Earnings. Use it for test orders.
+Every order has a **Delete** button (tap it twice). Deleting removes the order and its pictures for good, as if it never happened, so it no longer counts in the Business tab. Use it for test orders.
 
 After 2 no-shows, that nickname and section can't order anymore. You can change the limit in Supabase under `shop_settings → max_noshows`.
 
-**Earnings:** total earned, the last 7 days, money still to collect, and which posters bring in orders.
+**Business:** profit, supplies, equipment, and which posters bring in orders (see below).
 
-**Poster QR codes:** type a name for each poster spot (like `gate-1` or `library-board`), then download the QR code. Every poster should get its own name, so Earnings can show which spots work. Set `siteUrl` in CONFIG before making these.
+**Poster QR codes:** type a name for each poster spot (like `gate-1` or `library-board`), then download the QR code. Every poster should get its own name, so the Business tab can show which spots work. Set `siteUrl` in CONFIG before making these.
 
 **Settings** has two parts.
 
@@ -59,13 +59,52 @@ If two deals fit the same product, the customer gets the bigger one. Combos add 
 
 **Pickup signal:**, meaning what customers look for at the gate: "the person **holding / wearing** ___", like "holding a Stick2XU sign" or "wearing a yellow lanyard". Changes show up for customers right away.
 
+## Prints (plain paper)
+
+Customers upload PDFs or pictures. The site counts the pages, and they pick paper size, black and white or color, one side or both sides, and copies. Price = printed pages × price per page (₱5 black and white, +₱5 for color, so ₱10).
+
+- **Pickup any school day**, even the same day if they order at least 2 hours before the pickup time.
+- **Rush fee:** same day +₱20, next school day +₱10. Change these in Settings → Shop details → Prints and rush orders.
+- **Paper sizes:** A4 is on. Turn on Short or Long, or change prices, in Settings → Products → Prints.
+- **Printing them:** each prints order shows a button for every file. Open it and print from your phone or computer. These orders aren't in the PDF button.
+- **Privacy:** print files are deleted 3 days after pickup (changeable).
+
+## Big posters
+
+Customers can make a poster from 1, 2, 4 (2 × 2), or 9 (3 × 3) A4 sheets. Price = poster price + ₱30 for each extra sheet (changeable in Settings → Shop details → Big posters). The PDF puts one piece on each sheet, with cut marks and "Row 1, column 2" labels. Trim the white border at the cut marks and tape the sheets together from behind.
+
+## Business tab (admin)
+
+- **Profit:** this week and so far. Profit = sales minus the supplies each picked-up order used.
+- **Paying back the equipment:** how much is left, how much profit a week you need to finish in your chosen number of weeks, and roughly how many sticker sheets or pins that is. Each partner's name, how much they put in, and how much of it has been paid back so far.
+- **Supplies:** pack price, how much is in a pack, cost per piece, stock, and when to warn you. Stock goes down by itself when you tap **Mark ready** on an order. If something drops to its warning level, you get a Telegram message (if Telegram alerts are on). Tap **Restock** after buying a pack: it adds to stock and logs the purchase.
+- **What each item costs to make:** which supplies one item uses and how much, with its selling price, cost, and profit. Every number is editable. Starting values come from what you paid (sticker paper ₱220/20, photo paper ₱50/20, glossy paper ₱180/20, pin parts ₱400/100, ink ₱1,500). **Ink "pages per bottle set" (600) is a guess**: once you know how many pages your ink really lasts, change it.
+- **Equipment:** things bought once (the pin maker, ₱2,000) and how each partner split it.
+- **Money in and out:** the plain cash view, everything earned minus everything spent, plus a list of purchases.
+
+## Pickup and handoff rules
+
+- **Confirm before printing.** Customers tap **"I'll be there"** in My order by the day before pickup (change this in Settings → Shop details → Pickup rules). Only print orders tagged **Confirmed**; the button on unconfirmed ones says "Print anyway" and needs two taps. Unconfirmed orders are released automatically after their confirm-by day (they show as "Not confirmed in time"), with no strike and nothing to pay.
+- **Hold, then forfeit.** The first time someone doesn't show, tap **Didn't show up**: the order is held for the next pickup day and the customer sees "You missed your pickup" in My order. If they miss that too, tap **Didn't show up again**: it's forfeited and counts as a missed pickup.
+- **Customers can move their pickup** to another open day from My order, up to 2 times (Settings → Shop details).
+- **Class suspended or pickup cancelled?** Settings → **Notice to customers** shows a message on every customer page. Under it, **Move a pickup day** moves everyone from one day to another in one tap and fills in a notice for you.
+- **Pickup mode.** On the Ready list, tap **Start pickup mode** at the gate: the screen stays awake, and the phone chimes and buzzes when someone taps "I'm here". The page has to stay open for this; Telegram alerts work even when it's closed.
+- **GCash refunds.** If a GCash order was marked paid and then gets cancelled or rejected, it's tagged **Refund needed**. Send the money back, then tap **Mark refunded**.
+- **At the gate:** check GCash payments in your own GCash app (never trust a screenshot), keep the bag until you're paid, and bring change.
+
+## Telegram alerts
+
+Get a Telegram message for new orders, customers at the gate, confirmations, moved pickups, and cancellations. The database sends them, so they arrive even when the admin page is closed. Set it up in admin → Settings → **Telegram alerts** (steps are shown there), and see SETUP.md step 7.
+
 ## Changing things
 
 | To change | Where |
 |---|---|
 | Which products are available, prices, extras | Admin page → Settings |
 | Deals and promo codes | Admin page → Settings |
-| Pickup days, times, gates, dates to skip, grades, GCash, limits, pin and keychain sizes | Admin page → Settings → Shop details |
+| Pickup days, times, gates, dates to skip, grades, GCash, limits, pin and keychain sizes, website address | Admin page → Settings → Shop details |
+| Product names and descriptions | Admin page → Settings → Products |
+| Supplies, costs, partners, equipment, purchases | Admin page → Business |
 | Sticker sheet grid, poster paper sizes | `CONFIG` in `index.html`, then push |
 | Max sticker sheets per order | Admin page → Settings → Products (Stickers) |
 | Pickup signal | Admin page → Settings |

@@ -7,6 +7,9 @@
 <meta name="description" content="Design your own stickers, pins, posters, and keychains. Picked up at school.">
 <meta property="og:title" content="Stick2XU">
 <meta property="og:description" content="Turn your pictures into a sticker sheet. ₱50 per sheet.">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Stick2XU">
 <meta name="theme-color" content="#F4F5FA">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-3 -3 30 30'%3E%3Cpath d='M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z' fill='%233a52a3' stroke='%23fff' stroke-width='3' stroke-linejoin='round' paint-order='stroke'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
@@ -683,6 +686,138 @@ label.empty-f:active .ui{transform:scale(.94)}
 .tgsteps code{background:#EEF1F7;border-radius:6px;padding:1px 6px;font-size:13px}
 .tgevents{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
 .mgrid .choice small{display:block}
+
+/* ---------- business ---------- */
+.pricein .inp{padding-left:26px!important}
+table.biz .pricein .inp{min-width:96px}
+.bizh{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:8px}
+.bar b{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--xu-gold));border-radius:99px}
+.inp.inl{display:inline-block;width:70px;min-height:36px;padding:4px 8px;font-size:16px;margin:0 2px}
+.partners{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:14px}
+.pcell{display:grid;gap:4px;padding:10px;border:1px solid var(--line);border-radius:14px}
+.pcell .inp{min-height:40px;font-size:16px;padding:6px 10px}
+table.biz td{vertical-align:top}
+table.biz .inp{min-height:40px;font-size:15px;padding:6px 8px;min-width:70px}
+table.biz td:first-child .inp{min-width:170px}
+table.biz small{display:block;margin-top:4px;font-size:12px}
+table.biz tr.low td{background:#FFF8E6}
+.lowtag{display:inline-flex!important;gap:3px;align-items:center;color:#8A5E00;font-weight:700}
+.unitin{display:flex;gap:6px}
+.unitin .inp{min-width:60px}
+table.biz td.acts{white-space:nowrap}
+table.biz td.acts .btn{margin-right:4px}
+.ucards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.ucard{border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:8px;align-content:start}
+.ucard.off{opacity:.6}
+.ucard-h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.uline{display:grid;grid-template-columns:1fr 80px auto;gap:6px}
+.uline .inp{min-height:40px;font-size:15px;padding:6px 8px}
+.umath{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;padding-top:8px;border-top:1px dashed var(--line)}
+.good{color:var(--ok)} .bad{color:var(--bad)}
+.equip{display:grid;grid-template-columns:1.2fr 150px 120px;gap:8px;padding:12px;border:1px solid var(--line);border-radius:14px;margin-bottom:10px}
+.equip .inp{min-height:42px;font-size:16px;padding:6px 10px}
+.equip .splits{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.inout{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.inout > div{padding:12px;border:1px solid var(--line);border-radius:14px;display:grid;gap:2px}
+.inout b{font-family:var(--display);font-size:24px}
+.buyadd{display:grid;grid-template-columns:1fr 120px auto;gap:8px;margin-top:10px}
+.buyadd .inp{min-height:42px;font-size:16px}
+@media(max-width:600px){.buyadd{grid-template-columns:1fr 1fr}.uline{grid-template-columns:1fr 70px auto}}
+
+/* save this site */
+.savecard{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start;margin-top:18px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--paper)}
+.sc-ic img{display:block;border-radius:11px}
+.sc-tx{display:grid;gap:2px;font-size:14px;color:var(--muted)}
+.sc-tx b{color:var(--ink);font-family:var(--display);font-size:16px}
+.sc-act{grid-column:2;display:flex;gap:8px;flex-wrap:wrap}
+.savecard .sc-install{display:none}
+.savecard.can-install .sc-install{display:inline-flex}
+.savecard.can-install .sc-how{display:none}
+
+/* business: chart, partners, purchases, a bit of life */
+.wchart{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;align-items:end;height:170px;padding-top:6px}
+.wcol{display:grid;grid-template-rows:auto 1fr auto;justify-items:center;gap:4px;height:100%}
+.wcol i{align-self:end;width:100%;max-width:46px;height:var(--h);border-radius:10px 10px 4px 4px;background:var(--accent-soft);border:1.5px solid #B9C6E8;
+  transform-origin:bottom;animation:growbar .7s var(--ease) both}
+.wcol.now i{background:linear-gradient(180deg,#F7E3A4,var(--xu-gold));border-color:#D8B04F}
+.wcol:nth-child(2) i{animation-delay:.04s}.wcol:nth-child(3) i{animation-delay:.08s}.wcol:nth-child(4) i{animation-delay:.12s}
+.wcol:nth-child(5) i{animation-delay:.16s}.wcol:nth-child(6) i{animation-delay:.2s}.wcol:nth-child(7) i{animation-delay:.24s}.wcol:nth-child(8) i{animation-delay:.28s}
+.wv{font-size:11px;font-weight:700;color:var(--muted);min-height:14px;white-space:nowrap}
+.wl{font-size:12px;font-weight:700;color:var(--muted)}
+.wcol.now .wl{color:var(--ink)}
+@keyframes growbar{from{transform:scaleY(0)}}
+.bar b{width:var(--w,0);animation:fillbar 1s var(--ease) .15s both}
+@keyframes fillbar{from{width:0}}
+.pn{display:grid;grid-template-columns:1fr auto;gap:6px}
+table.biz.buys .inp{min-width:0}
+table.biz.buys td:nth-child(2) .inp{min-width:180px}
+.lowtag{animation:lowpulse 2.4s ease-in-out infinite}
+@keyframes lowpulse{50%{opacity:.55}}
+.savecard{animation:cardin .5s var(--ease) both .3s}
+@keyframes cardin{from{opacity:0;transform:translateY(8px)}}
+.notice{animation:noticein .45s var(--ease) both}
+@keyframes noticein{from{opacity:0;transform:translateY(-6px)}}
+.tghead .tag.ok svg{animation:twinkle 2.6s ease-in-out infinite}
+@keyframes twinkle{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+@media(max-width:600px){.equip{grid-template-columns:1fr 1fr}.equip > input:first-child{grid-column:1/-1}.wchart{gap:4px}.wv{font-size:9px}}
+
+/* ---------- prints + big posters ---------- */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.size.tile{align-items:center}
+.size.tile .tg{display:grid;gap:2px;width:30px;flex:none;padding:2px;border:1.5px solid var(--ink);border-radius:4px;background:#fff}
+.size.tile .tg i{background:var(--accent-soft);border-radius:1px}
+.size.tile.on .tg i{background:var(--xu-gold)}
+.tilegrid{position:absolute;inset:0;pointer-events:none;z-index:2}
+.tilegrid::before,.tilegrid::after{content:"";position:absolute;inset:0;background-size:calc(100% / var(--c)) 100%;
+  background-image:linear-gradient(to right,transparent calc(100% - 1px),rgba(255,255,255,.95) 0,rgba(255,255,255,.95) 100%);filter:drop-shadow(0 0 1px rgba(40,57,113,.55))}
+.tilegrid::after{background-size:100% calc(100% / var(--r));background-image:linear-gradient(to bottom,transparent calc(100% - 1px),rgba(255,255,255,.95) 0,rgba(255,255,255,.95) 100%)}
+  background-image:linear-gradient(to right,transparent calc(100% - 2px),rgba(255,255,255,.95) 0);background-size:calc(100% / var(--c)) 100%}
+.tilegrid::after{background-image:linear-gradient(to bottom,transparent calc(100% - 2px),rgba(255,255,255,.95) 0);background-size:100% calc(100% / var(--r))}
+.docs{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
+.docs li{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.docs .dt{width:44px;height:56px;border-radius:6px;border:1px solid var(--line);display:grid;place-items:center;overflow:hidden;background:#FAFBFD;color:var(--muted)}
+.docs .dt img{width:100%;height:100%;object-fit:cover}
+.docs .dn{display:grid;min-width:0}
+.docs .dn b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px}
+.docs .dn small{color:var(--muted);font-size:13px}
+.docs .ask{display:flex;gap:6px;align-items:center;color:#8A5E00!important;font-weight:700}
+.docs .ask .inp{width:76px;min-height:34px;padding:4px 8px;font-size:16px}
+.dx{width:36px;height:36px;border-radius:50%;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--muted)}
+.dx:hover{background:#F1F3F8}
+.docstage{display:grid;justify-items:center;gap:18px;width:100%}
+.pstack{position:relative;width:min(70%,230px);aspect-ratio:210/297;margin:10px 0 6px}
+.psheet{position:absolute;inset:0;background:#fff;border:1.5px solid var(--ink);border-radius:4px;box-shadow:var(--shadow-sm);overflow:hidden;display:grid;place-items:center;
+  transform:translate(calc(var(--i) * 10px),calc(var(--i) * -8px)) rotate(calc(var(--i) * 3deg));z-index:calc(10 - var(--i));animation:psin .5s var(--ease) both;animation-delay:calc(var(--i) * 80ms)}
+.psheet img{width:100%;height:100%;object-fit:cover}
+.psheet span{display:grid;justify-items:center;gap:8px;padding:12px;text-align:center;color:var(--muted);font-size:13px}
+.psheet span b{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
+@keyframes psin{from{opacity:0;transform:translateY(12px)}}
+.pmath{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.pmath > div{display:grid;justify-items:center;padding:10px 16px;border:1px solid var(--line);border-radius:14px;background:#fff;min-width:84px}
+.pmath > div.hi{border-color:var(--ink);background:var(--gold-soft)}
+.pmath b{font-family:var(--display);font-size:30px;line-height:1}
+.pmath span{font-size:13px;color:var(--muted);font-weight:600}
+.pmath i{font-style:normal;font-size:22px;color:var(--muted);font-weight:700}
+.rushinfo{display:flex;gap:10px;align-items:flex-start;max-width:460px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#FAFBFD;font-size:14px;color:var(--muted)}
+.rushinfo svg{flex:none;color:#C9951A;margin-top:1px}
+.rushinfo b{color:var(--ink)}
+.docempty{display:grid;justify-items:center;gap:8px;text-align:center;cursor:pointer;width:min(100%,420px);aspect-ratio:210/297;max-height:62svh;margin:0 auto;padding:24px;
+  border:2px dashed #B9C3DD;border-radius:12px;background:repeating-linear-gradient(45deg,#F7F8FC 0 10px,#F1F3F9 10px 20px);align-content:center}
+.docempty .ui{width:52px;height:52px;border-radius:16px;background:var(--accent);color:#fff;border:2px solid var(--ink);display:grid;place-items:center;box-shadow:var(--shadow-sm)}
+.docempty b{font-family:var(--display);font-size:20px}
+.docempty small{color:var(--muted);font-size:14px}
+.docthumb{width:64px;aspect-ratio:210/297;border:1.5px solid var(--ink);border-radius:4px;background:#fff;display:grid;justify-items:center;align-content:center;gap:0;color:var(--muted)}
+.docthumb b{font-family:var(--display);font-size:20px;color:var(--ink);line-height:1.1}
+.docthumb small{font-size:11px}
+.filechip{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border:1.5px solid var(--ink);border-radius:12px;background:#fff;color:var(--ink);text-decoration:none;font-size:14px;font-weight:700;max-width:100%}
+.filechip span{display:grid;min-width:0}
+.filechip span > :first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.filechip small{font-weight:500;color:var(--muted);font-size:12px}
+.filechip.off{opacity:.6;border-style:dashed}
+.rushtag{color:#8A5E00!important;font-weight:700}
+.sv-row.rushrow{margin-top:14px;padding:10px 14px;border:1px solid #EED9A2;border-radius:12px;background:#FFF8E6;color:#6B4B00;font-weight:700}
+.choice.off{opacity:.45}
 </style>
 </head>
 <body>
@@ -717,7 +852,7 @@ const CONFIG = {
   products: {
     stickers: {
       name: 'Stickers', blurb: 'A full sheet of die-cut stickers', unit: 'sheet', enabled: true,
-      sizes: [{ id: 'a4', label: 'A4 sheet', price: 50 }],
+      sizes: [{ id: 'a4', label: 'A4 sheet', price: 45 }],
       addons: [{ id: 'inkjet', label: 'Inkjet print', note: 'brighter, more vivid colors', price: 30, enabled: true }]
     },
     pins: {
@@ -728,8 +863,16 @@ const CONFIG = {
     },
     posters: {
       name: 'Posters', blurb: 'One big picture, printed on a full page', unit: 'poster', enabled: false,
-      sizes: [{ id: 'a4', label: 'A4', price: 40, wMm: 210, hMm: 297 }, { id: 'a3', label: 'A3', price: 80, wMm: 297, hMm: 420 }],
+      sizes: [{ id: 'a4', label: 'A4', price: 50, wMm: 210, hMm: 297 }, { id: 'a3', label: 'A3', price: 80, wMm: 297, hMm: 420 }],
       addons: []
+    },
+    prints: {
+      name: 'Prints', blurb: 'Documents and photos on plain paper', unit: 'page', enabled: true,
+      // price is per printed page (black and white); Color is an extra. Turn on more paper sizes in Settings.
+      sizes: [{ id: 'a4', label: 'A4', price: 5, wMm: 210, hMm: 297 },
+              { id: 'short', label: 'Short (Letter)', price: 5, wMm: 216, hMm: 279, enabled: false },
+              { id: 'long', label: 'Long (8.5 x 13)', price: 6, wMm: 216, hMm: 330, enabled: false }],
+      addons: [{ id: 'color', label: 'Color', note: 'instead of black and white', price: 5, enabled: true }]
     },
     keychains: {
       name: 'Keychains', blurb: 'Your picture inside a clear acrylic keychain', unit: 'keychain', enabled: false,
@@ -774,6 +917,13 @@ const CONFIG = {
   maxReschedules: 2,        // how many times a customer can move their own pickup day
   refundDays: 3,            // GCash refunds for cancelled orders go out within this many days
   notice: { on: false, kind: 'info', text: '' },   // banner on every customer page (set in admin)
+  // Prints and big posters (all editable in admin → Settings → Shop details)
+  printWeekdays: [1, 2, 3, 4, 5],   // prints can be picked up any school day
+  prepHours: 2,                     // same-day prints need this many hours before the pickup time
+  rushSameDay: 20,                  // extra for picking up prints the same day
+  rushNextDay: 10,                  // extra for picking up prints the next school day
+  printCleanupDays: 3,              // documents are deleted this many days after pickup (privacy)
+  posterExtraSheet: 30,             // each extra sheet on a big (multi-sheet) poster
   maxPictures: 20,
   cleanupDays: 30
 };
@@ -859,6 +1009,7 @@ const ICONS = {
   key:'<circle cx="12" cy="5" r="3"/><rect x="6" y="9" width="12" height="13" rx="2.5"/><path d="M12 8v1"/>',
   sticker:'<path d="M15 3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h9l6-6V6a3 3 0 0 0-3-3z"/><path d="M15 21v-3a3 3 0 0 1 3-3h3"/>',
   edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/>',
+  doc:'<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>',
   move:'<path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/>'
 };
 const ic = (n, s = 20) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n] || ''}</svg>`;
@@ -898,6 +1049,23 @@ function confetti(){
   }).join('');
   document.body.appendChild(box); setTimeout(() => box.remove(), 4200);
 }
+/* "Save this site": install on Android, Add to Home Screen steps on iPhone, bookmark shortcut on computers */
+let installEvt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; document.querySelectorAll('.savecard').forEach(c => c.classList.add('can-install')); });
+if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('/sw.js').catch(() => {});
+const isInstalled = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function saveCardHTML(){
+  if (isInstalled() || safeLS.get('sk_save_hide')) return '';
+  const mac = /mac/i.test(navigator.platform || '');
+  const how = isIOS() ? `Tap <b>Share</b> ${ic('download', 14)} at the bottom of Safari, then <b>Add to Home Screen</b>.`
+    : /android/i.test(navigator.userAgent) ? 'Open your browser menu (⋮), then tap <b>Add to Home screen</b> or <b>Install app</b>.'
+    : `Press <b>${mac ? '⌘' : 'Ctrl'} + D</b> to bookmark this page.`;
+  return `<div class="savecard ${installEvt ? 'can-install' : ''}">
+    <div class="sc-ic"><img src="/icon-192.png" alt="" width="40" height="40" onerror="this.remove()"></div>
+    <div class="sc-tx"><b>Save Stick2XU for later</b><span>Checking your order becomes one tap. </span><span class="sc-how">${how}</span></div>
+    <div class="sc-act">${smallBtn('Add to home screen', 'plus', 'installApp', 'dark sc-install')}${smallBtn('Not now', '', 'saveHide', 'plain')}</div></div>`;
+}
 let toastTimer;
 function toast(msg, undo){
   const t = $('#toast');
@@ -922,6 +1090,7 @@ function friendlyError(e){
   if (m.includes('NOT_FOUND')) return "No order matches that code and nickname. Check both and try again.";
   if (m.includes('BAD_INPUT')) return 'Some details are missing. Fill in every box and try again.';
   if (m.includes('NO_PGNET')) return 'Turn on pg_net in Supabase first: Database → Extensions → search "pg_net" → enable. Then try again.';
+  if (m.includes('TOO_SOON')) return 'That pickup time is too soon to get it ready. Pick a later time or another day.';
   if (m.includes('BAD_DATE')) return "That day isn't open for pickup anymore. Pick another one.";
   if (m.includes('NO_RESCHEDULE')) return "This order can't be moved anymore. Talk to the seller at pickup.";
   if (m.includes('BAD_CODE')) return "That promo code doesn't work. Check the spelling, or it may have ended.";
@@ -1018,6 +1187,8 @@ function mergeProducts(saved){
   for (const [key, base] of Object.entries(CONFIG.products)) {
     const d = (saved && saved[key]) || {};
     out[key] = { ...base, key,
+      name: (typeof d.name === 'string' && d.name.trim()) || base.name,
+      blurb: (typeof d.blurb === 'string' && d.blurb.trim()) || base.blurb,
       enabled: typeof d.enabled === 'boolean' ? d.enabled : base.enabled,
       sizes: base.sizes.map(z => {
         const ds = (d.sizes || []).find(x => x.id === z.id) || {};
@@ -1048,6 +1219,12 @@ function applyShopConfig(c){
   CONFIG.maxReschedules = Number.isFinite(+c.max_reschedules) && c.max_reschedules !== null && c.max_reschedules !== '' ? +c.max_reschedules : D.maxReschedules;
   CONFIG.refundDays = +c.refund_days > 0 ? +c.refund_days : D.refundDays;
   CONFIG.notice = { ...D.notice, ...(c.notice || {}) };
+  CONFIG.printWeekdays = arr(c.print_weekdays, D.printWeekdays).map(Number);
+  const numOr = (v, d) => v !== undefined && v !== null && v !== '' && Number.isFinite(+v) ? +v : d;
+  CONFIG.prepHours = numOr(c.prep_hours, D.prepHours); CONFIG.rushSameDay = numOr(c.rush_same_day, D.rushSameDay);
+  CONFIG.rushNextDay = numOr(c.rush_next_day, D.rushNextDay); CONFIG.printCleanupDays = numOr(c.print_cleanup_days, D.printCleanupDays);
+  CONFIG.posterExtraSheet = numOr(c.poster_extra_sheet, D.posterExtraSheet);
+  CONFIG.siteUrl = /^https?:\/\/\S+$/.test(c.site_url || '') ? c.site_url : D.siteUrl;
   for (const k of Object.keys(CONFIG.products)) {
     const base = D.products[k];
     CONFIG.products[k].maxQty = +((c.max_qty || {})[k]) > 0 ? +c.max_qty[k] : (base.maxQty || D.maxQty);
@@ -1063,9 +1240,9 @@ const fromPrice = key => Math.min(...liveSizes(key).map(z => z.price));
 const designRoute = key => key === 'stickers' ? '#/design' : '#/make/' + key;
 function unitPrice(it){
   const p = P(it.type), z = p.sizes.find(s => s.id === it.size) || p.sizes[0];
-  return (z ? z.price : 0) + (it.addons || []).reduce((t, id) => { const a = p.addons.find(x => x.id === id && x.enabled); return t + (a ? a.price : 0); }, 0);
+  return (z ? z.price : 0) + (it.type === 'posters' ? ((+it.tiles || 1) - 1) * CONFIG.posterExtraSheet : 0) + (it.addons || []).reduce((t, id) => { const a = p.addons.find(x => x.id === id && x.enabled); return t + (a ? a.price : 0); }, 0);
 }
-const itemUnits = it => it.type === 'stickers' ? it.sheets.filter(s => s.items.length).length : it.qty;
+const itemUnits = it => it.type === 'stickers' ? it.sheets.filter(s => s.items.length).length : it.type === 'prints' ? (+it.qty || 0) * (+it.pages || 0) : it.qty;
 const itemTotal = it => itemUnits(it) * unitPrice(it);
 /* Deals: per product, the better of "buy X get Y free" and "bulk discount"; combos on top; then a promo code. */
 const liveDeals = () => (S.settings.deals || []).filter(d => d.enabled && (d.type === 'combo' ? (d.products || []).every(isLive) : isLive(d.product)));
@@ -1147,23 +1324,30 @@ function itemTitle(it){
   const p = CONFIG.products[it.type] || { name: it.type, sizes: [] }, n = it.type === 'stickers' ? (it.sheets || []).filter(s => (s.items || []).length).length : it.qty;
   const sizeLabel = it.size_label || ((p.sizes.find(z => z.id === it.size) || {}).label) || '';
   if (it.type === 'stickers') return `Stickers, ${n} sheet${n === 1 ? '' : 's'}`;
-  const extra = it.type === 'posters' ? `, ${it.orient || 'portrait'}` : '';
+  if (it.type === 'prints') return `Prints (${sizeLabel}), ${it.pages} page${+it.pages === 1 ? '' : 's'} × ${n} cop${+n === 1 ? 'y' : 'ies'}`;
+  const extra = it.type === 'posters' ? `, ${(+it.tiles || 1) > 1 ? tileLabel(+it.tiles) + ' sheets, ' : ''}${it.orient === 'landscape' ? 'wide' : 'tall'}` : '';
   return `${p.name}${p.sizes.length > 1 ? ` (${sizeLabel}${extra})` : extra ? ` (${extra.slice(2)})` : ''} × ${n}`;
 }
 function itemDetails(it){
   const bits = [];
   const labels = it.addon_labels || (it.addons || []).map(id => (P(it.type).addons.find(a => a.id === id) || {}).label).filter(Boolean);
   if (labels.length) bits.push(labels.join(', '));
+  if (it.type === 'prints') { if (!labels.length) bits.push('Black and white'); bits.push(it.duplex ? 'double-sided' : 'one side'); }
   if (it.type === 'keychains') { const m = it.back_mode || it.backMode; bits.push(m === 'different' ? 'different back' : m === 'blank' ? 'clear back' : 'same picture both sides'); }
   return bits.join(' · ');
 }
+const TILE_GRID = { 1: [1, 1], 2: [1, 2], 4: [2, 2], 9: [3, 3] };   // [columns, rows] for a tall poster
+const tileLabel = t => ({ 1: '1', 2: '2', 4: '2 × 2', 9: '3 × 3' })[t] || String(t);
 function frameMm(it){
   if (it.mm) return it.mm;
   const z = P(it.type).sizes.find(s => s.id === it.size) || P(it.type).sizes[0];
   if (it.type === 'pins') return { w: z.cutMm, h: z.cutMm, face: z.faceMm, round: true };
   if (it.type === 'posters') {
-    let w = z.wMm, h = z.hMm; if (it.orient === 'landscape') [w, h] = [h, w];
-    return { w: w - 10, h: h - 10, pageW: w, pageH: h, margin: 5 };
+    // Big posters are several sheets taped together. 2 sheets turn sideways and stack, 4 and 9 make a grid.
+    const t = +it.tiles || 1, wide = it.orient === 'landscape', g = TILE_GRID[t] || TILE_GRID[1];
+    let sw = z.wMm, sh = z.hMm; if (wide !== (t === 2)) [sw, sh] = [sh, sw];
+    const cols = wide ? g[1] : g[0], rows = wide ? g[0] : g[1];
+    return { w: cols * (sw - 10), h: rows * (sh - 10), pageW: sw, pageH: sh, margin: 5, cols, rows };
   }
   return { w: z.wMm, h: z.hMm };
 }
@@ -1186,13 +1370,14 @@ function framedThumb(d, url, mm, width = 80){
     ? `<img src="${url}" alt="" data-d='${esc(JSON.stringify({ zoom: d.zoom, ox: d.ox, oy: d.oy }))}' data-w="${mm.w}" data-h="${mm.h}" onload="fitThumb(this)">` : ''}</div>`;
 }
 function itemThumb(it, urlFor){
+  if (it.type === 'prints') return `<div class="docthumb">${ic('doc', 26)}<b class="num">${it.pages}</b><small>page${+it.pages === 1 ? '' : 's'}</small></div>`;
   if (it.type === 'stickers') return miniSheet(it.sheets.find(s => s.items.length) || it.sheets[0], urlFor.sticker, false, !!urlFor.outlined);
   const mm = frameMm(it);
   return framedThumb(it.front || {}, it.front ? urlFor.framed(it.front) : '', mm, it.type === 'posters' ? 64 : 76);
 }
 
 function cartImageIds(){
-  return S.cart.flatMap(it => it.type === 'stickers' ? it.sheets.flatMap(sh => sh.items.map(x => x.imageId))
+  return S.cart.flatMap(it => it.type === 'prints' ? (it.files || []).map(f => f.id) : it.type === 'stickers' ? it.sheets.flatMap(sh => sh.items.map(x => x.imageId))
     : [it.front && it.front.imageId, it.type === 'keychains' && it.backMode === 'different' && it.back && it.back.imageId]).filter(Boolean);
 }
 function serializeItems(items, pathFor){
@@ -1200,16 +1385,18 @@ function serializeItems(items, pathFor){
     const p = P(it.type), z = p.sizes.find(x => x.id === it.size) || p.sizes[0];
     const base = { type: it.type, size: it.size, size_label: z.label, addons: it.addons || [],
       addon_labels: (it.addons || []).map(id => (p.addons.find(a => a.id === id) || {}).label).filter(Boolean), unit_price: unitPrice(it) };
+    if (it.type === 'prints') return { ...base, qty: it.qty, pages: it.pages, duplex: !!it.duplex,
+      files: (it.files || []).map(f => ({ path: pathFor[f.id], name: f.name, pages: f.pages, kind: f.kind })) };
     if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ items: sh.items.map(x => ({ path: pathFor[x.imageId], col: x.col, row: x.row, size: x.size, fit: x.fit })) })) };
     const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy, bg: x.bg || '#ffffff' } : null;
     const out = { ...base, qty: it.qty, mm: frameMm(it), front: d(it.front) };
-    if (it.type === 'posters') out.orient = it.orient;
+    if (it.type === 'posters') { out.orient = it.orient; out.tiles = +it.tiles || 1; }
     if (it.type === 'keychains') { out.back_mode = it.backMode; out.back = it.backMode === 'different' ? d(it.back) : null; }
     return out;
   });
 }
 const orderItems = o => (o.layout && o.layout.items) || [{ type: 'stickers', size: 'a4', size_label: 'A4 sheet', addons: [], addon_labels: [], sheets: (o.layout && o.layout.sheets) || [] }];
-const orderPaths = o => orderItems(o).flatMap(it => it.type === 'stickers' ? (it.sheets || []).flatMap(sh => sh.items.map(x => x.path)) : [it.front && it.front.path, it.back && it.back.path]).filter(Boolean);
+const orderPaths = o => orderItems(o).flatMap(it => it.type === 'prints' ? (it.files || []).map(f => f.path) : it.type === 'stickers' ? (it.sheets || []).flatMap(sh => sh.items.map(x => x.path)) : [it.front && it.front.path, it.back && it.back.path]).filter(Boolean);
 
 /* =====================================================================
    Backend: Supabase
@@ -1224,6 +1411,9 @@ function SupaBackend(){
   }
   return {
     async settings(){ const { data, error } = await sb.from('shop_settings').select('*').eq('id', 1).single(); if (error) throw error; return data; },
+    async getBusiness(){ const { data, error } = await sb.from('business').select('*').eq('id', 1).maybeSingle(); if (error) throw error; return (data && data.data) || {}; },
+    async saveBusiness(d){ const { error } = await sb.from('business').upsert({ id: 1, data: d, updated_at: new Date().toISOString() }); if (error) throw error; },
+    async stockAlert(text){ try { await rpc('business_alert', { p_text: text }); } catch (e) { console.warn('stock alert', e); } },
     async getTelegram(){ const { data, error } = await sb.from('telegram').select('*').eq('id', 1).maybeSingle(); if (error) throw error; return data || { enabled: false, notify: {} }; },
     async saveTelegram(row){ const { error } = await sb.from('telegram').upsert({ id: 1, ...row }); if (error) throw error; },
     async testTelegram(){ return await rpc('telegram_test', {}); },
@@ -1267,9 +1457,11 @@ function SupaBackend(){
       const m = {}; data.forEach(d => { if (d.signedUrl) m[d.path] = d.signedUrl; }); return m;
     },
     async cleanup(orders){
-      const cutoff = Date.now() - CONFIG.cleanupDays * 864e5; let n = 0;
+      let n = 0;
       for (const o of orders) {
-        if (['done','rejected','noshow','cancelled'].includes(o.status) && !o.images_deleted && new Date(o.updated_at).getTime() < cutoff) {
+        // documents for prints are deleted sooner, for privacy
+        const days = orderItems(o).some(it => it.type === 'prints') ? CONFIG.printCleanupDays : CONFIG.cleanupDays;
+        if (['done','rejected','noshow','cancelled'].includes(o.status) && !o.images_deleted && new Date(o.done_at || o.updated_at).getTime() < Date.now() - days * 864e5) {
           await wipeFolder(o.folder);
           await sb.from('orders').update({ images_deleted: true }).eq('id', o.id); n++;
         }
@@ -1483,8 +1675,17 @@ function illoKeychains(){
   const id = 'ik' + (illoN++);
   return `<svg viewBox="42 0 166 156" aria-hidden="true">${illoDefs(id)}${keychainSVG(id, 78, 8, 1.05, 6)}</svg>`;
 }
+function illoPrints(){
+  const id = 'ir' + (illoN++), line = (x, y, w) => `<rect x="${x}" y="${y}" width="${w}" height="3.4" rx="1.7" fill="#C9D1E3"/>`;
+  return `<svg viewBox="46 0 150 150" aria-hidden="true">${illoDefs(id)}
+    <g transform="rotate(7 150 80)" filter="url(#${id}f)"><rect x="100" y="24" width="74" height="100" rx="3" fill="#fff"/>
+      ${scene(id, 108, 32, 58, 44, '<rect x="108" y="32" width="58" height="44"/>')}${line(108, 84, 50)}${line(108, 92, 44)}${line(108, 100, 54)}</g>
+    <g transform="rotate(-5 110 80)" filter="url(#${id}f)"><rect x="70" y="18" width="78" height="108" rx="3" fill="#fff"/>
+      <rect x="80" y="30" width="40" height="6" rx="3" fill="#283971"/>${line(80, 44, 58)}${line(80, 52, 52)}${line(80, 60, 58)}${line(80, 68, 46)}${line(80, 80, 58)}${line(80, 88, 50)}${line(80, 96, 56)}${line(80, 104, 38)}</g>
+  </svg>`;
+}
 function productIllo(key){
-  return { stickers: illoStickers, pins: illoPins, posters: illoPosters, keychains: illoKeychains }[key]();
+  return { stickers: illoStickers, pins: illoPins, posters: illoPosters, keychains: illoKeychains, prints: illoPrints }[key]();
 }
 function viewShop(){
   S.editing = null;
@@ -1697,18 +1898,18 @@ async function onFiles(e){
     if (S.images.length >= CONFIG.maxPictures) { toast(`You can add up to ${CONFIG.maxPictures} pictures.`); break; }
     if (!f.type.startsWith('image/')) { toast('That file is not a picture.'); continue; }
     try {
-      const im = await processFile(f); S.images.push(im); S.selImage = im.id; S.selItem = null;
+      const im = await processFile(f, S.view === 'framed' && S.fd && S.fd.type === 'posters' ? 6000 : 2400); S.images.push(im); S.selImage = im.id; S.selItem = null;
       if (S.view === 'framed' && S.fd) { const d = activeDesign(); if (d) Object.assign(d, { imageId: im.id, zoom: 1, ox: 0, oy: 0 }); }
     } catch { toast("That picture didn't open. Try a screenshot of it instead."); }
     if (S.view === 'framed') break;
   }
   if (S.view === 'framed') drawFramed(); else { drawCtrl(); drawSheet(); }
 }
-async function processFile(file){
+async function processFile(file, maxPx = 2400){
   const u0 = URL.createObjectURL(file);
   try {
     const img = await loadImg(u0);
-    let k = Math.min(1, 2400 / Math.max(img.naturalWidth, img.naturalHeight));
+    let k = Math.min(1, maxPx / Math.max(img.naturalWidth, img.naturalHeight));
     let w = Math.round(img.naturalWidth * k), h = Math.round(img.naturalHeight * k);
     let c = document.createElement('canvas'); c.width = w; c.height = h;
     c.getContext('2d').drawImage(img, 0, 0, w, h);
@@ -1751,7 +1952,7 @@ function tapCell(col, row){
 const blankDesign = () => ({ imageId: null, zoom: 1, ox: 0, oy: 0, bg: '#ffffff' });
 function newFd(key){
   const first = liveSizes(key)[0];
-  return { type: key, size: first ? first.id : P(key).sizes[0].id, qty: 1, addons: [], orient: 'portrait',
+  return { type: key, size: first ? first.id : P(key).sizes[0].id, qty: 1, addons: [], orient: 'portrait', tiles: 1,
     front: blankDesign(), back: blankDesign(), backMode: 'same', side: 'front' };
 }
 function activeDesign(){
@@ -1764,6 +1965,7 @@ function setQty(n){ S.fd.qty = Math.max(1, Math.min(maxQtyFor(S.fd.type), Math.r
 function viewMake(key){
   if (!CONFIG.products[key]) return viewNotFound();
   if (!isLive(key)) return viewUnavailable(key);
+  if (key === 'prints') return viewPrints();
   S.view = 'framed';
   if (!S.fd || S.fd.type !== key) { S.fd = newFd(key); if (S.editing !== null && (!S.cart[S.editing] || S.cart[S.editing].type !== key)) S.editing = null; }
   if (!liveSizes(key).some(z => z.id === S.fd.size)) S.fd.size = liveSizes(key)[0].id;
@@ -1797,7 +1999,13 @@ function drawFramedCtrl(){
     ${!backSide && (sizes.length > 1 || f.type === 'posters') ? `<section>${step('Pick a size')}
       ${sizes.length > 1 ? `<div class="sizes">${sizes.map(z => `<button class="size ${f.size === z.id ? 'on' : ''}" type="button" data-act="fdSize" data-size="${esc(z.id)}" aria-pressed="${f.size === z.id}">
         ${f.type === 'pins' ? `<span class="szc" style="width:${Math.round(z.faceMm / 58 * 34)}px"></span>` : ''}<span>${esc(z.label)}<small class="num">${money(z.price)}</small></span></button>`).join('')}</div>` : ''}
-      ${f.type === 'posters' ? `<div class="seg" style="margin-top:12px">${['portrait','landscape'].map(o => `<button type="button" class="${f.orient === o ? 'on' : ''}" data-act="fdOrient" data-o="${o}">${o === 'portrait' ? 'Tall' : 'Wide'}</button>`).join('')}</div>` : ''}
+      ${f.type === 'posters' ? `<div class="seg" style="margin-top:12px">${['portrait','landscape'].map(o => `<button type="button" class="${f.orient === o ? 'on' : ''}" data-act="fdOrient" data-o="${o}">${o === 'portrait' ? 'Tall' : 'Wide'}</button>`).join('')}</div>
+        <p class="lab" style="margin:16px 0 8px">How many sheets?</p>
+        <div class="tiles">${[1, 2, 4, 9].map(t => { const mm = frameMm({ ...f, tiles: t }); const base = (P('posters').sizes.find(z => z.id === f.size) || {}).price || 0;
+          return `<button type="button" class="size tile ${(+f.tiles || 1) === t ? 'on' : ''}" data-act="fdTiles" data-t="${t}" aria-pressed="${(+f.tiles || 1) === t}">
+            <span class="tg" style="grid-template-columns:repeat(${mm.cols},1fr);aspect-ratio:${mm.w}/${mm.h}">${'<i></i>'.repeat(mm.cols * mm.rows)}</span>
+            <span>${tileLabel(t)} sheet${t > 1 ? 's' : ''}<small class="num">${Math.round(mm.w / 10)} × ${Math.round(mm.h / 10)} cm, ${money(base + (t - 1) * CONFIG.posterExtraSheet)}</small></span></button>`; }).join('')}</div>
+        ${(+f.tiles || 1) > 1 ? `<p class="help" style="margin-top:8px">We print it on ${f.tiles} sheets and tape them together for you.</p>` : ''}` : ''}
     </section>` : ''}
     ${d && d.imageId ? `<section>${step('Adjust')}
       <div class="zoomrow">${ic('search', 18)}<input type="range" id="zoom" min="0.4" max="3" step="0.01" value="${d.zoom}" aria-label="Zoom">
@@ -1860,9 +2068,12 @@ function drawFramedStage(){
       <p class="under" style="max-width:460px">The shaded ring wraps around the back of the pin, so it won't show. Keep faces and words inside the dashed circle.</p>`;
   } else if (f.type === 'posters') {
     const wide = mm.w > mm.h;
-    html = `<div class="postwrap"><div class="hang" style="width:min(100%, ${wide ? 560 : 400}px, calc(50svh * ${(mm.pageW / mm.pageH).toFixed(4)}));padding:${5 / mm.pageW * 100}%">
-        <div class="frame" id="frame" style="aspect-ratio:${mm.w}/${mm.h};background:${bg}">${frameInner(f.front, 'Choose a picture')}</div></div></div>
-      <p class="under">${esc((P('posters').sizes.find(z => z.id === f.size) || {}).label || '')} ${f.orient === 'landscape' ? 'wide' : 'tall'}, printed with a thin white border.</p>`;
+    const multi = mm.cols * mm.rows > 1;
+    html = `<div class="postwrap"><div class="hang" style="width:min(100%, ${wide ? 560 : 400}px, calc(50svh * ${(mm.w / mm.h).toFixed(4)}));padding:${multi ? 1.2 : 5 / mm.pageW * 100}%">
+        <div class="frame" id="frame" style="aspect-ratio:${mm.w}/${mm.h};background:${bg}">${frameInner(f.front, 'Choose a picture')}
+          ${multi ? `<span class="tilegrid" style="--c:${mm.cols};--r:${mm.rows}" aria-hidden="true"></span>` : ''}</div></div></div>
+      <p class="under">${multi ? `${tileLabel(+f.tiles)} sheets, about ${Math.round(mm.w / 10)} × ${Math.round(mm.h / 10)} cm taped together. The white lines show where the sheets meet.`
+        : `${esc((P('posters').sizes.find(z => z.id === f.size) || {}).label || '')} ${f.orient === 'landscape' ? 'wide' : 'tall'}, printed with a thin white border.`}</p>`;
   } else {
     const showBack = f.side === 'back', d = sd;
     const clear = showBack && f.backMode === 'blank';
@@ -1890,7 +2101,10 @@ function placeImg(){
   // Let the page scroll in any direction the picture can't move in (e.g. a wide photo in a tall poster)
   const fr = $('#frame');
   if (fr) { const mx = Math.abs(L.dw - 1) > .002, my = Math.abs(L.dh - 1) > .002; fr.style.touchAction = mx && my ? 'none' : mx ? 'pan-y' : my ? 'pan-x' : 'pan-y'; }
-  $('#reswarn').innerHTML = L.dpi < 150 ? `<p class="warnline">${ic('warn', 16)}This picture might print blurry at this size. Try a bigger picture or zoom out.</p>` : '';
+  const big = S.fd.type === 'posters' && (+S.fd.tiles || 1) > 1;   // big posters are seen from farther away
+  $('#reswarn').innerHTML = L.dpi < (big ? 90 : 150) ? `<p class="warnline">${ic('warn', 16)}${big
+    ? `This picture is ${im.w} pixels wide, which may look soft this big. Try a bigger picture or fewer sheets.`
+    : 'This picture might print blurry at this size. Try a bigger picture or zoom out.'}</p>` : '';
 }
 function syncZoomSlider(d){
   const z = $('#zoom'); if (!z) return;
@@ -1949,6 +2163,135 @@ function drawFramedBottom(){
 }
 
 /* =====================================================================
+   Prints: documents and photos on plain paper
+   ===================================================================== */
+const newPr = () => ({ type: 'prints', size: (liveSizes('prints')[0] || {}).id || 'a4', qty: 1, addons: [], duplex: false, files: [] });
+let pdfjsReady = null;
+function loadPdfJs(){
+  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  if (pdfjsReady) return pdfjsReady;
+  pdfjsReady = new Promise((res, rej) => {
+    const sc = document.createElement('script');
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    sc.onload = () => { try { window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; res(window.pdfjsLib); } catch (e) { rej(e); } };
+    sc.onerror = () => { pdfjsReady = null; rej(new Error('pdf.js did not load')); };
+    document.head.appendChild(sc);
+  });
+  return pdfjsReady;
+}
+/* Count a PDF's pages and draw its first page small, for the preview */
+async function readPdf(blob){
+  const lib = await loadPdfJs();
+  const pdf = await lib.getDocument({ data: await blob.arrayBuffer() }).promise;
+  let thumb = '';
+  try {
+    const pg = await pdf.getPage(1), v = pg.getViewport({ scale: 1 }), sc = 180 / v.width, vp = pg.getViewport({ scale: sc });
+    const c = document.createElement('canvas'); c.width = vp.width; c.height = vp.height;
+    await pg.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise; thumb = c.toDataURL('image/jpeg', .8);
+  } catch {}
+  return { pages: pdf.numPages, thumb };
+}
+async function onDocs(e){
+  const files = [...e.target.files]; e.target.value = '';
+  const up = e.target.closest('.upload'); if (up && files.length) up.classList.add('busy');
+  S.docs = S.docs || [];
+  for (const f of files) {
+    if (S.pr.files.length >= 20) { toast('You can add up to 20 files.'); break; }
+    if (f.size > 20 * 1024 * 1024) { toast(`${f.name} is bigger than 20 MB. Try a smaller file.`); continue; }
+    try {
+      let doc;
+      if (f.type === 'application/pdf' || /\.pdf$/i.test(f.name)) {
+        doc = { id: uid(), blob: f.type ? f : new Blob([f], { type: 'application/pdf' }), ext: 'pdf', name: f.name, kind: 'pdf', pages: null, thumb: '' };
+        try { Object.assign(doc, await readPdf(f)); } catch (err) { console.warn('pdf count', err); }
+      } else if (f.type.startsWith('image/')) {
+        const im = await processFile(f, 3500);
+        doc = { id: im.id, blob: im.blob, ext: im.ext, name: f.name, kind: 'image', pages: 1, thumb: im.url };
+      } else { toast(`${f.name} isn't a PDF or a picture.`); continue; }
+      S.docs.push(doc); S.pr.files.push({ id: doc.id, name: doc.name, kind: doc.kind, pages: doc.pages });
+    } catch { toast(`${f.name} didn't open. Try saving it as a PDF again.`); }
+  }
+  drawPrints();
+}
+const prPages = pr => pr.files.reduce((t, f) => t + (+f.pages || 0), 0);
+function viewPrints(){
+  S.view = 'prints';
+  if (!S.pr) S.pr = newPr();
+  if (!liveSizes('prints').some(z => z.id === S.pr.size)) S.pr.size = (liveSizes('prints')[0] || {}).id;
+  $('#app').innerHTML = `${topbar()}<main id="main" class="wrap">${progress(1)}${backBar()}
+    <div class="designer"><aside class="panel tools" id="ctrl"></aside><section class="stage2" id="fstage" aria-label="Your files"></section></div></main>
+    <div class="bottombar"><div class="in" id="bottom"></div></div>`;
+  drawPrints();
+}
+function drawPrints(){
+  const pr = S.pr, p = P('prints'), sizes = liveSizes('prints'), color = liveAddons('prints').find(a => a.id === 'color');
+  const pages = prPages(pr), sides = pages * pr.qty, sheets = (pr.duplex ? Math.ceil(pages / 2) : pages) * pr.qty;
+  const docById = id => (S.docs || []).find(d => d.id === id) || {};
+  let n = 0; const step = t => `<div class="stephead"><i>${++n}</i>${t}</div>`;
+  $('#ctrl').innerHTML = `
+    <section class="phead"><h2>${esc(p.name)}</h2><p class="muted small">${esc(p.blurb)}</p></section>
+    <section>${step('Add files')}
+      <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose files<small>PDFs or pictures, from your phone, tablet, or computer. We count the pages for you.</small></span>
+        <input id="docIn" type="file" accept="application/pdf,image/*" multiple hidden></label>
+      ${pr.files.length ? `<ul class="docs">${pr.files.map((f, i) => `<li>
+          <span class="dt">${docById(f.id).thumb ? `<img src="${docById(f.id).thumb}" alt="">` : ic('doc', 22)}</span>
+          <span class="dn"><b title="${esc(f.name)}">${esc(f.name)}</b>${f.pages ? `<small>${f.pages} page${f.pages === 1 ? '' : 's'}</small>`
+            : `<small class="ask">How many pages? <input class="inp num" type="number" min="1" max="500" data-pages="${i}" aria-label="Pages in ${esc(f.name)}"></small>`}</span>
+          <button type="button" class="dx" data-act="prDel" data-i="${i}" aria-label="Remove ${esc(f.name)}">${ic('x', 16)}</button></li>`).join('')}</ul>` : ''}
+    </section>
+    <section>${step('Paper and color')}
+      ${sizes.length > 1 ? `<div class="sizes" style="margin-bottom:12px">${sizes.map(z => `<button class="size ${pr.size === z.id ? 'on' : ''}" type="button" data-act="prSize" data-size="${esc(z.id)}" aria-pressed="${pr.size === z.id}"><span>${esc(z.label)}<small class="num">${money(z.price)} a page</small></span></button>`).join('')}</div>` : ''}
+      ${color ? `<div class="seg">${[['bw', 'Black and white'], ['color', 'Color']].map(([v, l]) => `<button type="button" class="${(pr.addons.includes('color') ? 'color' : 'bw') === v ? 'on' : ''}" data-act="prColor" data-v="${v}">${l}</button>`).join('')}</div>` : ''}
+      <div class="seg" style="margin-top:10px">${[[false, 'One side'], [true, 'Both sides']].map(([v, l]) => `<button type="button" class="${pr.duplex === v ? 'on' : ''}" data-act="prDuplex" data-v="${v}">${l}</button>`).join('')}</div>
+      <p class="help" style="margin-top:8px">${money(unitPrice(pr))} per printed page${color ? `, ${pr.addons.includes('color') ? 'color' : 'black and white'}` : ''}. Both sides uses less paper and costs the same per page.</p>
+    </section>
+    <section>${step('Copies')}
+      <div class="qty"><button type="button" data-act="prQty" data-d="-1" aria-label="One less">−</button><input id="prQtyIn" class="num" type="number" inputmode="numeric" min="1" max="${maxQtyFor('prints')}" value="${pr.qty}" aria-label="Copies"><button type="button" data-act="prQty" data-d="1" aria-label="One more">+</button></div>
+    </section>`;
+  $('#fstage').innerHTML = pr.files.length ? `<div class="docstage">
+      <div class="pstack">${pr.files.slice(0, 3).map((f, i) => `<div class="psheet" style="--i:${i}">${docById(f.id).thumb ? `<img src="${docById(f.id).thumb}" alt="">` : `<span>${ic('doc', 40)}<b>${esc(f.name)}</b></span>`}</div>`).join('')}</div>
+      <div class="pmath">
+        <div><b class="num">${pages || '?'}</b><span>page${pages === 1 ? '' : 's'}</span></div><i>×</i>
+        <div><b class="num">${pr.qty}</b><span>cop${pr.qty === 1 ? 'y' : 'ies'}</span></div><i>=</i>
+        <div class="hi"><b class="num">${sides || '?'}</b><span>printed page${sides === 1 ? '' : 's'}</span></div></div>
+      <p class="under">${pages ? `${sheets} sheet${sheets === 1 ? '' : 's'} of ${esc((sizes.find(z => z.id === pr.size) || {}).label || '')} paper${pr.duplex ? ', printed on both sides' : ''}.` : 'Type the page count for each file to see the total.'}</p>
+      <div class="rushinfo">${ic('clock', 18)}<span><b>Need it fast?</b> Pick up any school day. Same day: order at least ${CONFIG.prepHours} hour${CONFIG.prepHours === 1 ? '' : 's'} before pickup, +${money(CONFIG.rushSameDay)}. Next school day: +${money(CONFIG.rushNextDay)}.</span></div>
+    </div>`
+    : `<label class="docempty"><span class="ui">${ic('plus', 26)}</span><b>Choose files to print</b><small>PDFs or pictures. Homework, reviewers, photos, anything.</small><input class="docPick" type="file" accept="application/pdf,image/*" multiple hidden></label>`;
+  document.querySelectorAll('#docIn,.docPick').forEach(i => i.addEventListener('change', onDocs));
+  $('#ctrl').querySelectorAll('[data-pages]').forEach(i => i.addEventListener('change', () => { const f = pr.files[+i.dataset.pages]; f.pages = Math.max(1, Math.min(500, Math.round(+i.value || 0))) || null; drawPrints(); }));
+  const qi = $('#prQtyIn'); if (qi) qi.addEventListener('change', () => { pr.qty = Math.max(1, Math.min(maxQtyFor('prints'), Math.round(+qi.value || 1))); drawPrints(); });
+  const ready = pr.files.length && pr.files.every(f => f.pages > 0);
+  $('#bottom').innerHTML = `<div><div class="tot num">${money(sides * unitPrice(pr))}</div><div class="sub">${sides} printed page${sides === 1 ? '' : 's'}</div></div>
+    ${btn(S.editing !== null ? 'Save changes' : 'Add to order', { act: 'addPrints', icon: S.editing !== null ? 'check' : 'arrow', attrs: ready ? '' : 'disabled' })}`;
+  bumpTotal();
+}
+
+/* Pickup dates for checkout. Prints-only orders can be picked up any school day, even today. */
+const timeMins = t => { const m = String(t).match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i); return m ? (+m[1] % 12 + (/pm/i.test(m[3]) ? 12 : 0)) * 60 + +m[2] : null; };
+const printsOnly = () => S.cart.length > 0 && S.cart.every(it => it.type === 'prints');
+function timeOk(ds, t){
+  if (ds !== ymd(new Date())) return true;
+  const now = new Date(), mins = timeMins(t.time);
+  return mins !== null && mins - (now.getHours() * 60 + now.getMinutes()) >= CONFIG.prepHours * 60;
+}
+function nextSchoolDay(){ const d = new Date(); d.setHours(0, 0, 0, 0); do { d.setDate(d.getDate() + 1); } while (d.getDay() === 0 || d.getDay() === 6); return ymd(d); }
+function rushFee(ds){
+  if (!ds || !S.cart.some(it => it.type === 'prints')) return 0;
+  return ds === ymd(new Date()) ? CONFIG.rushSameDay : ds === nextSchoolDay() ? CONFIG.rushNextDay : 0;
+}
+function checkoutDates(){
+  if (!printsOnly()) return pickupDates();
+  const out = [], d = new Date(); d.setHours(0, 0, 0, 0);
+  for (let i = 0; i < 40 && out.length < CONFIG.datesToShow + 1; i++, d.setDate(d.getDate() + 1)) {
+    const ds = ymd(d);
+    if (!CONFIG.printWeekdays.includes(d.getDay()) || CONFIG.noPickupDates.includes(ds)) continue;
+    if (i === 0 && !CONFIG.pickupTimes.some(t => timeOk(ds, t))) continue;
+    out.push(ds);
+  }
+  return out;
+}
+
+/* =====================================================================
    Checkout
    ===================================================================== */
 function viewCheckout(){
@@ -1958,7 +2301,7 @@ function viewCheckout(){
   const total = computeDeals(S.cart).total - promoOff(S.promo, computeDeals(S.cart).total);
   const me = readJSON('sk_me') || {};
   const m = String(me.section || '').match(/^(\d+)\s*-\s*(.+)$/), myGrade = m ? m[1] : '', mySec = m ? m[2] : '';
-  const dates = pickupDates();
+  const dates = checkoutDates(), po = printsOnly();
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">${progress(2)}
     <a class="pilllink" href="#/cart" style="margin-bottom:18px">${ic('back', 18)}Back to my order</a>
     <form class="panel" id="orderForm" novalidate>
@@ -1980,8 +2323,9 @@ function viewCheckout(){
       <div class="hp" aria-hidden="true"><label>Leave this empty<input id="website" tabindex="-1" autocomplete="off"></label></div>
 
       <fieldset><legend>When will you pick it up? <span class="req">*</span></legend>
-        ${dates.map((d, i) => `<label class="choice"><input type="radio" name="pdate" value="${d}" ${i === 0 ? 'checked' : ''}>${ic('calendar', 20)}<span><b>${fmtDate(d)}</b></span></label>`).join('')}
-        <p class="help">Pickups happen every ${pickupDaysText()}. The first date gives us time to check and print your stickers.</p>
+        ${dates.map((d, i) => `<label class="choice"><input type="radio" name="pdate" value="${d}" ${i === 0 ? 'checked' : ''}>${ic('calendar', 20)}<span><b>${d === ymd(new Date()) ? 'Today, ' : ''}${fmtDate(d)}</b>${rushFee(d) ? `<small class="rushtag">Rush, +${money(rushFee(d))}</small>` : ''}</span></label>`).join('')}
+        <p class="help">${po ? `Prints can be picked up any school day. Same-day orders need at least ${CONFIG.prepHours} hour${CONFIG.prepHours === 1 ? '' : 's'} before the pickup time.`
+          : `Pickups happen every ${pickupDaysText()}. The first date gives us time to check and print your order.`}</p>
       </fieldset>
 
       <fieldset><legend>What time? <span class="req">*</span></legend>
@@ -2002,7 +2346,7 @@ function viewCheckout(){
       <fieldset><legend>How will you pay?</legend>
         <label class="choice"><input type="radio" name="pay" value="cash" checked>${ic('cash', 20)}<span>Cash when I pick up</span></label>
         ${CONFIG.gcash.enabled ? `<label class="choice"><input type="radio" name="pay" value="gcash">${ic('phone', 20)}<span>GCash</span></label>
-        <div class="gcashbox" id="gcashBox" hidden>Send <b class="num">${money(total)}</b> to <b>${esc(CONFIG.gcash.number)}</b> (${esc(CONFIG.gcash.name)}), then type the reference number. You can also send it later and show it at pickup.
+        <div class="gcashbox" id="gcashBox" hidden>Send <b class="num" id="gcashAmt">${money(total)}</b> to <b>${esc(CONFIG.gcash.number)}</b> (${esc(CONFIG.gcash.name)}), then type the reference number. You can also send it later and show it at pickup.
           <label class="lab" for="gref" style="display:block;margin:10px 0 6px">Reference number (optional)</label>
           <input class="inp" id="gref" maxlength="40" inputmode="numeric"></div>` : ''}
       </fieldset>
@@ -2033,6 +2377,13 @@ function viewCheckout(){
     const place = radio(form, 'pickup') === '__other' ? 'my chosen spot' : radio(form, 'pickup');
     if ($('#promise').checked) setErr(null, 'e-promise', '');
     if ($('#e-sec').textContent) validate(false);
+    // same-day pickups: only times with enough prep time
+    const ds = radio(form, 'pdate');
+    form.querySelectorAll('input[name="ptime"]').forEach(r => { const t = CONFIG.pickupTimes.find(x => timeLabel(x) === r.value); const ok = !t || timeOk(ds, t);
+      r.disabled = !ok; r.closest('.choice').classList.toggle('off', !ok); if (!ok && r.checked) r.checked = false; });
+    if (!radio(form, 'ptime')) { const first = form.querySelector('input[name="ptime"]:not(:disabled)'); if (first) first.checked = true; }
+    $('#sumBox').innerHTML = checkoutSummary(ds);
+    if ($('#gcashAmt')) $('#gcashAmt').textContent = money(checkoutTotal(ds));
     $('#promiseTxt').innerHTML = `I'll pick it up on <b>${esc(fmtDate(radio(form, 'pdate')))}</b>, <b>${esc(radio(form, 'ptime'))}</b>, at <b>${esc(place)}</b>`;
   };
   form.addEventListener('change', sync); sync();
@@ -2053,10 +2404,13 @@ function viewCheckoutKeep(){
   });
   f2.dispatchEvent(new Event('change'));
 }
-function checkoutSummary(){
-  const sum = computeDeals(S.cart), total = sum.total - promoOff(S.promo, sum.total);
+function checkoutTotal(ds){ const sum = computeDeals(S.cart); return sum.total - promoOff(S.promo, sum.total) + rushFee(ds); }
+function checkoutSummary(ds){
+  const form = $('#orderForm'); ds = ds || (form ? radio(form, 'pdate') : null);
+  const sum = computeDeals(S.cart), rush = rushFee(ds);
   const short = S.promo && sum.total < S.promo.min_total ? `<p class="nudgebar">${ic('warn', 16)}<span>Spend ${money(S.promo.min_total)} or more to use code ${esc(S.promo.code)}.</span></p>` : '';
-  return `${short}${savingsHTML(sum, S.promo)}<div class="totalrow"><span>Total</span><b class="num">${money(total)}</b></div>`;
+  return `${short}${savingsHTML(sum, S.promo)}${rush ? `<div class="sv-row rushrow"><span>${ic('clock', 16)}Rush fee, ${ds === ymd(new Date()) ? 'same day' : 'next school day'}</span><b class="num">+${money(rush)}</b></div>` : ''}
+    <div class="totalrow"><span>Total</span><b class="num">${money(checkoutTotal(ds))}</b></div>`;
 }
 function setErr(inputId, errId, msg){
   const el = $('#' + errId); if (el) el.innerHTML = msg ? `${ic('warn', 16)}${esc(msg)}` : '';
@@ -2090,15 +2444,15 @@ async function submitOrder(e){
   const b = $('#placeBtn'); b.disabled = true; b.innerHTML = '<span>Sending your order</span><span class="bi"><span class="spin"></span></span>';
   try {
     const used = new Set(cartImageIds());
-    const sum = computeDeals(S.cart), finalTotal = sum.total - promoOff(S.promo, sum.total);
-    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: SRC, promo: S.promo && sum.total >= S.promo.min_total ? S.promo.code : null, images: S.images.filter(i => used.has(i.id)), items: S.cart });
+    const sum = computeDeals(S.cart), finalTotal = checkoutTotal(pickupDate);
+    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: SRC, promo: S.promo && sum.total >= S.promo.min_total ? S.promo.code : null, images: S.images.concat(S.docs || []).filter(i => used.has(i.id)), items: S.cart });
     S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal };
     S.promo = null;
     S.celebrate = true; buzz([12, 40, 18]);
     safeLS.set('sk_me', JSON.stringify({ nickname, section }));
     safeLS.set('sk_last', JSON.stringify(S.lastOrder));
     S.images.forEach(i => revoke(i.url)); stickerCache.clear();
-    Object.assign(S, { images: [], sheets: [{ items: [] }], cur: 0, selImage: null, selItem: null, cart: [], editing: null, stickerAddons: [], fd: null });
+    Object.assign(S, { images: [], docs: [], pr: null, sheets: [{ items: [] }], cur: 0, selImage: null, selItem: null, cart: [], editing: null, stickerAddons: [], fd: null });
     location.hash = '#/done';
   } catch (ex) {
     $('#formErr').textContent = friendlyError(ex);
@@ -2144,6 +2498,7 @@ function viewDone(){
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">${progress(3)}
     <h2 style="margin:4px 0 6px">You're all set.</h2><p class="muted" style="margin-bottom:18px">Take a screenshot so you have your code handy.</p>
     ${passHTML(o)}
+    ${saveCardHTML()}
     <section class="panel" style="margin-top:22px">
       <h3>Your pickup</h3>
       <div class="pgrid">
@@ -2154,7 +2509,8 @@ function viewDone(){
       </div>
       <h3>Before you go</h3>
       <ol class="steps2">
-        <li><div><b>Tap <mark>I'll be there</mark> by ${esc(fmtDate(confirmBy(o), { weekday: 'short', month: 'short', day: 'numeric' }))}</b><span>Open "My order" and confirm. We only print confirmed orders, so if you don't confirm, your order is released and you don't owe anything.</span></div></li>
+        ${confirmBy(o) && confirmBy(o) <= ymd(new Date()) ? `<li><div><b>You're confirmed</b><span>Your pickup is soon, so we'll start on it right away.</span></div></li>`
+          : `<li><div><b>Tap <mark>I'll be there</mark> by ${esc(fmtDate(confirmBy(o), { weekday: 'short', month: 'short', day: 'numeric' }))}</b><span>Open "My order" and confirm. We only print confirmed orders, so if you don't confirm, your order is released and you don't owe anything.</span></div></li>`}
         <li><div><b>Tap <mark>I'm here</mark> at the gate</b><span>The seller sees your name, matches your code, and hands over your order. Pay, grab it, and that's it.</span></div></li>
         <li><div><b>Can't make it?</b><span>Change your pickup day in "My order" (up to ${CONFIG.maxReschedules} times).</span></div></li>
       </ol>
@@ -2232,6 +2588,7 @@ function drawStatus(){
         ${canMove && !S.moving ? smallBtn('Change pickup day', 'calendar', 'moveOpen', 'plain') : ''}
         ${['pending','approved'].includes(o.status) && !lapsed ? smallBtn('Cancel my order', 'x', 'cancelOrder', 'plain') : ''}
       </div>
+      ${saveCardHTML() ? `<div style="margin-top:18px">${saveCardHTML()}</div>` : ''}
       ${active && !lapsed ? `<p class="help" style="margin-top:10px">${(o.reschedules || 0) >= CONFIG.maxReschedules ? "You've already changed your pickup day the most times allowed. Talk to the seller if you need to move it again." : `You can change your pickup day ${CONFIG.maxReschedules - (o.reschedules || 0)} more time${CONFIG.maxReschedules - (o.reschedules || 0) === 1 ? '' : 's'}.`}</p>` : ''}
     </div>`;
   const mf = $('#moveForm');
@@ -2264,7 +2621,7 @@ async function viewAdmin(){
       <button class="pilllink" type="button" data-act="logout">${ic('logout', 18)}Log out</button></header>
     <main id="main" class="wrap">
       <nav class="atabs" aria-label="Admin sections">
-        ${[['orders','list','Orders'],['money','chart','Earnings'],['posters','qr','Poster QR codes'],['settings','sliders','Settings']].map(([k, i, l]) =>
+        ${[['orders','list','Orders'],['money','chart','Business'],['posters','qr','Poster QR codes'],['settings','sliders','Settings']].map(([k, i, l]) =>
           `<button class="tab ${S.admin.tab === k ? 'on' : ''}" type="button" data-act="admTab" data-tab="${k}" ${S.admin.tab === k ? 'aria-current="page"' : ''} style="display:inline-flex;gap:6px;align-items:center">${ic(i, 18)}${l}</button>`).join('')}
         <button class="tab" type="button" data-act="admRefresh" style="display:inline-flex;gap:6px;align-items:center">${ic('refresh', 18)}Refresh</button>
       </nav>
@@ -2349,7 +2706,7 @@ async function drawAdminBody(){
           <div><span><b>${esc(o.nickname)}</b>, ${esc(o.grade_section)}</span></div>
           <div>${ic('pin', 18)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span></div>
           <div>${ic('cash', 18)}<span class="num">${money(o.total)}, ${o.payment === 'gcash' ? `GCash${o.gcash_ref ? ` (ref ${esc(o.gcash_ref)})` : ', no ref yet'}` : 'cash'}</span></div>
-          <ul class="ilist">${orderItems(o).map(it => `<li>${ic(it.type === 'stickers' ? 'sticker' : it.type === 'pins' ? 'badge' : it.type === 'posters' ? 'image' : 'key', 18)}<span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `, ${esc(itemDetails(it))}` : ''}</span></li>`).join('')}</ul>
+          <ul class="ilist">${orderItems(o).map(it => `<li>${ic(it.type === 'stickers' ? 'sticker' : it.type === 'pins' ? 'badge' : it.type === 'posters' ? 'image' : it.type === 'prints' ? 'doc' : 'key', 18)}<span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `, ${esc(itemDetails(it))}` : ''}</span></li>`).join('')}</ul>
           <div class="tags">
             ${o.status === 'ready' && o.arrived_at ? `<span class="tag here">${ic('pin', 14)}Here now</span>` : ''}
             ${o.paid ? `<span class="tag ok">${ic('check', 14)}Paid</span>` : ''}
@@ -2364,6 +2721,9 @@ async function drawAdminBody(){
           </div></div>
         <div class="summary" style="margin:8px 0 0;align-items:center">${o.images_deleted ? miniSheet({ items: [] }, () => '', true) : orderItems(o).flatMap(it => it.type === 'stickers'
           ? (it.sheets || []).map(sh => miniSheet(sh, x => S.admin.urls[x.path], false))
+          : it.type === 'prints' ? (it.files || []).map(f => S.admin.urls[f.path]
+              ? `<a class="filechip" href="${S.admin.urls[f.path]}" target="_blank" rel="noopener" download="${esc(o.code + '-' + (f.name || 'file'))}">${ic('download', 16)}<span>${esc(f.name || 'file')}<small>${f.pages || '?'} page${+f.pages === 1 ? '' : 's'}</small></span></a>`
+              : `<span class="filechip off">${ic('doc', 16)}<span>${esc(f.name || 'file')}<small>loading</small></span></span>`)
           : [framedThumb(it.front || {}, it.front ? S.admin.urls[it.front.path] : '', frameMm(it), 64)].concat(it.back ? [framedThumb(it.back, S.admin.urls[it.back.path], frameMm(it), 64)] : [])).join('')}</div>
         ${S.admin.rejecting === o.id ? `<div class="rejbox">
             <label class="lab" for="rejText">Why isn't it approved? The customer sees this.</label>
@@ -2423,8 +2783,9 @@ function renderFramed(img, d, mm, dpi, round){
 async function makePdf(o){
   if (!window.jspdf) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
   if (o.images_deleted) { toast('The pictures for this order were already cleaned up.'); return; }
-  toast('Making the PDF. This takes a few seconds.');
-  const items = orderItems(o), urls = await api.imageUrls([...new Set(orderPaths(o))]), cache = {};
+  if (orderItems(o).every(it => it.type === 'prints')) { toast('This order is files to print. Open them with the file buttons on the order.'); return; }
+  toast('Making the PDF. This takes a few seconds. Prints files are separate: use the file buttons.');
+  const items = orderItems(o).filter(it => it.type !== 'prints'), urls = await api.imageUrls([...new Set(orderPaths(o))]), cache = {};
   const getImg = async path => cache[path] || (cache[path] = await loadImg(urls[path]));
   const who = `${o.code}   ${o.nickname}, ${o.grade_section}   pickup ${o.pickup_date ? fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' }) : ''} ${o.pickup_time || ''} at ${o.pickup}`;
   let doc = null;
@@ -2450,11 +2811,29 @@ async function makePdf(o){
     }
     const mm = it.mm || frameMm(it);
     if (it.type === 'posters') {
-      const img = await getImg(it.front.path).catch(() => null), r = img ? renderFramed(img, it.front, mm, 200, false) : null;
-      for (let q = 0; q < it.qty; q++) {
-        page(mm.pageW, mm.pageH);
-        if (r) doc.addImage(r.data, r.fmt, mm.margin, mm.margin, mm.w, mm.h, `poster${ii}`, 'FAST');
-        foot(`${label}, copy ${q + 1} of ${it.qty}`, mm.pageW, mm.pageH);
+      const pm = frameMm(it), img = await getImg(it.front.path).catch(() => null);
+      const cols = pm.cols || 1, rows = pm.rows || 1, tw = pm.w / cols, th = pm.h / rows;
+      // render the whole poster once, then cut it into one piece per sheet
+      const dpi = Math.min(200, 7000 / (Math.max(pm.w, pm.h) / 25.4));
+      const full = document.createElement('canvas'); full.width = Math.round(pm.w / 25.4 * dpi); full.height = Math.round(pm.h / 25.4 * dpi);
+      const fx = full.getContext('2d'); fx.fillStyle = it.front.bg || '#ffffff'; fx.fillRect(0, 0, full.width, full.height);
+      if (img) { const L = layoutFrac({ w: img.naturalWidth, h: img.naturalHeight }, { ...it.front }, pm.w, pm.h); fx.drawImage(img, L.left * full.width, L.top * full.height, L.dw * full.width, L.dh * full.height); }
+      const pieces = [];
+      for (let r0 = 0; r0 < rows; r0++) for (let c0 = 0; c0 < cols; c0++) {
+        const pc = document.createElement('canvas'); pc.width = Math.round(full.width / cols); pc.height = Math.round(full.height / rows);
+        pc.getContext('2d').drawImage(full, c0 * pc.width, r0 * pc.height, pc.width, pc.height, 0, 0, pc.width, pc.height);
+        pieces.push({ r0, c0, data: pc.toDataURL('image/jpeg', 0.92) });
+      }
+      for (let q = 0; q < it.qty; q++) for (const pc of pieces) {
+        page(pm.pageW, pm.pageH);
+        doc.addImage(pc.data, 'JPEG', pm.margin, pm.margin, tw, th, `poster${ii}_${pc.r0}_${pc.c0}`, 'FAST');
+        if (cols * rows > 1) {
+          // cut marks at the picture's corners, so the white border can be trimmed before taping
+          cutLine(); const x0 = pm.margin, y0 = pm.margin, x1 = x0 + tw, y1 = y0 + th, L2 = 3;
+          [[x0, y0, -1, -1], [x1, y0, 1, -1], [x0, y1, -1, 1], [x1, y1, 1, 1]].forEach(([x, y, sx, sy]) => { doc.line(x, y + sy * 1, x, y + sy * (1 + L2)); doc.line(x + sx * 1, y, x + sx * (1 + L2), y); });
+          doc.setFontSize(8); doc.setTextColor(120); doc.text(`Row ${pc.r0 + 1} of ${rows}, column ${pc.c0 + 1} of ${cols}`, pm.pageW - pm.margin, pm.margin - 1.2, { align: 'right' });
+        }
+        foot(`${label}, copy ${q + 1} of ${it.qty}${cols * rows > 1 ? `, sheet ${pc.r0 * cols + pc.c0 + 1} of ${cols * rows}` : ''}`, pm.pageW, pm.pageH);
       }
       continue;
     }
@@ -2507,7 +2886,9 @@ function drawSettings(){
   drawNoticeForm(); loadTelegram();
   S.admin.cfg = {
     pickup_weekdays: CONFIG.pickupWeekdays.slice(), pickup_times: clone(CONFIG.pickupTimes), pickup_places: CONFIG.pickupOptions.slice(),
-    confirm_days_before: CONFIG.confirmDaysBefore, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
+    site_url: CONFIG.siteUrl, confirm_days_before: CONFIG.confirmDaysBefore,
+    print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
+    print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
     grades: CONFIG.grades.slice(), gcash: { ...CONFIG.gcash }, cleanup_days: CONFIG.cleanupDays, max_pictures: CONFIG.maxPictures, max_noshows: CONFIG.maxNoShows,
     max_qty: Object.fromEntries(['pins', 'posters', 'keychains'].map(k => [k, maxQtyFor(k)])),
@@ -2531,8 +2912,11 @@ function drawProducts(){
   $('#prodForm').innerHTML = `<h3 style="margin-bottom:6px">Products and prices</h3>
     <p class="help" style="margin-bottom:16px">Turn things on when you're ready to sell them. Changes show up for customers after you save. Orders already placed keep their price.</p>
     ${Object.keys(CONFIG.products).map(key => { const p = D[key]; return `<fieldset class="prod ${p.enabled ? '' : 'off'}">
-      <div class="prodhead"><h3>${esc(p.name)}</h3>
+      <div class="prodhead"><h3>${esc(CONFIG.products[key].name)}</h3>
         <label class="switch"><input type="checkbox" data-k="${key}" data-kind="prod" data-f="enabled" ${p.enabled ? 'checked' : ''}><span>${p.enabled ? 'Available' : 'Hidden'}</span></label></div>
+      <div class="pgrid2" style="grid-template-columns:1fr 2fr;margin-bottom:6px">
+        <label class="dnum"><span>Name customers see</span><input class="inp" data-k="${key}" data-kind="prod" data-f="name" maxlength="30" value="${esc(p.name)}"></label>
+        <label class="dnum"><span>Short description</span><input class="inp" data-k="${key}" data-kind="prod" data-f="blurb" maxlength="70" value="${esc(p.blurb)}"></label></div>
       <div class="sub">${p.sizes.length > 1 ? 'Sizes' : 'Price'}</div>
       ${key === 'stickers' ? `<div class="prow"><span>Max sheets in one order</span><input class="inp num" id="maxSheets" type="number" min="1" max="50" value="${S.settings.maxSheets}" aria-label="Max sheets in one order"><span></span></div>` : ''}
       ${p.sizes.map((z, i) => `<div class="prow"><span>${esc(z.label)}${key === 'pins' ? ` <small class="muted">(cut ${z.cutMm} mm)</small>` : ''}</span>
@@ -2560,7 +2944,7 @@ function drawProducts(){
     e.preventDefault();
     for (const p of Object.values(D)) for (const a of p.addons) if (!a.label.trim()) { toast(`Give every extra under ${p.name} a name, or remove it.`); return; }
     const compact = {};
-    for (const [k, p] of Object.entries(D)) compact[k] = { enabled: p.enabled, sizes: p.sizes.map(z => ({ id: z.id, price: z.price, enabled: z.enabled })),
+    for (const [k, p] of Object.entries(D)) compact[k] = { name: String(p.name || '').trim() || CONFIG.products[k].name, blurb: String(p.blurb || '').trim() || CONFIG.products[k].blurb, enabled: p.enabled, sizes: p.sizes.map(z => ({ id: z.id, price: z.price, enabled: z.enabled })),
       addons: p.addons.map(a => ({ id: a.id, label: a.label.trim(), note: a.note.trim(), price: a.price, enabled: a.enabled })) };
     const ms = Math.max(1, Math.min(50, Math.round(+($('#maxSheets') || {}).value || S.settings.maxSheets)));
     try { await api.saveSettings({ products: compact, max_sheets: ms }); S.settings.productsRaw = compact; S.settings.maxSheets = ms; S.settings.products = mergeProducts(compact); S.admin.prodDraft = clone(S.settings.products); toast('Saved. Customers will see the changes.'); drawProducts(); }
@@ -2595,6 +2979,24 @@ function drawShopForm(){
         <label class="dnum"><span>Skip a date (holiday, exams)</span><input class="inp" type="date" id="skipDate"></label></div>
       <div class="tags" style="margin-top:8px">${c.no_pickup_dates.length ? c.no_pickup_dates.map((d, i) => `<span class="tag">${esc(fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' }))}
         <button type="button" class="tagx" data-act="cfgDelSkip" data-i="${i}" aria-label="Remove date">${ic('x', 12)}</button></span>`).join('') : '<span class="help">No skipped dates.</span>'}</div></div>
+
+    <div class="cfgsec"><div class="sub">Prints and rush orders</div>
+      <p class="help" style="margin-bottom:8px">Days prints can be picked up:</p>
+      <div class="daypick">${DAY_NAMES.map((d, i) => `<label class="choice"><input type="checkbox" data-cfgpday="${i}" ${c.print_weekdays.includes(i) ? 'checked' : ''}><span>${d.slice(0, 3)}</span></label>`).join('')}</div>
+      <div class="pgrid2" style="margin-top:10px">
+        <label class="dnum"><span>Same-day prep time (hours before pickup)</span>${n('prep_hours', c.prep_hours, 0, 12)}</label>
+        <label class="dnum"><span>Rush fee, same day (₱)</span>${n('rush_same_day', c.rush_same_day, 0, 500)}</label>
+        <label class="dnum"><span>Rush fee, next school day (₱)</span>${n('rush_next_day', c.rush_next_day, 0, 500)}</label>
+        <label class="dnum"><span>Delete print files after (days)</span>${n('print_cleanup_days', c.print_cleanup_days, 1, 60)}</label></div>
+      <p class="help" style="margin-top:6px">Per-page prices and paper sizes are under Products → Prints. Color is the "Color" extra there.</p></div>
+
+    <div class="cfgsec"><div class="sub">Big posters</div>
+      <div class="pgrid2"><label class="dnum"><span>Each extra sheet (₱)</span>${n('poster_extra_sheet', c.poster_extra_sheet, 0, 500)}</label></div>
+      <p class="help" style="margin-top:6px">A 2 × 2 poster is the poster price plus 3 extra sheets.</p></div>
+
+    <div class="cfgsec"><div class="sub">Website address</div>
+      <input class="inp" id="cfgSite" inputmode="url" value="${esc(c.site_url || '')}" placeholder="https://stick2xu.vercel.app/">
+      <p class="help" style="margin-top:6px">Used for poster QR codes. Change it only if the site moves to a new address.</p></div>
 
     <div class="cfgsec"><div class="sub">Grades in the dropdown</div>
       <input class="inp" id="cfgGrades" value="${esc(c.grades.join(', '))}" aria-label="Grades, separated by commas">
@@ -2632,7 +3034,8 @@ function drawShopForm(){
   const form = $('#shopForm');
   form.oninput = form.onchange = e => {
     const t = e.target, d = t.dataset;
-    if (d.cfgday !== undefined) { const i = +d.cfgday, a = c.pickup_weekdays, j = a.indexOf(i); if (t.checked && j < 0) a.push(i); if (!t.checked && j >= 0) a.splice(j, 1); a.sort(); }
+    if (d.cfgpday !== undefined) { const i = +d.cfgpday, a = c.print_weekdays, j = a.indexOf(i); if (t.checked && j < 0) a.push(i); if (!t.checked && j >= 0) a.splice(j, 1); a.sort(); }
+    else if (d.cfgday !== undefined) { const i = +d.cfgday, a = c.pickup_weekdays, j = a.indexOf(i); if (t.checked && j < 0) a.push(i); if (!t.checked && j >= 0) a.splice(j, 1); a.sort(); }
     else if (d.ptl !== undefined) c.pickup_times[+d.ptl].label = t.value;
     else if (d.ptt !== undefined) c.pickup_times[+d.ptt].time = to12(t.value);
     else if (d.pp !== undefined) c.pickup_places[+d.pp] = t.value;
@@ -2640,6 +3043,7 @@ function drawShopForm(){
     else if (d.cfggcash) c.gcash[d.cfggcash] = t.type === 'checkbox' ? t.checked : t.value;
     else if (d.cfg) { const keys = d.cfg.split('.'); let o = c; keys.slice(0, -1).forEach(k => o = o[k]); o[keys[keys.length - 1]] = Math.round(+t.value || 0); }
     else if (t.id === 'skipDate' && e.type === 'change' && t.value) { if (!c.no_pickup_dates.includes(t.value)) c.no_pickup_dates.push(t.value); c.no_pickup_dates.sort(); drawShopForm(); }
+    else if (t.id === 'cfgSite') c.site_url = t.value.trim();
     else if (t.id === 'cfgGrades') c.grades = t.value.split(',').map(x => x.trim()).filter(Boolean);
   };
   form.onsubmit = async e => {
@@ -2649,6 +3053,7 @@ function drawShopForm(){
     if (!c.pickup_times.length) return toast('Add at least one pickup time.');
     if (!c.pickup_places.length) return toast('Add at least one pickup place.');
     if (!c.grades.length) return toast('Add at least one grade.');
+    if (c.site_url && !/^https?:\/\/\S+$/.test(c.site_url)) return toast('The website address should start with https://');
     if (c.gcash.enabled && (!c.gcash.name.trim() || !c.gcash.number.trim())) return toast('Fill in the GCash name and number, or turn GCash off.');
     const { max_noshows, ...config } = c;
     try {
@@ -2658,10 +3063,10 @@ function drawShopForm(){
     } catch (ex) { toast(friendlyError(ex)); }
   };
 }
-const TG_EVENTS = [['new', 'New orders'], ['arrived', 'Customer at the gate'], ['confirmed', 'Confirmed ("I\'ll be there")'], ['moved', 'Pickup day moved'], ['cancelled', 'Cancelled or released']];
+const TG_EVENTS = [['stock', 'Low stock'], ['new', 'New orders'], ['arrived', 'Customer at the gate'], ['confirmed', 'Confirmed ("I\'ll be there")'], ['moved', 'Pickup day moved'], ['cancelled', 'Cancelled or released']];
 async function loadTelegram(){
   const box = $('#tgForm'); if (!box) return;
-  try { const t = await api.getTelegram(); S.admin.tg = { enabled: !!t.enabled, bot_token: t.bot_token || '', chat_id: t.chat_id || '', notify: { new: true, arrived: true, confirmed: true, moved: true, cancelled: true, ...(t.notify || {}) } }; }
+  try { const t = await api.getTelegram(); S.admin.tg = { enabled: !!t.enabled, bot_token: t.bot_token || '', chat_id: t.chat_id || '', notify: { stock: true, new: true, arrived: true, confirmed: true, moved: true, cancelled: true, ...(t.notify || {}) } }; }
   catch (e) { box.innerHTML = `<h3>Telegram alerts</h3><div class="formerr">${esc(friendlyError(e))} Run the latest schema.sql in Supabase.</div>`; return; }
   S.admin.tgChats = null; drawTelegram();
 }
@@ -2822,23 +3227,228 @@ async function drawPromos(){
   });
 }
 
-function drawMoney(){
+/* =====================================================================
+   Business: supplies, what each item costs to make, profit, paying back equipment
+   ===================================================================== */
+const SUPPLY_UNITS = ['sheet', 'set', 'page', 'piece', 'ml'];
+function defaultBusiness(){
+  const today = ymd(new Date());
+  return {
+    supplies: [
+      { id: 'sticker_paper', name: 'Sticker paper', unit: 'sheet', packPrice: 220, packSize: 20, stock: 20, lowAt: 5 },
+      { id: 'photo_paper', name: 'Photo paper (posters)', unit: 'sheet', packPrice: 50, packSize: 20, stock: 20, lowAt: 5 },
+      { id: 'inkjet_paper', name: 'Inkjet glossy paper (pins)', unit: 'sheet', packPrice: 180, packSize: 20, stock: 20, lowAt: 3 },
+      { id: 'pin_parts', name: 'Pin parts', unit: 'set', packPrice: 400, packSize: 100, stock: 100, lowAt: 20 },
+      { id: 'ink', name: 'Printer ink', unit: 'page', packPrice: 1500, packSize: 600, stock: 600, lowAt: 100 },
+      { id: 'bond_paper', name: 'Bond paper (A4)', unit: 'sheet', packPrice: 250, packSize: 500, stock: 500, lowAt: 50 }
+    ],
+    // how much of each supply ONE item uses. Pins: a 44 mm paper circle fits 12 on a sheet, a 58 mm one fits 6.
+    usage: {
+      'stickers:a4': [['sticker_paper', 1], ['ink', 1]],
+      'pins:44': [['pin_parts', 1], ['inkjet_paper', 0.0833], ['ink', 0.0833]],
+      'pins:58': [['pin_parts', 1], ['inkjet_paper', 0.1667], ['ink', 0.1667]],
+      'posters:a4': [['photo_paper', 1], ['ink', 1]],
+      'posters:a3': [['ink', 2]],
+      'keychains:std': [['photo_paper', 0.1], ['ink', 0.1]],
+      ...printUsageDefaults()
+    },
+    partners: ['Partner 1', 'Partner 2', 'Partner 3'],
+    equipment: [{ id: 'pinmaker', name: 'Pin maker (44 mm)', cost: 2000, date: today, split: [666.67, 666.67, 666.66] }],
+    purchases: [
+      { id: uid(), date: today, item: 'Sticker paper (20 sheets)', amount: 220 },
+      { id: uid(), date: today, item: 'Photo paper (20 sheets)', amount: 50 },
+      { id: uid(), date: today, item: 'Inkjet glossy paper (20 sheets)', amount: 180 },
+      { id: uid(), date: today, item: 'Pin parts (100 sets)', amount: 400 },
+      { id: uid(), date: today, item: 'Printer ink', amount: 1500 }
+    ],
+    paybackWeeks: 8
+  };
+}
+/* Plain-paper prints: one sheet per printed side (half a sheet when double-sided); text pages use little ink */
+function printUsageDefaults(){
+  const out = {};
+  for (const z of CONFIG.products.prints.sizes) { out[`prints:${z.id}`] = [['bond_paper', 1], ['ink', 0.2]]; out[`prints:${z.id}:duplex`] = [['bond_paper', 0.5], ['ink', 0.2]]; }
+  return out;
+}
+/* Shops that saved Business data before prints existed get the new supply and recipes added once */
+function ensureBusinessDefaults(b){
+  b.supplies = b.supplies || []; b.usage = b.usage || {};
+  if (!b.supplies.some(x => x.id === 'bond_paper')) b.supplies.push({ id: 'bond_paper', name: 'Bond paper (A4)', unit: 'sheet', packPrice: 250, packSize: 500, stock: 0, lowAt: 50 });
+  for (const [k, v] of Object.entries(printUsageDefaults())) if (!b.usage[k]) b.usage[k] = v;
+  return b;
+}
+const supCost = s => s.packSize > 0 ? s.packPrice / s.packSize : 0;
+const supById = (b, id) => (b.supplies || []).find(x => x.id === id);
+function unitCost(b, key){ return ((b.usage || {})[key] || []).reduce((t, [id, amt]) => { const s = supById(b, id); return t + (s ? supCost(s) * amt : 0); }, 0); }
+function orderLines(o){
+  return orderItems(o).map(it => {
+    if (it.type === 'prints') return { key: `prints:${it.size}${it.duplex ? ':duplex' : ''}`, units: (+it.qty || 0) * (+it.pages || 0) };
+    if (it.type === 'posters') return { key: `posters:${it.size}`, units: (+it.qty || 0) * (+it.tiles || 1) };
+    return { key: `${it.type}:${it.size || (it.type === 'stickers' ? 'a4' : '')}`, units: it.type === 'stickers' ? (it.sheets || []).length : (+it.qty || 0) };
+  });
+}
+const orderCost = (b, o) => orderLines(o).reduce((t, l) => t + l.units * unitCost(b, l.key), 0);
+function usageKeys(){
+  return Object.entries(CONFIG.products).flatMap(([k, p]) => p.sizes.flatMap(z => {
+    const base = { key: `${k}:${z.id}`, label: `${p.name}${p.sizes.length > 1 ? ' ' + z.label : ''}`, unit: p.unit, price: (P(k).sizes.find(x => x.id === z.id) || z).price, live: isLive(k) && (P(k).sizes.find(x => x.id === z.id) || {}).enabled !== false };
+    return k === 'prints' ? [{ ...base, label: base.label + ', one side' }, { ...base, key: base.key + ':duplex', label: base.label + ', double-sided' }] : [base];
+  }));
+}
+const pmoney = n => (n < 0 ? '−' : '') + CONFIG.currency + Math.abs(n).toLocaleString(undefined, { maximumFractionDigits: n % 1 && Math.abs(n) < 100 ? 2 : 0 });
+async function loadBusiness(){
+  if (S.admin.biz) return S.admin.biz;
+  const d = await api.getBusiness();
+  S.admin.biz = d && d.supplies ? ensureBusinessDefaults(d) : defaultBusiness();
+  return S.admin.biz;
+}
+let bizSaveTimer;
+function saveBiz(msg){
+  clearTimeout(bizSaveTimer);
+  bizSaveTimer = setTimeout(async () => { try { await api.saveBusiness(S.admin.biz); if (msg) toast(msg); } catch (e) { toast(friendlyError(e)); } }, 600);
+}
+/* Take one printed order's supplies out of stock (once), and warn when something runs low */
+async function useStock(o){
+  if (o.stock_used) return;
+  try {
+    const b = await loadBusiness(), low = [];
+    for (const l of orderLines(o)) for (const [id, amt] of (b.usage || {})[l.key] || []) {
+      const s = supById(b, id); if (!s) continue;
+      const before = s.stock; s.stock = Math.round((s.stock - amt * l.units) * 100) / 100;
+      if (before > s.lowAt && s.stock <= s.lowAt) low.push(s);
+    }
+    await api.saveBusiness(b); await api.updateOrder(o.id, { stock_used: true }); o.stock_used = true;
+    if (low.length) {
+      const txt = 'Low stock: ' + low.map(s => `${s.name}, ${Math.max(0, Math.floor(s.stock))} ${s.unit}${Math.floor(s.stock) === 1 ? '' : 's'} left`).join('; ') + '. Restock soon.';
+      toast(txt); api.stockAlert(txt);
+    }
+  } catch (e) { console.warn('stock', e); toast('Marked ready, but supplies could not be updated. Check the Business tab.'); }
+}
+/* Big numbers count up quickly when the Business tab opens */
+function countUp(root){
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  root.querySelectorAll('.stats b.num').forEach(el => {
+    const txt = el.textContent, m = txt.match(/^(−?)(\D*)([\d,]+)$/); if (!m) return;
+    const target = +m[3].replace(/,/g, ''); if (!target) return;
+    const t0 = performance.now(), dur = 700;
+    const step = now => { const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = m[1] + m[2] + Math.round(target * e).toLocaleString(); if (k < 1) requestAnimationFrame(step); else el.textContent = txt; };
+    requestAnimationFrame(step);
+  });
+}
+async function drawMoney(){
+  $('#admBody').innerHTML = '<div class="sk" style="height:220px;border-radius:18px"></div>';
+  let b; try { b = await loadBusiness(); } catch (e) { $('#admBody').innerHTML = `<div class="formerr">${esc(friendlyError(e))} Run the latest schema.sql in Supabase.</div>`; return; }
   const all = S.admin.orders, done = all.filter(o => o.status === 'done');
-  const sum = a => a.reduce((t, o) => t + (o.total || 0), 0);
-  const week = done.filter(o => Date.now() - new Date(o.updated_at).getTime() < 7 * 864e5);
-  const waiting = all.filter(o => ACTIVE.includes(o.status) && !o.paid);
+  const doneAt = o => new Date(o.done_at || o.updated_at).getTime();   // picked-up time (set once)
+  const inWeek = o => Date.now() - doneAt(o) < 7 * 864e5;
+  const rev = list => list.reduce((t, o) => t + (o.total || 0), 0), cost = list => list.reduce((t, o) => t + orderCost(b, o), 0);
+  const week = done.filter(inWeek), waiting = all.filter(o => ACTIVE.includes(o.status) && !o.paid);
+  const profitAll = rev(done) - cost(done), profitWeek = rev(week) - cost(week);
+  const capital = (b.equipment || []).reduce((t, e) => t + (+e.cost || 0), 0);
+  const paidBack = Math.max(0, Math.min(capital, profitAll)), pct = capital ? paidBack / capital : 1;
+  const remaining = Math.max(0, capital - profitAll), perWeek = remaining / Math.max(1, b.paybackWeeks || 8);
+  const keys = usageKeys(), liveKeys = keys.filter(k => k.live);
+  const per = k => k.price - unitCost(b, k.key);
+  const moneyOut = (b.purchases || []).reduce((t, x) => t + (+x.amount || 0), 0) + capital;
+  const contributed = (b.partners || []).map((n, i) => (b.equipment || []).reduce((t, e) => t + (+((e.split || [])[i]) || 0), 0));
   const src = {};
   all.forEach(o => { const k = o.src || 'No poster (direct link)'; src[k] = src[k] || { n: 0, done: 0, rev: 0 }; src[k].n++; if (o.status === 'done') { src[k].done++; src[k].rev += o.total; } });
+  const enough = s => { const uses = keys.map(k => [k, ((b.usage || {})[k.key] || []).find(([id]) => id === s.id)]).filter(([, u]) => u && u[1] > 0);
+    return uses.length ? uses.filter(([k]) => k.live).slice(0, 2).map(([k, u]) => `${Math.max(0, Math.floor(s.stock / u[1]))} ${k.unit}${Math.floor(s.stock / u[1]) === 1 ? '' : 's'} (${k.label.toLowerCase()})`).join(', ') : ''; };
+
   $('#admBody').innerHTML = `
     <div class="stats">
-      <div class="panel hero-stat"><span class="small">Earned so far</span><b class="num">${money(sum(done))}</b><span class="small">${done.length} finished order${done.length === 1 ? '' : 's'}</span></div>
-      <div class="panel"><span class="small muted">Last 7 days</span><b class="num">${money(sum(week))}</b></div>
-      <div class="panel"><span class="small muted">Still to collect</span><b class="num">${money(sum(waiting))}</b><span class="small muted">${all.filter(o => o.status === 'noshow').length} no-shows so far</span></div>
+      <div class="panel hero-stat"><span class="small">Profit this week</span><b class="num">${pmoney(Math.round(profitWeek))}</b><span class="small">${week.length} order${week.length === 1 ? '' : 's'} picked up, ${pmoney(Math.round(rev(week)))} in sales</span></div>
+      <div class="panel"><span class="small muted">Profit so far</span><b class="num">${pmoney(Math.round(profitAll))}</b><span class="small muted">${pmoney(Math.round(rev(done)))} sales minus ${pmoney(Math.round(cost(done)))} supplies</span></div>
+      <div class="panel"><span class="small muted">Still to collect</span><b class="num">${pmoney(rev(waiting))}</b><span class="small muted">${all.filter(o => o.status === 'noshow').length} missed pickups so far</span></div>
     </div>
+
+    ${(() => { const weeks = Array.from({ length: 8 }, (_, w) => { const end = Date.now() - w * 7 * 864e5, start = end - 7 * 864e5;
+        const list = done.filter(o => { const t2 = doneAt(o); return t2 > start && t2 <= end; }); return { w, p: rev(list) - cost(list), n: list.length }; }).reverse();
+      const max = Math.max(1, ...weeks.map(x => Math.abs(x.p)));
+      return `<div class="panel" style="margin-bottom:20px"><div class="bizh"><h3>Profit by week</h3><span class="small muted">Last 8 weeks</span></div>
+        <div class="wchart" role="img" aria-label="Profit for each of the last 8 weeks">${weeks.map(x => `<div class="wcol ${x.w === 0 ? 'now' : ''}" title="${x.w === 0 ? 'This week' : x.w + ' week' + (x.w > 1 ? 's' : '') + ' ago'}: ${pmoney(Math.round(x.p))}, ${x.n} order${x.n === 1 ? '' : 's'}">
+          <span class="wv num">${x.p ? pmoney(Math.round(x.p)) : ''}</span><i style="--h:${Math.max(x.p > 0 ? 4 : 2, Math.round(Math.max(0, x.p) / max * 100))}%"></i><span class="wl">${x.w === 0 ? 'Now' : '-' + x.w + 'w'}</span></div>`).join('')}</div>
+        ${weeks.every(x => !x.n) ? '<p class="help" style="margin-top:6px">Bars show up here as orders get picked up.</p>' : ''}</div>`; })()}
+    <div class="panel" style="margin-bottom:20px">
+      <div class="bizh"><h3>Paying back the equipment</h3><span class="tag ${pct >= 1 ? 'ok' : ''}">${Math.round(pct * 100)}% paid back</span></div>
+      <div class="bar"><b style="--w:${Math.round(pct * 100)}%"></b></div>
+      <p style="margin:10px 0 0">${pct >= 1 ? `<b>The equipment is fully paid back.</b> Everything from here is profit.`
+        : `<b>${pmoney(Math.round(remaining))}</b> left to pay back. To finish in <input class="inp num inl" type="number" min="1" max="52" data-biz="paybackWeeks" value="${b.paybackWeeks || 8}"> weeks, you need about <b>${pmoney(Math.ceil(perWeek))} profit a week</b>.`}</p>
+      ${pct < 1 && liveKeys.length ? `<p class="help" style="margin-top:6px">That's roughly ${liveKeys.filter(k => per(k) > 0).slice(0, 3).map(k => `<b>${Math.ceil(perWeek / per(k))} ${esc(k.label.toLowerCase())}${k.unit === 'sheet' ? ' sheets' : ''}</b>`).join(' or ')} a week.</p>` : ''}
+      <div class="partners">${(b.partners || []).map((n, i) => `<div class="pcell"><div class="pn"><input class="inp" data-partner="${i}" value="${esc(n)}" aria-label="Partner name">${(b.partners || []).length > 1 ? smallBtn('', 'x', 'bizDelPartner', 'plain', `data-i="${i}" aria-label="Remove partner"`) : ''}</div><span class="small muted">Put in <b class="num">${pmoney(Math.round(contributed[i]))}</b>${capital ? `, paid back <b class="num">${pmoney(Math.round(paidBack * contributed[i] / capital))}</b>` : ''}</span></div>`).join('')}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px"><p class="help" style="margin:0">Paid back is shared by how much each person put in.</p>${smallBtn('Add a partner', 'plus', 'bizAddPartner', 'plain')}</div>
+    </div>
+
+    <div class="panel" style="margin-bottom:20px">
+      <div class="bizh"><h3>Supplies</h3>${smallBtn('Add a supply', 'plus', 'bizAddSupply', 'plain')}</div>
+      <p class="help" style="margin-bottom:12px">Stock goes down by itself when you tap <b>Mark ready</b> on an order. Tap <b>Restock</b> when you buy more.</p>
+      <div class="tbl"><table class="biz"><thead><tr><th>Supply</th><th>Pack price</th><th>Per pack</th><th>Cost each</th><th>In stock</th><th>Warn at</th><th></th></tr></thead><tbody>
+      ${(b.supplies || []).map((x, i) => `<tr class="${x.stock <= x.lowAt ? 'low' : ''}">
+        <td><input class="inp" data-sup="${i}" data-f="name" value="${esc(x.name)}" aria-label="Supply name">${enough(x) ? `<small class="muted">Enough for ${esc(enough(x))}</small>` : ''}</td>
+        <td><span class="pricein"><input class="inp num" type="number" min="0" data-sup="${i}" data-f="packPrice" value="${x.packPrice}" aria-label="Pack price"></span></td>
+        <td><div class="unitin"><input class="inp num" type="number" min="1" data-sup="${i}" data-f="packSize" value="${x.packSize}" aria-label="Amount per pack"><select class="inp" data-sup="${i}" data-f="unit" aria-label="Unit">${SUPPLY_UNITS.map(u => `<option ${u === x.unit ? 'selected' : ''}>${u}</option>`).join('')}</select></div></td>
+        <td class="num">${pmoney(Math.round(supCost(x) * 100) / 100)}</td>
+        <td><input class="inp num" type="number" step="any" data-sup="${i}" data-f="stock" value="${Math.round(x.stock * 100) / 100}" aria-label="In stock">${x.stock <= x.lowAt ? `<small class="lowtag">${ic('warn', 12)}Low</small>` : ''}</td>
+        <td><input class="inp num" type="number" min="0" data-sup="${i}" data-f="lowAt" value="${x.lowAt}" aria-label="Warn when at or below"></td>
+        <td class="acts">${smallBtn('Restock', 'plus', 'bizRestock', 'plain', `data-i="${i}"`)}${smallBtn('', 'trash', 'bizDelSupply', 'plain', `data-i="${i}" aria-label="Remove supply"`)}</td></tr>`).join('')}
+      </tbody></table></div>
+    </div>
+
+    <div class="panel" style="margin-bottom:20px">
+      <h3 style="margin-bottom:6px">What each item costs to make</h3>
+      <p class="help" style="margin-bottom:12px">How much of each supply one item uses. A 44 mm pin uses 1/12 of a sheet because 12 fit on one sheet.</p>
+      <div class="ucards">${keys.map(k => { const lines = (b.usage || {})[k.key] || [], c = unitCost(b, k.key), pr = k.price - c;
+        return `<div class="ucard ${k.live ? '' : 'off'}"><div class="ucard-h"><b>${esc(k.label)}</b>${k.live ? '' : '<span class="tag">Hidden</span>'}</div>
+          ${lines.map(([id, amt], j) => `<div class="uline"><select class="inp" data-use="${esc(k.key)}" data-j="${j}" data-f="id" aria-label="Supply">${(b.supplies || []).map(x => `<option value="${esc(x.id)}" ${x.id === id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select>
+            <input class="inp num" type="number" step="any" min="0" data-use="${esc(k.key)}" data-j="${j}" data-f="amt" value="${amt}" aria-label="Amount">${smallBtn('', 'x', 'bizDelUse', 'plain', `data-k="${esc(k.key)}" data-j="${j}" aria-label="Remove"`)}</div>`).join('')}
+          ${smallBtn('Add a supply', 'plus', 'bizAddUse', 'plain', `data-k="${esc(k.key)}"`)}
+          <div class="umath"><span>Sells for <b class="num">${pmoney(k.price)}</b></span><span>Costs <b class="num">${pmoney(Math.round(c * 100) / 100)}</b></span><span class="${pr >= 0 ? 'good' : 'bad'}">Profit <b class="num">${pmoney(Math.round(pr * 100) / 100)}</b>${k.price ? ` (${Math.round(pr / k.price * 100)}%)` : ''}</span></div></div>`; }).join('')}</div>
+    </div>
+
+    <div class="panel" style="margin-bottom:20px">
+      <div class="bizh"><h3>Equipment</h3>${smallBtn('Add equipment', 'plus', 'bizAddEquip', 'plain')}</div>
+      <p class="help" style="margin-bottom:12px">Things you buy once, and who paid how much.</p>
+      ${(b.equipment || []).map((e, i) => `<div class="equip">
+        <input class="inp" data-eq="${i}" data-f="name" value="${esc(e.name)}" aria-label="Equipment name">
+        <input class="inp" type="date" data-eq="${i}" data-f="date" value="${esc(e.date || '')}" aria-label="Date bought">
+        <span class="pricein"><input class="inp num" type="number" min="0" data-eq="${i}" data-f="cost" value="${e.cost}" aria-label="Cost"></span>
+        <div class="splits">${(b.partners || []).map((n, j) => `<label class="dnum"><span>${esc(n)}</span><span class="pricein"><input class="inp num" type="number" min="0" step="any" data-eq="${i}" data-split="${j}" value="${(e.split || [])[j] || 0}"></span></label>`).join('')}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">${smallBtn('Split evenly', '', 'bizEven', 'plain', `data-i="${i}"`)}${smallBtn('', 'trash', 'bizDelEquip', 'plain', `data-i="${i}" aria-label="Remove equipment"`)}</div>
+        ${Math.abs((e.split || []).reduce((t, v) => t + (+v || 0), 0) - e.cost) > 1 ? `<p class="ferr" style="grid-column:1/-1">${ic('warn', 14)}The split adds up to ${pmoney(Math.round((e.split || []).reduce((t, v) => t + (+v || 0), 0)))}, not ${pmoney(e.cost)}.</p>` : ''}
+      </div>`).join('') || '<p class="help">No equipment yet.</p>'}
+    </div>
+
+    <div class="panel" style="margin-bottom:20px">
+      <div class="bizh"><h3>Money in and out</h3></div>
+      <div class="inout"><div><span class="small muted">Money in (picked-up orders)</span><b class="num">${pmoney(rev(done))}</b></div>
+        <div><span class="small muted">Money out (supplies and equipment)</span><b class="num">${pmoney(moneyOut)}</b></div>
+        <div><span class="small muted">Difference</span><b class="num ${rev(done) - moneyOut >= 0 ? 'good' : 'bad'}">${pmoney(rev(done) - moneyOut)}</b></div></div>
+      <details style="margin-top:12px"><summary class="lab" style="cursor:pointer">Purchases (${(b.purchases || []).length})</summary>
+        <div class="tbl" style="margin-top:8px"><table class="biz buys"><tbody>${(b.purchases || []).slice().reverse().map(x => `<tr><td><input class="inp" type="date" data-buy="${esc(x.id)}" data-f="date" value="${esc(x.date || '')}" aria-label="Date"></td><td><input class="inp" data-buy="${esc(x.id)}" data-f="item" value="${esc(x.item)}" aria-label="What you bought"></td><td><span class="pricein"><input class="inp num" type="number" min="0" step="any" data-buy="${esc(x.id)}" data-f="amount" value="${+x.amount || 0}" aria-label="Amount"></span></td><td>${smallBtn('', 'trash', 'bizDelBuy', 'plain', `data-id="${esc(x.id)}" aria-label="Remove purchase"`)}</td></tr>`).join('') || '<tr><td class="muted">No purchases yet.</td></tr>'}</tbody></table></div>
+        <div class="buyadd"><input class="inp" id="buyItem" placeholder="What you bought"><span class="pricein"><input class="inp num" id="buyAmt" type="number" min="0" placeholder="0"></span>${smallBtn('Add', 'plus', 'bizAddBuy', 'plain')}</div>
+      </details>
+      <p class="help" style="margin-top:8px">"Profit" above counts only the supplies each order used. This box is the plain cash view: everything earned minus everything spent.</p>
+    </div>
+
     <div class="panel"><h3 style="margin-bottom:10px">Which posters bring orders</h3>
       <div class="tbl"><table><thead><tr><th>Poster</th><th>Orders</th><th>Finished</th><th>Earned</th></tr></thead><tbody>
-      ${Object.entries(src).sort((a, b) => b[1].n - a[1].n).map(([k, v]) => `<tr><td>${esc(k)}</td><td class="num">${v.n}</td><td class="num">${v.done}</td><td class="num">${money(v.rev)}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">No orders yet</td></tr>'}
+      ${Object.entries(src).sort((a, b2) => b2[1].n - a[1].n).map(([k, v]) => `<tr><td>${esc(k)}</td><td class="num">${v.n}</td><td class="num">${v.done}</td><td class="num">${money(v.rev)}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">No orders yet</td></tr>'}
       </tbody></table></div></div>`;
+
+  countUp($('#admBody'));
+  const body = $('#admBody');
+  body.onchange = e => {
+    const t = e.target, d = t.dataset, num = v => { const n = parseFloat(v); return Number.isFinite(n) ? n : 0; };
+    if (d.sup !== undefined) { const x = b.supplies[+d.sup]; x[d.f] = ['name', 'unit'].includes(d.f) ? t.value : num(t.value); }
+    else if (d.use !== undefined) { const l = b.usage[d.use][+d.j]; if (d.f === 'id') l[0] = t.value; else l[1] = num(t.value); }
+    else if (d.eq !== undefined) { const e2 = b.equipment[+d.eq]; if (d.split !== undefined) { e2.split = e2.split || []; e2.split[+d.split] = num(t.value); } else e2[d.f] = ['name', 'date'].includes(d.f) ? t.value : num(t.value); }
+    else if (d.partner !== undefined) b.partners[+d.partner] = t.value || `Partner ${+d.partner + 1}`;
+    else if (d.buy !== undefined) { const x = (b.purchases || []).find(p2 => p2.id === d.buy); if (!x) return; x[d.f] = d.f === 'amount' ? num(t.value) : t.value; }
+    else if (d.biz) b[d.biz] = Math.max(1, Math.round(num(t.value)));
+    else return;
+    saveBiz('Saved.'); drawMoney();
+  };
 }
 function drawPosters(){
   const base = CONFIG.siteUrl || (location.origin + location.pathname);
@@ -2925,6 +3535,7 @@ const ACTIONS = {
   cartEdit: t => {
     const i = +t.dataset.i, it = S.cart[i]; S.editing = i;
     if (it.type === 'stickers') { S.sheets = clone(it.sheets); S.cur = 0; S.stickerAddons = it.addons.slice(); S.selItem = null; location.hash = '#/design'; }
+    else if (it.type === 'prints') { S.pr = clone(it); location.hash = designRoute('prints'); }
     else { S.fd = { ...clone(it), side: 'front' }; location.hash = designRoute(it.type); }
   },
   cartRemove: t => {
@@ -2949,12 +3560,23 @@ const ACTIONS = {
   },
   promoRemove: () => { S.promo = null; viewCheckoutKeep(); },
   fdBg: t => { const d = activeDesign(); if (d) { d.bg = t.dataset.c; drawFramed(); } },
+  prDel: t => { S.pr.files.splice(+t.dataset.i, 1); drawPrints(); },
+  prSize: t => { S.pr.size = t.dataset.size; drawPrints(); },
+  prColor: t => { S.pr.addons = t.dataset.v === 'color' ? ['color'] : []; drawPrints(); },
+  prDuplex: t => { S.pr.duplex = t.dataset.v === 'true'; drawPrints(); },
+  prQty: t => { buzz(5); S.pr.qty = Math.max(1, Math.min(maxQtyFor('prints'), S.pr.qty + +t.dataset.d)); drawPrints(); },
+  addPrints: () => {
+    const pr = S.pr; if (!pr.files.length || !pr.files.every(f => f.pages > 0)) return;
+    const item = { type: 'prints', size: pr.size, addons: pr.addons.slice(), qty: pr.qty, duplex: pr.duplex, pages: prPages(pr), files: pr.files.map(f => ({ ...f })) };
+    S.pr = null; saveToCart(item);
+  },
+  fdTiles: t => { S.fd.tiles = +t.dataset.t; buzz(5); drawFramed(); },
   fdQty: t => { buzz(5); setQty(S.fd.qty + +t.dataset.d); },
   fdQtySet: t => { buzz([6, 20, 6]); setQty(+t.dataset.n); },
   addFramed: () => {
     const f = S.fd; if (!f || !f.front.imageId) return;
     const item = { type: f.type, size: f.size, qty: f.qty, addons: f.addons.slice(), front: { ...f.front } };
-    if (f.type === 'posters') item.orient = f.orient;
+    if (f.type === 'posters') { item.orient = f.orient; item.tiles = +f.tiles || 1; }
     if (f.type === 'keychains') { item.backMode = f.backMode; item.back = { ...f.back }; }
     S.fd = null; saveToCart(item);
   },
@@ -2971,6 +3593,28 @@ const ACTIONS = {
   cfgAddPlace: () => { S.admin.cfg.pickup_places.push(''); drawShopForm(); },
   cfgDelPlace: t => { S.admin.cfg.pickup_places.splice(+t.dataset.i, 1); drawShopForm(); },
   cfgDelSkip: t => { S.admin.cfg.no_pickup_dates.splice(+t.dataset.i, 1); drawShopForm(); },
+  bizRestock: t => {
+    const b = S.admin.biz, x = b.supplies[+t.dataset.i]; x.stock = Math.round((x.stock + x.packSize) * 100) / 100;
+    const buy = { id: uid(), date: ymd(new Date()), item: `${x.name} (${x.packSize} ${x.unit}${x.packSize === 1 ? '' : 's'})`, amount: x.packPrice };
+    b.purchases = (b.purchases || []).concat([buy]); saveBiz(); drawMoney();
+    toast(`Added ${x.packSize} ${x.unit}s of ${x.name} and logged ${pmoney(x.packPrice)}.`, () => { x.stock -= x.packSize; b.purchases = b.purchases.filter(p => p.id !== buy.id); saveBiz(); drawMoney(); });
+  },
+  bizAddPartner: () => { const b = S.admin.biz; b.partners = (b.partners || []).concat([`Partner ${(b.partners || []).length + 1}`]); (b.equipment || []).forEach(e => { e.split = (e.split || []).concat([0]); }); saveBiz(); drawMoney(); },
+  bizDelPartner: t => { if (!armed(t, 'Tap again')) return; const i = +t.dataset.i, b = S.admin.biz; b.partners.splice(i, 1); (b.equipment || []).forEach(e => { (e.split || []).splice(i, 1); }); saveBiz('Removed.'); drawMoney(); },
+  bizAddSupply: () => { const b = S.admin.biz; b.supplies.push({ id: 's_' + uid(), name: 'New supply', unit: 'piece', packPrice: 0, packSize: 1, stock: 0, lowAt: 0 }); saveBiz(); drawMoney(); },
+  bizDelSupply: t => { if (!armed(t, 'Tap again')) return; const b = S.admin.biz, x = b.supplies.splice(+t.dataset.i, 1)[0]; for (const k of Object.keys(b.usage || {})) b.usage[k] = b.usage[k].filter(([id]) => id !== x.id); saveBiz('Removed.'); drawMoney(); },
+  bizAddUse: t => { const b = S.admin.biz; b.usage[t.dataset.k] = (b.usage[t.dataset.k] || []).concat([[(b.supplies[0] || {}).id, 1]]); saveBiz(); drawMoney(); },
+  bizDelUse: t => { const b = S.admin.biz; b.usage[t.dataset.k].splice(+t.dataset.j, 1); saveBiz(); drawMoney(); },
+  bizAddEquip: () => { const b = S.admin.biz; const n = (b.partners || []).length || 1; b.equipment = (b.equipment || []).concat([{ id: uid(), name: 'New equipment', cost: 0, date: ymd(new Date()), split: Array(n).fill(0) }]); saveBiz(); drawMoney(); },
+  bizDelEquip: t => { if (!armed(t, 'Tap again')) return; S.admin.biz.equipment.splice(+t.dataset.i, 1); saveBiz('Removed.'); drawMoney(); },
+  bizEven: t => { const b = S.admin.biz, e = b.equipment[+t.dataset.i], n = (b.partners || []).length || 1, each = Math.floor(e.cost / n * 100) / 100;
+    e.split = Array(n).fill(each); e.split[n - 1] = Math.round((e.cost - each * (n - 1)) * 100) / 100; saveBiz('Split evenly.'); drawMoney(); },
+  bizAddBuy: () => { const item = $('#buyItem').value.trim(), amount = parseFloat($('#buyAmt').value); if (!item || !(amount >= 0)) return toast('Type what you bought and how much.');
+    const b = S.admin.biz; b.purchases = (b.purchases || []).concat([{ id: uid(), date: ymd(new Date()), item, amount }]); saveBiz('Added.'); drawMoney(); },
+  bizDelBuy: t => { const b = S.admin.biz; b.purchases = b.purchases.filter(p => p.id !== t.dataset.id); saveBiz('Removed.'); drawMoney(); },
+  installApp: async () => { if (!installEvt) return; installEvt.prompt(); const r = await installEvt.userChoice.catch(() => null); installEvt = null;
+    if (r && r.outcome === 'accepted') { safeLS.set('sk_save_hide', '1'); document.querySelectorAll('.savecard').forEach(c => c.remove()); toast('Saved to your home screen.'); } },
+  saveHide: () => { safeLS.set('sk_save_hide', '1'); document.querySelectorAll('.savecard').forEach(c => c.remove()); },
   tgShow: () => { const i = $('#tgToken'); if (i) i.type = i.type === 'password' ? 'text' : 'password'; },
   tgFind: async t => {
     const tok = S.admin.tg.bot_token; if (!tok) return toast('Paste the bot token first.');
@@ -3035,7 +3679,7 @@ const ACTIONS = {
     S.admin.rejecting = null; setStatus(t.dataset.id, { status: 'rejected', reject_reason: reason.slice(0, 140) }, 'Rejected. The customer can see the reason.');
   },
   aPdf: t => makePdf(S.admin.orders.find(o => o.id === t.dataset.id)).catch(e => toast(friendlyError(e))),
-  aReady: t => setStatus(t.dataset.id, { status: 'ready' }, 'Marked ready.'),
+  aReady: async t => { const o = S.admin.orders.find(x => x.id === t.dataset.id); await setStatus(t.dataset.id, { status: 'ready' }, 'Marked ready.'); if (o) useStock(o); },
   aDone: t => setStatus(t.dataset.id, { status: 'done', paid: true }, 'Done.'),
   aNoshow: t => {
     const o = S.admin.orders.find(x => x.id === t.dataset.id); if (!o) return;
