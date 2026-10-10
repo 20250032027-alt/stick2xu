@@ -132,6 +132,15 @@ A dashboard of the money side. On a computer it fits in about two screens. Every
 - **Monthly report:** under the big numbers. Sales (and the change from the month before), profit, orders picked up, best seller, busiest pickup day, and missed or cancelled orders. Use ◀ ▶ to see other months.
 - **Which posters bring orders** (folded): orders by poster QR code.
 
+## Checkout, step by step
+
+So ordering never feels like a wall of text, checkout shows one small step at a time:
+1. **You:** full name, and grade and section (grades 1 to 12).
+2. **Pickup:** day, time, and gate.
+3. **Pay:** payment, the total, the promise box, and Place my order.
+
+Finished steps shrink to a one-line summary with **Change**. Returning customers start at Pickup. The promo or friend code box and the "Good to know" rules are folded away until tapped. After ordering, the page shows the code to save, the pickup pass, three short next steps, and Add to calendar.
+
 ## Seller's routine: from order to pickup
 
 1. **New order** (Telegram: "Order placed"). Open admin → **To review**. Check the design: nothing inappropriate, and pictures clear enough to print (the blur warnings help). Tap **Approve**, or **Reject** with a reason so the customer knows what to fix.

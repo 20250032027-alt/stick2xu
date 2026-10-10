@@ -1018,6 +1018,38 @@ table.biz.buys .btn{min-height:34px!important;width:34px;height:34px;padding:0!i
 .mcell small{font-size:12px;color:var(--muted)}
 @media(max-width:1100px){.mgrid2{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){.mgrid2{grid-template-columns:1fr 1fr}}
+
+/* checkout steps: one small screen at a time */
+.ordsum{margin:10px 0 6px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:#FAFBFD}
+.ordsum summary{display:flex;gap:8px;align-items:center;cursor:pointer;font-weight:700}
+.ordsum summary span{flex:1}
+.ordsum .clines{margin-top:8px}
+.cstep{border-top:1px solid var(--line);padding:14px 0 4px;scroll-margin-top:88px}
+.cstep:first-of-type{border-top:0}
+.chead{display:flex;gap:10px;align-items:center}
+.chead i{width:28px;height:28px;flex:none;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:14px;background:var(--line);color:var(--muted)}
+.chead b{font-family:var(--display);font-size:20px}
+.cstep.on .chead i{background:var(--xu-gold);color:var(--ink)}
+.cstep.done .chead i{background:var(--ink);color:#fff}
+.cstep.todo .chead b{color:var(--muted)}
+.csum{flex:1;min-width:0;font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:none}
+.cstep.done .csum{display:block}
+.cchange{display:none;margin-left:auto;border:0;background:none;color:var(--accent);font-weight:700;font-size:14px;cursor:pointer;padding:6px}
+.cstep.done .cchange{display:inline}
+.cstep:not(.on) .cbody{display:none}
+.cbody{padding-top:12px}
+.cbody > .btn.wide,.cbody > button.btn{margin-top:6px}
+.codebox{margin:14px 0 0}
+.codebox summary{cursor:pointer;color:var(--accent);font-weight:700;font-size:15px}
+.codebox .field{margin-top:10px!important}
+.lab.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+details.gtk{margin:14px 0 0;padding:10px 14px}
+details.gtk summary{cursor:pointer;font-weight:700;font-size:15px}
+details.gtk ul{margin-top:10px}
+/* order-sent page */
+.nsteps{margin:6px 0 0;padding-left:22px;display:grid;gap:8px;font-size:15px}
+.nsteps b{color:var(--ink)}
+.linkbtn{border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:14px;padding:8px}
 </style>
 </head>
 <body>
@@ -1109,7 +1141,7 @@ const CONFIG = {
   // change them anytime from the admin page under Settings.
   signalVerb: 'holding',         // 'holding' or 'wearing'
   signalItem: 'a Stick2It sign',
-  grades: [7, 8, 9, 10],
+  grades: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],   // grades in the checkout dropdown (change in admin → Shop details)
 
   gcash: { enabled: true, name: 'J. Dela Cruz', number: '0917 000 0000' },
 
@@ -1467,6 +1499,7 @@ function applyShopConfig(c){
   CONFIG.datesToShow = +c.dates_to_show > 0 ? +c.dates_to_show : D.datesToShow;
   CONFIG.noPickupDates = Array.isArray(c.no_pickup_dates) ? c.no_pickup_dates : D.noPickupDates;
   CONFIG.grades = arr(c.grades, D.grades);
+  if (CONFIG.grades.map(String).join(',') === '7,8,9,10') CONFIG.grades = D.grades;   // the old starting list: open it to every grade
   CONFIG.gcash = { ...D.gcash, ...(c.gcash || {}) };
   CONFIG.cleanupDays = +c.cleanup_days > 0 ? +c.cleanup_days : D.cleanupDays;
   CONFIG.maxPictures = +c.max_pictures > 0 ? +c.max_pictures : D.maxPictures;
@@ -2807,13 +2840,18 @@ function viewCheckout(){
   const me = readJSON('sk_me') || {};
   const m = String(me.section || '').match(/^(\d+)\s*-\s*(.+)$/), myGrade = m ? m[1] : '', mySec = m ? m[2] : '';
   const dates = checkoutDates(), po = printsOnly();
+  if (!S.coKeep) S.coStep = me.nickname && myGrade && mySec ? 2 : 1;   // returning customers start at Pickup
+  S.coKeep = false;
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">${progress(2)}
     <a class="pilllink" href="#/cart" style="margin-bottom:18px">${ic('back', 18)}Back to my order</a>
     <form class="panel" id="orderForm" novalidate>
       <h2>Almost done</h2>
-      <p class="muted">Tell us who you are and when you'll pick it up.</p>
-      <ul class="clines">${S.cart.map(it => `<li><span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `<small>${esc(itemDetails(it))}</small>` : ''}</span><b class="num">${money(itemTotal(it))}</b></li>`).join('')}</ul>
+      <details class="ordsum"><summary>${ic('box', 16)}<span>Your order: ${cartUnits()} item${cartUnits() === 1 ? '' : 's'}</span><b class="num" id="ordTot">${money(total)}</b></summary>
+      <ul class="clines">${S.cart.map(it => `<li><span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `<small>${esc(itemDetails(it))}</small>` : ''}</span><b class="num">${money(itemTotal(it))}</b></li>`).join('')}</ul></details>
 
+      <section class="cstep" data-step="1">
+        <div class="chead"><i>1</i><b>You</b><span class="csum" id="csum1"></span><button type="button" class="cchange" data-act="coGo" data-s="1">Change</button></div>
+        <div class="cbody">
       <div class="field"><label class="lab" for="nick">Full name <span class="req">*</span></label>
         <input class="inp" id="nick" maxlength="60" autocomplete="name" placeholder="Juan Dela Cruz" value="${esc(me.nickname || '')}" aria-describedby="e-nick e-nickhelp">
         <p class="help" id="e-nickhelp">${ic('school', 14)} As on your school ID. This is how we find your order at pickup, so bring your ID.</p>
@@ -2827,7 +2865,12 @@ function viewCheckout(){
         </div>
         <p class="ferr" id="e-sec" role="alert"></p></div>
       <div class="hp" aria-hidden="true"><label>Leave this empty<input id="website" tabindex="-1" autocomplete="off"></label></div>
+          ${btn('Next', { act: 'coNext', cls: 'wide', icon: 'arrow', attrs: 'data-s="1"' })}
+        </div></section>
 
+      <section class="cstep" data-step="2">
+        <div class="chead"><i>2</i><b>Pickup</b><span class="csum" id="csum2"></span><button type="button" class="cchange" data-act="coGo" data-s="2">Change</button></div>
+        <div class="cbody">
       <fieldset><legend>When will you pick it up? <span class="req">*</span></legend>
         ${dates.map((d, i) => `<label class="choice"><input type="radio" name="pdate" value="${d}" ${i === 0 ? 'checked' : ''}>${ic('calendar', 20)}<span><b>${d === ymd(new Date()) ? 'Today, ' : ''}${fmtDate(d)}</b>${rushFee(d) ? `<small class="rushtag">Rush, +${money(rushFee(d))}</small>` : ''}</span></label>`).join('')}
         <p class="help">${po ? `Prints can be picked up any school day. Same-day orders need at least ${CONFIG.prepHours} hour${CONFIG.prepHours === 1 ? '' : 's'} before the pickup time.`
@@ -2848,7 +2891,12 @@ function viewCheckout(){
         </div>` : ''}
         <p class="nudge">${ic('search', 18)}At the gate, look for ${esc(signal())}.</p>
       </fieldset>
+          ${btn('Next', { act: 'coNext', cls: 'wide', icon: 'arrow', attrs: 'data-s="2"' })}
+        </div></section>
 
+      <section class="cstep" data-step="3">
+        <div class="chead"><i>3</i><b>Pay</b></div>
+        <div class="cbody">
       <fieldset><legend>How will you pay?</legend>
         <label class="choice"><input type="radio" name="pay" value="cash" checked>${ic('cash', 20)}<span>Cash when I pick up</span></label>
         ${CONFIG.gcash.enabled ? `<label class="choice"><input type="radio" name="pay" value="gcash">${ic('phone', 20)}<span>GCash</span></label>
@@ -2856,26 +2904,24 @@ function viewCheckout(){
           <label class="lab" for="gref" style="display:block;margin:10px 0 6px">Reference number (optional)</label>
           <input class="inp" id="gref" maxlength="40" inputmode="numeric"></div>` : ''}
       </fieldset>
-
-      <div class="gtk">
-        <b>Good to know</b>
-        <ul>
+          <details class="codebox" ${S.promo ? 'open' : ''}><summary>Have a promo or friend code?</summary>
+      <div class="field" style="margin:18px 0 0"><label class="lab sr" for="promo">Promo or friend code</label>
+        <div class="qrrow promorow"><input class="inp" id="promo" maxlength="20" autocapitalize="characters" autocomplete="off" value="${esc(S.promo ? S.promo.code : '')}" style="text-transform:uppercase">
+          ${smallBtn(S.promo ? 'Remove' : 'Apply', S.promo ? 'x' : 'check', S.promo ? 'promoRemove' : 'promoApply', 'plain')}</div>
+        <p class="ferr" id="e-promo" role="alert"></p></div></details>
+          <div id="sumBox">${checkoutSummary()}</div>
+          <label class="choice"><input type="checkbox" id="promise"><span id="promiseTxt"></span></label>
+          <p class="ferr" id="e-promise" role="alert"></p>
+          <div class="formerr" id="formErr" role="alert"></div>
+          <div style="margin-top:14px">${btn('Place my order', { type: 'submit', cls: 'wide', icon: 'check', attrs: 'id="placeBtn"' })}</div>
+          <p class="help" style="margin:10px 0 0;text-align:center">Next, you'll get an order code. Save it.</p>
+          <details class="gtk"><summary>Good to know</summary><ul>
           <li>${ic('check', 16)}<span>We print your order only after you tap <b>"I'll be there"</b> in My order, by the day before pickup. Nothing goes to waste.</span></li>
           <li>${ic('calendar', 16)}<span>Miss your pickup? We hold it for one more pickup day. After that it's forfeited and counts as a missed pickup.</span></li>
           <li>${ic('image', 16)}<span>Printed colors can look a little softer than on your screen.</span></li>
           <li>${ic('cash', 16)}<span>Bring exact change if you can.${CONFIG.gcash.enabled ? ` Paid by GCash and the order gets cancelled? We send it back within ${CONFIG.refundDays} days.` : ''}</span></li>
-        </ul>
-      </div>
-      <label class="choice"><input type="checkbox" id="promise"><span id="promiseTxt"></span></label>
-      <p class="help" style="margin:8px 0 0">${ic('check', 14)} Next, you'll get an order code like <b>STK-7KQ4</b>. Save it: you need it with your name to check, confirm, and pick up.</p>
-      <p class="ferr" id="e-promise" role="alert"></p>
-      <div class="field" style="margin:18px 0 0"><label class="lab" for="promo">Promo code <span class="muted small" style="font-weight:500">(if you have one)</span></label>
-        <div class="qrrow promorow"><input class="inp" id="promo" maxlength="20" autocapitalize="characters" autocomplete="off" value="${esc(S.promo ? S.promo.code : '')}" style="text-transform:uppercase">
-          ${smallBtn(S.promo ? 'Remove' : 'Apply', S.promo ? 'x' : 'check', S.promo ? 'promoRemove' : 'promoApply', 'plain')}</div>
-        <p class="ferr" id="e-promo" role="alert"></p></div>
-      <div id="sumBox">${checkoutSummary()}</div>
-      <div class="formerr" id="formErr" role="alert"></div>
-      <div style="margin-top:18px">${btn('Place my order', { type: 'submit', cls: 'wide', icon: 'check', attrs: 'id="placeBtn"' })}</div>
+        </ul></details>
+        </div></section>
     </form></main>`;
   const form = $('#orderForm');
   const sync = () => {
@@ -2907,11 +2953,24 @@ function viewCheckout(){
   form.addEventListener('change', sync); sync();
   loadAvail(dates).then(() => { if (document.body.contains(form)) sync(); });
   $('#promo').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ACTIONS.promoApply(); } });
-  ['nick','sec','grade','otherPlace'].forEach(id => $('#' + id) && $('#' + id).addEventListener('blur', () => validate(false)));
-  form.addEventListener('submit', submitOrder);
+  // errors clear the moment they're fixed (while typing), so nothing moves when they tap Next
+  ['nick','sec','grade','otherPlace'].forEach(id => $('#' + id) && ['input', 'change'].forEach(ev => $('#' + id).addEventListener(ev, () => validate(false))));
+  form.addEventListener('submit', e => { if (S.coStep < 3) { e.preventDefault(); ACTIONS.coNext({ dataset: { s: String(S.coStep) } }); return; } submitOrder(e); });
+  coRender();
+}
+/* Checkout steps: only the current one is open; finished ones shrink to a one-line summary */
+function coRender(){
+  const form = $('#orderForm'); if (!form) return;
+  form.querySelectorAll('.cstep').forEach(el => { const n = +el.dataset.step; el.classList.toggle('on', n === S.coStep); el.classList.toggle('done', n < S.coStep); el.classList.toggle('todo', n > S.coStep); });
+  const g = $('#grade').value, sec = $('#sec').value.trim(), nm = $('#nick').value.trim();
+  $('#csum1').textContent = nm ? `${nm}${g ? `, ${g} - ${sec}` : ''}` : '';
+  const d = radio(form, 'pdate'), t = radio(form, 'ptime'), pl = radio(form, 'pickup');
+  $('#csum2').textContent = d ? `${fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' })}, ${String(t || '').replace(/\s*\(.*\)/, '')}, ${pl === '__other' ? (($('#otherPlace') || {}).value || 'in school') : pl}` : '';
+  const tot = $('#ordTot'); if (tot) tot.textContent = money(checkoutTotal(d));
 }
 /* Re-render checkout but keep what the customer already typed */
 function viewCheckoutKeep(){
+  S.coKeep = true;
   const form = $('#orderForm'); const keep = {};
   if (form) form.querySelectorAll('input,select').forEach(el => { if (!el.id && !el.name) return; keep[el.id || el.name + ':' + el.value] = el.type === 'checkbox' || el.type === 'radio' ? el.checked : el.value; });
   viewCheckout();
@@ -2938,16 +2997,24 @@ function setErr(inputId, errId, msg){
 }
 function validate(all){
   const form = $('#orderForm'); if (!form) return false;
+  // While typing, only clear errors that are already showing; new errors appear when they tap Next or Place.
+  // (Showing errors mid-typing moves the buttons, and on phones a tap could land in the wrong place.)
+  if (!all) { const showing = id => !!($('#' + id) && $('#' + id).textContent);
+    return validateFields(form, { nick: showing('e-nick'), sec: showing('e-sec'), place: showing('e-place') }); }
+  return validateFields(form, { nick: true, sec: true, place: true, all: true });
+}
+function validateFields(form, which){
+  const all = !!which.all;
   const nick = $('#nick').value.trim(), sec = $('#sec').value.trim(), grade = $('#grade').value, other = radio(form, 'pickup') === '__other';
   let ok = true;
-  if (all || nick) ok = setErr('nick', 'e-nick', nick.length < 2 ? 'Type your full name.' : !/\S+\s+\S+/.test(nick) ? 'Type your first and last name, as on your school ID.' : '') && ok;
-  if (all || sec || grade) {
+  if (which.nick) ok = setErr('nick', 'e-nick', nick.length < 2 ? 'Type your full name.' : !/\S+\s+\S+/.test(nick) ? 'Type your first and last name, as on your school ID.' : '') && ok;
+  if (which.sec) {
     const msg = !grade && sec.length < 2 ? 'Pick your grade and type your section.' : !grade ? 'Pick your grade.' : sec.length < 2 ? 'Type your section.' : '';
     ok = setErr('sec', 'e-sec', msg) && ok;
     $('#grade').setAttribute('aria-invalid', grade ? 'false' : String(!!msg));
     if (grade && sec.length >= 2) $('#sec').setAttribute('aria-invalid', 'false');
   }
-  if (other && (all || $('#otherPlace').value)) ok = setErr('otherPlace', 'e-place', $('#otherPlace').value.trim().length < 3 ? 'Tell us where in school to meet.' : '') && ok;
+  if (other && which.place) ok = setErr('otherPlace', 'e-place', $('#otherPlace').value.trim().length < 3 ? 'Tell us where in school to meet.' : '') && ok;
   if (all) ok = setErr(null, 'e-promise', !radio(form, 'pdate') ? 'Pick a pickup date.' : $('#promise').checked ? '' : 'Tick the box to promise you will pick it up.') && ok;
   return ok;
 }
@@ -3023,13 +3090,6 @@ function addToCalendar(o){
   else { const a = document.createElement('a'); a.href = url; a.download = `stick2xu-pickup-${o.code}.ics`; document.body.appendChild(a); a.click(); a.remove(); }
   setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
-function googleCalUrl(o){
-  const m = String(o.pickup_time || '').match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-  const h = m ? +m[1] % 12 + (/pm/i.test(m[3]) ? 12 : 0) : 12, mi = m ? +m[2] : 0, d = o.pickup_date.replace(/-/g, ''), end = h * 60 + mi + 30;
-  const q = new URLSearchParams({ action: 'TEMPLATE', text: `Pick up Stick2It order ${o.code}`, dates: `${d}T${pad2(h)}${pad2(mi)}00/${d}T${pad2(Math.floor(end / 60))}${pad2(end % 60)}00`,
-    details: `Look for ${signal()}. Tap I'm here in My order when you arrive. Your code: ${o.code}`, location: `${o.pickup} (inside campus)`, ctz: 'Asia/Manila' });
-  return 'https://calendar.google.com/calendar/render?' + q;
-}
 function viewDone(){
   const o = S.lastOrder || readJSON('sk_last');
   if (!o) { location.hash = '#/'; return; }
@@ -3037,40 +3097,32 @@ function viewDone(){
   setTimeout(() => fillFriendCard(o.code, o.nickname), 0);
   const gcash = o.payment === 'gcash';
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">${progress(3)}
-    <h2 style="margin:4px 0 6px">You're all set.</h2>
+    <h2 style="margin:4px 0 12px">You're all set.</h2>
     <section class="savecode" aria-labelledby="sch">
-      <div class="sc-top">${ic('warn', 22)}<div><b id="sch">Save your code now</b><span>You need it, with your name, to check, confirm, and pick up your order. If you lose it, we can't look it up for you.</span></div></div>
+      <div class="sc-top">${ic('warn', 22)}<div><b id="sch">Save your code</b><span>You need it with your name to check and pick up your order.</span></div></div>
       <div class="sc-code num">${esc(o.code)}</div>
       <div class="sc-btns">${btn('Save as picture', { act: 'savePass', icon: 'download', cls: 'dark' })}<button type="button" class="pilllink" data-act="copyCode">${ic('check', 16)}Copy code</button></div>
-      <p class="help" style="margin:8px 0 0">Or take a screenshot of your pickup pass below.</p>
     </section>
     ${passHTML(o)}
-    <div id="friendCard"></div>
-    ${saveCardHTML()}
-    <section class="panel" style="margin-top:22px">
-      <h3>Your pickup</h3>
-      <div class="pgrid">
-        <div class="pt hi"><span class="k">${ic('calendar', 16)}When</span><b>${esc(fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' }))}</b><span>${esc(o.pickup_time || '')}</span></div>
-        <div class="pt"><span class="k">${ic('pin', 16)}Where</span><b>${esc(o.pickup)}</b><span>Inside campus</span></div>
-        <div class="pt"><span class="k">${ic('cash', 16)}Bring</span><b class="num">${money(o.total)}</b><span>${gcash ? 'If you already sent it by GCash, bring the reference number' : 'In cash, exact amount if you can'}</span></div>
-        <div class="pt"><span class="k">${ic('search', 16)}Look for</span><b>The person ${esc(S.settings.signalVerb)} ${esc(S.settings.signalItem)}</b><span>They'll be at the gate</span></div>
-      </div>
-      <h3>Before you go</h3>
-      <ol class="steps2">
-        ${confirmBy(o) && confirmBy(o) <= ymd(new Date()) ? `<li><div><b>You're confirmed</b><span>Your pickup is soon, so we'll start on it right away.</span></div></li>`
-          : `<li><div><b>Tap <mark>I'll be there</mark> by ${esc(fmtDate(confirmBy(o), { weekday: 'short', month: 'short', day: 'numeric' }))}</b><span>Open "My order" and confirm. We only print confirmed orders, so if you don't confirm, your order is released and you don't owe anything.</span></div></li>`}
-        <li><div><b>Tap <mark>I'm here</mark> at the gate</b><span>The seller sees your name, matches your code, and hands over your order. Pay, grab it, and that's it.</span></div></li>
-        <li><div><b>Can't make it?</b><span>Change your pickup day in "My order" (up to ${CONFIG.maxReschedules} times).</span></div></li>
+    <section class="panel nextup" style="margin-top:18px">
+      <h3>What's next</h3>
+      <ol class="nsteps">
+        ${confirmBy(o) && confirmBy(o) > ymd(new Date())
+          ? `<li><b>Confirm by ${esc(fmtDate(confirmBy(o), { weekday: 'short', month: 'short', day: 'numeric' }))}.</b> In My order, tap "I'll be there".</li>`
+          : `<li><b>You're confirmed.</b> We'll start on it right away.</li>`}
+        <li><b>At the gate, tap "I'm here".</b> Look for ${esc(signal())}.</li>
+        <li><b>Bring ${money(o.total)}${gcash ? ' (or your GCash reference)' : ''}</b> and your school ID.</li>
       </ol>
-      <div class="notes">
-        <p>${ic('school', 20)}<span><b>Inside campus only.</b> Never meet anyone outside school for your order.</span></p>
-        <p>${ic('clock', 20)}<span><b>Can't make it?</b> Cancel in "My order" before it gets printed.</span></p>
-        <p>${ic('lock', 20)}<span>We only keep your name and section, and only the sellers see them. Your pictures are deleted ${CONFIG.cleanupDays} days after your order is done.</span></p>
-      </div>
-      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:22px">${btn('Check my order', { act: 'leaveDone', cls: 'dark', attrs: 'data-href="#/status"' })}
-        ${o.pickup_date ? `<button type="button" class="pilllink" data-act="calAdd">${ic('calendar', 18)}Add to calendar</button><a class="pilllink" href="${esc(googleCalUrl(o))}" target="_blank" rel="noopener">${ic('calendar', 18)}Google Calendar</a>` : ''}
-        <button type="button" class="pilllink" data-act="leaveDone" data-href="#/">Back to start</button></div>
-    </section></main>`;
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px">${btn('Check my order', { act: 'leaveDone', cls: 'dark', attrs: 'data-href="#/status"' })}
+        ${o.pickup_date ? `<button type="button" class="pilllink" data-act="calAdd">${ic('calendar', 18)}Add to calendar</button>` : ''}</div>
+      <details class="gtk" style="margin-top:14px"><summary>Good to know</summary><ul>
+        <li>${ic('school', 16)}<span>Pickup is inside campus only. Never meet anyone outside school for your order.</span></li>
+        <li>${ic('calendar', 16)}<span>Can't make it? Change your pickup day in My order (up to ${CONFIG.maxReschedules} times), or cancel before it's printed.</span></li>
+        <li>${ic('lock', 16)}<span>Only the sellers see your name and section. Your pictures are deleted ${CONFIG.cleanupDays} days after your order is done.</span></li></ul></details>
+    </section>
+    <div id="friendCard" style="margin-top:18px"></div>
+    <p style="text-align:center;margin:8px 0 0"><button type="button" class="linkbtn" data-act="leaveDone" data-href="#/">Back to start</button></p>
+  </main>`;
 }
 
 const STATUS = {
@@ -4351,6 +4403,15 @@ const ACTIONS = {
   savedGo: t => { S.codeSaved = true; closeSheet(); location.hash = t.dataset.href || '#/'; },
   prodMove: t => { const o = S.admin.prodOrder, i = o.indexOf(t.dataset.k), j = i + +t.dataset.d; if (i < 0 || j < 0 || j >= o.length) return; [o[i], o[j]] = [o[j], o[i]]; drawProducts(); },
   useHere: () => { S.admin.cfg.site_url = location.origin + '/'; drawShopForm(); toast('Address filled in. Tap Save shop details.'); },
+  coNext: t => {
+    const n = +t.dataset.s;
+    validate(true); setErr(null, 'e-promise', '');
+    const bad = n === 1 ? ['e-nick', 'e-sec'] : ['e-place'];
+    if (bad.some(id => $('#' + id) && $('#' + id).textContent)) { const f = $('#orderForm [aria-invalid="true"]'); if (f) f.focus(); return; }
+    S.coStep = n + 1; coRender(); buzz(6);
+    const nx = document.querySelector(`.cstep[data-step="${n + 1}"]`); if (nx) nx.scrollIntoView({ block: 'start' });
+  },
+  coGo: t => { S.coStep = +t.dataset.s; coRender(); },
   tgShow: () => { const i = $('#tgToken'); if (i) i.type = i.type === 'password' ? 'text' : 'password'; },
   tgFind: async t => {
     const tok = S.admin.tg.bot_token; if (!tok) return toast('Paste the bot token first.');
