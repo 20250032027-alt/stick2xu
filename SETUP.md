@@ -133,6 +133,10 @@ If **Find my chat** shows nothing, send `/start` again in the group and retry. A
 
 ---
 
+## 8. Morning summary (optional)
+
+In Supabase, open **Database → Extensions**, search **pg_cron**, and turn it on. Then run `schema.sql` again. That sets up the 7 AM summary (it runs at 23:00 UTC, which is 7:00 AM in the Philippines). To check it, tap **Send today's summary** in admin → Settings → Telegram alerts.
+
 ## Changing the web address to Stick2It
 
 The site still lives at stick2xu.vercel.app until you rename it:

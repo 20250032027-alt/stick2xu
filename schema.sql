@@ -30,6 +30,11 @@ alter table public.shop_settings add column if not exists deals jsonb not null d
 -- Shop details edited in admin → Settings (pickup schedule, gates, GCash, limits, sizes)
 alter table public.shop_settings add column if not exists config jsonb not null default '{}'::jsonb;
 insert into public.shop_settings (id) values (1) on conflict do nothing;
+-- Pins are 44 mm: turn the 58 mm size off (turn it back on in admin → Settings → Products if you get that mold)
+update public.shop_settings set products = jsonb_set(products, '{pins,sizes}',
+  (select jsonb_agg(case when z->>'id' = '58' then z || '{"enabled": false}' else z end) from jsonb_array_elements(products->'pins'->'sizes') z))
+  where id = 1 and products->'pins'->'sizes' is not null and not coalesce((config->>'pins_58_done')::boolean, false);
+update public.shop_settings set config = config || '{"pins_58_done": true}' where id = 1;
 -- New name: the pickup signal follows it, unless you changed it yourself
 update public.shop_settings set signal_item = 'a Stick2It sign' where id = 1 and signal_item = 'a Stick2XU sign';
 -- New prices: stickers ₱45 a sheet, A4 posters ₱50 (only changes them if still at the old starting price)
@@ -91,6 +96,11 @@ alter table public.orders add column if not exists missed int not null default 0
 alter table public.orders add column if not exists reschedules int not null default 0;     -- times the customer moved their pickup
 alter table public.orders add column if not exists refunded boolean not null default false;
 alter table public.orders add column if not exists rush_fee int not null default 0;
+alter table public.orders add column if not exists amount_paid int not null default 0;   -- part payments (paid = all of it)
+alter table public.orders add column if not exists admin_note text;                      -- private note, only sellers see it
+alter table public.orders add column if not exists friend_code text;                     -- the friend code this order used
+alter table public.orders add column if not exists friend_credit_used int not null default 0;
+
 
 -- Promo codes. Private: customers can only check one code at a time through check_promo().
 create table if not exists public.promo_codes (
@@ -170,6 +180,18 @@ create policy "admins edit settings" on public.shop_settings
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text);
+-- Friend codes: one per customer (name + section). A first-time customer using one gets money off;
+-- the owner earns credit when that order is picked up, used up automatically on their next order.
+create table if not exists public.friends (
+  code text primary key,
+  person text not null unique,
+  name text, section text,
+  credit int not null default 0,
+  earned int not null default 0,
+  uses int not null default 0,
+  created_at timestamptz not null default now()
+);
+
 -- =====================================================================
 -- Pickup capacity: one gate per time slot for each person on pickup duty, and limits per slot and per day.
 -- Settings (admin → Shop details → Pickup rules): sellers_at_pickup, max_per_slot, max_per_day (0 = no limit).
@@ -219,6 +241,7 @@ declare
   v_sec  text := public.norm_text(p_grade_section);
   v_item jsonb; v_prod jsonb; v_size jsonb; v_addon jsonb; v_addon_id text;
   v_units int; v_unit int; v_total int := 0; v_count int := 0; v_maxq int;
+  v_friend public.friends; v_fcode text; v_credit int := 0; v_fon boolean;
   v_tiles int; v_pages int; v_has_prints boolean := false; v_only_prints boolean := true;
   v_today date := (now() at time zone 'Asia/Manila')::date; v_next date; v_rush int := 0; v_tm text[]; v_mins int;
   v_lines jsonb := '[]'::jsonb; v_subtotal int; v_discount int := 0; v_labels jsonb := '[]'::jsonb;
@@ -337,6 +360,29 @@ begin
   end loop;
   v_discount := least(v_discount, v_subtotal);
 
+  -- Friend code (FR-...): only for someone's first order, and not their own code
+  v_fon := coalesce((s.config->>'referral_on')::boolean, true);
+  if v_pcode like 'FR-%' then
+    if not v_fon then raise exception 'BAD_CODE'; end if;
+    select * into v_friend from public.friends where code = v_pcode;
+    if not found then raise exception 'BAD_CODE'; end if;
+    if v_friend.person = v_nick || '|' || v_sec then raise exception 'OWN_CODE'; end if;
+    if exists (select 1 from public.orders where public.norm_text(nickname) = v_nick and public.norm_text(grade_section) = v_sec
+               and status not in ('cancelled', 'rejected')) then raise exception 'NOT_FIRST'; end if;
+    v_discount := least(v_subtotal, v_discount + coalesce((s.config->>'referral_friend_off')::int, 5));
+    v_labels := v_labels || to_jsonb('Friend code'::text);
+    v_fcode := v_pcode; v_pcode := null;
+  end if;
+  -- Friend credit this customer has earned comes off automatically
+  if v_fon then
+    select credit into v_credit from public.friends where person = v_nick || '|' || v_sec for update;
+    v_credit := least(coalesce(v_credit, 0), v_subtotal - v_discount);
+    if v_credit > 0 then
+      update public.friends set credit = credit - v_credit where person = v_nick || '|' || v_sec;
+      v_discount := v_discount + v_credit; v_labels := v_labels || to_jsonb('Friend credit ₱' || v_credit);
+    else v_credit := 0; end if;
+  end if;
+
   -- Promo code
   if v_pcode is not null then
     select * into v_promo from public.promo_codes
@@ -402,13 +448,13 @@ begin
 
   -- sheet_count holds the number of things in the order (sheets + pins + posters + keychains)
   insert into public.orders (code, nickname, grade_section, pickup, pickup_date, pickup_time, payment, gcash_ref,
-                             layout, folder, sheet_count, total, src, subtotal, discount, promo_code, deal_labels, rush_fee, confirmed)
+                             layout, folder, sheet_count, total, src, subtotal, discount, promo_code, deal_labels, rush_fee, confirmed, friend_code, friend_credit_used)
   values (v_code, trim(p_nickname), trim(p_grade_section), trim(p_pickup), p_pickup_date, trim(p_pickup_time), p_payment,
           nullif(trim(left(coalesce(p_gcash_ref, ''), 40)), ''),
           p_layout, p_folder, v_count, v_total,
           nullif(left(coalesce(p_src, ''), 40), ''), v_subtotal, v_discount, v_pcode, v_labels, v_rush,
           -- pickups inside the confirm window (like rush prints) count as confirmed right away
-          p_pickup_date - coalesce((s.config->>'confirm_days_before')::int, 1) <= v_today);
+          p_pickup_date - coalesce((s.config->>'confirm_days_before')::int, 1) <= v_today, v_fcode, v_credit);
   return v_code;
 end $$;
 
@@ -418,7 +464,7 @@ language sql stable security definer set search_path = public as $$
   select json_build_object('code', code, 'nickname', nickname, 'status', status, 'pickup', pickup,
     'pickup_date', pickup_date, 'pickup_time', pickup_time, 'arrived', arrived_at is not null,
     'payment', payment, 'total', total, 'sheet_count', sheet_count, 'reject_reason', reject_reason,
-    'confirmed', confirmed, 'paid', paid, 'missed', missed, 'reschedules', reschedules, 'created_at', created_at)
+    'confirmed', confirmed, 'paid', paid, 'amount_paid', amount_paid, 'missed', missed, 'reschedules', reschedules, 'created_at', created_at)
   from public.orders
   where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname)
   limit 1;
@@ -483,6 +529,12 @@ create or replace function public.check_promo(p_code text) returns json
 language plpgsql stable security definer set search_path = public as $$
 declare v public.promo_codes; v_used int;
 begin
+  if upper(trim(coalesce(p_code, ''))) like 'FR-%' then
+    if not coalesce((select (config->>'referral_on')::boolean from public.shop_settings where id = 1), true)
+       or not exists (select 1 from public.friends where code = upper(trim(p_code))) then return null; end if;
+    return json_build_object('code', upper(trim(p_code)), 'kind', 'peso', 'friend', true, 'min_total', 0, 'used_up', false,
+      'value', coalesce((select (config->>'referral_friend_off')::int from public.shop_settings where id = 1), 5));
+  end if;
   select * into v from public.promo_codes
     where code = upper(trim(coalesce(p_code, ''))) and active and (ends_on is null or ends_on >= current_date);
   if not found then return null; end if;
@@ -624,7 +676,9 @@ begin
   -- Customer arrived at the pickup spot
   if new.arrived_at is not null and old.arrived_at is null and coalesce((n->>'arrived')::boolean, true) then
     perform public.tg_send('<b>Arrived: ' || new.code || '</b>' || E'\n' || who || ' is at ' || public.tg_esc(new.pickup) || ' now.'
-      || E'\n' || case when new.paid then 'Already paid.' else 'Collect ₱' || new.total || '.' end);
+      || E'\n' || case when new.paid then 'Already paid.' else 'Collect ₱' || (new.total - coalesce(new.amount_paid, 0)) || '.'
+           || case when coalesce(new.amount_paid, 0) > 0 then ' (paid ₱' || new.amount_paid || ' already)' else '' end end
+      || case when coalesce(new.admin_note, '') <> '' then E'\n' || 'Note: ' || public.tg_esc(new.admin_note) else '' end);
   end if;
 
   -- Customer changed their pickup date (admin moves and missed-pickup holds don't message)
@@ -702,3 +756,109 @@ end $$;
 drop trigger if exists orders_done_at on public.orders;
 create trigger orders_done_at before insert or update on public.orders
   for each row execute function public.orders_done_at();
+
+
+
+-- Friend codes are private: only admins can see the list
+alter table public.friends enable row level security;
+grant select, update on public.friends to authenticated;
+drop policy if exists "admins see friend codes" on public.friends;
+create policy "admins see friend codes" on public.friends for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+-- =====================================================================
+-- Friend codes: each customer's own code, and credit when friends pick up
+-- =====================================================================
+create or replace function public.my_friend_code(p_code text, p_nickname text) returns text
+language plpgsql security definer set search_path = public as $$
+declare o public.orders; v_person text; v_code text; v_base text; i int := 0;
+begin
+  if not coalesce((select (config->>'referral_on')::boolean from public.shop_settings where id = 1), true) then return null; end if;
+  select * into o from public.orders where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname) limit 1;
+  if not found or o.status in ('cancelled', 'rejected') then return null; end if;
+  v_person := public.norm_text(o.nickname) || '|' || public.norm_text(o.grade_section);
+  select code into v_code from public.friends where person = v_person;
+  if v_code is not null then return v_code; end if;
+  v_base := upper(left(regexp_replace(split_part(public.norm_text(o.nickname), ' ', 1), '[^a-z]', '', 'g'), 5));
+  if v_base = '' then v_base := 'PAL'; end if;
+  loop
+    v_code := 'FR-' || v_base || upper(substr(md5(random()::text), 1, 3));
+    begin
+      insert into public.friends (code, person, name, section) values (v_code, v_person, o.nickname, o.grade_section);
+      return v_code;
+    exception when unique_violation then
+      i := i + 1; if i > 5 then select code into v_code from public.friends where person = v_person; return v_code; end if;
+    end;
+  end loop;
+end $$;
+grant execute on function public.my_friend_code(text, text) to anon, authenticated;
+
+create or replace function public.friend_rewards() returns trigger
+language plpgsql security definer set search_path = public as $$
+declare v_reward int;
+begin
+  -- the friend picked up: the code's owner earns credit (once per order)
+  if new.status = 'done' and old.status is distinct from 'done' and new.friend_code is not null then
+    select coalesce((config->>'referral_reward')::int, 5) into v_reward from public.shop_settings where id = 1;
+    update public.friends set credit = credit + v_reward, earned = earned + v_reward, uses = uses + 1 where code = new.friend_code;
+  end if;
+  -- an order that used credit is cancelled or rejected: give the credit back
+  if new.status in ('cancelled', 'rejected') and old.status not in ('cancelled', 'rejected') and new.friend_credit_used > 0 then
+    update public.friends set credit = credit + new.friend_credit_used
+      where person = public.norm_text(new.nickname) || '|' || public.norm_text(new.grade_section);
+  end if;
+  return new;
+end $$;
+drop trigger if exists friend_rewards on public.orders;
+create trigger friend_rewards after update on public.orders for each row execute function public.friend_rewards();
+
+-- =====================================================================
+-- Morning summary on Telegram (about 7 AM Philippine time, on days with pickups).
+-- Needs the pg_cron extension: Supabase → Database → Extensions → pg_cron.
+-- =====================================================================
+create or replace function public.telegram_morning(p_force boolean default false) returns text
+language plpgsql security definer set search_path = public as $$
+declare t public.telegram; v_day date := (now() at time zone 'Asia/Manila')::date; v_n int; v_lines text; v_ready int; v_todo int; v_unconf int; v_collect int; v_msg text;
+begin
+  select * into t from public.telegram where id = 1;
+  if not p_force and (t is null or not t.enabled or not coalesce((t.notify->>'morning')::boolean, true)) then return 'off'; end if;
+  select count(*) into v_n from public.orders where pickup_date = v_day and status in ('pending','approved','printing','ready');
+  if v_n = 0 then
+    if p_force then perform public.tg_send('<b>No pickups today</b> (' || to_char(v_day, 'Dy, Mon FMDD') || ').', true); end if;
+    return 'none';
+  end if;
+  select string_agg('- ' || public.tg_esc(coalesce(pickup_time, 'No time')) || ', ' || public.tg_esc(pickup) || ': ' || n, E'\n' order by mins, pickup)
+    into v_lines from (
+      select pickup_time, pickup, count(*) n,
+             coalesce((select (m[1]::int % 12 + case when upper(m[3]) = 'PM' then 12 else 0 end) * 60 + m[2]::int
+                       from regexp_match(pickup_time, '(\d{1,2}):(\d{2})\s*(AM|PM)', 'i') m), 9999) mins
+      from public.orders where pickup_date = v_day and status in ('pending','approved','printing','ready')
+      group by pickup_time, pickup) g;
+  select count(*) filter (where status = 'ready'), count(*) filter (where status in ('pending','approved','printing')),
+         count(*) filter (where status in ('pending','approved') and not confirmed),
+         coalesce(sum(case when paid then 0 else total - coalesce(amount_paid, 0) end), 0)
+    into v_ready, v_todo, v_unconf, v_collect
+    from public.orders where pickup_date = v_day and status in ('pending','approved','printing','ready');
+  v_msg := '<b>Pickups today (' || to_char(v_day, 'Dy, Mon FMDD') || '): ' || v_n || '</b>' || E'\n' || v_lines
+    || E'\n' || 'Ready: ' || v_ready || ' of ' || v_n || case when v_todo > 0 then '. Not printed yet: ' || v_todo else '' end || '.'
+    || case when v_unconf > 0 then E'\n' || v_unconf || ' not confirmed (they get released).' else '' end
+    || E'\n' || 'To collect: ₱' || v_collect || '.'
+    || E'\n' || 'Bring the bags, change, and the sign.';
+  perform public.tg_send(v_msg, p_force);
+  return 'sent';
+end $$;
+revoke all on function public.telegram_morning(boolean) from public, anon;
+
+-- Admin's "Send today's summary now" button
+create or replace function public.telegram_morning_now() returns text
+language plpgsql security definer set search_path = public as $$
+begin
+  if not public.is_admin() then raise exception 'NOT_ADMIN'; end if;
+  return public.telegram_morning(true);
+end $$;
+grant execute on function public.telegram_morning_now() to authenticated;
+
+do $$ begin
+  create extension if not exists pg_cron;
+  perform cron.schedule('stick2it-morning', '0 23 * * *', 'select public.telegram_morning()');   -- 23:00 UTC = 7:00 AM in the Philippines
+exception when others then raise notice 'pg_cron is not available here. Turn it on in Supabase: Database > Extensions > pg_cron, then run this file again.';
+end $$;

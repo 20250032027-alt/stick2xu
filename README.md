@@ -129,6 +129,7 @@ A dashboard of the money side. On a computer it fits in about two screens. Every
 - **Money in and out:** the plain cash view, everything earned minus everything spent, with a list of purchases you can edit.
 - **Equipment:** a record of things bought once, like the pin maker.
 - **What each item costs to make** (folded, tap to open): which supplies one item uses. The header shows each item's profit at a glance. Hidden products are folded inside too. **Ink "pages per bottle set" (600) is a guess**: once you know how many pages your ink really lasts, change it.
+- **Monthly report:** under the big numbers. Sales (and the change from the month before), profit, orders picked up, best seller, busiest pickup day, and missed or cancelled orders. Use ◀ ▶ to see other months.
 - **Which posters bring orders** (folded): orders by poster QR code.
 
 ## Seller's routine: from order to pickup
@@ -145,6 +146,28 @@ A dashboard of the money side. On a computer it fits in about two screens. Every
 Checkout asks for the customer's **full name, as on their school ID**, and tells them to bring their ID. That's how you match orders at pickup. To look up their order, the order code plus their first name is enough. Names are only seen by the sellers (admin page and Telegram), and are deleted with the pictures after the cleanup period.
 
 After ordering, customers see a big **Save your code** box with **Save as picture** (a pickup pass image for their Photos) and **Copy code**. If they try to leave without saving, it asks once.
+
+## Friend codes
+
+After ordering, each customer gets their own code (like `FR-KAYE7Q2`) with Copy and Share buttons. A **first-time** customer who types it at checkout gets **₱5 off**. When that friend **picks up**, the code's owner earns **₱5 credit**, which comes off their next order automatically. You can't use your own code, a friend code only works on someone's first order, and credit used on a cancelled order is given back. Change the amounts or turn it off in Settings → Shop details → Friend codes.
+
+## Notes and part payments
+
+Every order card has **Add note**: a private note only you see, like "pays the rest Friday". It's also included in the Telegram "Arrived" message. **Part payment** records how much someone has paid so far. The card shows "Paid ₱20 of ₱45", and everything that shows money still owed (Still to collect, the Telegram "Collect ₱__", the customer's My order page) uses what's left.
+
+## Batch print
+
+In **To print**, the bar at the top has one button per pickup day ("Tue, Oct 13 (5)"). It makes **one PDF** with every confirmed order for that day and marks them as printing. Every page has the order code, tiny and light grey, in the **top-right corner**, so sheets never get mixed up. Orders that are only customer files (prints, PDF posters) are listed so you print those from their file buttons.
+
+## Morning summary (Telegram)
+
+Around **7 AM on days with pickups**, Telegram gets a message with:
+- each time slot and gate, with how many orders
+- how many are ready
+- how many aren't confirmed
+- how much to collect
+
+It needs **pg_cron** (see SETUP.md). Settings → Telegram alerts has a switch for it and a **Send today's summary** button.
 
 ## Pickup and handoff rules
 

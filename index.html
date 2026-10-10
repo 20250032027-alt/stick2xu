@@ -975,6 +975,49 @@ details[open] > summary .foldhint{transform:rotate(180deg)}
 table.biz td{padding-top:6px;padding-bottom:6px}
 table.biz .inp{min-height:36px;padding:4px 8px}
 table.biz small{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}
+
+/* business: tidy cost cards and purchases */
+.uline{grid-template-columns:minmax(0,1fr) 68px 34px!important;gap:6px;align-items:center}
+.uline .inp{min-height:36px;font-size:14px;padding:4px 8px}
+.uline .btn{min-height:34px!important;width:34px;height:34px;padding:0!important;justify-content:center;border-radius:50%;box-shadow:none}
+.ucard > .btn{min-height:36px;padding:4px 12px;font-size:14px;justify-self:start;box-shadow:none}
+.ucard{gap:6px!important}
+table.biz.buys,table.biz.buys tbody{display:block;width:100%}
+table.biz.buys .inp,table.biz.buys td:first-child .inp,table.biz.buys td:nth-child(2) .inp{min-width:0!important;width:100%;box-sizing:border-box}
+.buyadd .inp{min-width:0;width:100%;box-sizing:border-box}
+table.biz.buys tr{display:grid;grid-template-columns:150px minmax(0,1fr) 120px 36px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+table.biz.buys td{padding:0!important;border:0!important}
+table.biz.buys .inp{width:100%;min-width:0;min-height:36px}
+table.biz.buys .btn{min-height:34px!important;width:34px;height:34px;padding:0!important;border-radius:50%;box-shadow:none;justify-content:center}
+.buyadd{grid-template-columns:minmax(0,1fr) 120px auto!important;align-items:center}
+.buyadd .btn{box-shadow:none}
+@media(max-width:600px){table.biz.buys tr{grid-template-columns:1fr 1fr;}table.biz.buys td:nth-child(2){grid-column:1/-1;order:-1}}
+
+/* friend codes, notes, part payments, batch print */
+.friendcard{margin:0 0 18px;padding:14px 16px;border:1.5px dashed #C9951A;border-radius:var(--r-lg);background:#FFFBF0}
+.fc-h{display:flex;gap:8px;align-items:center;font-family:var(--display);font-size:17px}
+.fc-h svg{color:#C9951A}
+.fc-code{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:.04em;margin:6px 0 4px;user-select:all}
+.friendcard p{margin:0;color:var(--muted);font-size:14px}
+.fc-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.onote{display:flex;gap:6px;align-items:flex-start;margin:8px 0 0;padding:8px 10px;border-radius:10px;background:#FFF8E6;color:#6B4B00;font-size:14px;font-weight:600}
+.onote svg{flex:none;margin-top:2px}
+.partquick{display:flex;gap:8px;margin-top:8px}
+#noteIn{width:100%;resize:vertical;font:inherit;font-size:16px}
+.batchbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#FAFBFD;font-size:14px}
+.batchbar svg{color:var(--accent)}
+
+/* monthly report */
+.monthly .mnav{display:flex;gap:8px;align-items:center}
+.ob2{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;font-size:11px}
+.ob2:disabled{opacity:.35;cursor:default}
+.mgrid2{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-top:6px}
+.mcell{display:grid;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#FAFBFD;min-width:0}
+.mcell span{font-size:12.5px;color:var(--muted);font-weight:700}
+.mcell b{font-family:var(--display);font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mcell small{font-size:12px;color:var(--muted)}
+@media(max-width:1100px){.mgrid2{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.mgrid2{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -1015,7 +1058,7 @@ const CONFIG = {
     pins: {
       name: 'Pins', blurb: 'Round button pins with your picture', unit: 'pin', enabled: false, maxQty: 60,   // big enough for a whole class
       // faceMm = the pin you hold. cutMm = the paper circle, which wraps around the edge. Match these to the pin machine.
-      sizes: [{ id: '58', label: '58 mm', price: 35, faceMm: 58, cutMm: 70 }, { id: '44', label: '44 mm', price: 25, faceMm: 44, cutMm: 55 }],
+      sizes: [{ id: '44', label: '44 mm', price: 25, faceMm: 44, cutMm: 55 }, { id: '58', label: '58 mm', price: 35, faceMm: 58, cutMm: 70, enabled: false }],
       addons: []
     },
     posters: {
@@ -1071,6 +1114,9 @@ const CONFIG = {
   gcash: { enabled: true, name: 'J. Dela Cruz', number: '0917 000 0000' },
 
   productOrder: ['stickers', 'pins', 'keychains', 'posters', 'prints'],   // order on the "What do you want to make?" page (admin can change it)
+  referralOn: true,         // friend codes on/off
+  referralFriendOff: 5,     // a friend's first order gets this much off
+  referralReward: 5,        // the code's owner earns this much credit when the friend picks up
   sellersAtPickup: 1,       // how many of you can be at pickup at the same time (= gates per time slot)
   maxPerSlot: 8,            // most orders for one pickup time (0 = no limit)
   maxPerDay: 15,            // most orders for one pickup day (0 = no limit)
@@ -1219,6 +1265,19 @@ window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); instal
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('/sw.js').catch(() => {});
 const isInstalled = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+/* Friend code card: filled in after the order is placed (and on My order) */
+function friendCardHTML(code){
+  if (!code || !CONFIG.referralOn) return '';
+  return `<div class="friendcard"><div class="fc-h">${ic('sparkle', 18)}<b>Share your friend code</b></div>
+    <div class="fc-code num">${esc(code)}</div>
+    <p>Friends get <b>${money(CONFIG.referralFriendOff)} off</b> their first order. When they pick it up, you get <b>${money(CONFIG.referralReward)} off</b> your next one.</p>
+    <div class="fc-btns"><button type="button" class="pilllink" data-act="friendCopy" data-code="${esc(code)}">${ic('check', 16)}Copy</button>
+      ${navigator.share ? `<button type="button" class="pilllink" data-act="friendShare" data-code="${esc(code)}">${ic('arrow', 16)}Share</button>` : ''}</div></div>`;
+}
+async function fillFriendCard(code, nick){
+  const el = $('#friendCard'); if (!el || !CONFIG.referralOn) return;
+  const fc = await api.myFriendCode(code, nick); if (fc && document.body.contains(el)) el.innerHTML = friendCardHTML(fc);
+}
 function saveCardHTML(){
   if (isInstalled() || safeLS.get('sk_save_hide')) return '';
   const mac = /mac/i.test(navigator.platform || '');
@@ -1284,6 +1343,8 @@ function friendlyError(e){
   if (m.includes('GATE_TAKEN')) return "At that time we'll be at a different gate. Pick the other gate, or another time.";
   if (m.includes('SLOT_FULL')) return 'That pickup time just filled up. Pick another time or day.';
   if (m.includes('DAY_FULL')) return 'That pickup day just filled up. Pick another day.';
+  if (m.includes('OWN_CODE')) return "That's your own friend code. Share it with friends instead!";
+  if (m.includes('NOT_FIRST')) return 'Friend codes are for first orders. Thanks for coming back!';
   if (m.includes('TOO_SOON')) return 'That pickup time is too soon to get it ready. Pick a later time or another day.';
   if (m.includes('BAD_DATE')) return "That day isn't open for pickup anymore. Pick another one.";
   if (m.includes('NO_RESCHEDULE')) return "This order can't be moved anymore. Talk to the seller at pickup.";
@@ -1417,6 +1478,9 @@ function applyShopConfig(c){
   const numOr = (v, d) => v !== undefined && v !== null && v !== '' && Number.isFinite(+v) ? +v : d;
   const keys = Object.keys(CONFIG.products), ord = (Array.isArray(c.product_order) ? c.product_order : D.productOrder).filter(k => keys.includes(k));
   CONFIG.productOrder = ord.concat(keys.filter(k => !ord.includes(k)));
+  CONFIG.referralOn = typeof c.referral_on === 'boolean' ? c.referral_on : D.referralOn;
+  CONFIG.referralFriendOff = Math.max(0, numOr(c.referral_friend_off, D.referralFriendOff));
+  CONFIG.referralReward = Math.max(0, numOr(c.referral_reward, D.referralReward));
   CONFIG.sellersAtPickup = Math.max(0, numOr(c.sellers_at_pickup, D.sellersAtPickup));
   CONFIG.maxPerSlot = Math.max(0, numOr(c.max_per_slot, D.maxPerSlot));
   CONFIG.maxPerDay = Math.max(0, numOr(c.max_per_day, D.maxPerDay));
@@ -1425,7 +1489,7 @@ function applyShopConfig(c){
   CONFIG.posterExtraSheet = numOr(c.poster_extra_sheet, D.posterExtraSheet);
   CONFIG.posterMarginMm = Math.max(3, Math.min(15, numOr(c.poster_margin_mm, D.posterMarginMm)));
   CONFIG.posterOverlapMm = Math.max(0, Math.min(30, numOr(c.poster_overlap_mm, D.posterOverlapMm)));
-  CONFIG.siteUrl = /^https?:\/\/\S+$/.test(c.site_url || '') ? c.site_url : D.siteUrl;
+  CONFIG.siteUrl = /^https?:\/\/\S+$/.test(c.site_url || '') ? c.site_url : (/^https?:$/.test(location.protocol) ? location.origin + '/' : D.siteUrl);
   for (const k of Object.keys(CONFIG.products)) {
     const base = D.products[k];
     CONFIG.products[k].maxQty = +((c.max_qty || {})[k]) > 0 ? +c.max_qty[k] : (base.maxQty || D.maxQty);
@@ -1659,6 +1723,8 @@ function SupaBackend(){
     async getBusiness(){ const { data, error } = await sb.from('business').select('*').eq('id', 1).maybeSingle(); if (error) throw error; return (data && data.data) || {}; },
     async saveBusiness(d){ const { error } = await sb.from('business').upsert({ id: 1, data: d, updated_at: new Date().toISOString() }); if (error) throw error; },
     async stockAlert(text){ try { await rpc('business_alert', { p_text: text }); } catch (e) { console.warn('stock alert', e); } },
+    async myFriendCode(code, nick){ try { return await rpc('my_friend_code', { p_code: code, p_nickname: nick }); } catch { return null; } },
+    async telegramMorning(){ return await rpc('telegram_morning_now', {}); },
     async getTelegram(){ const { data, error } = await sb.from('telegram').select('*').eq('id', 1).maybeSingle(); if (error) throw error; return data || { enabled: false, notify: {} }; },
     async saveTelegram(row){ const { error } = await sb.from('telegram').upsert({ id: 1, ...row }); if (error) throw error; },
     async testTelegram(){ return await rpc('telegram_test', {}); },
@@ -2905,6 +2971,7 @@ async function submitOrder(e){
     const uploads = S.images.concat((S.docs || []).map(d => pages[d.id] || d)).filter(i => used.has(i.id));
     const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: SRC, promo: S.promo && sum.total >= S.promo.min_total ? S.promo.code : null, images: uploads, items: S.cart });
     S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal };
+    try { const real = await api.getOrder(code, nickname); if (real && real.total !== finalTotal) { S.lastOrder.total = real.total; if (real.total < finalTotal) setTimeout(() => toast(`Your friend credit took ${money(finalTotal - real.total)} off. New total: ${money(real.total)}.`), 900); } } catch {}
     S.promo = null;
     S.celebrate = true; S.codeSaved = false; buzz([12, 40, 18]);
     safeLS.set('sk_me', JSON.stringify({ nickname, section }));
@@ -2967,6 +3034,7 @@ function viewDone(){
   const o = S.lastOrder || readJSON('sk_last');
   if (!o) { location.hash = '#/'; return; }
   if (S.celebrate) { S.celebrate = false; setTimeout(confetti, 150); }
+  setTimeout(() => fillFriendCard(o.code, o.nickname), 0);
   const gcash = o.payment === 'gcash';
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">${progress(3)}
     <h2 style="margin:4px 0 6px">You're all set.</h2>
@@ -2977,6 +3045,7 @@ function viewDone(){
       <p class="help" style="margin:8px 0 0">Or take a screenshot of your pickup pass below.</p>
     </section>
     ${passHTML(o)}
+    <div id="friendCard"></div>
     ${saveCardHTML()}
     <section class="panel" style="margin-top:22px">
       <h3>Your pickup</h3>
@@ -3056,12 +3125,12 @@ function drawStatus(){
       ${o.status === 'ready' ? `<div class="pt hi" style="margin-top:16px">
           <span class="k">${ic('search', 16)}At pickup</span>
           <b>Look for ${esc(signal())} at ${esc(o.pickup)}</b>
-          <span>${o.paid ? "You've already paid, so just grab your stickers. That's it." : `Bring <b class="num" style="font-size:inherit;font-family:inherit">${money(o.total)}</b>, exact change if you can. Grab your order, and that's it.`}</span></div>
+          <span>${o.paid ? "You've already paid, so just grab your stickers. That's it." : `Bring <b class="num" style="font-size:inherit;font-family:inherit">${money(o.total - (o.amount_paid || 0))}</b>${o.amount_paid ? ` (you've paid ${money(o.amount_paid)} already)` : ''}, exact change if you can. Grab your order, and that's it.`}</span></div>
         <div style="margin-top:14px">${o.arrived
           ? `<span class="tag ok" style="font-size:15px;padding:8px 12px">${ic('check', 16)}They know you're here. Look for ${esc(signal())}.</span>`
           : btn("I'm here", { act: 'imHere', icon: 'pin', cls: 'wide' })}</div>` : ''}
       <dl class="kv">${o.pickup_date ? `<dt>Pickup</dt><dd>${esc(fmtDate(o.pickup_date))}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</dd>` : ''}<dt>Where</dt><dd>${esc(o.pickup)}</dd>
-        <dt>Total</dt><dd class="num">${money(o.total)}${o.paid ? ', paid' : ''}</dd>
+        <dt>Total</dt><dd class="num">${money(o.total)}${o.paid ? ', paid' : o.amount_paid ? `, paid ${money(o.amount_paid)}, ${money(o.total - o.amount_paid)} left` : ''}</dd>
         <dt>Items</dt><dd>${o.sheet_count}</dd><dt>Ordered</dt><dd>${fmtTime(o.created_at)}</dd></dl>
       ${S.moving ? rescheduleHTML(o) : ''}
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:20px">
@@ -3071,6 +3140,7 @@ function drawStatus(){
       ${active && !lapsed && saveCardHTML() ? `<div style="margin-top:18px">${saveCardHTML()}</div>` : ''}
       ${active && !lapsed ? `<p class="help" style="margin-top:10px">${(o.reschedules || 0) >= CONFIG.maxReschedules ? "You've already changed your pickup day the most times allowed. Talk to the seller if you need to move it again." : `You can change your pickup day ${CONFIG.maxReschedules - (o.reschedules || 0)} more time${CONFIG.maxReschedules - (o.reschedules || 0) === 1 ? '' : 's'}.`}</p>` : ''}
     </div>`;
+  if (!['cancelled', 'rejected'].includes(o.status) && !lapsed) { $('#statusOut').insertAdjacentHTML('beforeend', '<div id="friendCard"></div>'); fillFriendCard(o.code, S.statusNick); }
   const mf = $('#moveForm');
   if (mf) {
     // on the chosen day, times that are full or where we'll be at another gate can't be picked
@@ -3184,6 +3254,8 @@ async function drawAdminBody(){
     ${upcomingHTML(all)}
     <div class="chips">${FILTERS.map(([k, l]) => { const c = all.filter(o => inFilter(o, k)).length;
       return `<button class="chip ${f === k ? 'on' : ''}" type="button" data-act="admFilter" data-f="${k}">${l}${c && ACTIVE.includes(k) ? `<span class="c num">${c}</span>` : ''}</button>`; }).join('')}</div>
+    ${f === 'approved' ? (() => { const days = [...new Set(all.filter(o => ['approved', 'printing'].includes(o.status) && o.confirmed && o.pickup_date).map(o => o.pickup_date))].sort();
+      return days.length ? `<div class="batchbar">${ic('printer', 18)}<span>Print everything for a pickup day in one PDF:</span>${days.map(d => smallBtn(`${fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' })} (${all.filter(o => ['approved', 'printing'].includes(o.status) && o.confirmed && o.pickup_date === d).length})`, 'printer', 'aBatch', 'dark', `data-date="${d}"`)).join('')}</div>` : ''; })() : ''}
     ${f === 'approved' ? `<p class="hint" style="margin-bottom:16px">${ic('printer', 18)}<span>Print only orders marked <b>Confirmed</b>. Unconfirmed ones are released by themselves after their confirm-by day, so nothing gets wasted.</span></p>` : ''}
     ${f === 'ready' ? `<div class="pickupbar ${S.admin.pickupMode ? 'on' : ''}">
         <div>${ic('box', 18)}<span>${S.admin.pickupMode
@@ -3202,6 +3274,8 @@ async function drawAdminBody(){
         : smallBtn('Print anyway', 'printer', 'aPdfForce', 'plain', `data-id="${o.id}"`), smallBtn('Mark ready', 'box', 'aReady', '', `data-id="${o.id}"`));
       if (o.status === 'ready') a.push(smallBtn('Picked up and paid', 'check', 'aDone', 'ok', `data-id="${o.id}"`), smallBtn(o.missed ? "Didn't show up again" : "Didn't show up", 'ghost', 'aNoshow', 'plain', `data-id="${o.id}"`), smallBtn('Reprint', 'printer', 'aPdf', 'plain', `data-id="${o.id}"`));
       if (ACTIVE.includes(o.status)) a.push(smallBtn(o.paid ? 'Mark unpaid' : 'Mark paid', 'cash', 'aPaid', 'plain', `data-id="${o.id}"`));
+      if (ACTIVE.includes(o.status) && !o.paid) a.push(smallBtn('Part payment', 'cash', 'aPart', 'plain', `data-id="${o.id}"`));
+      a.push(smallBtn(o.admin_note ? 'Edit note' : 'Add note', 'edit', 'aNote', 'plain', `data-id="${o.id}"`));
       if (o.payment === 'gcash' && o.paid && ['rejected','cancelled'].includes(o.status) && !o.refunded) a.push(smallBtn('Mark refunded', 'check', 'aRefund', 'ok', `data-id="${o.id}"`));
       a.push(smallBtn('Delete', 'trash', 'aDelete', 'plain', `data-id="${o.id}"`));
       return `${head}<article class="ocard">
@@ -3211,11 +3285,12 @@ async function drawAdminBody(){
         <div class="ometa">
           <div><span><b>${esc(o.nickname)}</b>, ${esc(o.grade_section)}</span></div>
           <div>${ic('pin', 18)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span></div>
-          <div>${ic('cash', 18)}<span class="num">${money(o.total)}, ${o.payment === 'gcash' ? `GCash${o.gcash_ref ? ` (ref ${esc(o.gcash_ref)})` : ', no ref yet'}` : 'cash'}</span></div>
+          <div>${ic('cash', 18)}<span class="num">${money(o.total)}${!o.paid && o.amount_paid ? ` (paid ${money(o.amount_paid)}, owes ${money(o.total - o.amount_paid)})` : ''}, ${o.payment === 'gcash' ? `GCash${o.gcash_ref ? ` (ref ${esc(o.gcash_ref)})` : ', no ref yet'}` : 'cash'}</span></div>
           <ul class="ilist">${orderItems(o).map(it => `<li>${ic(it.type === 'stickers' ? 'sticker' : it.type === 'pins' ? 'badge' : it.type === 'posters' ? 'image' : it.type === 'prints' ? 'doc' : 'key', 18)}<span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `, ${esc(itemDetails(it))}` : ''}</span></li>`).join('')}</ul>
           <div class="tags">
             ${o.status === 'ready' && o.arrived_at ? `<span class="tag here">${ic('pin', 14)}Here now</span>` : ''}
-            ${o.paid ? `<span class="tag ok">${ic('check', 14)}Paid</span>` : ''}
+            ${o.paid ? `<span class="tag ok">${ic('check', 14)}Paid</span>` : o.amount_paid ? `<span class="tag warn">${ic('cash', 14)}Paid ${money(o.amount_paid)} of ${money(o.total)}</span>` : ''}
+            ${o.friend_code ? `<span class="tag">${ic('sparkle', 14)}Used a friend code</span>` : ''}${o.friend_credit_used ? `<span class="tag">${ic('sparkle', 14)}${money(o.friend_credit_used)} friend credit</span>` : ''}
             ${o.confirmed ? `<span class="tag ok">${ic('thumb', 14)}Confirmed</span>` : ['pending','approved'].includes(o.status) && o.pickup_date ? `<span class="tag warn">${ic('clock', 14)}Not confirmed yet (by ${esc(fmtDate(confirmBy(o), { weekday: 'short', month: 'short', day: 'numeric' }))})</span>` : ''}
             ${o.missed && o.status === 'ready' ? `<span class="tag warn">${ic('calendar', 14)}Missed once, held for this day</span>` : ''}
             ${o.reschedules ? `<span class="tag">${ic('calendar', 14)}Moved ${o.reschedules}×</span>` : ''}
@@ -3224,7 +3299,9 @@ async function drawAdminBody(){
             ${o.src ? `<span class="tag">${ic('qr', 14)}Poster: ${esc(o.src)}</span>` : ''}
             ${o.reject_reason ? `<span class="tag bad">Reason: ${esc(o.reject_reason)}</span>` : ''}
             ${o.discount ? `<span class="tag hot">${ic('sparkle', 14)}Saved ${money(o.discount)}: ${esc((o.deal_labels || []).join(', '))}</span>` : ''}
-          </div></div>
+          </div>
+          ${o.admin_note ? `<p class="onote">${ic('edit', 14)}<span>${esc(o.admin_note)}</span></p>` : ''}
+          </div>
         <div class="summary" style="margin:8px 0 0;align-items:center">${o.images_deleted ? miniSheet({ items: [] }, () => '', true) : orderItems(o).flatMap(it => it.type === 'stickers'
           ? (it.sheets || []).map(sh => miniSheet(sh, x => S.admin.urls[x.path], false))
           : it.mode === 'pages' && it.pdf ? (S.admin.urls[it.pdf.path]
@@ -3289,17 +3366,32 @@ function renderFramed(img, d, mm, dpi, round){
   x.drawImage(img, L.left * pw, L.top * ph, L.dw * pw, L.dh * ph);
   return round ? { data: c.toDataURL('image/png'), fmt: 'PNG' } : { data: c.toDataURL('image/jpeg', 0.92), fmt: 'JPEG' };
 }
-async function makePdf(o){
+/* One PDF for every confirmed order picking up on one day */
+async function batchPrint(date){
+  const list = S.admin.orders.filter(o => ['approved', 'printing'].includes(o.status) && o.confirmed && o.pickup_date === date);
+  if (!list.length) return toast('No confirmed orders for that day.');
+  toast(`Making one PDF for ${list.length} order${list.length === 1 ? '' : 's'}. This can take a bit.`);
+  const batch = { doc: null }, files = [], gone = [];
+  for (const o of list) { const r = await makePdf(o, batch).catch(e => { console.warn(e); return 'err'; }); if (r === 'files') files.push(o.code); if (r === 'gone' || r === 'err') gone.push(o.code); }
+  if (batch.doc) {
+    batch.doc.save(`pickup-${date}.pdf`);
+    for (const o of list) if (o.status === 'approved' && !files.includes(o.code) && !gone.includes(o.code)) await setStatus(o.id, { status: 'printing' });
+  }
+  toast(`PDF ready. Print at 100% ("Actual size").${files.length ? ` Print these from their file buttons: ${files.join(', ')}.` : ''}${gone.length ? ` Couldn't make: ${gone.join(', ')}.` : ''}`);
+}
+async function makePdf(o, batch){
   if (!window.jspdf) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
-  if (o.images_deleted) { toast('The pictures for this order were already cleaned up.'); return; }
+  if (o.images_deleted) { if (!batch) toast('The pictures for this order were already cleaned up.'); return 'gone'; }
   const asIs = it => it.type === 'prints' || it.mode === 'pages';   // customer files we print exactly as they are
-  if (orderItems(o).every(asIs)) { toast('This order is files to print as they are. Open them with the file buttons on the order.'); return; }
-  toast('Making the PDF. This takes a few seconds. Customer PDFs are separate: use the file buttons.');
+  if (orderItems(o).every(asIs)) { if (!batch) toast('This order is files to print as they are. Open them with the file buttons on the order.'); return 'files'; }
+  if (!batch) toast('Making the PDF. This takes a few seconds. Customer PDFs are separate: use the file buttons.');
   const items = orderItems(o).filter(it => !asIs(it)), urls = await api.imageUrls([...new Set(orderPaths(o))]), cache = {};
   const getImg = async path => cache[path] || (cache[path] = await loadImg(urls[path]));
   const who = `${o.code}   ${o.nickname}, ${o.grade_section}   pickup ${o.pickup_date ? fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' }) : ''} ${o.pickup_time || ''} at ${o.pickup}`;
-  let doc = null;
-  const page = (w, h) => { const or = w > h ? 'landscape' : 'portrait'; if (!doc) doc = new window.jspdf.jsPDF({ unit: 'mm', format: [w, h], orientation: or }); else doc.addPage([w, h], or); };
+  let doc = batch ? batch.doc : null;
+  const page = (w, h) => { const or = w > h ? 'landscape' : 'portrait'; if (!doc) doc = new window.jspdf.jsPDF({ unit: 'mm', format: [w, h], orientation: or }); else doc.addPage([w, h], or);
+    // the order code, tiny and light in the top-right corner, so pages never get mixed up
+    doc.setFontSize(6); doc.setTextColor(170); doc.text(o.code, w - 2.5, 2.8, { align: 'right' }); };
   const foot = (txt, w, h) => { doc.setFontSize(8); doc.setTextColor(90); doc.text(`${who}   ${txt}`, 8, h - 3.5); };
   const cutLine = () => { doc.setDrawColor(160); doc.setLineWidth(0.2); };
   const A4W = 210, A4H = 297, M = 10, GAP = 4;
@@ -3379,6 +3471,7 @@ async function makePdf(o){
       foot(`${label}${bk ? ', front and back side by side' : ''}, page ${pg + 1} of ${pages}`, A4W, A4H);
     }
   }
+  if (batch) { batch.doc = doc; return 'ok'; }
   doc.save(`${o.code}.pdf`);
   if (o.status === 'approved') setStatus(o.id, { status: 'printing' }, 'PDF downloaded. Print at 100% ("Actual size") and cut on the grey lines.');
 }
@@ -3406,7 +3499,7 @@ function drawSettings(){
   drawNoticeForm(); loadTelegram();
   S.admin.cfg = {
     pickup_weekdays: CONFIG.pickupWeekdays.slice(), pickup_times: clone(CONFIG.pickupTimes), pickup_places: CONFIG.pickupOptions.slice(),
-    product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
+    product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
     print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
@@ -3517,7 +3610,16 @@ function drawShopForm(){
         <label class="dnum"><span>Glue overlap between sheets (mm)</span>${n('poster_overlap_mm', c.poster_overlap_mm, 0, 30)}</label></div>
       <p class="help" style="margin-top:6px">A 2 × 2 poster is the poster price plus 3 extra sheets. If your printer leaves a wider blank edge, raise the border (Rasterbator uses 10 mm). Glue overlap: each sheet repeats this much picture where the next sheet goes on top, so the sheets can be glued firmly (10 mm is a good start). 0 means the edges just meet and you tape from behind.</p></div>
 
+    <div class="cfgsec"><div class="sub">Friend codes</div>
+      <label class="switch" style="margin-bottom:10px"><input type="checkbox" data-cfgbool="referral_on" ${c.referral_on ? 'checked' : ''}><span>Customers get a friend code to share</span></label>
+      <div class="pgrid2">
+        <label class="dnum"><span>Friend's first order: ₱ off</span>${n('referral_friend_off', c.referral_friend_off, 0, 100)}</label>
+        <label class="dnum"><span>Owner earns (₱ credit) when the friend picks up</span>${n('referral_reward', c.referral_reward, 0, 100)}</label></div>
+      <p class="help" style="margin-top:6px">After ordering, each customer gets a code like FR-KAYE7Q2. A first-time customer who uses it gets money off. The owner earns credit once that friend picks up, and it comes off their next order by itself.</p></div>
+
     <div class="cfgsec"><div class="sub">Website address</div>
+      ${/^https?:$/.test(location.protocol) && c.site_url && !c.site_url.startsWith(location.origin) ? `<div class="note warn" style="margin:0 0 8px">${ic('warn', 18)}<span>You're on <b>${esc(location.origin)}</b>, but the saved address is <b>${esc(c.site_url)}</b>. New QR codes would point to the old one.
+        <button type="button" class="pilllink" data-act="useHere" style="margin-top:6px">Use ${esc(location.host)}</button></span></div>` : ''}
       <input class="inp" id="cfgSite" inputmode="url" value="${esc(c.site_url || '')}" placeholder="https://stick2xu.vercel.app/">
       <p class="help" style="margin-top:6px">Used for poster QR codes. Change it only if the site moves to a new address.</p></div>
 
@@ -3589,10 +3691,10 @@ function drawShopForm(){
     } catch (ex) { toast(friendlyError(ex)); }
   };
 }
-const TG_EVENTS = [['stock', 'Low stock'], ['new', 'New orders'], ['arrived', 'Customer at the gate'], ['confirmed', 'Confirmed ("I\'ll be there")'], ['moved', 'Pickup day moved'], ['cancelled', 'Cancelled or released']];
+const TG_EVENTS = [['morning', 'Morning summary on pickup days (7 AM)'], ['stock', 'Low stock'], ['new', 'New orders'], ['arrived', 'Customer at the gate'], ['confirmed', 'Confirmed ("I\'ll be there")'], ['moved', 'Pickup day moved'], ['cancelled', 'Cancelled or released']];
 async function loadTelegram(){
   const box = $('#tgForm'); if (!box) return;
-  try { const t = await api.getTelegram(); S.admin.tg = { enabled: !!t.enabled, bot_token: t.bot_token || '', chat_id: t.chat_id || '', notify: { stock: true, new: true, arrived: true, confirmed: true, moved: true, cancelled: true, ...(t.notify || {}) } }; }
+  try { const t = await api.getTelegram(); S.admin.tg = { enabled: !!t.enabled, bot_token: t.bot_token || '', chat_id: t.chat_id || '', notify: { morning: true, stock: true, new: true, arrived: true, confirmed: true, moved: true, cancelled: true, ...(t.notify || {}) } }; }
   catch (e) { box.innerHTML = `<h3>Telegram alerts</h3><div class="formerr">${esc(friendlyError(e))} Run the latest schema.sql in Supabase.</div>`; return; }
   S.admin.tgChats = null; drawTelegram();
 }
@@ -3618,7 +3720,7 @@ function drawTelegram(){
     <div class="sub" style="font-weight:700;font-size:13px;color:var(--muted);margin:12px 0 8px;text-transform:uppercase;letter-spacing:.06em">Send me a message for</div>
     <div class="tgevents">${TG_EVENTS.map(([k, l]) => `<label class="switch"><input type="checkbox" data-tgn="${k}" ${t.notify[k] ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>
     <label class="switch" style="margin-top:14px"><input type="checkbox" id="tgOn" ${t.enabled ? 'checked' : ''}><span><b>Turn Telegram alerts on</b></span></label>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">${btn('Save', { type: 'submit', cls: 'dark', icon: 'check' })}${smallBtn('Send test', 'sparkle', 'tgTest', 'plain')}</div>`;
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">${btn('Save', { type: 'submit', cls: 'dark', icon: 'check' })}${smallBtn('Send test', 'sparkle', 'tgTest', 'plain')}${smallBtn("Send today's summary", 'calendar', 'tgMorning', 'plain')}</div>`;
   const f = $('#tgForm');
   f.oninput = f.onchange = e => {
     const el = e.target;
@@ -3780,13 +3882,7 @@ function defaultBusiness(){
     },
     partners: ['Partner 1', 'Partner 2', 'Partner 3'],
     equipment: [{ id: 'pinmaker', name: 'Pin maker (44 mm)', cost: 2000, date: today, split: [666.67, 666.67, 666.66] }],
-    purchases: [
-      { id: uid(), date: today, item: 'Sticker paper (20 sheets)', amount: 220 },
-      { id: uid(), date: today, item: 'Photo paper (20 sheets)', amount: 50 },
-      { id: uid(), date: today, item: 'Inkjet glossy paper (20 sheets)', amount: 180 },
-      { id: uid(), date: today, item: 'Pin parts (100 sets)', amount: 400 },
-      { id: uid(), date: today, item: 'Printer ink', amount: 1500 }
-    ],
+    purchases: [{ id: uid(), date: today, item: 'Starting supplies and pin maker', amount: 2100 }],
     paybackWeeks: 8
   };
 }
@@ -3802,6 +3898,13 @@ function ensureBusinessDefaults(b){
   if (!b.supplies.some(x => x.id === 'bond_paper')) b.supplies.push({ id: 'bond_paper', name: 'Bond paper (A4)', unit: 'sheet', packPrice: 250, packSize: 500, stock: 0, lowAt: 50 });
   for (const [k, v] of Object.entries(printUsageDefaults())) if (!b.usage[k]) b.usage[k] = v;
   // once: add any recipes and supplies that didn't exist when this data was first saved (new supplies start at 0 stock)
+  // once: the 5 starting purchases were placeholders (₱2,350, including ink you already had). Swap them for the real ₱2,100.
+  if (!b.defaultsV3) {
+    const guess = ['Sticker paper (20 sheets)', 'Photo paper (20 sheets)', 'Inkjet glossy paper (20 sheets)', 'Pin parts (100 sets)', 'Printer ink'];
+    const ps = b.purchases || [];
+    if (ps.length === 5 && guess.every(g => ps.some(x => x.item === g))) b.purchases = [{ id: uid(), date: ps[0].date || ymd(new Date()), item: 'Starting supplies and pin maker', amount: 2100 }];
+    b.defaultsV3 = true;
+  }
   if (!b.defaultsV2) {
     const d = defaultBusiness();
     for (const x of d.supplies) if (!b.supplies.some(y => y.id === x.id)) b.supplies.push({ ...x, stock: 0 });
@@ -3868,6 +3971,33 @@ async function useStock(o){
     }
   } catch (e) { console.warn('stock', e); toast('Marked ready, but supplies could not be updated. Check the Business tab.'); }
 }
+/* Monthly report: one month at a time, compared with the month before */
+function monthlyHTML(b, all){
+  const off = S.admin.month || 0, now = new Date(), start = new Date(now.getFullYear(), now.getMonth() - off, 1);
+  const end = new Date(start.getFullYear(), start.getMonth() + 1, 1), prev = new Date(start.getFullYear(), start.getMonth() - 1, 1);
+  const at = o => new Date(o.done_at || o.updated_at).getTime(), within = (t, a, z) => t >= a.getTime() && t < z.getTime();
+  const done = all.filter(o => o.status === 'done'), m = done.filter(o => within(at(o), start, end)), pm = done.filter(o => within(at(o), prev, start));
+  const sales = l => l.reduce((t, o) => t + (o.total || 0), 0), profit = l => sales(l) - l.reduce((t, o) => t + orderCost(b, o), 0);
+  const units = {}; m.forEach(o => orderItems(o).forEach(it => { const nm = (CONFIG.products[it.type] || {}).name || it.type; units[nm] = (units[nm] || 0) + (it.type === 'stickers' ? (it.sheets || []).length : +it.qty || 0); }));
+  const best = Object.entries(units).sort((a, z) => z[1] - a[1])[0];
+  const days = {}; m.forEach(o => { if (o.pickup_date) { const k = fmtDate(o.pickup_date, { weekday: 'long' }); days[k] = (days[k] || 0) + 1; } });
+  const busiest = Object.entries(days).sort((a, z) => z[1] - a[1])[0];
+  const lost = all.filter(o => ['noshow', 'cancelled'].includes(o.status) && within(new Date(o.created_at).getTime(), start, end)).length;
+  const ch = sales(pm) > 0 ? Math.round((sales(m) - sales(pm)) / sales(pm) * 100) : null;
+  const label = start.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+  const cell = (k, v, sub) => `<div class="mcell"><span>${k}</span><b class="num">${v}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
+  return `<div class="panel monthly" style="margin-bottom:16px">
+    <div class="bizh"><h3>${ic('calendar', 18)}Monthly report</h3>
+      <div class="mnav"><button type="button" class="ob2" data-act="monthNav" data-d="1" aria-label="Previous month">◀</button><b>${esc(label)}</b><button type="button" class="ob2" data-act="monthNav" data-d="-1" ${off === 0 ? 'disabled' : ''} aria-label="Next month">▶</button></div></div>
+    <div class="mgrid2">
+      ${cell('Sales', pmoney(sales(m)), ch === null ? (m.length ? 'First month with sales' : '') : `<span class="${ch >= 0 ? 'good' : 'bad'}">${ch >= 0 ? '▲' : '▼'} ${Math.abs(ch)}%</span> vs last month`)}
+      ${cell('Profit', pmoney(Math.round(profit(m))), m.length ? `${Math.round(profit(m) / Math.max(1, sales(m)) * 100)}% of sales` : '')}
+      ${cell('Orders picked up', m.length, m.length ? `about ${pmoney(Math.round(sales(m) / m.length))} each` : '')}
+      ${cell('Best seller', best ? esc(best[0]) : '—', best ? `${best[1]} sold` : '')}
+      ${cell('Busiest pickup day', busiest ? esc(busiest[0]) : '—', busiest ? `${busiest[1]} pickup${busiest[1] === 1 ? '' : 's'}` : '')}
+      ${cell('Missed or cancelled', lost, '')}
+    </div></div>`;
+}
 /* Big numbers count up quickly when the Business tab opens */
 function countUp(root){
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -3889,6 +4019,7 @@ async function drawMoney(){
   const inWeek = o => Date.now() - doneAt(o) < 7 * 864e5;
   const rev = list => list.reduce((t, o) => t + (o.total || 0), 0), cost = list => list.reduce((t, o) => t + orderCost(b, o), 0);
   const week = done.filter(inWeek), waiting = all.filter(o => ACTIVE.includes(o.status) && !o.paid);
+  const owed = waiting.reduce((t, o) => t + (o.total || 0) - (o.amount_paid || 0), 0);
   const profitAll = rev(done) - cost(done), profitWeek = rev(week) - cost(week);
   const eqTotal = (b.equipment || []).reduce((t, e) => t + (+e.cost || 0), 0);
   const capital = (b.invest || []).reduce((t, v) => t + (+v || 0), 0);   // what the partners put in
@@ -3907,9 +4038,10 @@ async function drawMoney(){
     <div class="stats">
       <div class="panel hero-stat"><span class="small">Profit this week</span><b class="num">${pmoney(Math.round(profitWeek))}</b><span class="small">${week.length} order${week.length === 1 ? '' : 's'} picked up, ${pmoney(Math.round(rev(week)))} in sales</span></div>
       <div class="panel"><span class="small muted">Profit so far</span><b class="num">${pmoney(Math.round(profitAll))}</b><span class="small muted">${pmoney(Math.round(rev(done)))} sales minus ${pmoney(Math.round(cost(done)))} supplies</span></div>
-      <div class="panel"><span class="small muted">Still to collect</span><b class="num">${pmoney(rev(waiting))}</b><span class="small muted">${all.filter(o => o.status === 'noshow').length} missed pickups so far</span></div>
+      <div class="panel"><span class="small muted">Still to collect</span><b class="num">${pmoney(owed)}</b><span class="small muted">${all.filter(o => o.status === 'noshow').length} missed pickups so far</span></div>
     </div>
 
+    ${monthlyHTML(b, all)}
     ${(() => { const weeks = Array.from({ length: 8 }, (_, w) => { const end = Date.now() - w * 7 * 864e5, start = end - 7 * 864e5;
         const list = done.filter(o => { const t2 = doneAt(o); return t2 > start && t2 <= end; }); return { w, p: rev(list) - cost(list), n: list.length }; }).reverse();
       const max = Math.max(1, ...weeks.map(x => Math.abs(x.p)));
@@ -3931,8 +4063,8 @@ async function drawMoney(){
 
     <div class="panel" style="margin-bottom:20px">
       <div class="bizh"><h3>${ic('box', 18)}Supplies</h3>${smallBtn('Add a supply', 'plus', 'bizAddSupply', 'plain')}</div>
-      <p class="help" style="margin-bottom:12px">Stock goes down by itself when you tap <b>Mark ready</b> on an order. Tap <b>Restock</b> when you buy more.</p>
-      <div class="tbl"><table class="biz"><thead><tr><th>Supply</th><th>Pack price</th><th>Per pack</th><th>Cost each</th><th>In stock</th><th>Warn at</th><th></th></tr></thead><tbody>
+      <p class="help" style="margin-bottom:12px">Stock goes down by itself when you tap <b>Mark ready</b> on an order. Tap <b>Restock</b> when you buy more. <b>Pack price</b> is what the next pack costs. For ink, "one pack has" means how many pages one refill prints (600 is a guess: check the ink box, and remember colorful sticker sheets use more ink than text).</p>
+      <div class="tbl"><table class="biz"><thead><tr><th>Supply</th><th>Pack price</th><th>One pack has</th><th>Cost each</th><th>In stock</th><th>Warn at</th><th></th></tr></thead><tbody>
       ${(b.supplies || []).map((x, i) => `<tr class="${x.stock <= x.lowAt ? 'low' : ''}">
         <td><input class="inp" data-sup="${i}" data-f="name" value="${esc(x.name)}" aria-label="Supply name">${enough(x) ? `<small class="muted">Enough for ${esc(enough(x))}</small>` : ''}</td>
         <td><span class="pricein"><input class="inp num" type="number" min="0" data-sup="${i}" data-f="packPrice" value="${x.packPrice}" aria-label="Pack price"></span></td>
@@ -4117,7 +4249,7 @@ const ACTIONS = {
       const r = await api.checkPromo(v);
       if (!r) return setErr('promo', 'e-promo', "That code doesn't work. Check the spelling, or it may have ended.");
       if (r.used_up) return setErr('promo', 'e-promo', 'That code has been used up.');
-      S.promo = r; buzz([8, 30, 8]); toast(`Code ${r.code} added.`); viewCheckoutKeep();
+      S.promo = r; buzz([8, 30, 8]); toast(r.friend ? `Friend code added: ${money(r.value)} off your first order.` : `Code ${r.code} added.`); viewCheckoutKeep();
     } catch (e) { setErr('promo', 'e-promo', friendlyError(e)); }
   },
   promoRemove: () => { S.promo = null; viewCheckoutKeep(); },
@@ -4218,6 +4350,7 @@ const ACTIONS = {
   },
   savedGo: t => { S.codeSaved = true; closeSheet(); location.hash = t.dataset.href || '#/'; },
   prodMove: t => { const o = S.admin.prodOrder, i = o.indexOf(t.dataset.k), j = i + +t.dataset.d; if (i < 0 || j < 0 || j >= o.length) return; [o[i], o[j]] = [o[j], o[i]]; drawProducts(); },
+  useHere: () => { S.admin.cfg.site_url = location.origin + '/'; drawShopForm(); toast('Address filled in. Tap Save shop details.'); },
   tgShow: () => { const i = $('#tgToken'); if (i) i.type = i.type === 'password' ? 'text' : 'password'; },
   tgFind: async t => {
     const tok = S.admin.tg.bot_token; if (!tok) return toast('Paste the bot token first.');
@@ -4281,6 +4414,32 @@ const ACTIONS = {
     const reason = $('#rejText').value.trim() || REJECT_REASONS[0];
     S.admin.rejecting = null; setStatus(t.dataset.id, { status: 'rejected', reject_reason: reason.slice(0, 140) }, 'Rejected. The customer can see the reason.');
   },
+  aNote: t => {
+    const o = S.admin.orders.find(x => x.id === t.dataset.id); if (!o) return;
+    showSheet(`<h3 style="margin-bottom:4px">Note for ${esc(o.code)}</h3><p class="help" style="margin:0 0 10px">Only you can see this. It's included when they arrive (Telegram).</p>
+      <textarea class="inp" id="noteIn" rows="4" maxlength="300" placeholder="Like: pays the rest on Friday, wants matte, ask about the second design">${esc(o.admin_note || '')}</textarea>
+      <div style="display:flex;gap:10px;margin-top:12px">${btn('Save note', { act: 'aNoteSave', icon: 'check', cls: 'dark', attrs: `data-id="${o.id}"` })}<button type="button" class="pilllink" data-act="sheetClose">Cancel</button></div>`);
+    setTimeout(() => { const n = $('#noteIn'); if (n) n.focus(); }, 50);
+  },
+  aNoteSave: async t => { const v = ($('#noteIn') || {}).value || ''; closeSheet(); await setStatus(t.dataset.id, { admin_note: v.trim() || null }, v.trim() ? 'Note saved.' : 'Note removed.'); },
+  aPart: t => {
+    const o = S.admin.orders.find(x => x.id === t.dataset.id); if (!o) return;
+    showSheet(`<h3 style="margin-bottom:4px">Part payment for ${esc(o.code)}</h3><p class="help" style="margin:0 0 10px">${esc(o.nickname)} owes ${money(o.total)} in total. Type everything they've paid so far.</p>
+      <label class="dnum"><span>Paid so far</span><span class="pricein"><input class="inp num" id="partIn" type="number" min="0" max="${o.total}" value="${o.amount_paid || ''}" inputmode="numeric"></span></label>
+      <div class="partquick">${[0.25, 0.5].map(k => `<button type="button" class="pilllink" data-act="partFill" data-v="${Math.round(o.total * k)}">${money(Math.round(o.total * k))}</button>`).join('')}</div>
+      <div style="display:flex;gap:10px;margin-top:12px">${btn('Save', { act: 'aPartSave', icon: 'check', cls: 'dark', attrs: `data-id="${o.id}"` })}<button type="button" class="pilllink" data-act="sheetClose">Cancel</button></div>`);
+  },
+  partFill: t => { const i = $('#partIn'); if (i) i.value = t.dataset.v; },
+  aPartSave: async t => {
+    const o = S.admin.orders.find(x => x.id === t.dataset.id); if (!o) return;
+    const v = Math.max(0, Math.min(o.total, Math.round(+($('#partIn') || {}).value || 0))); closeSheet();
+    await setStatus(o.id, { amount_paid: v, paid: v >= o.total }, v >= o.total ? 'Paid in full.' : v ? `Paid ${money(v)}. ${money(o.total - v)} left.` : 'Part payment cleared.');
+  },
+  friendCopy: async t => { try { await navigator.clipboard.writeText(t.dataset.code); } catch {} toast(`Copied ${t.dataset.code}. Send it to your friends!`); },
+  friendShare: async t => { try { await navigator.share({ text: `Use my code ${t.dataset.code} on ${CONFIG.shopName} for ${money(CONFIG.referralFriendOff)} off your first order: ${CONFIG.siteUrl}` }); } catch {} },
+  monthNav: t => { S.admin.month = Math.max(0, (S.admin.month || 0) + +t.dataset.d); drawMoney(); },
+  aBatch: t => batchPrint(t.dataset.date),
+  tgMorning: async () => { try { const r = await api.telegramMorning(); toast(r === 'none' ? 'No pickups today. Sent a short note to Telegram.' : 'Sent. Check Telegram.'); } catch (e) { toast(friendlyError(e)); } },
   aPdf: t => makePdf(S.admin.orders.find(o => o.id === t.dataset.id)).catch(e => toast(friendlyError(e))),
   aReady: async t => { const o = S.admin.orders.find(x => x.id === t.dataset.id); await setStatus(t.dataset.id, { status: 'ready' }, 'Marked ready.'); if (o) useStock(o); },
   aDone: t => setStatus(t.dataset.id, { status: 'done', paid: true }, 'Done.'),
@@ -4301,7 +4460,7 @@ const ACTIONS = {
     else { await keepAwake(false); toast('Pickup mode off.'); }
     clearInterval(S.admin.poll); drawAdminBody();
   },
-  aPaid: t => { const o = S.admin.orders.find(x => x.id === t.dataset.id); setStatus(o.id, { paid: !o.paid }, o.paid ? 'Marked unpaid.' : 'Marked paid.'); },
+  aPaid: t => { const o = S.admin.orders.find(x => x.id === t.dataset.id); setStatus(o.id, { paid: !o.paid, amount_paid: o.paid ? 0 : o.total }, o.paid ? 'Marked unpaid.' : 'Marked paid.'); },
   copyLink: async () => { try { await navigator.clipboard.writeText(S.admin.qr.url); toast('Link copied.'); } catch { toast("Copying didn't work. Select the link and copy it."); } }
 };
 document.addEventListener('change', e => {
