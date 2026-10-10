@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Stick2XU · Make your own sticker sheet</title>
+<title>Stick2It · Make your own sticker sheet</title>
 <meta name="description" content="Design your own stickers, pins, posters, and keychains. Picked up at school.">
-<meta property="og:title" content="Stick2XU">
+<meta property="og:title" content="Stick2It">
 <meta property="og:description" content="Turn your pictures into a sticker sheet. ₱50 per sheet.">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="apple-mobile-web-app-title" content="Stick2XU">
+<meta name="apple-mobile-web-app-title" content="Stick2It">
 <meta name="theme-color" content="#F4F5FA">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-3 -3 30 30'%3E%3Cpath d='M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z' fill='%233a52a3' stroke='%23fff' stroke-width='3' stroke-linejoin='round' paint-order='stroke'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
@@ -32,7 +32,7 @@
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
 *,*::before,*::after{box-sizing:inherit}
-html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100dvh}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.06;z-index:0;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
@@ -904,6 +904,77 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .sheetbg{position:fixed;inset:0;z-index:70;background:rgba(20,28,58,.55);display:grid;place-items:center;padding:16px;animation:pagein .25s var(--ease) both}
 .sheetbox{background:#fff;border:2px solid var(--ink);border-radius:var(--r-lg);padding:18px;max-width:440px;width:100%;max-height:92svh;overflow:auto;box-shadow:var(--shadow)}
 .passimg{display:block;width:100%;border-radius:14px;border:1px solid var(--line);-webkit-touch-callout:default}
+
+/* product order buttons (admin) */
+.ordbtns{display:inline-flex;flex-direction:column;gap:2px;margin-right:6px}
+.ob{width:26px;height:18px;padding:0;border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--ink);font-size:9px;line-height:1;cursor:pointer}
+.ob:disabled{opacity:.3;cursor:default}
+.prodhead{align-items:center}
+/* phones: two columns so every product is visible at a glance */
+@media(max-width:600px){
+  .pcards{grid-template-columns:1fr 1fr!important;gap:10px}
+  .pcard{padding:10px;border-radius:18px}
+  .pcard .illo{height:96px;margin-bottom:6px;border-radius:12px}
+  .pcard h3{font-size:17px;margin:2px 0 0}
+  .pcard p{flex:none;font-size:12.5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:2px 0 0}
+  .pcard .dealslot{min-height:0;padding-top:6px}
+  .pcard .gold-in{height:26px;font-size:11px;padding:0 8px}
+  .pcard .gold-in > svg{width:12px;height:12px}
+  .pcard .pfoot{padding-top:8px;margin-top:8px!important}
+  .pcard .pfoot .price b{font-size:20px}
+  .pcard .pfoot .price small{font-size:11px}
+  .pcard .pfoot .go{width:32px;height:32px}
+  /* an odd last card spans the row, picture on the left */
+  .pcards > .pcard:last-child:nth-child(odd){grid-column:1/-1;display:grid;grid-template-columns:110px 1fr;column-gap:12px;align-items:center}
+  .pcards > .pcard:last-child:nth-child(odd) .illo{grid-row:1/span 4;height:100%;min-height:96px;margin:0}
+}
+
+/* business dashboard */
+main.wrap.wide{max-width:1400px}
+.bizbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+.savedot{display:inline-flex;gap:5px;align-items:center;font-size:13px;font-weight:700;color:#0F5F34;background:var(--ok-soft);border-radius:999px;padding:4px 10px;transition:background .2s}
+.savedot.saving{color:var(--muted);background:#F1F3F8}
+.savedot.err{color:#B4232A;background:#FDECEC}
+#admBody .panel h3{display:flex;gap:8px;align-items:center}
+#admBody .panel h3 svg{color:var(--accent);flex:none}
+.bizrow{display:grid;gap:16px;margin-bottom:16px;align-items:start}
+.bizrow > .panel,.bizcol > .panel{margin-bottom:0!important}
+.bizcol{display:grid;gap:16px}
+.bizfull{margin-bottom:16px!important}
+@media(min-width:1100px){
+  .bizrow{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .stats{margin-bottom:16px}
+}
+.putin{display:flex;gap:8px;align-items:center;font-size:13px;font-weight:700;color:var(--muted);margin:4px 0}
+.putin .inp{width:110px;min-height:38px;font-size:16px}
+.equip{grid-template-columns:1.4fr 150px 120px auto!important;align-items:center}
+@media(max-width:600px){.equip{grid-template-columns:1fr 1fr!important}}
+.bizempty{display:flex;gap:10px;align-items:center;padding:14px;border:1.5px dashed var(--line);border-radius:14px;color:var(--muted);font-size:14px}
+.bizempty svg{flex:none;color:var(--accent)}
+.hiddenitems{margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:#FAFBFD}
+.hiddenitems summary{cursor:pointer;display:flex;gap:8px;align-items:center;font-weight:700}
+.hiddenitems .ucards{margin-top:10px}
+.bizfold summary{cursor:pointer;display:flex;gap:10px;align-items:center;justify-content:space-between;list-style:none}
+.bizfold summary::-webkit-details-marker{display:none}
+.bizfold summary h3{margin:0}
+.bizfold[open] summary{margin-bottom:10px}
+.ucards{grid-template-columns:repeat(auto-fill,minmax(290px,1fr))!important}
+.uline{grid-template-columns:minmax(0,1fr) 72px auto!important}
+.uline select.inp{min-width:0;text-overflow:ellipsis}
+
+/* item costs folded, with profit chips; compact supply rows */
+.costfold summary{flex-wrap:wrap;justify-content:flex-start}
+.profchips{display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:0}
+.pchip{font-size:12.5px;padding:3px 9px;border-radius:999px;background:var(--ok-soft);color:#0F5F34;font-weight:600;white-space:nowrap}
+.pchip b{font-family:var(--display)}
+.pchip.neg{background:#FDECEC;color:#B4232A}
+.foldhint{margin-left:auto;display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line);transition:transform .2s var(--ease)}
+.foldhint svg{transform:rotate(90deg)}
+details[open] > summary .foldhint{transform:rotate(180deg)}
+.bizfold summary{flex-wrap:wrap}
+table.biz td{padding-top:6px;padding-bottom:6px}
+table.biz .inp{min-height:36px;padding:4px 8px}
+table.biz small{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}
 </style>
 </head>
 <body>
@@ -919,7 +990,7 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
    SETTINGS — edit these
    ===================================================================== */
 const CONFIG = {
-  shopName: 'Stick2XU',
+  shopName: 'Stick2It',
 
   // Paste from Supabase → Project Settings → API.
   supabaseUrl: 'https://afyniszezhjtycwdxhgh.supabase.co',
@@ -994,11 +1065,12 @@ const CONFIG = {
   // What the seller holds or wears at pickup. These are only the starting values:
   // change them anytime from the admin page under Settings.
   signalVerb: 'holding',         // 'holding' or 'wearing'
-  signalItem: 'a Stick2XU sign',
+  signalItem: 'a Stick2It sign',
   grades: [7, 8, 9, 10],
 
   gcash: { enabled: true, name: 'J. Dela Cruz', number: '0917 000 0000' },
 
+  productOrder: ['stickers', 'pins', 'keychains', 'posters', 'prints'],   // order on the "What do you want to make?" page (admin can change it)
   sellersAtPickup: 1,       // how many of you can be at pickup at the same time (= gates per time slot)
   maxPerSlot: 8,            // most orders for one pickup time (0 = no limit)
   maxPerDay: 15,            // most orders for one pickup day (0 = no limit)
@@ -1084,6 +1156,7 @@ const ICONS = {
   refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
   logout:'<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H3"/>',
   qr:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM21 14v.01M14 21h.01M17 21h4v-4"/>',
+  eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   chart:'<path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/>', list:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
   ghost:'<path d="M5 21V10a7 7 0 0 1 14 0v11l-2.3-1.8-2.3 1.8-2.4-1.8-2.4 1.8-2.3-1.8z"/><path d="M9.5 10h.01M14.5 10h.01"/>',
   thumb:'<path d="M7 11v10H4V11zM7 11l4-8a2.5 2.5 0 0 1 3 3l-1 4h6a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 17.6 21H7"/>',
@@ -1154,7 +1227,7 @@ function saveCardHTML(){
     : `Press <b>${mac ? '⌘' : 'Ctrl'} + D</b> to bookmark this page.`;
   return `<div class="savecard ${installEvt ? 'can-install' : ''}">
     <div class="sc-ic"><img src="/icon-192.png" alt="" width="40" height="40" onerror="this.remove()"></div>
-    <div class="sc-tx"><b>Save Stick2XU for later</b><span>Checking your order becomes one tap. </span><span class="sc-how">${how}</span></div>
+    <div class="sc-tx"><b>Save Stick2It for later</b><span>Checking your order becomes one tap. </span><span class="sc-how">${how}</span></div>
     <div class="sc-act">${smallBtn('Add to home screen', 'plus', 'installApp', 'dark sc-install')}${smallBtn('Not now', '', 'saveHide', 'plain')}</div></div>`;
 }
 /* A picture of the pickup pass, to keep in Photos */
@@ -1162,7 +1235,7 @@ function passPicture(o){
   const W = 1080, H = 1350, c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
   const font = (w, sz) => `${w} ${sz}px 'Cabinet Grotesk', 'Satoshi', system-ui, sans-serif`;
   x.fillStyle = '#283971'; x.fillRect(0, 0, W, H);
-  x.fillStyle = '#F2BC2E'; x.font = font(800, 64); x.textAlign = 'center'; x.fillText('Stick2XU', W / 2, 150);
+  x.fillStyle = '#F2BC2E'; x.font = font(800, 64); x.textAlign = 'center'; x.fillText('Stick2It', W / 2, 150);
   const rr = (X, Y, w, h, r) => { x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + w, Y, X + w, Y + h, r); x.arcTo(X + w, Y + h, X, Y + h, r); x.arcTo(X, Y + h, X, Y, r); x.arcTo(X, Y, X + w, Y, r); x.closePath(); };
   rr(90, 220, W - 180, 900, 48); x.fillStyle = '#fff'; x.fill();
   x.fillStyle = '#FFF4DC'; rr(90, 220, W - 180, 220, 48); x.fill(); x.fillRect(90, 380, W - 180, 60);
@@ -1342,6 +1415,8 @@ function applyShopConfig(c){
   CONFIG.notice = { ...D.notice, ...(c.notice || {}) };
   CONFIG.printWeekdays = arr(c.print_weekdays, D.printWeekdays).map(Number);
   const numOr = (v, d) => v !== undefined && v !== null && v !== '' && Number.isFinite(+v) ? +v : d;
+  const keys = Object.keys(CONFIG.products), ord = (Array.isArray(c.product_order) ? c.product_order : D.productOrder).filter(k => keys.includes(k));
+  CONFIG.productOrder = ord.concat(keys.filter(k => !ord.includes(k)));
   CONFIG.sellersAtPickup = Math.max(0, numOr(c.sellers_at_pickup, D.sellersAtPickup));
   CONFIG.maxPerSlot = Math.max(0, numOr(c.max_per_slot, D.maxPerSlot));
   CONFIG.maxPerDay = Math.max(0, numOr(c.max_per_day, D.maxPerDay));
@@ -1361,7 +1436,8 @@ const P = key => S.settings.products[key] || mergeProducts({})[key];
 const liveSizes = key => P(key).sizes.filter(z => z.enabled);
 const liveAddons = key => P(key).addons.filter(a => a.enabled && a.label);
 const isLive = key => !!P(key) && P(key).enabled && liveSizes(key).length > 0;
-const liveProducts = () => Object.keys(CONFIG.products).filter(isLive).map(P);
+const productKeys = () => (CONFIG.productOrder || []).concat(Object.keys(CONFIG.products).filter(k => !(CONFIG.productOrder || []).includes(k)));
+const liveProducts = () => productKeys().filter(isLive).map(P);
 const fromPrice = key => Math.min(...liveSizes(key).map(z => z.price));
 const designRoute = key => key === 'stickers' ? '#/design' : '#/make/' + key;
 function unitPrice(it){
@@ -1674,7 +1750,7 @@ function noticeHTML(){
 }
 function topbar(){
   const n = S.cart.length, onCart = location.hash.startsWith('#/cart');
-  return `<div class="topwrap"><header class="top"><a class="mark" href="#/" aria-label="${esc(CONFIG.shopName)} home">Stick<b>2</b>XU</a>
+  return `<div class="topwrap"><header class="top"><a class="mark" href="#/" aria-label="${esc(CONFIG.shopName)} home">Stick<b>2</b>It</a>
     <div class="topacts ${n && !onCart ? 'has-cart' : ''}">
       ${n && !onCart ? `<a class="pilllink cartpill" href="#/cart" aria-label="Your order, ${n} item${n > 1 ? 's' : ''}">${ic('sticker', 18)}<span class="lbl">Cart</span><b class="badge-n num">${n}</b></a>` : ''}
       <a class="pilllink" href="#/status" aria-label="Check my order">${ic('box', 18)}<span class="lbl">My order</span></a>
@@ -1686,11 +1762,13 @@ function progress(step){
   return `<nav class="prog" aria-label="Order steps">${names.map((n, i) => `${i ? '<span class="bar" aria-hidden="true"></span>' : ''}
     <span class="${i + 1 === step ? 'on' : i + 1 < step ? 'done' : ''}" ${i + 1 === step ? 'aria-current="step"' : ''}><i>${i + 1 < step ? ic('check', 14) : i + 1}</i>${label(n)}</span>`).join('')}</nav>`;
 }
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+function toTop(){ window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }
 function route(){
   const parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/'), page = parts[0];
   const views = { home: viewHome, shop: viewShop, design: viewDesign, make: () => viewMake(parts[1]), cart: viewCart, checkout: viewCheckout, done: viewDone, status: viewStatus, admin: viewAdmin };
   (views[page] || viewNotFound)();
-  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  toTop(); requestAnimationFrame(toTop); setTimeout(toTop, 60);
 }
 window.addEventListener('hashchange', route);
 window.addEventListener('scroll', () => { const t = $('.topwrap'); if (t) t.classList.toggle('scrolled', scrollY > 4); }, { passive: true });
@@ -1716,7 +1794,7 @@ function heroArt(){
   return `<div class="hero-art">${extras}<div class="sheet-art" style="container-type:inline-size" aria-hidden="true">
     ${shapes.map(p => `<span class="hs" style="left:${p.x}%;top:${p.y}%;width:${p.w}%;--r:${p.r}deg;--d:${p.d}ms">${shapeSVG(p.s, p.c, '100%')}</span>`).join('')}
     <span class="hs txt" style="left:6%;top:37%;width:36%;--r:-7deg;--d:600ms;background:#fff;font-size:11cqw">${money(P('stickers').sizes[0].price)}<span style="font-size:4.6cqw;font-family:var(--body);font-weight:700;margin-top:4px">per sheet</span></span>
-    <span class="hs txt peel" style="left:36%;top:64%;width:30%;aspect-ratio:1;--r:8deg;--d:960ms;background:var(--xu-blue1);color:#fff;font-size:10cqw">XU</span>
+    <span class="hs txt peel" style="left:36%;top:64%;width:30%;aspect-ratio:1;--r:8deg;--d:960ms;background:var(--xu-blue1);color:#fff;font-size:9cqw">HI!</span>
   </div></div>`;
 }
 function viewHome(){
@@ -1740,7 +1818,7 @@ function viewHome(){
       </div>
       ${heroArt()}
     </section>
-    <footer><span>${esc(CONFIG.shopName)} is run by students. It isn't an official XU service.</span><a href="#/status">Check my order</a></footer>
+    <footer><span>${esc(CONFIG.shopName)} is run by students. It isn't an official school service.</span><a href="#/status">Check my order</a></footer>
   </main>`;
 }
 
@@ -1787,7 +1865,7 @@ function illoStickers(){
       ${shapeAt('star', '#F2BC2E', 74, 20, 38, -10, id)}
       ${shapeAt('heart', '#ec282a', 118, 26, 34, 8, id)}
       <g filter="url(#${id}t)" transform="rotate(-6 102 98)"><rect x="76" y="80" width="50" height="34" rx="9" fill="#283971" stroke="#fff" stroke-width="4" paint-order="stroke"/>
-        <text x="101" y="104" text-anchor="middle" font-family="Cabinet Grotesk, Arial Black, sans-serif" font-weight="800" font-size="20" fill="#fff">XU</text></g>
+        <text x="101" y="104" text-anchor="middle" font-family="Cabinet Grotesk, Arial Black, sans-serif" font-weight="800" font-size="19" fill="#fff">HI!</text></g>
       <g filter="url(#${id}t)"><circle cx="146" cy="104" r="17" fill="#fff"/>${scene(id, 129, 87, 34, 34, '<circle cx="146" cy="104" r="14"/>')}</g>
     </g>
     <g transform="translate(170 102) rotate(16 19 19)" filter="url(#${id}t)">
@@ -2857,16 +2935,16 @@ function icsFor(o){
   let h = m ? +m[1] % 12 + (/pm/i.test(m[3]) ? 12 : 0) : 12, mi = m ? +m[2] : 0;
   const d = o.pickup_date.replace(/-/g, ''), t = (hh, mm) => `${d}T${pad2(hh)}${pad2(mm)}00`;
   const end = h * 60 + mi + 30;
-  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Stick2XU//Pickup//EN', 'BEGIN:VEVENT',
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Stick2It//Pickup//EN', 'BEGIN:VEVENT',
     `UID:${o.code}@stick2xu`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`,
     `DTSTART:${t(h, mi)}`, `DTEND:${t(Math.floor(end / 60), end % 60)}`,
-    `SUMMARY:Pick up Stick2XU order ${o.code}`, `LOCATION:${o.pickup} (inside campus)`,
+    `SUMMARY:Pick up Stick2It order ${o.code}`, `LOCATION:${o.pickup} (inside campus)`,
     `DESCRIPTION:Look for ${signal()}. Tap I'm here in My order when you arrive.`,
-    'BEGIN:VALARM', 'TRIGGER:-PT30M', 'ACTION:DISPLAY', 'DESCRIPTION:Stick2XU pickup soon', 'END:VALARM',
+    'BEGIN:VALARM', 'TRIGGER:-PT30M', 'ACTION:DISPLAY', 'DESCRIPTION:Stick2It pickup soon', 'END:VALARM',
     'END:VEVENT',
     ...(confirmBy(o) ? ['BEGIN:VEVENT', `UID:${o.code}-confirm@stick2xu`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`,
       `DTSTART:${confirmBy(o).replace(/-/g, '')}T180000`, `DTEND:${confirmBy(o).replace(/-/g, '')}T181500`,
-      `SUMMARY:Confirm your Stick2XU order ${o.code}`, `DESCRIPTION:Open My order and tap I'll be there so it gets printed.`, 'END:VEVENT'] : []),
+      `SUMMARY:Confirm your Stick2It order ${o.code}`, `DESCRIPTION:Open My order and tap I'll be there so it gets printed.`, 'END:VEVENT'] : []),
     'END:VCALENDAR'];
   return lines.join('\r\n');
 }
@@ -2881,7 +2959,7 @@ function addToCalendar(o){
 function googleCalUrl(o){
   const m = String(o.pickup_time || '').match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
   const h = m ? +m[1] % 12 + (/pm/i.test(m[3]) ? 12 : 0) : 12, mi = m ? +m[2] : 0, d = o.pickup_date.replace(/-/g, ''), end = h * 60 + mi + 30;
-  const q = new URLSearchParams({ action: 'TEMPLATE', text: `Pick up Stick2XU order ${o.code}`, dates: `${d}T${pad2(h)}${pad2(mi)}00/${d}T${pad2(Math.floor(end / 60))}${pad2(end % 60)}00`,
+  const q = new URLSearchParams({ action: 'TEMPLATE', text: `Pick up Stick2It order ${o.code}`, dates: `${d}T${pad2(h)}${pad2(mi)}00/${d}T${pad2(Math.floor(end / 60))}${pad2(end % 60)}00`,
     details: `Look for ${signal()}. Tap I'm here in My order when you arrive. Your code: ${o.code}`, location: `${o.pickup} (inside campus)`, ctz: 'Asia/Manila' });
   return 'https://calendar.google.com/calendar/render?' + q;
 }
@@ -3032,7 +3110,7 @@ function rescheduleHTML(o){
 async function viewAdmin(){
   $('#app').innerHTML = `<main id="main" class="wrap narrow" style="padding-top:40px"><div class="sk" style="height:260px;border-radius:28px"></div></main>`;
   if (!(await api.session())) return drawLogin();
-  $('#app').innerHTML = `<header class="top"><span class="mark">Stick<b>2</b>XU</span>
+  $('#app').innerHTML = `<header class="top"><span class="mark">Stick<b>2</b>It</span>
       <button class="pilllink" type="button" data-act="logout">${ic('logout', 18)}Log out</button></header>
     <main id="main" class="wrap">
       <nav class="atabs" aria-label="Admin sections">
@@ -3045,7 +3123,7 @@ async function viewAdmin(){
 }
 function drawLogin(){
   $('#app').innerHTML = `<main id="main" class="wrap narrow" style="padding-top:40px">
-    <form class="panel" id="loginForm"><span class="mark" style="margin-bottom:14px">Stick<b>2</b>XU</span><h2 style="margin:10px 0 18px">Admin log in</h2>
+    <form class="panel" id="loginForm"><span class="mark" style="margin-bottom:14px">Stick<b>2</b>It</span><h2 style="margin:10px 0 18px">Admin log in</h2>
       <div class="field"><label class="lab" for="em">Email</label><input class="inp" id="em" type="email" autocomplete="username"></div>
       <div class="field"><label class="lab" for="pw">Password</label><input class="inp" id="pw" type="password" autocomplete="current-password"></div>
       ${btn('Log in', { type: 'submit', cls: 'wide dark', icon: 'lock' })}<div class="formerr" id="logErr" role="alert"></div>
@@ -3313,14 +3391,14 @@ function drawSettings(){
     <div class="field"><span class="lab">The seller is…</span>
       <div class="gs" style="grid-template-columns:150px 1fr">
         <select class="inp" id="sVerb" aria-label="Holding or wearing">${['holding','wearing'].map(v => `<option value="${v}" ${st.signalVerb === v ? 'selected' : ''}>${v}</option>`).join('')}</select>
-        <input class="inp" id="sItem" maxlength="60" value="${esc(st.signalItem)}" aria-label="What" placeholder="a blue Stick2XU cap">
+        <input class="inp" id="sItem" maxlength="60" value="${esc(st.signalItem)}" aria-label="What" placeholder="a blue Stick2It cap">
       </div>
-      <p class="help">Start with "a" or "the", like "a yellow lanyard" or "the Stick2XU sign".</p></div>
+      <p class="help">Start with "a" or "the", like "a yellow lanyard" or "the Stick2It sign".</p></div>
     <div class="pt hi" style="margin-bottom:18px"><span class="k">${ic('search', 16)}Customers will see</span><b id="sPrev"></b></div>
     ${btn('Save', { type: 'submit', cls: 'dark', icon: 'check' })}
   </form>`;
   $('#admBody').insertAdjacentHTML('beforeend', `<form class="panel" id="prodForm" style="max-width:820px;margin-top:20px"></form>`);
-  S.admin.prodDraft = clone(S.settings.products); drawProducts();
+  S.admin.prodDraft = clone(S.settings.products); S.admin.prodOrder = productKeys(); drawProducts();
   $('#admBody').insertAdjacentHTML('beforeend', `<form class="panel" id="dealForm" style="max-width:820px;margin-top:20px"></form>
     <div class="panel" id="promoPanel" style="max-width:820px;margin-top:20px"></div>`);
   S.admin.dealDraft = clone(S.settings.deals || []); drawDeals(); drawPromos();
@@ -3328,7 +3406,7 @@ function drawSettings(){
   drawNoticeForm(); loadTelegram();
   S.admin.cfg = {
     pickup_weekdays: CONFIG.pickupWeekdays.slice(), pickup_times: clone(CONFIG.pickupTimes), pickup_places: CONFIG.pickupOptions.slice(),
-    site_url: CONFIG.siteUrl, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
+    product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
     print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
@@ -3352,9 +3430,9 @@ function drawSettings(){
 function drawProducts(){
   const D = S.admin.prodDraft;
   $('#prodForm').innerHTML = `<h3 style="margin-bottom:6px">Products and prices</h3>
-    <p class="help" style="margin-bottom:16px">Turn things on when you're ready to sell them. Changes show up for customers after you save. Orders already placed keep their price.</p>
-    ${Object.keys(CONFIG.products).map(key => { const p = D[key]; return `<fieldset class="prod ${p.enabled ? '' : 'off'}">
-      <div class="prodhead"><h3>${esc(CONFIG.products[key].name)}</h3>
+    <p class="help" style="margin-bottom:16px">Use ▲ ▼ to change the order customers see. Turn things on when you're ready to sell them. Changes show up for customers after you save. Orders already placed keep their price.</p>
+    ${(S.admin.prodOrder || productKeys()).map((key, oi, all) => { const p = D[key]; return `<fieldset class="prod ${p.enabled ? '' : 'off'}">
+      <div class="prodhead"><span class="ordbtns"><button type="button" class="ob" data-act="prodMove" data-k="${key}" data-d="-1" ${oi === 0 ? 'disabled' : ''} aria-label="Move ${esc(p.name)} up">▲</button><button type="button" class="ob" data-act="prodMove" data-k="${key}" data-d="1" ${oi === all.length - 1 ? 'disabled' : ''} aria-label="Move ${esc(p.name)} down">▼</button></span><h3>${esc(CONFIG.products[key].name)}</h3>
         <label class="switch"><input type="checkbox" data-k="${key}" data-kind="prod" data-f="enabled" ${p.enabled ? 'checked' : ''}><span>${p.enabled ? 'Available' : 'Hidden'}</span></label></div>
       <div class="pgrid2" style="grid-template-columns:1fr 2fr;margin-bottom:6px">
         <label class="dnum"><span>Name customers see</span><input class="inp" data-k="${key}" data-kind="prod" data-f="name" maxlength="30" value="${esc(p.name)}"></label>
@@ -3389,7 +3467,8 @@ function drawProducts(){
     for (const [k, p] of Object.entries(D)) compact[k] = { name: String(p.name || '').trim() || CONFIG.products[k].name, blurb: String(p.blurb || '').trim() || CONFIG.products[k].blurb, enabled: p.enabled, sizes: p.sizes.map(z => ({ id: z.id, price: z.price, enabled: z.enabled })),
       addons: p.addons.map(a => ({ id: a.id, label: a.label.trim(), note: a.note.trim(), price: a.price, enabled: a.enabled })) };
     const ms = Math.max(1, Math.min(50, Math.round(+($('#maxSheets') || {}).value || S.settings.maxSheets)));
-    try { await api.saveSettings({ products: compact, max_sheets: ms }); S.settings.productsRaw = compact; S.settings.maxSheets = ms; S.settings.products = mergeProducts(compact); S.admin.prodDraft = clone(S.settings.products); toast('Saved. Customers will see the changes.'); drawProducts(); }
+    const order = (S.admin.prodOrder || productKeys()).slice(), cfg = { ...(S.settings.configRaw || {}), product_order: order };
+    try { await api.saveSettings({ products: compact, max_sheets: ms, config: cfg }); S.settings.configRaw = cfg; CONFIG.productOrder = order; if (S.admin.cfg) S.admin.cfg.product_order = order; S.settings.productsRaw = compact; S.settings.maxSheets = ms; S.settings.products = mergeProducts(compact); S.admin.prodDraft = clone(S.settings.products); toast('Saved. Customers will see the changes.'); drawProducts(); }
     catch (ex) { toast(friendlyError(ex)); }
   };
 }
@@ -3523,7 +3602,7 @@ function drawTelegram(){
     <p class="help" style="margin-bottom:14px">Get a Telegram message the moment there's a new order or a customer taps "I'm here". Works even with this page closed and your phone locked.</p>
     <details class="tgsteps" ${ready ? '' : 'open'}><summary>How to set it up (5 minutes)</summary>
       <ol>
-        <li>In Telegram, open <b>@BotFather</b>, send <b>/newbot</b>, and follow the steps. Name it something like "Stick2XU Orders". It gives you a <b>token</b>, a long code like <code>123456:ABC-xyz</code>.</li>
+        <li>In Telegram, open <b>@BotFather</b>, send <b>/newbot</b>, and follow the steps. Name it something like "Stick2It Orders". It gives you a <b>token</b>, a long code like <code>123456:ABC-xyz</code>.</li>
         <li>Make a Telegram <b>group</b> with you and your friend, add your new bot to it, and send <b>/start</b> in the group. (Just you? Message the bot <b>/start</b> directly instead.)</li>
         <li>Paste the token below and tap <b>Find my chat</b>. Pick your group, save, then tap <b>Send test</b>.</li>
       </ol>
@@ -3722,6 +3801,20 @@ function ensureBusinessDefaults(b){
   b.supplies = b.supplies || []; b.usage = b.usage || {};
   if (!b.supplies.some(x => x.id === 'bond_paper')) b.supplies.push({ id: 'bond_paper', name: 'Bond paper (A4)', unit: 'sheet', packPrice: 250, packSize: 500, stock: 0, lowAt: 50 });
   for (const [k, v] of Object.entries(printUsageDefaults())) if (!b.usage[k]) b.usage[k] = v;
+  // once: add any recipes and supplies that didn't exist when this data was first saved (new supplies start at 0 stock)
+  if (!b.defaultsV2) {
+    const d = defaultBusiness();
+    for (const x of d.supplies) if (!b.supplies.some(y => y.id === x.id)) b.supplies.push({ ...x, stock: 0 });
+    for (const [k, v] of Object.entries(d.usage)) if (!b.usage[k] || !b.usage[k].length) b.usage[k] = v;
+    b.defaultsV2 = true;
+  }
+  // what each partner put in. First time: from the old equipment splits, or ₱700 each (₱2,100 for three)
+  b.partners = b.partners && b.partners.length ? b.partners : ['Partner 1', 'Partner 2', 'Partner 3'];
+  if (!Array.isArray(b.invest)) {
+    const fromEq = b.partners.map((_, i) => (b.equipment || []).reduce((t, e) => t + (+((e.split || [])[i]) || 0), 0));
+    b.invest = fromEq.some(v => v > 0) ? fromEq : b.partners.map(() => b.partners.length === 3 ? 700 : 0);
+  }
+  while (b.invest.length < b.partners.length) b.invest.push(0);
   return b;
 }
 const supCost = s => s.packSize > 0 ? s.packPrice / s.packSize : 0;
@@ -3745,13 +3838,18 @@ const pmoney = n => (n < 0 ? '−' : '') + CONFIG.currency + Math.abs(n).toLocal
 async function loadBusiness(){
   if (S.admin.biz) return S.admin.biz;
   const d = await api.getBusiness();
-  S.admin.biz = d && d.supplies ? ensureBusinessDefaults(d) : defaultBusiness();
+  S.admin.biz = ensureBusinessDefaults(d && d.supplies ? d : defaultBusiness());
   return S.admin.biz;
 }
 let bizSaveTimer;
 function saveBiz(msg){
   clearTimeout(bizSaveTimer);
-  bizSaveTimer = setTimeout(async () => { try { await api.saveBusiness(S.admin.biz); if (msg) toast(msg); } catch (e) { toast(friendlyError(e)); } }, 600);
+  const dot = () => $('#bizSaved'), set = (cls, txt) => { const d = dot(); if (d) { d.className = 'savedot ' + cls; d.innerHTML = txt; } };
+  S.admin.bizSaving = true; set('saving', 'Saving…');
+  bizSaveTimer = setTimeout(async () => {
+    try { await api.saveBusiness(S.admin.biz); S.admin.bizSaving = false; set('', `${ic('check', 14)}All changes saved`); if (msg) toast(msg); }
+    catch (e) { S.admin.bizSaving = false; set('err', `${ic('warn', 14)}Not saved`); toast(friendlyError(e)); }
+  }, 600);
 }
 /* Take one printed order's supplies out of stock (once), and warn when something runs low */
 async function useStock(o){
@@ -3783,6 +3881,7 @@ function countUp(root){
   });
 }
 async function drawMoney(){
+  const mainEl = document.querySelector('main'); if (mainEl) mainEl.classList.add('wide');
   $('#admBody').innerHTML = '<div class="sk" style="height:220px;border-radius:18px"></div>';
   let b; try { b = await loadBusiness(); } catch (e) { $('#admBody').innerHTML = `<div class="formerr">${esc(friendlyError(e))} Run the latest schema.sql in Supabase.</div>`; return; }
   const all = S.admin.orders, done = all.filter(o => o.status === 'done');
@@ -3791,13 +3890,14 @@ async function drawMoney(){
   const rev = list => list.reduce((t, o) => t + (o.total || 0), 0), cost = list => list.reduce((t, o) => t + orderCost(b, o), 0);
   const week = done.filter(inWeek), waiting = all.filter(o => ACTIVE.includes(o.status) && !o.paid);
   const profitAll = rev(done) - cost(done), profitWeek = rev(week) - cost(week);
-  const capital = (b.equipment || []).reduce((t, e) => t + (+e.cost || 0), 0);
+  const eqTotal = (b.equipment || []).reduce((t, e) => t + (+e.cost || 0), 0);
+  const capital = (b.invest || []).reduce((t, v) => t + (+v || 0), 0);   // what the partners put in
   const paidBack = Math.max(0, Math.min(capital, profitAll)), pct = capital ? paidBack / capital : 1;
   const remaining = Math.max(0, capital - profitAll), perWeek = remaining / Math.max(1, b.paybackWeeks || 8);
   const keys = usageKeys(), liveKeys = keys.filter(k => k.live);
   const per = k => k.price - unitCost(b, k.key);
-  const moneyOut = (b.purchases || []).reduce((t, x) => t + (+x.amount || 0), 0) + capital;
-  const contributed = (b.partners || []).map((n, i) => (b.equipment || []).reduce((t, e) => t + (+((e.split || [])[i]) || 0), 0));
+  const moneyOut = (b.purchases || []).reduce((t, x) => t + (+x.amount || 0), 0) + eqTotal;
+  const contributed = (b.partners || []).map((n, i) => +((b.invest || [])[i]) || 0);
   const src = {};
   all.forEach(o => { const k = o.src || 'No poster (direct link)'; src[k] = src[k] || { n: 0, done: 0, rev: 0 }; src[k].n++; if (o.status === 'done') { src[k].done++; src[k].rev += o.total; } });
   const enough = s => { const uses = keys.map(k => [k, ((b.usage || {})[k.key] || []).find(([id]) => id === s.id)]).filter(([, u]) => u && u[1] > 0);
@@ -3813,22 +3913,24 @@ async function drawMoney(){
     ${(() => { const weeks = Array.from({ length: 8 }, (_, w) => { const end = Date.now() - w * 7 * 864e5, start = end - 7 * 864e5;
         const list = done.filter(o => { const t2 = doneAt(o); return t2 > start && t2 <= end; }); return { w, p: rev(list) - cost(list), n: list.length }; }).reverse();
       const max = Math.max(1, ...weeks.map(x => Math.abs(x.p)));
-      return `<div class="panel" style="margin-bottom:20px"><div class="bizh"><h3>Profit by week</h3><span class="small muted">Last 8 weeks</span></div>
+      return `<div class="panel" style="margin-bottom:20px"><div class="bizh"><h3>${ic('chart', 18)}Profit by week</h3><span class="small muted">Last 8 weeks</span></div>
         <div class="wchart" role="img" aria-label="Profit for each of the last 8 weeks">${weeks.map(x => `<div class="wcol ${x.w === 0 ? 'now' : ''}" title="${x.w === 0 ? 'This week' : x.w + ' week' + (x.w > 1 ? 's' : '') + ' ago'}: ${pmoney(Math.round(x.p))}, ${x.n} order${x.n === 1 ? '' : 's'}">
           <span class="wv num">${x.p ? pmoney(Math.round(x.p)) : ''}</span><i style="--h:${Math.max(x.p > 0 ? 4 : 2, Math.round(Math.max(0, x.p) / max * 100))}%"></i><span class="wl">${x.w === 0 ? 'Now' : '-' + x.w + 'w'}</span></div>`).join('')}</div>
         ${weeks.every(x => !x.n) ? '<p class="help" style="margin-top:6px">Bars show up here as orders get picked up.</p>' : ''}</div>`; })()}
     <div class="panel" style="margin-bottom:20px">
-      <div class="bizh"><h3>Paying back the equipment</h3><span class="tag ${pct >= 1 ? 'ok' : ''}">${Math.round(pct * 100)}% paid back</span></div>
+      <div class="bizh"><h3>${ic('cash', 18)}Paying back what you put in</h3><span class="tag ${pct >= 1 ? 'ok' : ''}">${capital ? Math.round(pct * 100) + '% paid back' : 'Add what you put in'}</span></div>
       <div class="bar"><b style="--w:${Math.round(pct * 100)}%"></b></div>
-      <p style="margin:10px 0 0">${pct >= 1 ? `<b>The equipment is fully paid back.</b> Everything from here is profit.`
+      <p style="margin:10px 0 0">${!capital ? 'Type how much each of you put in below.' : pct >= 1 ? `<b>Everything you put in is paid back.</b> From here on, it's all profit.`
         : `<b>${pmoney(Math.round(remaining))}</b> left to pay back. To finish in <input class="inp num inl" type="number" min="1" max="52" data-biz="paybackWeeks" value="${b.paybackWeeks || 8}"> weeks, you need about <b>${pmoney(Math.ceil(perWeek))} profit a week</b>.`}</p>
       ${pct < 1 && liveKeys.length ? `<p class="help" style="margin-top:6px">That's roughly ${liveKeys.filter(k => per(k) > 0).slice(0, 3).map(k => `<b>${Math.ceil(perWeek / per(k))} ${esc(k.label.toLowerCase())}${k.unit === 'sheet' ? ' sheets' : ''}</b>`).join(' or ')} a week.</p>` : ''}
-      <div class="partners">${(b.partners || []).map((n, i) => `<div class="pcell"><div class="pn"><input class="inp" data-partner="${i}" value="${esc(n)}" aria-label="Partner name">${(b.partners || []).length > 1 ? smallBtn('', 'x', 'bizDelPartner', 'plain', `data-i="${i}" aria-label="Remove partner"`) : ''}</div><span class="small muted">Put in <b class="num">${pmoney(Math.round(contributed[i]))}</b>${capital ? `, paid back <b class="num">${pmoney(Math.round(paidBack * contributed[i] / capital))}</b>` : ''}</span></div>`).join('')}</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px"><p class="help" style="margin:0">Paid back is shared by how much each person put in.</p>${smallBtn('Add a partner', 'plus', 'bizAddPartner', 'plain')}</div>
+      <div class="partners">${(b.partners || []).map((n, i) => `<div class="pcell"><div class="pn"><input class="inp" data-partner="${i}" value="${esc(n)}" aria-label="Partner name">${(b.partners || []).length > 1 ? smallBtn('', 'x', 'bizDelPartner', 'plain', `data-i="${i}" aria-label="Remove partner"`) : ''}</div>
+        <label class="putin"><span>Put in</span><span class="pricein"><input class="inp num" type="number" min="0" step="any" data-invest="${i}" value="${contributed[i]}" aria-label="${esc(n)} put in"></span></label>
+        ${capital ? `<span class="small muted">Paid back <b class="num">${pmoney(Math.round(paidBack * contributed[i] / capital))}</b> of ${pmoney(Math.round(contributed[i]))}</span>` : ''}</div>`).join('')}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px"><p class="help" style="margin:0">Total put in: <b class="num">${pmoney(capital)}</b>. Paid back is shared by how much each person put in.</p>${smallBtn('Add a partner', 'plus', 'bizAddPartner', 'plain')}</div>
     </div>
 
     <div class="panel" style="margin-bottom:20px">
-      <div class="bizh"><h3>Supplies</h3>${smallBtn('Add a supply', 'plus', 'bizAddSupply', 'plain')}</div>
+      <div class="bizh"><h3>${ic('box', 18)}Supplies</h3>${smallBtn('Add a supply', 'plus', 'bizAddSupply', 'plain')}</div>
       <p class="help" style="margin-bottom:12px">Stock goes down by itself when you tap <b>Mark ready</b> on an order. Tap <b>Restock</b> when you buy more.</p>
       <div class="tbl"><table class="biz"><thead><tr><th>Supply</th><th>Pack price</th><th>Per pack</th><th>Cost each</th><th>In stock</th><th>Warn at</th><th></th></tr></thead><tbody>
       ${(b.supplies || []).map((x, i) => `<tr class="${x.stock <= x.lowAt ? 'low' : ''}">
@@ -3842,32 +3944,34 @@ async function drawMoney(){
       </tbody></table></div>
     </div>
 
-    <div class="panel" style="margin-bottom:20px">
-      <h3 style="margin-bottom:6px">What each item costs to make</h3>
+    <details class="panel bizfold costfold" style="margin-bottom:20px" ${S.admin.costOpen ? 'open' : ''} ontoggle="S.admin.costOpen=this.open">
+      <summary><h3>${ic('sticker', 18)}What each item costs to make</h3>
+        <span class="profchips">${keys.filter(k => k.live).map(k => { const pr = k.price - unitCost(b, k.key); return `<span class="pchip ${pr >= 0 ? '' : 'neg'}">${esc(k.label)} <b class="num">${pmoney(Math.round(pr * 100) / 100)}</b> <small>${k.price ? Math.round(pr / k.price * 100) + '%' : ''}</small></span>`; }).join('')}</span>
+        <span class="foldhint">${ic('arrow', 14)}</span></summary>
       <p class="help" style="margin-bottom:12px">How much of each supply one item uses. A 44 mm pin uses 1/12 of a sheet because 12 fit on one sheet.</p>
-      <div class="ucards">${keys.map(k => { const lines = (b.usage || {})[k.key] || [], c = unitCost(b, k.key), pr = k.price - c;
+      ${(() => { const card = k => { const lines = (b.usage || {})[k.key] || [], c = unitCost(b, k.key), pr = k.price - c;
         return `<div class="ucard ${k.live ? '' : 'off'}"><div class="ucard-h"><b>${esc(k.label)}</b>${k.live ? '' : '<span class="tag">Hidden</span>'}</div>
           ${lines.map(([id, amt], j) => `<div class="uline"><select class="inp" data-use="${esc(k.key)}" data-j="${j}" data-f="id" aria-label="Supply">${(b.supplies || []).map(x => `<option value="${esc(x.id)}" ${x.id === id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select>
             <input class="inp num" type="number" step="any" min="0" data-use="${esc(k.key)}" data-j="${j}" data-f="amt" value="${amt}" aria-label="Amount">${smallBtn('', 'x', 'bizDelUse', 'plain', `data-k="${esc(k.key)}" data-j="${j}" aria-label="Remove"`)}</div>`).join('')}
           ${smallBtn('Add a supply', 'plus', 'bizAddUse', 'plain', `data-k="${esc(k.key)}"`)}
-          <div class="umath"><span>Sells for <b class="num">${pmoney(k.price)}</b></span><span>Costs <b class="num">${pmoney(Math.round(c * 100) / 100)}</b></span><span class="${pr >= 0 ? 'good' : 'bad'}">Profit <b class="num">${pmoney(Math.round(pr * 100) / 100)}</b>${k.price ? ` (${Math.round(pr / k.price * 100)}%)` : ''}</span></div></div>`; }).join('')}</div>
-    </div>
+          <div class="umath"><span>Sells for <b class="num">${pmoney(k.price)}</b></span><span>Costs <b class="num">${pmoney(Math.round(c * 100) / 100)}</b></span><span class="${pr >= 0 ? 'good' : 'bad'}">Profit <b class="num">${pmoney(Math.round(pr * 100) / 100)}</b>${k.price ? ` (${Math.round(pr / k.price * 100)}%)` : ''}</span></div></div>`; }, on = keys.filter(k => k.live), off = keys.filter(k => !k.live);
+        return `<div class="ucards">${on.map(card).join('') || '<p class="help">Nothing is on sale yet.</p>'}</div>
+          ${off.length ? `<details class="hiddenitems"><summary>${ic('eye', 16)}Hidden products (${off.length}) <span class="muted small">Not on sale right now</span></summary><div class="ucards">${off.map(card).join('')}</div></details>` : ''}`; })()}
+    </details>
 
     <div class="panel" style="margin-bottom:20px">
-      <div class="bizh"><h3>Equipment</h3>${smallBtn('Add equipment', 'plus', 'bizAddEquip', 'plain')}</div>
-      <p class="help" style="margin-bottom:12px">Things you buy once, and who paid how much.</p>
+      <div class="bizh"><h3>${ic('printer', 18)}Equipment</h3>${smallBtn('Add equipment', 'plus', 'bizAddEquip', 'plain')}</div>
+      <p class="help" style="margin-bottom:12px">Things you buy once, like the pin maker. It's a record of what you bought; what each person put in is above.</p>
       ${(b.equipment || []).map((e, i) => `<div class="equip">
         <input class="inp" data-eq="${i}" data-f="name" value="${esc(e.name)}" aria-label="Equipment name">
         <input class="inp" type="date" data-eq="${i}" data-f="date" value="${esc(e.date || '')}" aria-label="Date bought">
         <span class="pricein"><input class="inp num" type="number" min="0" data-eq="${i}" data-f="cost" value="${e.cost}" aria-label="Cost"></span>
-        <div class="splits">${(b.partners || []).map((n, j) => `<label class="dnum"><span>${esc(n)}</span><span class="pricein"><input class="inp num" type="number" min="0" step="any" data-eq="${i}" data-split="${j}" value="${(e.split || [])[j] || 0}"></span></label>`).join('')}</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">${smallBtn('Split evenly', '', 'bizEven', 'plain', `data-i="${i}"`)}${smallBtn('', 'trash', 'bizDelEquip', 'plain', `data-i="${i}" aria-label="Remove equipment"`)}</div>
-        ${Math.abs((e.split || []).reduce((t, v) => t + (+v || 0), 0) - e.cost) > 1 ? `<p class="ferr" style="grid-column:1/-1">${ic('warn', 14)}The split adds up to ${pmoney(Math.round((e.split || []).reduce((t, v) => t + (+v || 0), 0)))}, not ${pmoney(e.cost)}.</p>` : ''}
-      </div>`).join('') || '<p class="help">No equipment yet.</p>'}
+        ${smallBtn('', 'trash', 'bizDelEquip', 'plain', `data-i="${i}" aria-label="Remove ${esc(e.name)}"`)}
+      </div>`).join('') || `<div class="bizempty">${ic('box', 22)}<span>Nothing here yet. Add things you bought once, like the pin maker.</span></div>`}
     </div>
 
     <div class="panel" style="margin-bottom:20px">
-      <div class="bizh"><h3>Money in and out</h3></div>
+      <div class="bizh"><h3>${ic('chart', 18)}Money in and out</h3></div>
       <div class="inout"><div><span class="small muted">Money in (picked-up orders)</span><b class="num">${pmoney(rev(done))}</b></div>
         <div><span class="small muted">Money out (supplies and equipment)</span><b class="num">${pmoney(moneyOut)}</b></div>
         <div><span class="small muted">Difference</span><b class="num ${rev(done) - moneyOut >= 0 ? 'good' : 'bad'}">${pmoney(rev(done) - moneyOut)}</b></div></div>
@@ -3878,12 +3982,22 @@ async function drawMoney(){
       <p class="help" style="margin-top:8px">"Profit" above counts only the supplies each order used. This box is the plain cash view: everything earned minus everything spent.</p>
     </div>
 
-    <div class="panel"><h3 style="margin-bottom:10px">Which posters bring orders</h3>
+    <details class="panel bizfold"><summary><h3>${ic('qr', 18)}Which posters bring orders</h3><span class="muted small">${Object.keys(src).length} source${Object.keys(src).length === 1 ? '' : 's'}</span></summary>
       <div class="tbl"><table><thead><tr><th>Poster</th><th>Orders</th><th>Finished</th><th>Earned</th></tr></thead><tbody>
       ${Object.entries(src).sort((a, b2) => b2[1].n - a[1].n).map(([k, v]) => `<tr><td>${esc(k)}</td><td class="num">${v.n}</td><td class="num">${v.done}</td><td class="num">${money(v.rev)}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">No orders yet</td></tr>'}
-      </tbody></table></div></div>`;
+      </tbody></table></div></details>`;
 
   countUp($('#admBody'));
+  // dashboard: put related sections side by side, so less scrolling
+  const bodyEl = $('#admBody'), pick = t => [...bodyEl.querySelectorAll(':scope > .panel')].find(x => (x.querySelector('h3') || {}).textContent && x.querySelector('h3').textContent.includes(t));
+  const row = (cls, ...els) => { els = els.filter(Boolean); if (!els.length) return; const r = document.createElement('div'); r.className = cls; els[0].before(r); els.forEach(e => r.appendChild(e)); return r; };
+  row('bizrow', pick('Paying back'), pick('Profit by week'));
+  // supplies is a wide table, so it gets the full width; money in/out and equipment sit side by side under it
+  const sup = pick('Supplies'), mio = pick('Money in and out'), eq = pick('Equipment');
+  if (sup) sup.classList.add('bizfull');
+  const r2 = row('bizrow', mio, eq); if (r2 && sup) sup.after(r2);
+  bodyEl.insertAdjacentHTML('afterbegin', `<div class="bizbar"><span class="savedot ${S.admin.bizSaving ? 'saving' : ''}" id="bizSaved">${S.admin.bizSaving ? 'Saving…' : `${ic('check', 14)}All changes saved`}</span><span class="muted small">Every number here can be changed. Changes save by themselves.</span></div>`);
+  if (capital && pct >= 1 && !b.celebratedPayback) { b.celebratedPayback = true; saveBiz(); setTimeout(confetti, 300); toast('Everything you put in is paid back. Nice work!'); }
   const body = $('#admBody');
   body.onchange = e => {
     const t = e.target, d = t.dataset, num = v => { const n = parseFloat(v); return Number.isFinite(n) ? n : 0; };
@@ -3891,6 +4005,7 @@ async function drawMoney(){
     else if (d.use !== undefined) { const l = b.usage[d.use][+d.j]; if (d.f === 'id') l[0] = t.value; else l[1] = num(t.value); }
     else if (d.eq !== undefined) { const e2 = b.equipment[+d.eq]; if (d.split !== undefined) { e2.split = e2.split || []; e2.split[+d.split] = num(t.value); } else e2[d.f] = ['name', 'date'].includes(d.f) ? t.value : num(t.value); }
     else if (d.partner !== undefined) b.partners[+d.partner] = t.value || `Partner ${+d.partner + 1}`;
+    else if (d.invest !== undefined) { b.invest = b.invest || []; b.invest[+d.invest] = Math.max(0, num(t.value)); }
     else if (d.buy !== undefined) { const x = (b.purchases || []).find(p2 => p2.id === d.buy); if (!x) return; x[d.f] = d.f === 'amount' ? num(t.value) : t.value; }
     else if (d.biz) b[d.biz] = Math.max(1, Math.round(num(t.value)));
     else return;
@@ -4061,13 +4176,13 @@ const ACTIONS = {
     b.purchases = (b.purchases || []).concat([buy]); saveBiz(); drawMoney();
     toast(`Added ${x.packSize} ${x.unit}s of ${x.name} and logged ${pmoney(x.packPrice)}.`, () => { x.stock -= x.packSize; b.purchases = b.purchases.filter(p => p.id !== buy.id); saveBiz(); drawMoney(); });
   },
-  bizAddPartner: () => { const b = S.admin.biz; b.partners = (b.partners || []).concat([`Partner ${(b.partners || []).length + 1}`]); (b.equipment || []).forEach(e => { e.split = (e.split || []).concat([0]); }); saveBiz(); drawMoney(); },
-  bizDelPartner: t => { if (!armed(t, 'Tap again')) return; const i = +t.dataset.i, b = S.admin.biz; b.partners.splice(i, 1); (b.equipment || []).forEach(e => { (e.split || []).splice(i, 1); }); saveBiz('Removed.'); drawMoney(); },
+  bizAddPartner: () => { const b = S.admin.biz; b.partners = (b.partners || []).concat([`Partner ${(b.partners || []).length + 1}`]); b.invest = (b.invest || []).concat([0]); saveBiz(); drawMoney(); },
+  bizDelPartner: t => { if (!armed(t, 'Tap again')) return; const i = +t.dataset.i, b = S.admin.biz; b.partners.splice(i, 1); (b.invest || []).splice(i, 1); saveBiz(); drawMoney(); },
   bizAddSupply: () => { const b = S.admin.biz; b.supplies.push({ id: 's_' + uid(), name: 'New supply', unit: 'piece', packPrice: 0, packSize: 1, stock: 0, lowAt: 0 }); saveBiz(); drawMoney(); },
   bizDelSupply: t => { if (!armed(t, 'Tap again')) return; const b = S.admin.biz, x = b.supplies.splice(+t.dataset.i, 1)[0]; for (const k of Object.keys(b.usage || {})) b.usage[k] = b.usage[k].filter(([id]) => id !== x.id); saveBiz('Removed.'); drawMoney(); },
   bizAddUse: t => { const b = S.admin.biz; b.usage[t.dataset.k] = (b.usage[t.dataset.k] || []).concat([[(b.supplies[0] || {}).id, 1]]); saveBiz(); drawMoney(); },
   bizDelUse: t => { const b = S.admin.biz; b.usage[t.dataset.k].splice(+t.dataset.j, 1); saveBiz(); drawMoney(); },
-  bizAddEquip: () => { const b = S.admin.biz; const n = (b.partners || []).length || 1; b.equipment = (b.equipment || []).concat([{ id: uid(), name: 'New equipment', cost: 0, date: ymd(new Date()), split: Array(n).fill(0) }]); saveBiz(); drawMoney(); },
+  bizAddEquip: () => { const b = S.admin.biz; b.equipment = (b.equipment || []).concat([{ id: uid(), name: 'Pin maker', cost: 0, date: ymd(new Date()) }]); saveBiz(); drawMoney(); },
   bizDelEquip: t => { if (!armed(t, 'Tap again')) return; S.admin.biz.equipment.splice(+t.dataset.i, 1); saveBiz('Removed.'); drawMoney(); },
   bizEven: t => { const b = S.admin.biz, e = b.equipment[+t.dataset.i], n = (b.partners || []).length || 1, each = Math.floor(e.cost / n * 100) / 100;
     e.split = Array(n).fill(each); e.split[n - 1] = Math.round((e.cost - each * (n - 1)) * 100) / 100; saveBiz('Split evenly.'); drawMoney(); },
@@ -4102,6 +4217,7 @@ const ACTIONS = {
         <button type="button" class="pilllink" data-act="savedGo" data-href="${esc(href)}">Yes, I saved it</button></div>`);
   },
   savedGo: t => { S.codeSaved = true; closeSheet(); location.hash = t.dataset.href || '#/'; },
+  prodMove: t => { const o = S.admin.prodOrder, i = o.indexOf(t.dataset.k), j = i + +t.dataset.d; if (i < 0 || j < 0 || j >= o.length) return; [o[i], o[j]] = [o[j], o[i]]; drawProducts(); },
   tgShow: () => { const i = $('#tgToken'); if (i) i.type = i.type === 'password' ? 'text' : 'password'; },
   tgFind: async t => {
     const tok = S.admin.tg.bot_token; if (!tok) return toast('Paste the bot token first.');
@@ -4154,7 +4270,7 @@ const ACTIONS = {
     try { await api.cancel(S.statusResult.code, S.statusNick); toast('Order cancelled.'); lookup(); } catch (e) { toast(friendlyError(e)); }
   },
   logout: async () => { await api.logout(); S.admin.cleaned = false; viewAdmin(); },
-  admTab: t => { S.admin.tab = t.dataset.tab; clearInterval(S.admin.poll); viewAdmin(); },
+  admTab: t => { const mainEl = document.querySelector('main'); if (mainEl) mainEl.classList.remove('wide'); S.admin.tab = t.dataset.tab; clearInterval(S.admin.poll); viewAdmin(); },
   admRefresh: () => { S.admin.urls = {}; adminLoad(); },
   admFilter: t => { if (t.dataset.f !== 'ready' && S.admin.pickupMode) { S.admin.pickupMode = false; keepAwake(false); } S.admin.filter = t.dataset.f; S.admin.rejecting = null; clearInterval(S.admin.poll); drawAdminBody().then(() => { if (S.admin.filter === 'ready') pollReady(); }); },
   aApprove: t => setStatus(t.dataset.id, { status: 'approved' }, 'Approved.'),
@@ -4207,7 +4323,7 @@ document.addEventListener('click', e => {
 (async function init(){
   if (!CONFIG.supabaseUrl || !CONFIG.supabaseAnonKey || !window.supabase) {
     $('#app').innerHTML = `<main id="main" class="wrap narrow" style="padding-top:60px"><div class="panel">
-      <span class="mark">Stick<b>2</b>XU</span>
+      <span class="mark">Stick<b>2</b>It</span>
       <h2 style="margin:16px 0 10px">${!window.supabase && CONFIG.supabaseUrl ? "Can't connect right now" : 'Not connected yet'}</h2>
       <p class="muted">${!window.supabase && CONFIG.supabaseUrl ? 'Check your internet connection and refresh the page.' : 'Add the Supabase URL and anon key to CONFIG at the top of index.html. See SETUP.md.'}</p></div></main>`;
     return;

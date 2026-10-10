@@ -1,4 +1,4 @@
-# Stick2XU setup
+# Stick2It setup
 
 This gets the site live: Supabase for the database, GitHub for the code, Vercel for hosting. Plan on about 30 minutes.
 
@@ -71,7 +71,7 @@ Prices, which products are available, extras (like inkjet), deals, promo codes, 
 cd stick2xu
 git init
 git add .
-git commit -m "Stick2XU"
+git commit -m "Stick2It"
 git branch -M main
 git remote add origin https://github.com/YOUR-USERNAME/stick2xu.git
 git push -u origin main
@@ -132,6 +132,13 @@ Do this on a phone using mobile data, not just on a laptop:
 If **Find my chat** shows nothing, send `/start` again in the group and retry. As a backup, open `https://api.telegram.org/bot<YOUR-TOKEN>/getUpdates` in a browser and copy the `"chat":{"id": ...}` number (group IDs start with a minus sign) into **Send alerts to**.
 
 ---
+
+## Changing the web address to Stick2It
+
+The site still lives at stick2xu.vercel.app until you rename it:
+1. In Vercel, open the project → **Settings** → **General** → change the **Project Name** to `stick2it` (if it's taken, try `stick2it-shop`). Vercel then gives the site the new address, like `stick2it.vercel.app`.
+2. In the admin page, open **Settings** → **Shop details** → **Website address**, type the new address, and save.
+3. Make **new poster QR codes** in admin (Poster QR codes tab), because the old ones point to the old address. Update the Facebook page link too.
 
 ## Troubleshooting
 

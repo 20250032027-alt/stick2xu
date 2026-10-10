@@ -1,6 +1,6 @@
-# Stick2XU
+# Stick2It
 
-Custom stickers, pins, posters, and keychains for XU students. Customers design on their phone, pick a pickup date, time, and gate, and get their order at school. Stick2XU is run by students and isn't an official XU service.
+Custom stickers, pins, posters, and keychains for XU students. Customers design on their phone, pick a pickup date, time, and gate, and get their order at school. Stick2It is run by students and isn't an official XU service.
 
 First time setting it up? See **SETUP.md**.
 
@@ -57,7 +57,7 @@ If two deals fit the same product, the customer gets the bigger one. Combos add 
 
 **Shop details:** pickup days, pickup times, pickup places (gates), earliest pickup, how many dates to offer, dates to skip (holidays and exams), grades in the dropdown, GCash on/off with name and number, per-design limits for pins/posters/keychains, how many pictures a customer can add, no-shows before blocking, how long pictures are kept, and the pin paper-circle and keychain insert sizes in mm.
 
-**Pickup signal:**, meaning what customers look for at the gate: "the person **holding / wearing** ___", like "holding a Stick2XU sign" or "wearing a yellow lanyard". Changes show up for customers right away.
+**Pickup signal:**, meaning what customers look for at the gate: "the person **holding / wearing** ___", like "holding a Stick2It sign" or "wearing a yellow lanyard". Changes show up for customers right away.
 
 ## Prints (plain paper)
 
@@ -112,21 +112,31 @@ So one person never has to be at two gates at once, and a day never gets more or
 
 The server enforces these rules, so two people ordering at the same moment can't both take the last spot. Customers moving their pickup follow the same rules. Change all three in Settings → Shop details → Pickup rules. The Orders tab has an **Upcoming pickups** box with the next pickup days, each time slot, its gate, and how many orders, so you can plan who goes where and how much to print the night before.
 
+## Product order
+
+Customers see products in this order: Stickers, Pins, Keychains, Posters, Prints. Change it in Settings → Products with the ▲ ▼ buttons, then Save. On phones, products show two to a row so customers see them all at a glance. An odd one out at the end (like Prints) gets a full row.
+
+## New name: Stick2It
+
+The site, PDFs, Telegram messages, calendar, and app icon name all say Stick2It now. The pickup signal changes to "a Stick2It sign" when you run schema.sql (unless you had already changed it). To change the web address too, see SETUP.md.
+
 ## Business tab (admin)
 
-- **Profit:** this week and so far. Profit = sales minus the supplies each picked-up order used.
-- **Paying back the equipment:** how much is left, how much profit a week you need to finish in your chosen number of weeks, and roughly how many sticker sheets or pins that is. Each partner's name, how much they put in, and how much of it has been paid back so far.
-- **Supplies:** pack price, how much is in a pack, cost per piece, stock, and when to warn you. Stock goes down by itself when you tap **Mark ready** on an order. If something drops to its warning level, you get a Telegram message (if Telegram alerts are on). Tap **Restock** after buying a pack: it adds to stock and logs the purchase.
-- **What each item costs to make:** which supplies one item uses and how much, with its selling price, cost, and profit. Every number is editable. Starting values come from what you paid (sticker paper ₱220/20, photo paper ₱50/20, glossy paper ₱180/20, pin parts ₱400/100, ink ₱1,500). **Ink "pages per bottle set" (600) is a guess**: once you know how many pages your ink really lasts, change it.
-- **Equipment:** things bought once (the pin maker, ₱2,000) and how each partner split it.
-- **Money in and out:** the plain cash view, everything earned minus everything spent, plus a list of purchases.
+A dashboard of the money side. On a computer it fits in about two screens. Everything saves by itself (the green "All changes saved" at the top).
+- **Profit:** this week and so far, and a chart of the last 8 weeks. Profit = sales minus the supplies each picked-up order used.
+- **Paying back what you put in:** each partner's name and how much they **put in** (₱700 each, ₱2,100 total). It shows how much is left, the profit a week you need to finish in your chosen number of weeks, roughly how many sticker sheets or pins that is, and how much each person has gotten back so far. Fully paid back gets a little celebration.
+- **Supplies:** pack price, how much is in a pack, cost per piece, stock, and when to warn you. Stock goes down by itself when you tap **Mark ready**, and you get a Telegram alert when something runs low. Tap **Restock** after buying a pack: it adds to stock and logs the purchase. Rows that need restocking (or a stock count) are highlighted. **Do a real inventory count** and type the actual stock and prices in.
+- **Money in and out:** the plain cash view, everything earned minus everything spent, with a list of purchases you can edit.
+- **Equipment:** a record of things bought once, like the pin maker.
+- **What each item costs to make** (folded, tap to open): which supplies one item uses. The header shows each item's profit at a glance. Hidden products are folded inside too. **Ink "pages per bottle set" (600) is a guess**: once you know how many pages your ink really lasts, change it.
+- **Which posters bring orders** (folded): orders by poster QR code.
 
 ## Seller's routine: from order to pickup
 
 1. **New order** (Telegram: "Order placed"). Open admin → **To review**. Check the design: nothing inappropriate, and pictures clear enough to print (the blur warnings help). Tap **Approve**, or **Reject** with a reason so the customer knows what to fix.
 2. **Wait for the customer to confirm** (Telegram: "Confirmed"). They tap "I'll be there" by the day before pickup. Unconfirmed orders are released by themselves, so nothing is printed for no-shows.
 3. **The night before pickup.** Check **Upcoming pickups** in the Orders tab to see which days, times, and gates have orders. In **To print**, tap **Download PDF** for each confirmed order (prints and PDF posters: use the file buttons). Print, cut, and assemble (big posters: cut at the marks, glue the strips). Tap **Mark ready**: supplies come off stock automatically, and you get a Telegram alert if something runs low. Put each order in a bag with its **code and full name** written on it.
-4. **Pickup.** Bring the bags, change, and the signal ("a Stick2XU sign"). At the gate, open the **Ready** list and tap **Start pickup mode**. When someone taps "I'm here" (Telegram: "Arrived"), match their **code**, **full name**, and **school ID**. Take payment (GCash: check it arrived in your own GCash app), hand over the bag, and tap **Picked up and paid**.
+4. **Pickup.** Bring the bags, change, and the signal ("a Stick2It sign"). At the gate, open the **Ready** list and tap **Start pickup mode**. When someone taps "I'm here" (Telegram: "Arrived"), match their **code**, **full name**, and **school ID**. Take payment (GCash: check it arrived in your own GCash app), hand over the bag, and tap **Picked up and paid**.
 5. **Didn't show up?** Tap **Didn't show up**: the order moves to the next pickup day. If they miss that too, tap **Didn't show up again** to forfeit it (it counts as a strike).
 6. **After.** Check the **Business** tab for profit and restocking. Send back any GCash refunds it lists, and tap **Mark refunded**.
 

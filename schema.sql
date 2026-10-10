@@ -1,5 +1,5 @@
 -- =====================================================================
--- Stick2XU: run this whole file in Supabase → SQL Editor.
+-- Stick2It: run this whole file in Supabase → SQL Editor.
 -- It's safe to run again after updates; it only adds what's missing.
 -- Then add the admin's email at the bottom (see STEP AT THE END).
 -- =====================================================================
@@ -14,7 +14,7 @@ create table if not exists public.shop_settings (
   max_noshows int not null default 2
 );
 alter table public.shop_settings add column if not exists signal_verb text not null default 'holding';
-alter table public.shop_settings add column if not exists signal_item text not null default 'a Stick2XU sign';
+alter table public.shop_settings add column if not exists signal_item text not null default 'a Stick2It sign';
 alter table public.shop_settings add column if not exists products jsonb not null default '{
   "stickers":  {"enabled": true,  "sizes": [{"id": "a4", "price": 50, "enabled": true}],
                 "addons": [{"id": "inkjet", "label": "Inkjet print", "note": "brighter, more vivid colors", "price": 30, "enabled": true}]},
@@ -30,6 +30,8 @@ alter table public.shop_settings add column if not exists deals jsonb not null d
 -- Shop details edited in admin → Settings (pickup schedule, gates, GCash, limits, sizes)
 alter table public.shop_settings add column if not exists config jsonb not null default '{}'::jsonb;
 insert into public.shop_settings (id) values (1) on conflict do nothing;
+-- New name: the pickup signal follows it, unless you changed it yourself
+update public.shop_settings set signal_item = 'a Stick2It sign' where id = 1 and signal_item = 'a Stick2XU sign';
 -- New prices: stickers ₱45 a sheet, A4 posters ₱50 (only changes them if still at the old starting price)
 update public.shop_settings set products = jsonb_set(products, '{stickers,sizes,0,price}', '45')
   where id = 1 and products->'stickers'->'sizes'->0->>'price' = '50';
@@ -577,7 +579,7 @@ language plpgsql security definer set search_path = public as $$
 begin
   if not public.is_admin() then raise exception 'NOT_ADMIN'; end if;
   if not exists (select 1 from pg_extension where extname = 'pg_net') then raise exception 'NO_PGNET'; end if;
-  perform public.tg_send('<b>Stick2XU is connected.</b>' || E'\n' || 'Order alerts will be sent to this chat.', true);
+  perform public.tg_send('<b>Stick2It is connected.</b>' || E'\n' || 'Order alerts will be sent to this chat.', true);
   return 'sent';
 end $$;
 grant execute on function public.telegram_test() to authenticated;
