@@ -121,6 +121,21 @@ The server enforces these rules, so two people ordering at the same moment can't
 - **Equipment:** things bought once (the pin maker, ₱2,000) and how each partner split it.
 - **Money in and out:** the plain cash view, everything earned minus everything spent, plus a list of purchases.
 
+## Seller's routine: from order to pickup
+
+1. **New order** (Telegram: "Order placed"). Open admin → **To review**. Check the design: nothing inappropriate, and pictures clear enough to print (the blur warnings help). Tap **Approve**, or **Reject** with a reason so the customer knows what to fix.
+2. **Wait for the customer to confirm** (Telegram: "Confirmed"). They tap "I'll be there" by the day before pickup. Unconfirmed orders are released by themselves, so nothing is printed for no-shows.
+3. **The night before pickup.** Check **Upcoming pickups** in the Orders tab to see which days, times, and gates have orders. In **To print**, tap **Download PDF** for each confirmed order (prints and PDF posters: use the file buttons). Print, cut, and assemble (big posters: cut at the marks, glue the strips). Tap **Mark ready**: supplies come off stock automatically, and you get a Telegram alert if something runs low. Put each order in a bag with its **code and full name** written on it.
+4. **Pickup.** Bring the bags, change, and the signal ("a Stick2XU sign"). At the gate, open the **Ready** list and tap **Start pickup mode**. When someone taps "I'm here" (Telegram: "Arrived"), match their **code**, **full name**, and **school ID**. Take payment (GCash: check it arrived in your own GCash app), hand over the bag, and tap **Picked up and paid**.
+5. **Didn't show up?** Tap **Didn't show up**: the order moves to the next pickup day. If they miss that too, tap **Didn't show up again** to forfeit it (it counts as a strike).
+6. **After.** Check the **Business** tab for profit and restocking. Send back any GCash refunds it lists, and tap **Mark refunded**.
+
+## Customer names
+
+Checkout asks for the customer's **full name, as on their school ID**, and tells them to bring their ID. That's how you match orders at pickup. To look up their order, the order code plus their first name is enough. Names are only seen by the sellers (admin page and Telegram), and are deleted with the pictures after the cleanup period.
+
+After ordering, customers see a big **Save your code** box with **Save as picture** (a pickup pass image for their Photos) and **Copy code**. If they try to leave without saving, it asks once.
+
 ## Pickup and handoff rules
 
 - **Confirm before printing.** Customers tap **"I'll be there"** in My order by the day before pickup (change this in Settings → Shop details → Pickup rules). Only print orders tagged **Confirmed**; the button on unconfirmed ones says "Print anyway" and needs two taps. Unconfirmed orders are released automatically after their confirm-by day (they show as "Not confirmed in time"), with no strike and nothing to pay.

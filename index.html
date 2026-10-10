@@ -887,6 +887,23 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .upcslot > span:first-child{color:var(--muted);font-size:12.5px;font-weight:700}
 .upcslot.clash{background:#FFF4DC}
 .upcslot small{display:flex;gap:4px;align-items:center;color:#8A5E00;font-weight:700}
+
+/* save your code; crossed-out pass; pop-up sheet */
+.savecode{margin:6px 0 18px;padding:16px;border:2px solid var(--ink);border-radius:var(--r-lg);background:linear-gradient(160deg,#FFF4DC,#fff 75%);box-shadow:var(--shadow)}
+.sc-top{display:flex;gap:10px;align-items:flex-start}
+.sc-top svg{flex:none;color:#C9951A;margin-top:2px}
+.sc-top b{display:block;font-family:var(--display);font-size:20px}
+.sc-top span{color:var(--muted);font-size:14px}
+.sc-code{font-family:var(--display);font-weight:800;font-size:clamp(38px,11vw,56px);letter-spacing:.04em;text-align:center;margin:10px 0;user-select:all}
+.sc-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.pass{position:relative}
+.pass.void{filter:grayscale(1);opacity:.7}
+.pass.void .code{text-decoration:line-through;text-decoration-thickness:3px}
+.stamp{position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-10deg);border:3px solid #B4232A;color:#B4232A;font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:.06em;text-transform:uppercase;padding:4px 14px;border-radius:10px;background:rgba(255,255,255,.85)}
+.voidnote{display:flex;gap:6px;align-items:center;justify-content:center;margin:8px 0 0;color:#B4232A;font-weight:700;font-size:14px}
+.sheetbg{position:fixed;inset:0;z-index:70;background:rgba(20,28,58,.55);display:grid;place-items:center;padding:16px;animation:pagein .25s var(--ease) both}
+.sheetbox{background:#fff;border:2px solid var(--ink);border-radius:var(--r-lg);padding:18px;max-width:440px;width:100%;max-height:92svh;overflow:auto;box-shadow:var(--shadow)}
+.passimg{display:block;width:100%;border-radius:14px;border:1px solid var(--line);-webkit-touch-callout:default}
 </style>
 </head>
 <body>
@@ -1140,6 +1157,33 @@ function saveCardHTML(){
     <div class="sc-tx"><b>Save Stick2XU for later</b><span>Checking your order becomes one tap. </span><span class="sc-how">${how}</span></div>
     <div class="sc-act">${smallBtn('Add to home screen', 'plus', 'installApp', 'dark sc-install')}${smallBtn('Not now', '', 'saveHide', 'plain')}</div></div>`;
 }
+/* A picture of the pickup pass, to keep in Photos */
+function passPicture(o){
+  const W = 1080, H = 1350, c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
+  const font = (w, sz) => `${w} ${sz}px 'Cabinet Grotesk', 'Satoshi', system-ui, sans-serif`;
+  x.fillStyle = '#283971'; x.fillRect(0, 0, W, H);
+  x.fillStyle = '#F2BC2E'; x.font = font(800, 64); x.textAlign = 'center'; x.fillText('Stick2XU', W / 2, 150);
+  const rr = (X, Y, w, h, r) => { x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + w, Y, X + w, Y + h, r); x.arcTo(X + w, Y + h, X, Y + h, r); x.arcTo(X, Y + h, X, Y, r); x.arcTo(X, Y, X + w, Y, r); x.closePath(); };
+  rr(90, 220, W - 180, 900, 48); x.fillStyle = '#fff'; x.fill();
+  x.fillStyle = '#FFF4DC'; rr(90, 220, W - 180, 220, 48); x.fill(); x.fillRect(90, 380, W - 180, 60);
+  x.fillStyle = '#283971'; x.textAlign = 'center';
+  x.font = font(800, 40); x.fillText('PICKUP PASS', W / 2, 300);
+  x.font = font(700, 52); x.fillText(o.pickup_date ? fmtDate(o.pickup_date, { weekday: 'long', month: 'long', day: 'numeric' }) : '', W / 2, 390);
+  x.font = font(800, 150); x.fillText(o.code, W / 2, 620);
+  x.font = font(700, 52); x.fillText(String(o.nickname || '').slice(0, 30), W / 2, 740);
+  x.fillStyle = '#5A6488'; x.font = font(600, 42); x.fillText(o.section || '', W / 2, 805);
+  x.fillStyle = '#283971'; x.font = font(700, 44); x.fillText(`${o.pickup}${o.pickup_time ? ', ' + o.pickup_time : ''}`, W / 2, 920);
+  x.fillStyle = '#5A6488'; x.font = font(600, 36); x.fillText(`Bring ${money(o.total)} and your school ID`, W / 2, 1000);
+  x.fillStyle = '#fff'; x.font = font(600, 34); x.fillText('Show this at pickup. Check your order at', W / 2, 1200); x.fillText(location.host || 'stick2xu.vercel.app', W / 2, 1250);
+  return c.toDataURL('image/png');
+}
+function showSheet(html){
+  closeSheet(); const d = document.createElement('div'); d.className = 'sheetbg'; d.id = 'sheet';
+  d.innerHTML = `<div class="sheetbox" role="dialog" aria-modal="true">${html}</div>`;
+  d.addEventListener('click', e => { if (e.target === d) closeSheet(); });
+  document.body.appendChild(d);
+}
+function closeSheet(){ const d = $('#sheet'); if (d) d.remove(); }
 let toastTimer;
 function toast(msg, undo){
   const t = $('#toast');
@@ -2626,8 +2670,9 @@ function viewCheckout(){
       <p class="muted">Tell us who you are and when you'll pick it up.</p>
       <ul class="clines">${S.cart.map(it => `<li><span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `<small>${esc(itemDetails(it))}</small>` : ''}</span><b class="num">${money(itemTotal(it))}</b></li>`).join('')}</ul>
 
-      <div class="field"><label class="lab" for="nick">Nickname <span class="req">*</span></label>
-        <input class="inp" id="nick" maxlength="24" autocomplete="nickname" value="${esc(me.nickname || '')}" aria-describedby="e-nick">
+      <div class="field"><label class="lab" for="nick">Full name <span class="req">*</span></label>
+        <input class="inp" id="nick" maxlength="60" autocomplete="name" placeholder="Juan Dela Cruz" value="${esc(me.nickname || '')}" aria-describedby="e-nick e-nickhelp">
+        <p class="help" id="e-nickhelp">${ic('school', 14)} As on your school ID. This is how we find your order at pickup, so bring your ID.</p>
         <p class="ferr" id="e-nick" role="alert"></p></div>
       <div class="field"><span class="lab" id="l-gs">Grade and section <span class="req">*</span></span>
         <div class="gs" role="group" aria-labelledby="l-gs">
@@ -2678,6 +2723,7 @@ function viewCheckout(){
         </ul>
       </div>
       <label class="choice"><input type="checkbox" id="promise"><span id="promiseTxt"></span></label>
+      <p class="help" style="margin:8px 0 0">${ic('check', 14)} Next, you'll get an order code like <b>STK-7KQ4</b>. Save it: you need it with your name to check, confirm, and pick up.</p>
       <p class="ferr" id="e-promise" role="alert"></p>
       <div class="field" style="margin:18px 0 0"><label class="lab" for="promo">Promo code <span class="muted small" style="font-weight:500">(if you have one)</span></label>
         <div class="qrrow promorow"><input class="inp" id="promo" maxlength="20" autocapitalize="characters" autocomplete="off" value="${esc(S.promo ? S.promo.code : '')}" style="text-transform:uppercase">
@@ -2750,7 +2796,7 @@ function validate(all){
   const form = $('#orderForm'); if (!form) return false;
   const nick = $('#nick').value.trim(), sec = $('#sec').value.trim(), grade = $('#grade').value, other = radio(form, 'pickup') === '__other';
   let ok = true;
-  if (all || nick) ok = setErr('nick', 'e-nick', nick.length < 2 ? 'Type your nickname, at least 2 letters.' : '') && ok;
+  if (all || nick) ok = setErr('nick', 'e-nick', nick.length < 2 ? 'Type your full name.' : !/\S+\s+\S+/.test(nick) ? 'Type your first and last name, as on your school ID.' : '') && ok;
   if (all || sec || grade) {
     const msg = !grade && sec.length < 2 ? 'Pick your grade and type your section.' : !grade ? 'Pick your grade.' : sec.length < 2 ? 'Type your section.' : '';
     ok = setErr('sec', 'e-sec', msg) && ok;
@@ -2782,7 +2828,7 @@ async function submitOrder(e){
     const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: SRC, promo: S.promo && sum.total >= S.promo.min_total ? S.promo.code : null, images: uploads, items: S.cart });
     S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal };
     S.promo = null;
-    S.celebrate = true; buzz([12, 40, 18]);
+    S.celebrate = true; S.codeSaved = false; buzz([12, 40, 18]);
     safeLS.set('sk_me', JSON.stringify({ nickname, section }));
     safeLS.set('sk_last', JSON.stringify(S.lastOrder));
     S.images.forEach(i => revoke(i.url)); stickerCache.clear();
@@ -2797,9 +2843,9 @@ async function submitOrder(e){
 /* =====================================================================
    Done + status
    ===================================================================== */
-function passHTML(o){
+function passHTML(o, stamp){
   const d = o.pickup_date;
-  return `<div class="pass">
+  return `<div class="pass ${stamp ? 'void' : ''}">${stamp ? `<span class="stamp">${esc(stamp)}</span>` : ''}
     <div class="side">${d ? `<span class="m">${fmtDate(d, { weekday: 'short' })}</span><span class="dd">${parseYmd(d).getDate()}</span><span class="m">${fmtDate(d, { month: 'short' })}</span>` : ic('box', 40)}</div>
     <div class="body"><div class="k">Pickup pass</div><div class="code">${esc(o.code)}</div>
       <div class="who">${esc(o.nickname)}${o.section ? ', ' + esc(o.section) : ''}</div>
@@ -2822,7 +2868,22 @@ function icsFor(o){
       `DTSTART:${confirmBy(o).replace(/-/g, '')}T180000`, `DTEND:${confirmBy(o).replace(/-/g, '')}T181500`,
       `SUMMARY:Confirm your Stick2XU order ${o.code}`, `DESCRIPTION:Open My order and tap I'll be there so it gets printed.`, 'END:VEVENT'] : []),
     'END:VCALENDAR'];
-  return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(lines.join('\r\n'));
+  return lines.join('\r\n');
+}
+/* iPhone Safari ignores download links, but opens a calendar file it navigates to (it shows "Add to Calendar") */
+function addToCalendar(o){
+  const ics = icsFor(o); if (!ics) return;
+  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
+  if (isIOS()) { location.href = url; }
+  else { const a = document.createElement('a'); a.href = url; a.download = `stick2xu-pickup-${o.code}.ics`; document.body.appendChild(a); a.click(); a.remove(); }
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+function googleCalUrl(o){
+  const m = String(o.pickup_time || '').match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  const h = m ? +m[1] % 12 + (/pm/i.test(m[3]) ? 12 : 0) : 12, mi = m ? +m[2] : 0, d = o.pickup_date.replace(/-/g, ''), end = h * 60 + mi + 30;
+  const q = new URLSearchParams({ action: 'TEMPLATE', text: `Pick up Stick2XU order ${o.code}`, dates: `${d}T${pad2(h)}${pad2(mi)}00/${d}T${pad2(Math.floor(end / 60))}${pad2(end % 60)}00`,
+    details: `Look for ${signal()}. Tap I'm here in My order when you arrive. Your code: ${o.code}`, location: `${o.pickup} (inside campus)`, ctz: 'Asia/Manila' });
+  return 'https://calendar.google.com/calendar/render?' + q;
 }
 function viewDone(){
   const o = S.lastOrder || readJSON('sk_last');
@@ -2830,7 +2891,13 @@ function viewDone(){
   if (S.celebrate) { S.celebrate = false; setTimeout(confetti, 150); }
   const gcash = o.payment === 'gcash';
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">${progress(3)}
-    <h2 style="margin:4px 0 6px">You're all set.</h2><p class="muted" style="margin-bottom:18px">Take a screenshot so you have your code handy.</p>
+    <h2 style="margin:4px 0 6px">You're all set.</h2>
+    <section class="savecode" aria-labelledby="sch">
+      <div class="sc-top">${ic('warn', 22)}<div><b id="sch">Save your code now</b><span>You need it, with your name, to check, confirm, and pick up your order. If you lose it, we can't look it up for you.</span></div></div>
+      <div class="sc-code num">${esc(o.code)}</div>
+      <div class="sc-btns">${btn('Save as picture', { act: 'savePass', icon: 'download', cls: 'dark' })}<button type="button" class="pilllink" data-act="copyCode">${ic('check', 16)}Copy code</button></div>
+      <p class="help" style="margin:8px 0 0">Or take a screenshot of your pickup pass below.</p>
+    </section>
     ${passHTML(o)}
     ${saveCardHTML()}
     <section class="panel" style="margin-top:22px">
@@ -2851,11 +2918,11 @@ function viewDone(){
       <div class="notes">
         <p>${ic('school', 20)}<span><b>Inside campus only.</b> Never meet anyone outside school for your order.</span></p>
         <p>${ic('clock', 20)}<span><b>Can't make it?</b> Cancel in "My order" before it gets printed.</span></p>
-        <p>${ic('lock', 20)}<span>We only keep your nickname and section. Your pictures are deleted ${CONFIG.cleanupDays} days after your order is done.</span></p>
+        <p>${ic('lock', 20)}<span>We only keep your name and section, and only the sellers see them. Your pictures are deleted ${CONFIG.cleanupDays} days after your order is done.</span></p>
       </div>
-      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:22px">${btn('Check my order', { href: '#/status', cls: 'dark' })}
-        ${icsFor(o) ? `<a class="pilllink" href="${icsFor(o)}" download="stick2xu-pickup-${esc(o.code)}.ics">${ic('calendar', 18)}Add to calendar</a>` : ''}
-        <a class="pilllink" href="#/">Back to start</a></div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:22px">${btn('Check my order', { act: 'leaveDone', cls: 'dark', attrs: 'data-href="#/status"' })}
+        ${o.pickup_date ? `<button type="button" class="pilllink" data-act="calAdd">${ic('calendar', 18)}Add to calendar</button><a class="pilllink" href="${esc(googleCalUrl(o))}" target="_blank" rel="noopener">${ic('calendar', 18)}Google Calendar</a>` : ''}
+        <button type="button" class="pilllink" data-act="leaveDone" data-href="#/">Back to start</button></div>
     </section></main>`;
 }
 
@@ -2871,7 +2938,7 @@ function viewStatus(){
       <h2 style="margin-bottom:18px">Check my order</h2>
       <div class="field"><label class="lab" for="lc">Order code</label><input class="inp" id="lc" value="${esc(last.code || '')}" autocapitalize="characters" autocomplete="off" aria-describedby="h-lc">
         <p class="help" id="h-lc">It starts with STK, like STK-7KQ4. It's on your pickup pass.</p></div>
-      <div class="field"><label class="lab" for="ln">Nickname</label><input class="inp" id="ln" value="${esc(last.nickname || '')}"></div>
+      <div class="field"><label class="lab" for="ln">Your name</label><input class="inp" id="ln" autocomplete="name" value="${esc(last.nickname || '')}"><p class="help">Your first name is enough.</p></div>
       ${btn('Find my order', { type: 'submit', cls: 'wide dark', icon: 'search' })}
       <div class="formerr" id="lookErr" role="alert"></div>
     </form>
@@ -2901,7 +2968,8 @@ function drawStatus(){
       ${btn("I'll be there", { act: 'confirmComing', icon: 'thumb', cls: 'wide' })}</div>`;
   else if (active && o.confirmed && o.status !== 'ready') confirmBox = `<p class="okline">${ic('check', 16)}You confirmed. We'll print it and see you on ${esc(short(o.pickup_date))}.</p>`;
   const missedBox = o.status === 'ready' && o.missed ? `<div class="note warn">${ic('calendar', 18)}<span><b>You missed your pickup.</b> We're holding your order until ${esc(short(o.pickup_date))}. If you miss this one too, it's forfeited.</span></div>` : '';
-  $('#statusOut').innerHTML = `${passHTML(o)}
+  const voidStamp = lapsed ? 'Released' : ({ cancelled: 'Cancelled', rejected: 'Not approved', noshow: 'Forfeited', done: 'Picked up' })[o.status] || '';
+  $('#statusOut').innerHTML = `${passHTML(o, voidStamp)}${voidStamp && o.status !== 'done' ? `<p class="voidnote">${ic('x', 16)}This pickup pass is no longer valid.</p>` : ''}
     <div class="panel" style="margin-top:22px">
       <div class="stmsg"><span class="ic">${ic(lapsed ? 'clock' : icon, 24)}</span>${esc(lapsed ? 'Released' : msg)}</div>
       ${at >= 0 && !lapsed ? `<div class="track">${flow.map((s, i) => `<div class="${i <= at ? 'on' : ''} ${i === at ? 'now' : ''}"><i></i>${lbl[s]}</div>`).join('')}</div>` : ''}
@@ -2922,7 +2990,7 @@ function drawStatus(){
         ${canMove && !S.moving ? smallBtn('Change pickup day', 'calendar', 'moveOpen', 'plain') : ''}
         ${['pending','approved'].includes(o.status) && !lapsed ? smallBtn('Cancel my order', 'x', 'cancelOrder', 'plain') : ''}
       </div>
-      ${saveCardHTML() ? `<div style="margin-top:18px">${saveCardHTML()}</div>` : ''}
+      ${active && !lapsed && saveCardHTML() ? `<div style="margin-top:18px">${saveCardHTML()}</div>` : ''}
       ${active && !lapsed ? `<p class="help" style="margin-top:10px">${(o.reschedules || 0) >= CONFIG.maxReschedules ? "You've already changed your pickup day the most times allowed. Talk to the seller if you need to move it again." : `You can change your pickup day ${CONFIG.maxReschedules - (o.reschedules || 0)} more time${CONFIG.maxReschedules - (o.reschedules || 0) === 1 ? '' : 's'}.`}</p>` : ''}
     </div>`;
   const mf = $('#moveForm');
@@ -4009,6 +4077,31 @@ const ACTIONS = {
   installApp: async () => { if (!installEvt) return; installEvt.prompt(); const r = await installEvt.userChoice.catch(() => null); installEvt = null;
     if (r && r.outcome === 'accepted') { safeLS.set('sk_save_hide', '1'); document.querySelectorAll('.savecard').forEach(c => c.remove()); toast('Saved to your home screen.'); } },
   saveHide: () => { safeLS.set('sk_save_hide', '1'); document.querySelectorAll('.savecard').forEach(c => c.remove()); },
+  calAdd: () => { const o = S.lastOrder || readJSON('sk_last'); if (o) addToCalendar(o); },
+  copyCode: async () => {
+    const o = S.lastOrder || readJSON('sk_last'); if (!o) return;
+    try { await navigator.clipboard.writeText(o.code); } catch { const t = document.createElement('textarea'); t.value = o.code; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch {} t.remove(); }
+    S.codeSaved = true; buzz(8); toast(`Copied ${o.code}. Paste it somewhere you'll find it, like your notes.`);
+  },
+  savePass: () => {
+    const o = S.lastOrder || readJSON('sk_last'); if (!o) return;
+    const url = passPicture(o); S.codeSaved = true;
+    showSheet(`<h3 style="margin-bottom:6px">Your pickup pass</h3>
+      <p class="help" style="margin-bottom:12px">${isIOS() || /android/i.test(navigator.userAgent) ? '<b>Press and hold the picture</b>, then tap <b>Save to Photos</b> (or <b>Download image</b>).' : 'Download it, or right-click and save it.'}</p>
+      <img src="${url}" alt="Pickup pass ${esc(o.code)}" class="passimg">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><a class="btn dark" href="${url}" download="stick2xu-${esc(o.code)}.png">${ic('download', 18)}Download</a>
+        <button type="button" class="pilllink" data-act="sheetClose">Done</button></div>`);
+  },
+  sheetClose: () => closeSheet(),
+  leaveDone: t => {
+    const href = t.dataset.href || '#/', o = S.lastOrder || readJSON('sk_last');
+    if (S.codeSaved || !o) { location.hash = href; return; }
+    showSheet(`<h3 style="margin-bottom:6px">Did you save your code?</h3>
+      <p style="margin:0 0 10px">You need <b class="num">${esc(o.code)}</b> and your name to check, confirm, or pick up your order.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">${btn('Save as picture', { act: 'savePass', icon: 'download', cls: 'dark' })}
+        <button type="button" class="pilllink" data-act="savedGo" data-href="${esc(href)}">Yes, I saved it</button></div>`);
+  },
+  savedGo: t => { S.codeSaved = true; closeSheet(); location.hash = t.dataset.href || '#/'; },
   tgShow: () => { const i = $('#tgToken'); if (i) i.type = i.type === 'password' ? 'text' : 'password'; },
   tgFind: async t => {
     const tok = S.admin.tg.bot_token; if (!tok) return toast('Paste the bot token first.');

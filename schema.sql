@@ -105,6 +105,14 @@ create table if not exists public.promo_codes (
 create or replace function public.norm_text(t text) returns text
 language sql immutable as $$ select lower(regexp_replace(trim(coalesce(t,'')), '\s+', ' ', 'g')) $$;
 
+-- Order lookups: the full name, or just the first name, both work (any capitals or spacing)
+create or replace function public.name_match(stored text, given text) returns boolean
+language sql immutable as $$
+  select public.norm_text(stored) = public.norm_text(given)
+      or (position(' ' in public.norm_text(given)) = 0 and length(public.norm_text(given)) >= 2
+          and split_part(public.norm_text(stored), ' ', 1) = public.norm_text(given))
+$$;
+
 create index if not exists orders_person_idx on public.orders (public.norm_text(nickname), public.norm_text(grade_section));
 create index if not exists orders_status_idx on public.orders (status);
 
@@ -218,7 +226,7 @@ declare
 begin
   select * into s from public.shop_settings where id = 1;
 
-  if length(v_nick) < 2 or length(v_nick) > 24
+  if length(v_nick) < 2 or length(v_nick) > 60
      or length(v_sec) < 2 or length(v_sec) > 30
      or length(trim(coalesce(p_pickup,''))) < 3 or length(p_pickup) > 120
      or p_payment not in ('cash','gcash')
@@ -410,7 +418,7 @@ language sql stable security definer set search_path = public as $$
     'payment', payment, 'total', total, 'sheet_count', sheet_count, 'reject_reason', reject_reason,
     'confirmed', confirmed, 'paid', paid, 'missed', missed, 'reschedules', reschedules, 'created_at', created_at)
   from public.orders
-  where code = upper(trim(p_code)) and public.norm_text(nickname) = public.norm_text(p_nickname)
+  where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname)
   limit 1;
 $$;
 
@@ -419,7 +427,7 @@ create or replace function public.confirm_order(p_code text, p_nickname text) re
 language plpgsql security definer set search_path = public as $$
 begin
   update public.orders set confirmed = true
-  where code = upper(trim(p_code)) and public.norm_text(nickname) = public.norm_text(p_nickname)
+  where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname)
     and status in ('pending','approved','printing','ready');
   return found;
 end $$;
@@ -438,11 +446,11 @@ begin
      or length(trim(coalesce(p_time, ''))) < 3 or length(p_time) > 40 then
     raise exception 'BAD_DATE';
   end if;
-  select pickup into v_pick from public.orders where code = upper(trim(p_code)) and public.norm_text(nickname) = public.norm_text(p_nickname);
+  select pickup into v_pick from public.orders where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname);
   if v_pick is not null then perform public.check_pickup(p_date, p_time, v_pick, upper(trim(p_code))); end if;
   update public.orders
      set pickup_date = p_date, pickup_time = trim(p_time), reschedules = reschedules + 1, arrived_at = null, confirmed = true
-   where code = upper(trim(p_code)) and public.norm_text(nickname) = public.norm_text(p_nickname)
+   where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname)
      and status in ('pending','approved','printing','ready') and reschedules < v_max;
   if not found then raise exception 'NO_RESCHEDULE'; end if;
   return true;
@@ -453,7 +461,7 @@ create or replace function public.cancel_order(p_code text, p_nickname text) ret
 language plpgsql security definer set search_path = public as $$
 begin
   update public.orders set status = 'cancelled'
-  where code = upper(trim(p_code)) and public.norm_text(nickname) = public.norm_text(p_nickname)
+  where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname)
     and status in ('pending','approved');
   return found;
 end $$;
@@ -463,7 +471,7 @@ create or replace function public.mark_arrived(p_code text, p_nickname text) ret
 language plpgsql security definer set search_path = public as $$
 begin
   update public.orders set arrived_at = now()
-  where code = upper(trim(p_code)) and public.norm_text(nickname) = public.norm_text(p_nickname)
+  where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname)
     and status = 'ready';
   return found;
 end $$;
