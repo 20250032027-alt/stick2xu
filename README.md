@@ -143,7 +143,12 @@ The name field shows a small **student ID preview** that fills in as they type, 
 
 ## Countdowns on the home page
 
-Small chips like "73 days to Christmas" under the home page buttons: a reason to visit even when people aren't ordering. The next three upcoming ones show. Edit them in Settings → Shop details → Countdowns: name, date, and **Every year** for holidays. Set **Last day of classes** each school year.
+A small pill above the home page headline, like "72 days to Christmas · Make something for it →": a reason to visit even when people aren't ordering. Only the next upcoming countdown shows. Edit them in Settings → Shop details → Countdowns:
+- **Show a countdown on the home page:** turns the whole thing on or off.
+- **Show** (each row): turns one countdown on or off.
+- **Repeats every year:** for holidays, so they roll over to next year by themselves.
+
+Set **Last day of classes** each school year (it stays hidden until it has a date).
 
 ## Seller's routine: from order to pickup
 

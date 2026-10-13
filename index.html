@@ -1080,17 +1080,20 @@ details.gtk ul{margin-top:10px}
 #lookForm:not(.found) #lookBar{display:none}
 .odetails{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
 .odetails summary{cursor:pointer;font-weight:700;color:var(--muted);font-size:14px}
-/* countdowns */
-.cdown{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch;margin:18px 0 0}
-.cd{display:flex;gap:8px;align-items:center;padding:8px 12px;border:1.5px solid var(--line);border-radius:14px;background:#fff;animation:cdin .5s var(--ease) both;animation-delay:calc(var(--i) * 90ms)}
-.cd.next{border-color:var(--ink);background:var(--gold-soft);box-shadow:var(--shadow-sm)}
-.cd-n{font-family:var(--display);font-weight:800;font-size:26px;line-height:1;color:var(--ink);display:grid;place-items:center}
-.cd span{display:grid;line-height:1.15;font-size:13.5px}
-.cd span small{font-size:11px;color:var(--muted)}
-.cd-cta{align-self:center;display:inline-flex;gap:6px;align-items:center;font-size:13.5px;font-weight:700;color:var(--accent);text-decoration:none;padding:6px 4px}
 @keyframes cdin{from{opacity:0;transform:translateY(6px)}}
-.cdrow{display:grid;grid-template-columns:minmax(0,1fr) 160px auto auto;gap:8px;align-items:center;margin-bottom:8px}
-@media(max-width:600px){.cdrow{grid-template-columns:1fr 1fr}}
+.cdrow{display:grid;grid-template-columns:auto minmax(0,1fr) 160px auto auto;gap:10px;align-items:center;margin-bottom:8px}
+.cdrow.off .inp,.cdrow.off .yearly{opacity:.45}
+.yearly{display:inline-flex;gap:6px;align-items:center;font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap}
+.yearly input{width:16px;height:16px;accent-color:var(--accent)}
+@media(max-width:700px){.cdrow{grid-template-columns:auto 1fr}.cdrow > input[type=date]{grid-column:2}.cdrow .yearly{grid-column:2}}
+
+/* countdown pill above the headline */
+.cdpill{display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 14px;padding:7px 14px;border:1.5px solid var(--ink);border-radius:999px;background:var(--gold-soft);color:var(--ink);text-decoration:none;font-size:14.5px;box-shadow:var(--shadow-sm);animation:cdin .5s var(--ease) both}
+.cdpill > svg{color:var(--accent);flex:none}
+.cdpill b.num{font-family:var(--display);font-size:17px}
+.cdgo{display:inline-flex;gap:4px;align-items:center;color:var(--accent);font-weight:700;font-size:13.5px;padding-left:8px;border-left:1px solid rgba(40,57,113,.2)}
+.cdpill:hover .cdgo svg{transform:translateX(2px)}
+.cdgo svg{transition:transform .2s var(--ease)}
 </style>
 </head>
 <body>
@@ -1559,6 +1562,7 @@ function applyShopConfig(c){
   CONFIG.referralFriendOff = Math.max(0, numOr(c.referral_friend_off, D.referralFriendOff));
   CONFIG.referralReward = Math.max(0, numOr(c.referral_reward, D.referralReward));
   CONFIG.countdowns = Array.isArray(c.countdowns) ? c.countdowns : D.countdowns;
+  CONFIG.countdownsOn = typeof c.countdowns_on === 'boolean' ? c.countdowns_on : true;
   CONFIG.sellersAtPickup = Math.max(0, numOr(c.sellers_at_pickup, D.sellersAtPickup));
   CONFIG.maxPerSlot = Math.max(0, numOr(c.max_per_slot, D.maxPerSlot));
   CONFIG.maxPerDay = Math.max(0, numOr(c.max_per_day, D.maxPerDay));
@@ -1944,18 +1948,17 @@ function heroArt(){
 /* The next few countdowns (yearly ones roll over to next year) */
 function upcomingCountdowns(max = 3){
   const today = new Date(); today.setHours(0, 0, 0, 0);
-  return (CONFIG.countdowns || []).filter(x => x && x.name && /^\d{4}-\d{2}-\d{2}$/.test(x.date || '')).map(x => {
+  if (CONFIG.countdownsOn === false) return [];
+  return (CONFIG.countdowns || []).filter(x => x && x.show !== false && x.name && /^\d{4}-\d{2}-\d{2}$/.test(x.date || '')).map(x => {
     let d = parseYmd(x.date);
     if (x.yearly) { d = new Date(today.getFullYear(), d.getMonth(), d.getDate()); if (d < today) d.setFullYear(d.getFullYear() + 1); }
     return { name: x.name, days: Math.round((d - today) / 864e5) };
   }).filter(x => x.days >= 0 && x.days <= 366).sort((a, b) => a.days - b.days).slice(0, max);
 }
 function countdownHTML(){
-  const list = upcomingCountdowns(); if (!list.length) return '';
-  return `<section class="cdown" aria-label="Coming up">${list.map((x, i) => `<div class="cd ${i === 0 ? 'next' : ''}" style="--i:${i}">
-      ${x.days === 0 ? `<b class="cd-n">${ic('sparkle', 22)}</b><span><b>${esc(x.name)}</b>Today!</span>`
-        : `<b class="cd-n num">${x.days}</b><span><small>day${x.days === 1 ? '' : 's'} to</small><b>${esc(x.name)}</b></span>`}</div>`).join('')}
-    ${isLive('stickers') ? `<a class="cd-cta" href="#/shop">${ic('sticker', 16)}Make something for it</a>` : ''}</section>`;
+  const x = upcomingCountdowns(1)[0]; if (!x) return '';
+  const text = x.days === 0 ? `<b>${esc(x.name)}</b> is today!` : `<b class="num">${x.days}</b> day${x.days === 1 ? '' : 's'} to <b>${esc(x.name)}</b>`;
+  return `<a class="cdpill" href="#/shop">${ic('calendar', 16)}<span>${text}</span>${isLive('stickers') ? `<span class="cdgo">Make something for it ${ic('arrow', 14)}</span>` : ''}</a>`;
 }
 function viewHome(){
   const g = geom(), live = liveProducts(), others = live.filter(p => p.key !== 'stickers').map(p => p.name.toLowerCase());
@@ -1963,6 +1966,7 @@ function viewHome(){
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap home" style="padding-bottom:24px">
     <section class="hero">
       <div>
+        ${countdownHTML()}
         <h1>${others.length ? 'Turn your pictures into stickers and more.' : 'Turn your pictures into a sticker sheet.'}</h1>
         <p class="lead">${others.length ? `Make ${esc(list)} from your own pictures. We print them, and you pick them up at school.`
           : 'Pick your pics, make them tiny or huge, and we print the whole sheet for you. You pick it up at school.'}</p>
@@ -1970,7 +1974,6 @@ function viewHome(){
           ${btn('Start designing', { href: '#/shop' })}
           <a class="pilllink" href="#/status">${ic('search', 18)}Check my order</a>
         </div>
-        ${countdownHTML()}
         <ul class="facts">
           ${isLive('stickers') ? `<li>${ic('cash', 18)}<span>Stickers <b class="num">${money(fromPrice('stickers'))}</b> a sheet</span></li>
           <li>${ic('layers', 18)}<span>Up to ${g.cols * g.rows} small stickers</span></li>` : ''}
@@ -3633,7 +3636,7 @@ function drawSettings(){
   drawNoticeForm(); loadTelegram();
   S.admin.cfg = {
     pickup_weekdays: CONFIG.pickupWeekdays.slice(), pickup_times: clone(CONFIG.pickupTimes), pickup_places: CONFIG.pickupOptions.slice(),
-    countdowns: clone(CONFIG.countdowns || []), product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
+    countdowns: clone(CONFIG.countdowns || []), countdowns_on: CONFIG.countdownsOn !== false, product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
     print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
@@ -3745,10 +3748,12 @@ function drawShopForm(){
       <p class="help" style="margin-top:6px">A 2 × 2 poster is the poster price plus 3 extra sheets. If your printer leaves a wider blank edge, raise the border (Rasterbator uses 10 mm). Glue overlap: each sheet repeats this much picture where the next sheet goes on top, so the sheets can be glued firmly (10 mm is a good start). 0 means the edges just meet and you tape from behind.</p></div>
 
     <div class="cfgsec"><div class="sub">Countdowns on the home page</div>
-      <p class="help" style="margin-bottom:8px">The next three show on the home page, like "52 days to Christmas". A reason to visit even when people aren't ordering.</p>
-      ${(c.countdowns || []).map((x, i) => `<div class="cdrow"><input class="inp" data-cd="${i}" data-f="name" value="${esc(x.name || '')}" placeholder="Event name" aria-label="Event name">
+      <label class="switch" style="margin-bottom:8px"><input type="checkbox" data-cfgbool="countdowns_on" ${c.countdowns_on !== false ? 'checked' : ''}><span><b>Show a countdown on the home page</b></span></label>
+      <p class="help" style="margin-bottom:10px">The next one shows above the headline, like "72 days to Christmas". A reason to visit even when people aren't ordering. Turn each one on or off with <b>Show</b>.</p>
+      ${(c.countdowns || []).map((x, i) => `<div class="cdrow ${x.show === false ? 'off' : ''}"><label class="switch" title="Show this countdown"><input type="checkbox" data-cd="${i}" data-f="show" ${x.show !== false ? 'checked' : ''}><span>Show</span></label>
+        <input class="inp" data-cd="${i}" data-f="name" value="${esc(x.name || '')}" placeholder="Event name" aria-label="Event name">
         <input class="inp" type="date" data-cd="${i}" data-f="date" value="${esc(x.date || '')}" aria-label="Date">
-        <label class="switch"><input type="checkbox" data-cd="${i}" data-f="yearly" ${x.yearly ? 'checked' : ''}><span>Every year</span></label>
+        <label class="yearly"><input type="checkbox" data-cd="${i}" data-f="yearly" ${x.yearly ? 'checked' : ''}> Repeats every year</label>
         ${smallBtn('', 'trash', 'cdDel', 'plain', `data-i="${i}" aria-label="Remove ${esc(x.name || 'event')}"`)}</div>`).join('')}
       ${smallBtn('Add a countdown', 'plus', 'cdAdd', 'plain')}</div>
 
@@ -3813,7 +3818,7 @@ function drawShopForm(){
     else if (d.cfggcash) c.gcash[d.cfggcash] = t.type === 'checkbox' ? t.checked : t.value;
     else if (d.cfg) { const keys = d.cfg.split('.'); let o = c; keys.slice(0, -1).forEach(k => o = o[k]); o[keys[keys.length - 1]] = Math.round(+t.value || 0); }
     else if (t.id === 'skipDate' && e.type === 'change' && t.value) { if (!c.no_pickup_dates.includes(t.value)) c.no_pickup_dates.push(t.value); c.no_pickup_dates.sort(); drawShopForm(); }
-    else if (d.cd !== undefined) { const x = c.countdowns[+d.cd]; x[d.f] = d.f === 'yearly' ? t.checked : t.value; }
+    else if (d.cd !== undefined) { const x = c.countdowns[+d.cd]; x[d.f] = ['yearly', 'show'].includes(d.f) ? t.checked : t.value; if (d.f === 'show') t.closest('.cdrow').classList.toggle('off', !t.checked); }
     else if (t.id === 'cfgSite') c.site_url = t.value.trim();
     else if (t.id === 'cfgGrades') c.grades = t.value.split(',').map(x => x.trim()).filter(Boolean);
   };
@@ -4503,7 +4508,7 @@ const ACTIONS = {
     const nx = document.querySelector(`.cstep[data-step="${n + 1}"]`); if (nx) nx.scrollIntoView({ block: 'start' });
   },
   coGo: t => { S.coStep = +t.dataset.s; coRender(); },
-  cdAdd: () => { const c = S.admin.cfg; c.countdowns = (c.countdowns || []).concat([{ name: '', date: '', yearly: false }]); drawShopForm(); },
+  cdAdd: () => { const c = S.admin.cfg; c.countdowns = (c.countdowns || []).concat([{ name: '', date: '', yearly: false, show: true }]); drawShopForm(); },
   cdDel: t => { const c = S.admin.cfg; c.countdowns.splice(+t.dataset.i, 1); drawShopForm(); },
   lookAnother: () => { compactLook(false); S.statusResult = null; $('#statusOut').innerHTML = ''; $('#lc').value = ''; $('#ln').value = ''; $('#lc').focus(); },
   tgShow: () => { const i = $('#tgToken'); if (i) i.type = i.type === 'password' ? 'text' : 'password'; },
