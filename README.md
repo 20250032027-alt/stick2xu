@@ -143,7 +143,7 @@ The name field shows a small **student ID preview** that fills in as they type, 
 
 ## Countdowns on the home page
 
-A small pill above the home page headline, like "72 days to Christmas · Make something for it →": a reason to visit even when people aren't ordering. Only the next upcoming countdown shows. Edit them in Settings → Shop details → Countdowns:
+A quiet "Coming up" row at the bottom of the home page text, like "73 days to Christmas · 80 days to New Year · 124 days to Valentine's Day": a reason to visit even when people aren't ordering. The nearest one is cream. It sits away from the Start designing button so it doesn't compete, and tapping a chip opens the products. Edit them in Settings → Shop details → Countdowns:
 - **Show a countdown on the home page:** turns the whole thing on or off.
 - **Show** (each row): turns one countdown on or off.
 - **Repeats every year:** for holidays, so they roll over to next year by themselves.
