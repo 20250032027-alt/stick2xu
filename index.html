@@ -1050,6 +1050,47 @@ details.gtk ul{margin-top:10px}
 .nsteps{margin:6px 0 0;padding-left:22px;display:grid;gap:8px;font-size:15px}
 .nsteps b{color:var(--ink)}
 .linkbtn{border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:14px;padding:8px}
+
+/* name highlight: an ID card that fills in as you type */
+.idprev{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;margin-top:10px;padding:12px;border:2px solid var(--xu-gold);border-radius:16px;background:#FFF8E6}
+.idprev p{margin:0;font-size:13.5px;color:#6B4B00}
+.idprev p b{color:var(--ink)}
+.idc{width:150px;border-radius:10px;background:#fff;border:1.5px solid var(--ink);overflow:hidden;box-shadow:var(--shadow-sm);transform:rotate(-2deg)}
+.idc-top{background:var(--accent);color:#fff;font-size:9px;font-weight:800;letter-spacing:.14em;text-align:center;padding:3px 0}
+.idc-body{display:flex;gap:8px;align-items:center;padding:8px}
+.idc-ph{width:28px;height:34px;flex:none;border-radius:5px;background:#C9DEFA;display:grid;place-items:center;color:var(--accent)}
+.idc-txt{display:grid;min-width:0}
+.idc-txt b{font-size:12px;line-height:1.15;color:var(--ink);overflow-wrap:anywhere}
+.idc-txt b.ph{color:#9AA3BF;font-weight:600}
+.idc-txt small{font-size:10px;color:var(--muted)}
+.help.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(max-width:380px){.idprev{grid-template-columns:1fr}.idc{justify-self:start}}
+.namecheck{display:flex;gap:8px;align-items:center;margin:14px 0 10px;padding:10px 12px;border-radius:12px;background:#FFF8E6;border:1px solid #EED9A2;font-size:14px}
+.namecheck svg{flex:none;color:#C9951A}
+.namecheck span{flex:1;min-width:0}
+/* steps slide open gently */
+.cstep.on .cbody{animation:stepin .3s var(--ease) both}
+@keyframes stepin{from{opacity:0;transform:translateY(6px)}}
+/* My order: compact once found */
+.lookbar{display:flex;gap:10px;align-items:center}
+.lookbar .lb-ic{color:var(--accent);display:grid}
+.lookbar .lb-t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#lookForm.found{padding:12px 16px}
+#lookForm.found > :not(#lookBar){display:none}
+#lookForm:not(.found) #lookBar{display:none}
+.odetails{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+.odetails summary{cursor:pointer;font-weight:700;color:var(--muted);font-size:14px}
+/* countdowns */
+.cdown{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch;margin:18px 0 0}
+.cd{display:flex;gap:8px;align-items:center;padding:8px 12px;border:1.5px solid var(--line);border-radius:14px;background:#fff;animation:cdin .5s var(--ease) both;animation-delay:calc(var(--i) * 90ms)}
+.cd.next{border-color:var(--ink);background:var(--gold-soft);box-shadow:var(--shadow-sm)}
+.cd-n{font-family:var(--display);font-weight:800;font-size:26px;line-height:1;color:var(--ink);display:grid;place-items:center}
+.cd span{display:grid;line-height:1.15;font-size:13.5px}
+.cd span small{font-size:11px;color:var(--muted)}
+.cd-cta{align-self:center;display:inline-flex;gap:6px;align-items:center;font-size:13.5px;font-weight:700;color:var(--accent);text-decoration:none;padding:6px 4px}
+@keyframes cdin{from{opacity:0;transform:translateY(6px)}}
+.cdrow{display:grid;grid-template-columns:minmax(0,1fr) 160px auto auto;gap:8px;align-items:center;margin-bottom:8px}
+@media(max-width:600px){.cdrow{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -1149,6 +1190,9 @@ const CONFIG = {
   referralOn: true,         // friend codes on/off
   referralFriendOff: 5,     // a friend's first order gets this much off
   referralReward: 5,        // the code's owner earns this much credit when the friend picks up
+  // countdowns on the home page (admin can change them). yearly: true repeats every year on that month and day
+  countdowns: [{ name: 'Christmas', date: '2026-12-25', yearly: true }, { name: 'New Year', date: '2027-01-01', yearly: true },
+               { name: "Valentine's Day", date: '2027-02-14', yearly: true }, { name: 'Last day of classes', date: '', yearly: false }],
   sellersAtPickup: 1,       // how many of you can be at pickup at the same time (= gates per time slot)
   maxPerSlot: 8,            // most orders for one pickup time (0 = no limit)
   maxPerDay: 15,            // most orders for one pickup day (0 = no limit)
@@ -1369,7 +1413,7 @@ function friendlyError(e){
   if (m.includes('ACTIVE_ORDER')) return 'You already have an order in progress. Pick that one up first, then you can order again.';
   if (m.includes('BLOCKED')) return 'Orders are paused for this name because of missed pickups. Talk to the seller to sort it out.';
   if (m.includes('TOO_MANY_SHEETS')) return `You can order up to ${S.settings.maxSheets} sheets at a time.`;
-  if (m.includes('NOT_FOUND')) return "No order matches that code and nickname. Check both and try again.";
+  if (m.includes('NOT_FOUND')) return "No order matches that code and name. Check both and try again (your first name is enough).";
   if (m.includes('BAD_INPUT')) return 'Some details are missing. Fill in every box and try again.';
   if (m.includes('NO_PGNET')) return 'Turn on pg_net in Supabase first: Database → Extensions → search "pg_net" → enable. Then try again.';
   if (m.includes('GATE_TAKEN')) return "At that time we'll be at a different gate. Pick the other gate, or another time.";
@@ -1514,6 +1558,7 @@ function applyShopConfig(c){
   CONFIG.referralOn = typeof c.referral_on === 'boolean' ? c.referral_on : D.referralOn;
   CONFIG.referralFriendOff = Math.max(0, numOr(c.referral_friend_off, D.referralFriendOff));
   CONFIG.referralReward = Math.max(0, numOr(c.referral_reward, D.referralReward));
+  CONFIG.countdowns = Array.isArray(c.countdowns) ? c.countdowns : D.countdowns;
   CONFIG.sellersAtPickup = Math.max(0, numOr(c.sellers_at_pickup, D.sellersAtPickup));
   CONFIG.maxPerSlot = Math.max(0, numOr(c.max_per_slot, D.maxPerSlot));
   CONFIG.maxPerDay = Math.max(0, numOr(c.max_per_day, D.maxPerDay));
@@ -1896,6 +1941,22 @@ function heroArt(){
     <span class="hs txt peel" style="left:36%;top:64%;width:30%;aspect-ratio:1;--r:8deg;--d:960ms;background:var(--xu-blue1);color:#fff;font-size:9cqw">HI!</span>
   </div></div>`;
 }
+/* The next few countdowns (yearly ones roll over to next year) */
+function upcomingCountdowns(max = 3){
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  return (CONFIG.countdowns || []).filter(x => x && x.name && /^\d{4}-\d{2}-\d{2}$/.test(x.date || '')).map(x => {
+    let d = parseYmd(x.date);
+    if (x.yearly) { d = new Date(today.getFullYear(), d.getMonth(), d.getDate()); if (d < today) d.setFullYear(d.getFullYear() + 1); }
+    return { name: x.name, days: Math.round((d - today) / 864e5) };
+  }).filter(x => x.days >= 0 && x.days <= 366).sort((a, b) => a.days - b.days).slice(0, max);
+}
+function countdownHTML(){
+  const list = upcomingCountdowns(); if (!list.length) return '';
+  return `<section class="cdown" aria-label="Coming up">${list.map((x, i) => `<div class="cd ${i === 0 ? 'next' : ''}" style="--i:${i}">
+      ${x.days === 0 ? `<b class="cd-n">${ic('sparkle', 22)}</b><span><b>${esc(x.name)}</b>Today!</span>`
+        : `<b class="cd-n num">${x.days}</b><span><small>day${x.days === 1 ? '' : 's'} to</small><b>${esc(x.name)}</b></span>`}</div>`).join('')}
+    ${isLive('stickers') ? `<a class="cd-cta" href="#/shop">${ic('sticker', 16)}Make something for it</a>` : ''}</section>`;
+}
 function viewHome(){
   const g = geom(), live = liveProducts(), others = live.filter(p => p.key !== 'stickers').map(p => p.name.toLowerCase());
   const list = others.length ? `stickers, ${others.slice(0, -1).join(', ')}${others.length > 1 ? ',' : ''} and ${others[others.length - 1]}` : '';
@@ -1909,6 +1970,7 @@ function viewHome(){
           ${btn('Start designing', { href: '#/shop' })}
           <a class="pilllink" href="#/status">${ic('search', 18)}Check my order</a>
         </div>
+        ${countdownHTML()}
         <ul class="facts">
           ${isLive('stickers') ? `<li>${ic('cash', 18)}<span>Stickers <b class="num">${money(fromPrice('stickers'))}</b> a sheet</span></li>
           <li>${ic('layers', 18)}<span>Up to ${g.cols * g.rows} small stickers</span></li>` : ''}
@@ -2854,7 +2916,12 @@ function viewCheckout(){
         <div class="cbody">
       <div class="field"><label class="lab" for="nick">Full name <span class="req">*</span></label>
         <input class="inp" id="nick" maxlength="60" autocomplete="name" placeholder="Juan Dela Cruz" value="${esc(me.nickname || '')}" aria-describedby="e-nick e-nickhelp">
-        <p class="help" id="e-nickhelp">${ic('school', 14)} As on your school ID. This is how we find your order at pickup, so bring your ID.</p>
+        <div class="idprev" aria-hidden="true">
+          <div class="idc"><div class="idc-top">STUDENT ID</div><div class="idc-body"><span class="idc-ph">${ic('school', 18)}</span>
+            <div class="idc-txt"><b id="idName">${esc(me.nickname || 'Your full name')}</b><small id="idSec">${esc(me.section || 'Grade - Section')}</small></div></div></div>
+          <p><b>This is how we find you.</b> Type it exactly like your school ID, and bring the ID to pickup.</p>
+        </div>
+        <p class="help sr" id="e-nickhelp">As on your school ID. This is how we find your order at pickup, so bring your ID.</p>
         <p class="ferr" id="e-nick" role="alert"></p></div>
       <div class="field"><span class="lab" id="l-gs">Grade and section <span class="req">*</span></span>
         <div class="gs" role="group" aria-labelledby="l-gs">
@@ -2910,6 +2977,7 @@ function viewCheckout(){
           ${smallBtn(S.promo ? 'Remove' : 'Apply', S.promo ? 'x' : 'check', S.promo ? 'promoRemove' : 'promoApply', 'plain')}</div>
         <p class="ferr" id="e-promo" role="alert"></p></div></details>
           <div id="sumBox">${checkoutSummary()}</div>
+          <div class="namecheck">${ic('school', 18)}<span>Name for pickup: <b id="ncName"></b></span><button type="button" class="cchange" style="display:inline" data-act="coGo" data-s="1">Fix</button></div>
           <label class="choice"><input type="checkbox" id="promise"><span id="promiseTxt"></span></label>
           <p class="ferr" id="e-promise" role="alert"></p>
           <div class="formerr" id="formErr" role="alert"></div>
@@ -2954,7 +3022,7 @@ function viewCheckout(){
   loadAvail(dates).then(() => { if (document.body.contains(form)) sync(); });
   $('#promo').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ACTIONS.promoApply(); } });
   // errors clear the moment they're fixed (while typing), so nothing moves when they tap Next
-  ['nick','sec','grade','otherPlace'].forEach(id => $('#' + id) && ['input', 'change'].forEach(ev => $('#' + id).addEventListener(ev, () => validate(false))));
+  ['nick','sec','grade','otherPlace'].forEach(id => $('#' + id) && ['input', 'change'].forEach(ev => $('#' + id).addEventListener(ev, () => { validate(false); coRender(); })));
   form.addEventListener('submit', e => { if (S.coStep < 3) { e.preventDefault(); ACTIONS.coNext({ dataset: { s: String(S.coStep) } }); return; } submitOrder(e); });
   coRender();
 }
@@ -2967,6 +3035,12 @@ function coRender(){
   const d = radio(form, 'pdate'), t = radio(form, 'ptime'), pl = radio(form, 'pickup');
   $('#csum2').textContent = d ? `${fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' })}, ${String(t || '').replace(/\s*\(.*\)/, '')}, ${pl === '__other' ? (($('#otherPlace') || {}).value || 'in school') : pl}` : '';
   const tot = $('#ordTot'); if (tot) tot.textContent = money(checkoutTotal(d));
+  const pb = $('#placeBtn span'); if (pb) pb.textContent = `Place my order · ${money(checkoutTotal(d))}`;
+  // the ID preview and the name double-check follow what they type
+  const idn = $('#idName'), ids = $('#idSec'), ncn = $('#ncName');
+  if (idn) { idn.textContent = nm || 'Your full name'; idn.classList.toggle('ph', !nm); }
+  if (ids) ids.textContent = g || sec ? `Grade ${g || '?'} - ${sec || '?'}` : 'Grade - Section';
+  if (ncn) ncn.textContent = nm ? `${nm}, ${g} - ${sec}` : '';
 }
 /* Re-render checkout but keep what the customer already typed */
 function viewCheckoutKeep(){
@@ -3145,12 +3219,20 @@ function viewStatus(){
   $('#lookForm').addEventListener('submit', e => { e.preventDefault(); lookup(); });
   if (last.code && last.nickname) lookup();
 }
+/* Once an order is found, the lookup form shrinks to one line */
+function compactLook(on){
+  const f = $('#lookForm'); if (!f) return;
+  f.classList.toggle('found', on);
+  const bar = $('#lookBar');
+  if (on) { const html = `<span class="lb-ic">${ic('box', 18)}</span><span class="lb-t"><b class="num">${esc($('#lc').value.trim().toUpperCase())}</b> · ${esc($('#ln').value.trim())}</span><button type="button" class="linkbtn" data-act="lookAnother">Look up another</button>`;
+    if (bar) bar.innerHTML = html; else f.insertAdjacentHTML('afterbegin', `<div id="lookBar" class="lookbar">${html}</div>`); }
+}
 async function lookup(){
   const code = $('#lc').value.trim().toUpperCase(), nick = $('#ln').value.trim();
   $('#lookErr').textContent = '';
-  if (!code || !nick) { $('#lookErr').textContent = 'Type your order code and nickname.'; return; }
+  if (!code || !nick) { $('#lookErr').textContent = 'Type your order code and your name.'; return; }
   $('#statusOut').innerHTML = `<div class="sk" style="height:150px;border-radius:28px"></div><div class="sk" style="height:220px;margin-top:20px;border-radius:28px"></div>`;
-  try { S.statusResult = await api.getOrder(code, nick); S.statusNick = nick; drawStatus(); }
+  try { S.statusResult = await api.getOrder(code, nick); S.statusNick = nick; compactLook(true); drawStatus(); }
   catch (e) { $('#statusOut').innerHTML = ''; $('#lookErr').textContent = friendlyError(e); }
 }
 function drawStatus(){
@@ -3181,9 +3263,9 @@ function drawStatus(){
         <div style="margin-top:14px">${o.arrived
           ? `<span class="tag ok" style="font-size:15px;padding:8px 12px">${ic('check', 16)}They know you're here. Look for ${esc(signal())}.</span>`
           : btn("I'm here", { act: 'imHere', icon: 'pin', cls: 'wide' })}</div>` : ''}
-      <dl class="kv">${o.pickup_date ? `<dt>Pickup</dt><dd>${esc(fmtDate(o.pickup_date))}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</dd>` : ''}<dt>Where</dt><dd>${esc(o.pickup)}</dd>
+      <details class="odetails"><summary>Order details</summary><dl class="kv">${o.pickup_date ? `<dt>Pickup</dt><dd>${esc(fmtDate(o.pickup_date))}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</dd>` : ''}<dt>Where</dt><dd>${esc(o.pickup)}</dd>
         <dt>Total</dt><dd class="num">${money(o.total)}${o.paid ? ', paid' : o.amount_paid ? `, paid ${money(o.amount_paid)}, ${money(o.total - o.amount_paid)} left` : ''}</dd>
-        <dt>Items</dt><dd>${o.sheet_count}</dd><dt>Ordered</dt><dd>${fmtTime(o.created_at)}</dd></dl>
+        <dt>Items</dt><dd>${o.sheet_count}</dd><dt>Ordered</dt><dd>${fmtTime(o.created_at)}</dd></dl></details>
       ${S.moving ? rescheduleHTML(o) : ''}
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:20px">
         ${canMove && !S.moving ? smallBtn('Change pickup day', 'calendar', 'moveOpen', 'plain') : ''}
@@ -3312,7 +3394,7 @@ async function drawAdminBody(){
     ${f === 'ready' ? `<div class="pickupbar ${S.admin.pickupMode ? 'on' : ''}">
         <div>${ic('box', 18)}<span>${S.admin.pickupMode
           ? '<b>Pickup mode is on.</b> The screen stays awake, and your phone chimes and buzzes when someone taps "I\'m here". Keep this page open.'
-          : 'At the gate? Turn on <b>pickup mode</b> so your phone chimes when someone arrives. Write the code and nickname on each bag.'}</span></div>
+          : 'At the gate? Turn on <b>pickup mode</b> so your phone chimes when someone arrives. Write the code and full name on each bag.'}</span></div>
         ${smallBtn(S.admin.pickupMode ? 'Stop pickup mode' : 'Start pickup mode', S.admin.pickupMode ? 'x' : 'pin', 'pickupMode', S.admin.pickupMode ? 'plain' : 'dark')}</div>` : ''}
     <div class="olist">${list.length ? list.map((o, idx) => {
       const sk = strikes[personKey(o)] || 0, a = [];
@@ -3551,7 +3633,7 @@ function drawSettings(){
   drawNoticeForm(); loadTelegram();
   S.admin.cfg = {
     pickup_weekdays: CONFIG.pickupWeekdays.slice(), pickup_times: clone(CONFIG.pickupTimes), pickup_places: CONFIG.pickupOptions.slice(),
-    product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
+    countdowns: clone(CONFIG.countdowns || []), product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
     print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
@@ -3662,6 +3744,14 @@ function drawShopForm(){
         <label class="dnum"><span>Glue overlap between sheets (mm)</span>${n('poster_overlap_mm', c.poster_overlap_mm, 0, 30)}</label></div>
       <p class="help" style="margin-top:6px">A 2 × 2 poster is the poster price plus 3 extra sheets. If your printer leaves a wider blank edge, raise the border (Rasterbator uses 10 mm). Glue overlap: each sheet repeats this much picture where the next sheet goes on top, so the sheets can be glued firmly (10 mm is a good start). 0 means the edges just meet and you tape from behind.</p></div>
 
+    <div class="cfgsec"><div class="sub">Countdowns on the home page</div>
+      <p class="help" style="margin-bottom:8px">The next three show on the home page, like "52 days to Christmas". A reason to visit even when people aren't ordering.</p>
+      ${(c.countdowns || []).map((x, i) => `<div class="cdrow"><input class="inp" data-cd="${i}" data-f="name" value="${esc(x.name || '')}" placeholder="Event name" aria-label="Event name">
+        <input class="inp" type="date" data-cd="${i}" data-f="date" value="${esc(x.date || '')}" aria-label="Date">
+        <label class="switch"><input type="checkbox" data-cd="${i}" data-f="yearly" ${x.yearly ? 'checked' : ''}><span>Every year</span></label>
+        ${smallBtn('', 'trash', 'cdDel', 'plain', `data-i="${i}" aria-label="Remove ${esc(x.name || 'event')}"`)}</div>`).join('')}
+      ${smallBtn('Add a countdown', 'plus', 'cdAdd', 'plain')}</div>
+
     <div class="cfgsec"><div class="sub">Friend codes</div>
       <label class="switch" style="margin-bottom:10px"><input type="checkbox" data-cfgbool="referral_on" ${c.referral_on ? 'checked' : ''}><span>Customers get a friend code to share</span></label>
       <div class="pgrid2">
@@ -3723,6 +3813,7 @@ function drawShopForm(){
     else if (d.cfggcash) c.gcash[d.cfggcash] = t.type === 'checkbox' ? t.checked : t.value;
     else if (d.cfg) { const keys = d.cfg.split('.'); let o = c; keys.slice(0, -1).forEach(k => o = o[k]); o[keys[keys.length - 1]] = Math.round(+t.value || 0); }
     else if (t.id === 'skipDate' && e.type === 'change' && t.value) { if (!c.no_pickup_dates.includes(t.value)) c.no_pickup_dates.push(t.value); c.no_pickup_dates.sort(); drawShopForm(); }
+    else if (d.cd !== undefined) { const x = c.countdowns[+d.cd]; x[d.f] = d.f === 'yearly' ? t.checked : t.value; }
     else if (t.id === 'cfgSite') c.site_url = t.value.trim();
     else if (t.id === 'cfgGrades') c.grades = t.value.split(',').map(x => x.trim()).filter(Boolean);
   };
@@ -4412,6 +4503,9 @@ const ACTIONS = {
     const nx = document.querySelector(`.cstep[data-step="${n + 1}"]`); if (nx) nx.scrollIntoView({ block: 'start' });
   },
   coGo: t => { S.coStep = +t.dataset.s; coRender(); },
+  cdAdd: () => { const c = S.admin.cfg; c.countdowns = (c.countdowns || []).concat([{ name: '', date: '', yearly: false }]); drawShopForm(); },
+  cdDel: t => { const c = S.admin.cfg; c.countdowns.splice(+t.dataset.i, 1); drawShopForm(); },
+  lookAnother: () => { compactLook(false); S.statusResult = null; $('#statusOut').innerHTML = ''; $('#lc').value = ''; $('#ln').value = ''; $('#lc').focus(); },
   tgShow: () => { const i = $('#tgToken'); if (i) i.type = i.type === 'password' ? 'text' : 'password'; },
   tgFind: async t => {
     const tok = S.admin.tg.bot_token; if (!tok) return toast('Paste the bot token first.');

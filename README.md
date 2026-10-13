@@ -13,7 +13,7 @@ First time setting it up? See **SETUP.md**.
    - **Keychains:** a picture for the paper insert of a clear acrylic keychain. The back can be the same picture, a different one, or left clear.
 
    Everything goes into one order, and they can add more items before checking out.
-2. **Details.** Nickname, grade and section, then a pickup date, time (Lunch 12:30 PM or After class 5:10 PM), and gate (Gate 1 or Gate 4). Pay in cash at pickup, or by GCash.
+2. **Details.** Full name (as on their school ID), grade and section, then a pickup date, time (Lunch 12:30 PM or After class 5:10 PM), and gate (Gate 1 or Gate 4). Pay in cash at pickup, or by GCash.
 3. **Pickup pass.** They get a code like `STK-7KQ4` and a "Your pickup" summary.
 4. **Pickup day.** They check **My order** until it says Ready. At the gate, they look for the seller's signal and tap **I'm here**.
 
@@ -29,13 +29,13 @@ Open `your-site/#/admin` and log in.
   - **Pins:** circles packed on A4. Cut on the grey circle.
   - **Posters:** one page per copy, at A4 or A3.
   - **Keychains:** inserts packed on A4, front and back side by side. Cut on the grey lines. Orders where the customer tapped "I'll be there" are listed first.
-- **Printing:** tap **Mark ready** when they're cut and bagged. Write the code and nickname on each bag.
+- **Printing:** tap **Mark ready** when they're cut and bagged. Write the code and full name on each bag.
 - **Ready:** grouped by pickup date. Keep this open on your phone at the gate. When someone taps "I'm here", they jump to the top with a gold **Here now** tag and a pop-up with their name, section, and gate. It checks every 15 seconds. Then tap **Picked up and paid**, or **Didn't show up**.
 - **Done / Other:** finished, rejected, cancelled, and no-show orders.
 
 Every order has a **Delete** button (tap it twice). Deleting removes the order and its pictures for good, as if it never happened, so it no longer counts in the Business tab. Use it for test orders.
 
-After 2 no-shows, that nickname and section can't order anymore. You can change the limit in Supabase under `shop_settings → max_noshows`.
+After 2 no-shows, that name and section can't order anymore. You can change the limit in Supabase under `shop_settings → max_noshows`.
 
 **Business:** profit, supplies, equipment, and which posters bring in orders (see below).
 
@@ -139,7 +139,11 @@ So ordering never feels like a wall of text, checkout shows one small step at a 
 2. **Pickup:** day, time, and gate.
 3. **Pay:** payment, the total, the promise box, and Place my order.
 
-Finished steps shrink to a one-line summary with **Change**. Returning customers start at Pickup. The promo or friend code box and the "Good to know" rules are folded away until tapped. After ordering, the page shows the code to save, the pickup pass, three short next steps, and Add to calendar.
+The name field shows a small **student ID preview** that fills in as they type, so it's clear the name must match their ID, and step 3 repeats "Name for pickup" with a **Fix** link. The button shows the total ("Place my order · ₱45"). Finished steps shrink to a one-line summary with **Change**. Returning customers start at Pickup. The promo or friend code box and the "Good to know" rules are folded away until tapped. After ordering, the page shows the code to save, the pickup pass, three short next steps, and Add to calendar.
+
+## Countdowns on the home page
+
+Small chips like "73 days to Christmas" under the home page buttons: a reason to visit even when people aren't ordering. The next three upcoming ones show. Edit them in Settings → Shop details → Countdowns: name, date, and **Every year** for holidays. Set **Last day of classes** each school year.
 
 ## Seller's routine: from order to pickup
 
