@@ -1094,11 +1094,17 @@ details.gtk ul{margin-top:10px}
 .cdrow2{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
 .cd-lbl{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .cdchips{display:flex;gap:8px;flex-wrap:wrap}
-.cdc{display:flex;gap:7px;align-items:center;padding:5px 11px 5px 9px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);text-decoration:none;animation:cdin .5s var(--ease) both;animation-delay:calc(var(--i) * 80ms);transition:border-color .2s var(--ease)}
+.cdc{position:relative;display:flex;gap:7px;align-items:center;padding:5px 11px 5px 9px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);text-decoration:none;animation:cdin .5s var(--ease) both;animation-delay:calc(var(--i) * 80ms);transition:border-color .2s var(--ease)}
 .cdc:hover{border-color:#B9C3DD}
-.cdc.next{background:#FFF6DA;border-color:#F1DFA6}
+.cdc.next{background:#fff;border-color:color-mix(in srgb,var(--cdc) 35%,#D8DCEB)}
+.cdc.next:hover{border-color:var(--cdc)}
 .cdc-n{font-family:var(--display);font-weight:800;font-size:20px;line-height:1;display:grid;place-items:center}
-.cdc.next .cdc-n{color:#9A6B00}
+.cdc.next .cdc-n{color:var(--cdc)}
+.cdic{width:18px;height:18px;flex:none}
+.cdtw{position:absolute;color:#F2BC2E;pointer-events:none;animation:cdtw 2.6s ease-in-out infinite}
+.cdtw.t1{right:4px;top:3px;width:9px;height:9px}
+.cdtw.t2{left:3px;bottom:3px;width:6px;height:6px;animation-delay:1.3s}
+@keyframes cdtw{0%,100%{transform:scale(.3) rotate(0);opacity:0}50%{transform:scale(1) rotate(45deg);opacity:1}}
 .cdc span{display:grid;line-height:1.15;font-size:13px;font-weight:600}
 .cdc small{font-size:10.5px;font-weight:500;color:var(--muted)}
 </style>
@@ -1962,12 +1968,25 @@ function upcomingCountdowns(max = 3){
     return { name: x.name, days: Math.round((d - today) / 864e5) };
   }).filter(x => x.days >= 0 && x.days <= 366).sort((a, b) => a.days - b.days).slice(0, max);
 }
-/* Countdowns: a quiet "Coming up" row at the bottom of the home page text, away from the main button */
+/* Countdowns: a quiet "Coming up" row at the bottom of the home page text, away from the main button.
+   Only the nearest one stands out: its own seasonal color and tiny icon, with two soft twinkles. */
+const CD_THEMES = [
+  { match: /christmas|pasko/i, color: '#C2272D', icon: '<path d="M12 2l5 7h-3l4 6h-4l3 5H7l3-5H6l4-6H7z" fill="#2E7A4C"/><rect x="11" y="20" width="2" height="3" rx=".5" fill="#8A5A2B"/><circle cx="12" cy="2.5" r="1.6" fill="#F2BC2E"/>' },
+  { match: /new year/i, color: '#A87400', icon: '<path d="M12 1l2 7 7 2-7 2-2 7-2-7-7-2 7-2z" fill="#F2BC2E"/><circle cx="19" cy="19" r="1.6" fill="#ec282a"/><circle cx="5" cy="19" r="1.2" fill="#3a52a3"/>' },
+  { match: /valentine|heart/i, color: '#C2185B', icon: '<path d="M12 21S3 15 3 8.5A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 9 2.5C21 15 12 21 12 21z" fill="#E8457C"/>' },
+  { match: /class|school|grad|exam|intram|sports|foundation|recognition/i, color: '#3a52a3', icon: '<path d="M12 4 1 9l11 5 11-5-11-5z" fill="#283971"/><path d="M6 11.5v4.5c3 2 9 2 12 0v-4.5L12 14z" fill="#3a52a3"/><path d="M21 9v6" stroke="#F2BC2E" stroke-width="1.6" stroke-linecap="round"/>' },
+  { match: /.*/, color: '#3a52a3', icon: '<path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z" fill="#F2BC2E"/>' }
+];
+const cdTheme = name => CD_THEMES.find(t => t.match.test(name));
 function countdownHTML(){
   const list = upcomingCountdowns(3); if (!list.length) return '';
-  return `<section class="cdrow2" aria-label="Coming up"><span class="cd-lbl">Coming up</span><div class="cdchips">${list.map((x, i) => `<a class="cdc ${i === 0 ? 'next' : ''}" href="#/shop" style="--i:${i}" aria-label="${esc(x.days === 0 ? `${x.name} is today` : `${x.days} day${x.days === 1 ? '' : 's'} to ${x.name}`)}">
-      ${x.days === 0 ? `<b class="cdc-n">${ic('sparkle', 18)}</b><span><small>today</small>${esc(x.name)}</span>`
-        : `<b class="cdc-n num">${x.days}</b><span><small>day${x.days === 1 ? '' : 's'} to</small>${esc(x.name)}</span>`}</a>`).join('')}</div></section>`;
+  const twinkle = cls => `<svg class="cdtw ${cls}" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 0l2.5 9.5L24 12l-9.5 2.5L12 24l-2.5-9.5L0 12l9.5-2.5z"/></svg>`;
+  return `<section class="cdrow2" aria-label="Coming up"><span class="cd-lbl">Coming up</span><div class="cdchips">${list.map((x, i) => {
+      const th = i === 0 ? cdTheme(x.name) : null;
+      return `<a class="cdc ${th ? 'next' : ''}" href="#/shop" style="--i:${i}${th ? `;--cdc:${th.color}` : ''}" aria-label="${esc(x.days === 0 ? `${x.name} is today` : `${x.days} day${x.days === 1 ? '' : 's'} to ${x.name}`)}">
+      ${th ? `${twinkle('t1')}${twinkle('t2')}<svg class="cdic" viewBox="0 0 24 24" aria-hidden="true">${th.icon}</svg>` : ''}
+      ${x.days === 0 ? `${th ? '' : `<b class="cdc-n">${ic('sparkle', 18)}</b>`}<span><small>today!</small>${esc(x.name)}</span>`
+        : `<b class="cdc-n num">${x.days}</b><span><small>day${x.days === 1 ? '' : 's'} to</small>${esc(x.name)}</span>`}</a>`; }).join('')}</div></section>`;
 }
 function viewHome(){
   const g = geom(), live = liveProducts(), others = live.filter(p => p.key !== 'stickers').map(p => p.name.toLowerCase());
