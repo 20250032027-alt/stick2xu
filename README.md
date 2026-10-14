@@ -141,6 +141,10 @@ So ordering never feels like a wall of text, checkout shows one small step at a 
 
 The name field shows a small **student ID preview** that fills in as they type, so it's clear the name must match their ID, and step 3 repeats "Name for pickup" with a **Fix** link. The button shows the total ("Place my order · ₱45"). Finished steps shrink to a one-line summary with **Change**. Returning customers start at Pickup. The promo or friend code box and the "Good to know" rules are folded away until tapped. After ordering, the page shows the code to save, the pickup pass, three short next steps, and Add to calendar.
 
+## Facebook link
+
+The bottom of the home page says **Follow us on Facebook** with a link to the shop's page. Change or remove the link in Settings → Shop details → Facebook page (leave it empty to hide it).
+
 ## Countdowns on the home page
 
 A quiet "Coming up" row at the bottom of the home page text, like "73 days to Christmas · 80 days to New Year · 124 days to Valentine's Day": a reason to visit even when people aren't ordering. The nearest one stands out a little: its number takes the event's own color with a tiny icon (red and a tree for Christmas, gold for New Year, pink and a heart for Valentine's, blue and a graduation cap for school events, the brand star for anything else), plus two soft gold twinkles. It sits away from the Start designing button so it doesn't compete, and tapping a chip opens the products. Edit them in Settings → Shop details → Countdowns:
