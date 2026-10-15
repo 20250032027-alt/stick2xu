@@ -154,6 +154,28 @@ A quiet "Coming up" row at the bottom of the home page text, like "73 days to Ch
 
 Set **Last day of classes** each school year (it stays hidden until it has a date).
 
+## Search and AI (SEO and GEO)
+
+Built in, so Google, link previews, and AI assistants (ChatGPT, Gemini, Claude) describe Stick2It correctly:
+- **Title and description:** a proper page title and description for search results, including "for XU uptown students".
+- **Link preview:** `og-image.png`, shown when someone shares stick2it.me in Messenger, Facebook, Viber, or TikTok.
+- **Structured facts:** what you sell, prices, payment, the area served, the Facebook page, alternate spellings ("Stick 2 It", "Stick To It", "Stickit", "Stick2It CDO"), and an FAQ. They're in the `<script type="application/ld+json">` block near the top of `index.html`.
+- **A readable version of the page** for anything that doesn't run JavaScript (link previews, many AI crawlers). People never see it.
+- **Standard files:** `robots.txt`, `sitemap.xml`, and `llms.txt` (a plain-text summary for AI tools).
+
+**When prices or products change,** update them in three places: the structured-facts block, the readable version (`<main class="seo-fallback">`), and `llms.txt`. Or ask Claude.
+
+**Monthly (10 minutes):** check Google Search Console for what people searched, and keep the name, link, and handle the same everywhere (site, Facebook, TikTok).
+
+## Customer reminders (so nobody misses a step)
+
+The customer's next step shows as a strip under the top bar **on every page**, using the order saved on their phone:
+- **Before the confirm-by day:** "Confirm your order by …" with an **I'll be there** button.
+- **On pickup day, once it's ready:** "It's pickup day! … At the gate, tap:" with a big **I'm here** button.
+- **After they tap it:** "They know you're here. Look for the sign."
+
+The **My order** button gets a red dot whenever something needs doing.
+
 ## Seller's routine: from order to pickup
 
 1. **New order** (Telegram: "Order placed"). Open admin → **To review**. Check the design: nothing inappropriate, and pictures clear enough to print (the blur warnings help). Tap **Approve**, or **Reject** with a reason so the customer knows what to fix.

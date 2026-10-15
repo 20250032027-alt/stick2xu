@@ -1,17 +1,185 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-PH">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Stick2It · Make your own sticker sheet</title>
-<meta name="description" content="Design your own stickers, pins, posters, and keychains. Picked up at school.">
-<meta property="og:title" content="Stick2It">
-<meta property="og:description" content="Turn your pictures into a sticker sheet. ₱50 per sheet.">
+<title>Stick2It · Custom stickers, pins, keychains, posters, and prints</title>
+<meta name="description" content="Custom stickers, pins, keychains, posters, and prints from your own pictures, for XU uptown students in Cagayan de Oro. Order online, pick up at school. Run by students.">
+<link rel="canonical" href="https://www.stick2it.me/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<!-- link previews (Facebook, Messenger, Viber, TikTok, etc.) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Stick2It">
+<meta property="og:locale" content="en_PH">
+<meta property="og:url" content="https://www.stick2it.me/">
+<meta property="og:title" content="Stick2It · Your pictures, made into stickers and more">
+<meta property="og:description" content="Custom stickers, pins, keychains, posters, and prints for XU uptown students. Order online, pick up at school. By students, for students.">
+<meta property="og:image" content="https://www.stick2it.me/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Stick2It: your pictures, made into stickers, pins, keychains, posters, and prints">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="Stick2It">
 <meta name="theme-color" content="#F4F5FA">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-3 -3 30 30'%3E%3Cpath d='M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z' fill='%233a52a3' stroke='%23fff' stroke-width='3' stroke-linejoin='round' paint-order='stroke'/%3E%3C/svg%3E">
+<!-- facts about the shop for search engines and AI assistants (keep prices in sync with admin → Settings) -->
+<script type="application/ld+json">[
+ {
+  "@context": "https://schema.org",
+  "@type": "OnlineStore",
+  "name": "Stick2It",
+  "alternateName": [
+   "Stick 2 It",
+   "Stick To It",
+   "Stickit",
+   "Stick2It CDO",
+   "Stick2It XU"
+  ],
+  "url": "https://www.stick2it.me/",
+  "logo": "https://www.stick2it.me/icon-512.png",
+  "image": "https://www.stick2it.me/og-image.png",
+  "description": "Custom stickers, pins, keychains, posters, and prints from your own pictures, for XU uptown students in Cagayan de Oro. Order online, pick up at school. Run by students.",
+  "slogan": "By students, for students.",
+  "sameAs": [
+   "https://www.facebook.com/profile.php?id=61594155363888"
+  ],
+  "areaServed": {
+   "@type": "City",
+   "name": "Cagayan de Oro",
+   "containedInPlace": {
+    "@type": "Country",
+    "name": "Philippines"
+   }
+  },
+  "paymentAccepted": "Cash, GCash",
+  "currenciesAccepted": "PHP",
+  "makesOffer": [
+   {
+    "@type": "Offer",
+    "itemOffered": {
+     "@type": "Product",
+     "name": "Sticker sheet (A4)"
+    },
+    "price": "45",
+    "priceCurrency": "PHP",
+    "description": "per sheet"
+   },
+   {
+    "@type": "Offer",
+    "itemOffered": {
+     "@type": "Product",
+     "name": "Button pin (44 mm)"
+    },
+    "price": "25",
+    "priceCurrency": "PHP",
+    "description": "per pin; class orders of 40 or more are ₱15 each"
+   },
+   {
+    "@type": "Offer",
+    "itemOffered": {
+     "@type": "Product",
+     "name": "Acrylic keychain"
+    },
+    "price": "45",
+    "priceCurrency": "PHP",
+    "description": "per keychain"
+   },
+   {
+    "@type": "Offer",
+    "itemOffered": {
+     "@type": "Product",
+     "name": "Poster (A4)"
+    },
+    "price": "50",
+    "priceCurrency": "PHP",
+    "description": "per poster; big multi-sheet posters cost more"
+   },
+   {
+    "@type": "Offer",
+    "itemOffered": {
+     "@type": "Product",
+     "name": "Prints (A4, black and white)"
+    },
+    "price": "5",
+    "priceCurrency": "PHP",
+    "description": "per page; color is ₱10 per page"
+   }
+  ]
+ },
+ {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+   {
+    "@type": "Question",
+    "name": "What is Stick2It?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Stick2It is a student-run shop for XU uptown students (grade school, junior high, and senior high at the Pueblo de Oro campus in Cagayan de Oro). You design custom stickers, pins, keychains, posters, and prints from your own pictures on the website, and pick them up at school."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "How do I order?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Go to stick2it.me, design your item, then pick a pickup day, time, and gate. You'll get an order code. Confirm in My order by the day before, then pick it up and pay at school."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "How much does it cost?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Sticker sheets are ₱45, 44 mm pins are ₱25 (₱15 each for class orders of 40 or more), keychains are ₱45, A4 posters are ₱50, and prints are ₱5 a page in black and white or ₱10 in color."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Who can order?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Students of the XU uptown campus (Pueblo de Oro): grade school, junior high, and senior high."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Where do I pick up my order?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Inside campus, on pickup days. Your exact gate and time are shown on your pickup pass after you order."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "How do I pay?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Cash when you pick up, or GCash."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Can I print documents?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Yes. Upload PDFs or pictures for plain-paper prints. Same-day pickup is possible if you order at least 2 hours before the pickup time, for a small rush fee."
+    }
+   },
+   {
+    "@type": "Question",
+    "name": "Is Stick2It an official school service?",
+    "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "No. Stick2It is run by students and isn't an official school service."
+    }
+   }
+  ]
+ }
+]</script>
 <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
 <style>
@@ -1111,11 +1279,35 @@ details.gtk ul{margin-top:10px}
 .cdc small{font-size:10.5px;font-weight:500;color:var(--muted)}
 
 .fblink{display:inline-flex;gap:8px;align-items:center}
+
+.ocard.broken{padding:14px 16px;border-style:dashed;color:var(--muted);font-size:14px}
+.ocard.broken code{display:block;margin-top:6px;font-size:12px;color:#B4232A;white-space:pre-wrap}
+.empty .btn{margin-top:12px}
+
+/* the customer's next step, on every page */
+.actstrip{background:#fff;border-bottom:1px solid var(--line);animation:noticein .45s var(--ease) both}
+.actstrip .in{max-width:1120px;margin:0 auto;padding:10px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:15px}
+.actstrip .in > svg{flex:none;color:var(--accent)}
+.actstrip .in > span{flex:1;min-width:200px}
+.actstrip.go{background:linear-gradient(90deg,#FFF4DC,#FFFBF0);border-bottom-color:#EED9A2}
+.actstrip.go .in > svg{color:#C9951A;animation:twinkle 2s ease-in-out infinite}
+.actstrip.go .btn{font-size:16px;padding:10px 18px}
+.actstrip.ok{background:var(--ok-soft);border-bottom-color:#9FD7B5}
+.actstrip.ok .in > svg{color:var(--ok)}
+a.pilllink.needs{position:relative}
+a.pilllink.needs::after{content:"";position:absolute;top:-2px;right:-2px;width:12px;height:12px;border-radius:50%;background:#ec282a;border:2px solid #fff;animation:lowpulse 2s ease-in-out infinite}
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<div id="app"></div>
+<div id="app"><main class="seo-fallback" style="max-width:720px;margin:40px auto;padding:0 20px;font-family:system-ui,sans-serif;color:#283971">
+  <h1>Stick2It: your pictures, made into stickers and more</h1>
+  <p>Custom stickers, pins, keychains, posters, and prints from your own pictures, for XU uptown students in Cagayan de Oro. Order online, pick up at school. Run by students.</p>
+  <h2>What you can make</h2><ul><li><b>Sticker sheet (A4)</b>: ₱45 per sheet</li><li><b>Button pin (44 mm)</b>: ₱25 per pin; class orders of 40 or more are ₱15 each</li><li><b>Acrylic keychain</b>: ₱45 per keychain</li><li><b>Poster (A4)</b>: ₱50 per poster; big multi-sheet posters cost more</li><li><b>Prints (A4, black and white)</b>: ₱5 per page; color is ₱10 per page</li></ul>
+  <h2>How it works</h2><ol><li>Design your item on the website from your own pictures.</li><li>Pick a pickup day, time, and gate, and get your order code.</li><li>Confirm by the day before, then pick it up inside campus and pay with cash or GCash.</li></ol>
+  <h2>Questions</h2><h3>What is Stick2It?</h3><p>Stick2It is a student-run shop for XU uptown students (grade school, junior high, and senior high at the Pueblo de Oro campus in Cagayan de Oro). You design custom stickers, pins, keychains, posters, and prints from your own pictures on the website, and pick them up at school.</p><h3>How do I order?</h3><p>Go to stick2it.me, design your item, then pick a pickup day, time, and gate. You'll get an order code. Confirm in My order by the day before, then pick it up and pay at school.</p><h3>How much does it cost?</h3><p>Sticker sheets are ₱45, 44 mm pins are ₱25 (₱15 each for class orders of 40 or more), keychains are ₱45, A4 posters are ₱50, and prints are ₱5 a page in black and white or ₱10 in color.</p><h3>Who can order?</h3><p>Students of the XU uptown campus (Pueblo de Oro): grade school, junior high, and senior high.</p><h3>Where do I pick up my order?</h3><p>Inside campus, on pickup days. Your exact gate and time are shown on your pickup pass after you order.</p><h3>How do I pay?</h3><p>Cash when you pick up, or GCash.</p><h3>Can I print documents?</h3><p>Yes. Upload PDFs or pictures for plain-paper prints. Same-day pickup is possible if you order at least 2 hours before the pickup time, for a small rush fee.</p><h3>Is Stick2It an official school service?</h3><p>No. Stick2It is run by students and isn't an official school service.</p>
+  <p><a href="https://www.stick2it.me/#/shop">Start designing</a> · <a href="https://www.facebook.com/profile.php?id=61594155363888">Stick2It on Facebook</a></p>
+</main></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
@@ -1134,7 +1326,7 @@ const CONFIG = {
   bucket: 'sticker-uploads',
 
   // The real web address of the site. Set this BEFORE making poster QR codes.
-  siteUrl: 'https://stick2xu.vercel.app/',
+  siteUrl: 'https://www.stick2it.me/',
 
   currency: '₱',
   maxSheets: 10,           // sticker sheets per order (the live limit is set in admin → Settings)
@@ -1499,7 +1691,7 @@ function lowRes(img, size){ return !!img && Math.min(img.w, img.h) < rectMm(0, 0
 function drawSticker(src, px, mm, fit, cut){
   const mk = () => { const c = document.createElement('canvas'); c.width = px; c.height = px; return c; };
   const b = Math.max(2, Math.round(px * CONFIG.outlineMm / mm));
-  const cl = cut ? Math.max(1, Math.round(px * 0.3 / mm)) : 0;
+  const cl = cut ? Math.max(2, Math.round(px * 0.45 / mm)) : 0;   // cut line thickness (about 0.45 mm), printed as dots
   const pad = b + cl + 1, inner = px - 2 * pad;
   const iw = src.naturalWidth || src.width, ih = src.naturalHeight || src.height;
   const art = mk(), a = art.getContext('2d');
@@ -1513,7 +1705,16 @@ function drawSticker(src, px, mm, fit, cut){
     for (const rr of [r, r * 0.66, r * 0.33]) for (let i = 0; i < 28; i++) { const t = i / 28 * Math.PI * 2; o.drawImage(c, Math.cos(t) * rr, Math.sin(t) * rr); }
     o.drawImage(c, 0, 0);
   };
-  if (cut) stamp(sil('#8E8E98'), b + cl);
+  if (cut) {
+    // cut line as dots: draw the grey band on its own, keep only a grid of dots from it, then lay it down
+    const ring = mk(), rg = ring.getContext('2d'), gs = sil('#8E8E98');
+    for (const rr of [b + cl, (b + cl) * 0.66, (b + cl) * 0.33]) for (let i = 0; i < 28; i++) { const t = i / 28 * Math.PI * 2; rg.drawImage(gs, Math.cos(t) * rr, Math.sin(t) * rr); }
+    const sp = Math.max(5, Math.round(px * 1.25 / mm)), dr = Math.max(1.4, cl * 1.1);
+    const dots = mk(), dg = dots.getContext('2d'); dg.fillStyle = '#000';
+    for (let y = sp / 2; y < px; y += sp) for (let x = sp / 2; x < px; x += sp) { dg.beginPath(); dg.arc(x, y, dr, 0, Math.PI * 2); dg.fill(); }
+    rg.globalCompositeOperation = 'destination-in'; rg.drawImage(dots, 0, 0);
+    o.drawImage(ring, 0, 0);
+  }
   stamp(sil('#FFFFFF'), b);
   o.drawImage(art, 0, 0);
   return out;
@@ -1915,6 +2116,34 @@ let SRC = (params.get('src') || safeLS.get('sk_src') || '').replace(/[^a-z0-9-]/
 if (params.get('src')) safeLS.set('sk_src', SRC);
 let api;
 
+/* The customer's own order (saved on this phone): what they need to do next, shown on every page */
+function myAction(o){
+  if (!o || !o.pickup_date) return null;
+  const today = ymd(new Date());
+  if (o.status === 'ready' && o.pickup_date === today) return o.arrived || o.arrived_at ? 'arrived' : 'here';
+  if (['pending', 'approved'].includes(o.status) && !o.confirmed && !confirmMissed(o)) return 'confirm';
+  return null;
+}
+function actionStripHTML(){
+  const o = S.myOrder, act = myAction(o); if (!act || location.hash.startsWith('#/admin')) return '';
+  const short = v => fmtDate(v, { weekday: 'short', month: 'short', day: 'numeric' });
+  if (act === 'confirm') return `<div class="actstrip"><div class="in">${ic('thumb', 20)}<span><b>Confirm your order by ${esc(short(confirmBy(o)))}.</b> We only print confirmed orders.</span>
+    ${smallBtn("I'll be there", 'thumb', 'stripConfirm', 'dark')}</div></div>`;
+  if (act === 'here') return `<div class="actstrip go"><div class="in">${ic('pin', 20)}<span><b>It's pickup day!</b> Your order is ready at ${esc(o.pickup)}, ${esc(o.pickup_time || '')}. At the gate, tap:</span>
+    ${smallBtn("I'm here", 'pin', 'stripHere', 'dark')}</div></div>`;
+  return `<div class="actstrip ok"><div class="in">${ic('check', 20)}<span><b>They know you're here.</b> Look for ${esc(signal())} at ${esc(o.pickup)}.</span></div></div>`;
+}
+async function loadMyOrder(){
+  const last = readJSON('sk_last'); if (!last || !last.code || !last.nickname) { S.myOrder = null; return; }
+  try { S.myOrder = await api.getOrder(last.code, last.nickname); S.myOrder.pickup = S.myOrder.pickup || last.pickup; }
+  catch { S.myOrder = null; }
+  refreshActionStrip();
+}
+function refreshActionStrip(){
+  document.querySelectorAll('.actstrip').forEach(e => e.remove());
+  const tw = document.querySelector('.topwrap'); if (tw) tw.insertAdjacentHTML('afterend', actionStripHTML());
+  const btn = document.querySelector('a.pilllink[href="#/status"]'); if (btn) btn.classList.toggle('needs', !!myAction(S.myOrder) && myAction(S.myOrder) !== 'arrived');
+}
 function noticeHTML(){
   const nt = CONFIG.notice; if (!nt || !nt.on || !String(nt.text || '').trim()) return '';
   const key = 'sk_notice_' + nt.text.length + '_' + nt.text.slice(0, 24);
@@ -1927,8 +2156,8 @@ function topbar(){
   return `<div class="topwrap"><header class="top"><a class="mark" href="#/" aria-label="${esc(CONFIG.shopName)} home">Stick<b>2</b>It</a>
     <div class="topacts ${n && !onCart ? 'has-cart' : ''}">
       ${n && !onCart ? `<a class="pilllink cartpill" href="#/cart" aria-label="Your order, ${n} item${n > 1 ? 's' : ''}">${ic('sticker', 18)}<span class="lbl">Cart</span><b class="badge-n num">${n}</b></a>` : ''}
-      <a class="pilllink" href="#/status" aria-label="Check my order">${ic('box', 18)}<span class="lbl">My order</span></a>
-    </div></header></div>${noticeHTML()}`;
+      <a class="pilllink ${['confirm', 'here'].includes(myAction(S.myOrder)) ? 'needs' : ''}" href="#/status" aria-label="Check my order${['confirm', 'here'].includes(myAction(S.myOrder)) ? ' (something to do)' : ''}">${ic('box', 18)}<span class="lbl">My order</span></a>
+    </div></header></div>${noticeHTML()}${actionStripHTML()}`;
 }
 function progress(step){
   const names = ['Design', 'Details', 'Pickup pass'];
@@ -1937,6 +2166,10 @@ function progress(step){
     <span class="${i + 1 === step ? 'on' : i + 1 < step ? 'done' : ''}" ${i + 1 === step ? 'aria-current="step"' : ''}><i>${i + 1 < step ? ic('check', 14) : i + 1}</i>${label(n)}</span>`).join('')}</nav>`;
 }
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+// On the admin page, show any error on screen instead of failing silently (screenshot it and send it in)
+function adminErr(msg){ if (location.hash.startsWith('#/admin')) toast(`Something went wrong: ${String(msg).slice(0, 140)}. Screenshot this and send it.`); }
+window.addEventListener('error', e => adminErr(e.message));
+window.addEventListener('unhandledrejection', e => adminErr(e.reason && e.reason.message || e.reason));
 function toTop(){ window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }
 function route(){
   const parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/'), page = parts[0];
@@ -1945,6 +2178,7 @@ function route(){
   toTop(); requestAnimationFrame(toTop); setTimeout(toTop, 60);
 }
 window.addEventListener('hashchange', route);
+setTimeout(loadMyOrder, 300); setInterval(() => { if (!document.hidden && !location.hash.startsWith('#/admin')) loadMyOrder(); }, 60000);
 window.addEventListener('scroll', () => { const t = $('.topwrap'); if (t) t.classList.toggle('scrolled', scrollY > 4); }, { passive: true });
 window.addEventListener('beforeunload', e => {
   if ((S.cart.length || S.sheets.some(s => s.items.length) || (S.fd && S.fd.front.imageId)) && !location.hash.includes('admin')) { e.preventDefault(); e.returnValue = ''; }
@@ -3160,7 +3394,7 @@ async function submitOrder(e){
     S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal };
     try { const real = await api.getOrder(code, nickname); if (real && real.total !== finalTotal) { S.lastOrder.total = real.total; if (real.total < finalTotal) setTimeout(() => toast(`Your friend credit took ${money(finalTotal - real.total)} off. New total: ${money(real.total)}.`), 900); } } catch {}
     S.promo = null;
-    S.celebrate = true; S.codeSaved = false; buzz([12, 40, 18]);
+    S.celebrate = true; S.codeSaved = false; setTimeout(loadMyOrder, 800); buzz([12, 40, 18]);
     safeLS.set('sk_me', JSON.stringify({ nickname, section }));
     safeLS.set('sk_last', JSON.stringify(S.lastOrder));
     S.images.forEach(i => revoke(i.url)); stickerCache.clear();
@@ -3436,13 +3670,14 @@ async function drawAdminBody(){
       return `<button class="chip ${f === k ? 'on' : ''}" type="button" data-act="admFilter" data-f="${k}">${l}${c && ACTIVE.includes(k) ? `<span class="c num">${c}</span>` : ''}</button>`; }).join('')}</div>
     ${f === 'approved' ? (() => { const days = [...new Set(all.filter(o => ['approved', 'printing'].includes(o.status) && o.confirmed && o.pickup_date).map(o => o.pickup_date))].sort();
       return days.length ? `<div class="batchbar">${ic('printer', 18)}<span>Print everything for a pickup day in one PDF:</span>${days.map(d => smallBtn(`${fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' })} (${all.filter(o => ['approved', 'printing'].includes(o.status) && o.confirmed && o.pickup_date === d).length})`, 'printer', 'aBatch', 'dark', `data-date="${d}"`)).join('')}</div>` : ''; })() : ''}
+    ${f === 'printing' && list.length ? `<p class="hint" style="margin-bottom:16px">${ic('box', 18)}<span><b>Next:</b> when an order is printed, cut, and bagged (code and full name on the bag), tap <b>Mark ready</b>. It moves to "Ready" for pickup day.</span></p>` : ''}
     ${f === 'approved' ? `<p class="hint" style="margin-bottom:16px">${ic('printer', 18)}<span>Print only orders marked <b>Confirmed</b>. Unconfirmed ones are released by themselves after their confirm-by day, so nothing gets wasted.</span></p>` : ''}
     ${f === 'ready' ? `<div class="pickupbar ${S.admin.pickupMode ? 'on' : ''}">
         <div>${ic('box', 18)}<span>${S.admin.pickupMode
           ? '<b>Pickup mode is on.</b> The screen stays awake, and your phone chimes and buzzes when someone taps "I\'m here". Keep this page open.'
           : 'At the gate? Turn on <b>pickup mode</b> so your phone chimes when someone arrives. Write the code and full name on each bag.'}</span></div>
         ${smallBtn(S.admin.pickupMode ? 'Stop pickup mode' : 'Start pickup mode', S.admin.pickupMode ? 'x' : 'pin', 'pickupMode', S.admin.pickupMode ? 'plain' : 'dark')}</div>` : ''}
-    <div class="olist">${list.length ? list.map((o, idx) => {
+    <div class="olist">${list.length ? list.map((o, idx) => { try {
       const sk = strikes[personKey(o)] || 0, a = [];
       const prev = list[idx - 1];
       let head = '';
@@ -3497,8 +3732,14 @@ async function drawAdminBody(){
             <input class="inp" id="rejText" maxlength="140" value="${esc(REJECT_REASONS[0])}">
             <div class="oacts">${smallBtn('Send rejection', 'x', 'rejSend', 'danger', `data-id="${o.id}"`)}${smallBtn('Cancel', '', 'rejCancel', 'plain')}</div></div>`
           : `<div class="oacts">${a.join('')}</div>`}
-      </article>`; }).join('')
-      : `<div class="empty">${ic('box', 36)}<b>${emptyMsg[f] || 'Nothing here yet.'}</b><span>New orders show up under "To review".</span></div>`}</div>`;
+      </article>`; } catch (err) {
+        console.error('order card', o && o.code, err);
+        return `<article class="ocard broken"><b>${esc((o && o.code) || 'An order')}</b> couldn't be shown here. Try the All tab. If this keeps happening, screenshot this: <code>${esc(String(err && err.message || err))}</code></article>`;
+      } }).join('')
+      : `<div class="empty">${ic('box', 36)}<b>${emptyMsg[f] || 'Nothing here yet.'}</b>${
+          f === 'approved' && all.some(o => o.status === 'printing') ? `<span>${all.filter(o => o.status === 'printing').length} order${all.filter(o => o.status === 'printing').length === 1 ? ' is' : 's are'} printing. When they're cut and bagged, mark them ready.</span>${smallBtn('Go to Printing', 'arrow', 'admFilter', 'dark', 'data-f="printing"')}`
+          : f === 'printing' && all.some(o => o.status === 'ready') ? `<span>Ready orders wait under "Ready" for pickup day.</span>${smallBtn('Go to Ready', 'arrow', 'admFilter', 'dark', 'data-f="ready"')}`
+          : '<span>New orders show up under "To review".</span>'}</div>`}</div>`;
 }
 function chime(){
   try {
@@ -3557,7 +3798,8 @@ async function batchPrint(date){
     batch.doc.save(`pickup-${date}.pdf`);
     for (const o of list) if (o.status === 'approved' && !files.includes(o.code) && !gone.includes(o.code)) await setStatus(o.id, { status: 'printing' });
   }
-  toast(`PDF ready. Print at 100% ("Actual size").${files.length ? ` Print these from their file buttons: ${files.join(', ')}.` : ''}${gone.length ? ` Couldn't make: ${gone.join(', ')}.` : ''}`);
+  toast(`PDF ready. Print at 100% ("Actual size"). These orders are now under Printing.${files.length ? ` Print these from their file buttons: ${files.join(', ')}.` : ''}${gone.length ? ` Couldn't make: ${gone.join(', ')}.` : ''}`);
+  S.admin.filter = 'printing'; drawAdminBody();
 }
 async function makePdf(o, batch){
   if (!window.jspdf) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
@@ -3642,18 +3884,19 @@ async function makePdf(o, batch){
     const cols = Math.max(1, Math.floor((A4W - 2 * M + GAP) / (mm.w + GAP))), rows = Math.max(1, Math.floor((A4H - 2 * M - 6 + GAP) / (mm.h + GAP)));
     const per = cols * rows, pages = Math.ceil(pieces.length / per);
     for (let pg = 0; pg < pages; pg++) {
-      page(A4W, A4H); cutLine();
+      page(A4W, A4H); cutLine(); doc.setLineCap('round'); doc.setLineWidth(0.45); doc.setLineDashPattern([0.2, 1.0], 0);   // short round dashes = dots in every viewer and printer
       pieces.slice(pg * per, (pg + 1) * per).forEach((pc, i) => {
         const x = M + (i % cols) * (mm.w + GAP), y = M + Math.floor(i / cols) * (mm.h + GAP);
         if (pc) doc.addImage(pc.data, pc.fmt, x, y, mm.w, mm.h, `p${ii}_${pieces.indexOf(pc)}`, 'FAST');
         if (mm.round) doc.circle(x + mm.w / 2, y + mm.h / 2, mm.w / 2, 'S'); else doc.rect(x, y, mm.w, mm.h, 'S');
       });
+      doc.setLineDashPattern([], 0); doc.setLineCap('butt');
       foot(`${label}${bk ? ', front and back side by side' : ''}, page ${pg + 1} of ${pages}`, A4W, A4H);
     }
   }
   if (batch) { batch.doc = doc; return 'ok'; }
   doc.save(`${o.code}.pdf`);
-  if (o.status === 'approved') setStatus(o.id, { status: 'printing' }, 'PDF downloaded. Print at 100% ("Actual size") and cut on the grey lines.');
+  if (o.status === 'approved') setStatus(o.id, { status: 'printing' }, 'PDF downloaded. Print at 100% ("Actual size") and cut along the dotted lines.');
 }
 
 function drawSettings(){
@@ -4560,6 +4803,12 @@ const ACTIONS = {
   cdAdd: () => { const c = S.admin.cfg; c.countdowns = (c.countdowns || []).concat([{ name: '', date: '', yearly: false, show: true }]); drawShopForm(); },
   cdDel: t => { const c = S.admin.cfg; c.countdowns.splice(+t.dataset.i, 1); drawShopForm(); },
   lookAnother: () => { compactLook(false); S.statusResult = null; $('#statusOut').innerHTML = ''; $('#lc').value = ''; $('#ln').value = ''; $('#lc').focus(); },
+  stripConfirm: async t => { const o = S.myOrder, last = readJSON('sk_last'); if (!o || !last) return; t.disabled = true;
+    try { await api.confirm(o.code, last.nickname); buzz([8, 30, 8]); toast("Thanks! You're confirmed. We'll print it."); await loadMyOrder(); if (location.hash === '#/status' && S.statusResult) lookup(); }
+    catch (e) { t.disabled = false; toast(friendlyError(e)); } },
+  stripHere: async t => { const o = S.myOrder, last = readJSON('sk_last'); if (!o || !last) return; t.disabled = true;
+    try { await api.imHere(o.code, last.nickname); buzz([8, 30, 8]); toast("The seller's been told you're here."); await loadMyOrder(); if (location.hash === '#/status' && S.statusResult) lookup(); }
+    catch (e) { t.disabled = false; toast(friendlyError(e)); } },
   tgShow: () => { const i = $('#tgToken'); if (i) i.type = i.type === 'password' ? 'text' : 'password'; },
   tgFind: async t => {
     const tok = S.admin.tg.bot_token; if (!tok) return toast('Paste the bot token first.');
@@ -4600,13 +4849,13 @@ const ACTIONS = {
   prodDelAddon: t => { S.admin.prodDraft[t.dataset.k].addons.splice(+t.dataset.i, 1); drawProducts(); },
   imHere: async t => {
     t.disabled = true;
-    try { await api.imHere(S.statusResult.code, S.statusNick); toast("The seller's been told you're here."); lookup(); }
+    try { await api.imHere(S.statusResult.code, S.statusNick); toast("The seller's been told you're here."); lookup(); loadMyOrder(); }
     catch (e) { t.disabled = false; toast(friendlyError(e)); }
   },
   moveOpen: async () => { S.moving = true; drawStatus(); const o = S.statusResult; await loadAvail(openDates(true, 40).slice(0, 12)); if (S.moving && S.statusResult === o) drawStatus(); },
   moveClose: () => { S.moving = false; drawStatus(); },
   noticeClose: t => { try { sessionStorage.setItem(t.dataset.k, '1'); } catch {} const n = t.closest('.notice'); if (n) n.remove(); },
-  confirmComing: async () => { try { await api.confirm(S.statusResult.code, S.statusNick); toast("Thanks. The seller knows you're coming."); lookup(); } catch (e) { toast(friendlyError(e)); } },
+  confirmComing: async () => { try { await api.confirm(S.statusResult.code, S.statusNick); toast("Thanks. The seller knows you're coming."); lookup(); loadMyOrder(); } catch (e) { toast(friendlyError(e)); } },
   cancelOrder: async t => {
     if (!armed(t, 'Tap again to cancel')) return;
     try { await api.cancel(S.statusResult.code, S.statusNick); toast('Order cancelled.'); lookup(); } catch (e) { toast(friendlyError(e)); }

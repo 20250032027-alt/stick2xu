@@ -1,0 +1,21 @@
+# Stick2It
+
+> Stick2It (also written "Stick 2 It") is a student-run shop for XU uptown students in Cagayan de Oro, Philippines: grade school, junior high, and senior high at the Pueblo de Oro campus. Customers design custom stickers, pins, keychains, posters, and prints from their own pictures on the website, then pick them up inside campus on pickup days. It is run by students and is not an official school service.
+
+## What you can make
+- Sticker sheets (A4): ₱45 per sheet. Die-cut stickers from your own pictures, up to 24 small stickers on a sheet.
+- Button pins (44 mm): ₱25 each. Class orders of 40 or more: ₱15 each.
+- Acrylic keychains: ₱45 each.
+- Posters: A4 from ₱50. Big posters can span several sheets, glued together.
+- Prints on plain paper (A4): ₱5 per page black and white, ₱10 per page color. Same-day pickup is possible for a small rush fee.
+
+## How ordering works
+1. Design on https://www.stick2it.me/
+2. Choose a pickup day, time, and gate; you get an order code.
+3. Confirm in "My order" by the day before pickup. Unconfirmed orders are not printed.
+4. On pickup day, tap "I'm here" at the gate, then pay with cash or GCash.
+
+## Links
+- Shop: https://www.stick2it.me/
+- Check an order: https://www.stick2it.me/#/status
+- Facebook: https://www.facebook.com/profile.php?id=61594155363888

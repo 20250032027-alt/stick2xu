@@ -137,6 +137,14 @@ If **Find my chat** shows nothing, send `/start` again in the group and retry. A
 
 In Supabase, open **Database → Extensions**, search **pg_cron**, and turn it on. Then run `schema.sql` again. That sets up the 7 AM summary (it runs at 23:00 UTC, which is 7:00 AM in the Philippines). To check it, tap **Send today's summary** in admin → Settings → Telegram alerts.
 
+## 9. Search engines (one time)
+
+1. **Upload** `og-image.png`, `robots.txt`, `sitemap.xml`, and `llms.txt` next to `index.html`.
+2. **Google Search Console** (search.google.com/search-console): add a **Domain** property `stick2it.me`, verify with the **TXT record** it gives you (Namecheap → Advanced DNS → Add new record → TXT, Host `@`), submit `https://www.stick2it.me/sitemap.xml` under **Sitemaps**, then use **URL inspection** on `https://www.stick2it.me/` → **Request indexing**.
+3. **Bing Webmaster Tools** (bing.com/webmasters): **Import from Google Search Console** (one click; Bing also feeds Microsoft Copilot).
+4. **Facebook Sharing Debugger** (developers.facebook.com/tools/debug): paste the site address and tap **Scrape Again**.
+5. **Rich Results Test** (search.google.com/test/rich-results): it should find the FAQ with no errors.
+
 ## Changing the web address to Stick2It
 
 The site still lives at stick2xu.vercel.app until you rename it:

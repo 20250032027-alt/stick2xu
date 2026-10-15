@@ -1,0 +1,5 @@
+# Stick2It: everyone is welcome to read the shop
+User-agent: *
+Allow: /
+
+Sitemap: https://www.stick2it.me/sitemap.xml
