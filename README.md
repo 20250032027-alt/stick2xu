@@ -196,6 +196,12 @@ Small finishing touches, each with its own switch in **Settings → Shop details
 
 People who've turned on reduced motion on their phone never see the animations.
 
+## Shortcuts
+
+- **Admin:** tap the **Stick2It logo 5 times quickly** (within about 2 seconds) on any page. It still asks for your admin login.
+- **Account button** (top right): a person icon when signed out (opens XU sign-in), or a navy circle with the student's initial when signed in (opens Your orders).
+- If you're signed in with a student XU account in the same browser, the admin page says so and shows the admin login. Logging in as admin replaces the student sign-in on that browser.
+
 ## Latest (admin)
 
 The **Latest** tab is a feed of everything that happens, newest first:
@@ -206,7 +212,7 @@ The **Latest** tab is a feed of everything that happens, newest first:
 - cancellations
 - changes to settings, deals, promo codes, Telegram, and the Business tab
 
-It shows who did each thing: You, another admin by name, a Student, or a Customer. Tap an order code to jump to that order. A red dot on the tab means there's something new since you last looked (each admin has their own).
+It shows who did each thing (You, another admin by name, a Student, or a Customer), with times like "5 min ago". Filter it to **Orders** or **Admin changes**; it refreshes by itself while open. Tap an order code to jump to that order. A red dot on the tab means there's something new since you last looked (each admin has their own).
 
 ## Customer reminders (so nobody misses a step)
 

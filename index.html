@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-PH">
 <head>
+<script>document.documentElement.classList.add('js')</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Stick2It · Custom stickers, pins, keychains, posters, and prints</title>
@@ -1389,6 +1390,19 @@ a.pilllink.needs::after{content:"";position:absolute;top:-2px;right:-2px;width:1
 .detsw span{display:grid;gap:2px}
 .detsw small{font-size:12.5px;color:var(--muted);font-weight:500}
 @media (prefers-reduced-motion: reduce){.pass.printin,.okstamp.thunk,.bump,.cline.justin,.ripplefx,.ocard.fresh,.d-cd_shine .cdc.next::after{animation:none!important}}
+
+.js .seo-fallback{display:none}
+
+/* account button (top right) */
+.acctbtn{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:50%;border:2px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;box-shadow:2px 3px 0 var(--ink);transition:transform .15s var(--ease)}
+.acctbtn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink)}
+.acctbtn.in{background:var(--ink);color:#fff}
+.acctbtn{order:9}
+.acctbtn.in b{font-family:var(--display);font-weight:800;font-size:18px;line-height:1}
+
+/* top bar on narrow phones: labels never wrap; icons only when space is tight */
+.topacts .pilllink{white-space:nowrap}
+@media(max-width:374px){.topacts .pilllink .lbl{display:none}.topacts .pilllink{padding-left:12px;padding-right:12px}}
 </style>
 </head>
 <body>
@@ -1590,7 +1604,7 @@ const ICONS = {
   chart:'<path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/>', list:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
   ghost:'<path d="M5 21V10a7 7 0 0 1 14 0v11l-2.3-1.8-2.3 1.8-2.4-1.8-2.4 1.8-2.3-1.8z"/><path d="M9.5 10h.01M14.5 10h.01"/>',
   thumb:'<path d="M7 11v10H4V11zM7 11l4-8a2.5 2.5 0 0 1 3 3l-1 4h6a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 17.6 21H7"/>',
-  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>', search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>', bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>', search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
   warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17.5v.01"/>',
   copy:'<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
   download:'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>', lock:'<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
@@ -2162,6 +2176,7 @@ function SupaBackend(){
     async reschedule(code, nick, date, time){ await rpc('reschedule_order', { p_code: code, p_nickname: nick, p_date: date, p_time: time }); },
     async imHere(code, nick){ await rpc('mark_arrived', { p_code: code, p_nickname: nick }); },
     async session(){ const { data } = await sb.auth.getSession(); return !!data.session; },
+    async isAdmin(){ try { return !!(await rpc('is_admin', {})); } catch { return true; } },   // if the check itself fails, don't lock admins out (the database still protects the data)
     async me(){ const { data } = await sb.auth.getSession(); const u = data.session && data.session.user; return u ? { email: (u.email || '').toLowerCase(), name: (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || '' } : null; },
     async xuStart(){ const { data, error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/?signin=1', skipBrowserRedirect: true, queryParams: { hd: 'my.xu.edu.ph', prompt: 'select_account' } } }); if (error) throw error; return data.url; },
     async signOut(){ await sb.auth.signOut(); },
@@ -2238,6 +2253,7 @@ function actionStripHTML(){
   return `<div class="actstrip ok"><div class="in">${ic('check', 20)}<span><b>They know you're here.</b> Look for ${esc(signal())} at ${esc(o.pickup)}.</span></div></div>`;
 }
 async function loadMyOrder(){
+  if (S.halt) return;
   const last = readJSON('sk_last'); if (!last || !last.code || !last.nickname) { S.myOrder = null; return; }
   try { S.myOrder = await api.getOrder(last.code, last.nickname); S.myOrder.pickup = S.myOrder.pickup || last.pickup; }
   catch { S.myOrder = null; }
@@ -2279,31 +2295,55 @@ function xuBoxHTML(){
     <p class="help" style="margin:6px 0 0">${CONFIG.requireXu ? 'Required to order. Only school accounts ending in <b>' + XU_DOMAIN + '</b> work.' : 'Optional. Signing in keeps all your orders in one place, no codes needed.'}</p>
     <p class="ferr" id="e-xu" role="alert"></p></div>`;
 }
-// The sign-in window lands back here (?signin=1&code=...): finish, check it's a school account, tell the shop page, and close
+// The sign-in window lands back here (?signin=1&code=...): finish, check it's a school account, tell the shop page, and close.
+// Google's pages usually cut the link between the two windows (window.opener), so we also announce it on a channel
+// every page of this site listens to, and the shop page re-checks whenever it's shown again.
+const signinChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('s2i-signin') : null;
 async function finishSignIn(){
   const q = new URLSearchParams(location.search);
   if (!q.has('signin')) return false;
   await api.session().catch(() => false);   // waits for the sign-in to complete
   let me = await api.me().catch(() => null);
   if (me && !isXu(me.email)) { await api.signOut().catch(() => {}); me = null; }
-  if (window.opener && !window.opener.closed) {
-    try { window.opener.postMessage({ s2i: me ? 'signedin' : 'notxu' }, location.origin); } catch {}
-    document.body.innerHTML = `<p style="font:16px system-ui;padding:40px;text-align:center;color:#283971">${me ? 'Signed in. You can close this window.' : 'Only XU school accounts (' + XU_DOMAIN + ') work. You can close this window and try again.'}</p>`;
-    setTimeout(() => window.close(), 500);
-    return true;
+  const msg = { s2i: me ? 'signedin' : 'notxu' };
+  try { signinChannel && signinChannel.postMessage(msg); } catch {}
+  try { window.opener && !window.opener.closed && window.opener.postMessage(msg, location.origin); } catch {}
+  const back = sessionStorage.getItem('s2i_return');
+  if (back !== null) {   // the pop-up was blocked, so sign-in happened in this same tab: go back to where they were
+    sessionStorage.removeItem('s2i_return');
+    history.replaceState(null, '', location.pathname + (back || '#/'));
+    if (!me) setTimeout(() => toast('Only XU school accounts (' + XU_DOMAIN + ') work. Try again with your school account.'), 600);
+    else setTimeout(() => onSignedIn(true), 300);
+    return false;
   }
-  if (!me) setTimeout(() => toast('Only XU school accounts (' + XU_DOMAIN + ') work. Try again with your school account.'), 600);
-  history.replaceState(null, '', location.pathname + (sessionStorage.getItem('s2i_return') || '#/'));
-  sessionStorage.removeItem('s2i_return');
-  return false;
+  S.halt = true;
+  document.getElementById('app').innerHTML = `<main style="font:16px/1.5 system-ui;padding:48px 24px;text-align:center;color:#283971;max-width:420px;margin:auto">
+    <p style="font-size:40px;margin:0">${me ? '✓' : '!'}</p>
+    <h1 style="font-size:22px;margin:8px 0">${me ? 'You\u2019re signed in' : 'That wasn\u2019t a school account'}</h1>
+    <p>${me ? 'Go back to the Stick2It tab to continue your order. You can close this one.' : 'Only XU school accounts (' + XU_DOMAIN + ') work. Close this and try again.'}</p></main>`;
+  setTimeout(() => { try { window.close(); } catch {} }, 700);
+  return true;
 }
-window.addEventListener('message', async e => {
-  if (e.origin !== location.origin || !e.data || !e.data.s2i) return;
-  if (e.data.s2i === 'notxu') { toast('Only XU school accounts (' + XU_DOMAIN + ') work. Try again with your school account.'); return; }
+async function onSignedIn(fromHere){
   const before = !!S.me; await refreshMe();
-  if (S.me && !before) { toast(`Signed in as ${S.me.email}.`); buzz([8, 30, 8]); }
-  if (location.hash.startsWith('#/checkout')) viewCheckoutKeep(); else if (location.hash.startsWith('#/status')) drawMine();
-});
+  if (S.me && !before) {
+    if (S.me.name) { const m0 = readJSON('sk_me') || {}; safeLS.set('sk_me', JSON.stringify({ ...m0, nickname: S.me.name })); const nk = $('#nick'); if (nk) { nk.value = S.me.name; nk.dispatchEvent(new Event('input')); } }
+    const first = (S.me.name || '').trim().split(/\s+/)[0];
+    toast(first ? `Welcome, ${first}! We filled in your name from your XU account (you can still change it).` : `Signed in as ${S.me.email}.`); buzz([8, 30, 8]);
+    if (location.hash.startsWith('#/checkout')) viewCheckoutKeep(); else if (location.hash.startsWith('#/status')) drawMine();
+  }
+  refreshTopAcct();
+}
+function onSignInMessage(d){
+  if (!d || !d.s2i) return;
+  if (d.s2i === 'notxu') { toast('Only XU school accounts (' + XU_DOMAIN + ') work. Try again with your school account.'); return; }
+  onSignedIn();
+}
+window.addEventListener('message', e => { if (e.origin === location.origin) onSignInMessage(e.data); });
+if (signinChannel) signinChannel.onmessage = e => onSignInMessage(e.data);
+// fallbacks: the sign-in is saved in this browser, so notice it when the saved data changes or the tab is shown again
+window.addEventListener('storage', e => { if (e.key && e.key.includes('auth-token') && !S.me) onSignedIn(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden && !S.me && !location.hash.startsWith('#/admin') && api) onSignedIn(); });
 /* ---------- Little details: small finishing touches, each with its own switch (admin → Settings → Little details) ---------- */
 const DETAILS = [
   ['pass_ticket', 'Ticket notches on the pickup pass', 'Half-circle notches at the tear line, like a real ticket.'],
@@ -2332,6 +2372,13 @@ function dayWord(v, cap){
   if (w) return cap ? w[0].toUpperCase() + w.slice(1) : w;
   return fmtDate(v, { weekday: 'short', month: 'short', day: 'numeric' });
 }
+function refreshTopAcct(){
+  const b = document.querySelector('.acctbtn'); if (!b) return;
+  b.classList.toggle('in', !!S.me);
+  b.innerHTML = S.me ? `<b>${esc(((S.me.name || S.me.email).trim()[0] || '?').toUpperCase())}</b>` : ic('user', 18);
+  b.setAttribute('aria-label', S.me ? `Signed in as ${S.me.email}. Your orders` : 'Sign in with your XU account');
+  b.title = S.me ? S.me.email : 'Sign in with your XU account';
+}
 function noticeHTML(){
   const nt = CONFIG.notice; if (!nt || !nt.on || !String(nt.text || '').trim()) return '';
   const key = 'sk_notice_' + nt.text.length + '_' + nt.text.slice(0, 24);
@@ -2341,9 +2388,10 @@ function noticeHTML(){
 }
 function topbar(){
   const n = S.cart.length, onCart = location.hash.startsWith('#/cart');
-  return `<div class="topwrap"><header class="top"><a class="mark" href="#/" aria-label="${esc(CONFIG.shopName)} home">Stick<b>2</b>It</a>
+  return `<div class="topwrap"><header class="top"><a class="mark" href="#/" data-act="logoTap" aria-label="${esc(CONFIG.shopName)} home">Stick<b>2</b>It</a>
     <div class="topacts ${n && !onCart ? 'has-cart' : ''}">
       ${n && !onCart ? `<a class="pilllink cartpill" href="#/cart" aria-label="Your order, ${n} item${n > 1 ? 's' : ''}">${ic('sticker', 18)}<span class="lbl">Cart</span><b class="badge-n num">${n}</b></a>` : ''}
+      <button type="button" class="acctbtn ${S.me ? 'in' : ''}" data-act="acct" aria-label="${S.me ? `Signed in as ${esc(S.me.email)}. Your orders` : 'Sign in with your XU account'}" title="${S.me ? esc(S.me.email) : 'Sign in with your XU account'}">${S.me ? `<b>${esc(((S.me.name || S.me.email).trim()[0] || '?').toUpperCase())}</b>` : ic('user', 18)}</button>
       <a class="pilllink ${['confirm', 'here'].includes(myAction(S.myOrder)) ? 'needs' : ''}" href="#/status" aria-label="Check my order${['confirm', 'here'].includes(myAction(S.myOrder)) ? ' (something to do)' : ''}">${ic('box', 18)}<span class="lbl">My order</span></a>
     </div></header></div>${noticeHTML()}${actionStripHTML()}`;
 }
@@ -2361,6 +2409,7 @@ window.addEventListener('unhandledrejection', e => adminErr(e.reason && e.reason
 function toTop(){ window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }
 const BASE_TITLE = document.title;
 function route(){
+  if (S.halt) return;
   document.title = BASE_TITLE;
   const parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/'), page = parts[0];
   const views = { home: viewHome, shop: viewShop, design: viewDesign, make: () => viewMake(parts[1]), cart: viewCart, checkout: viewCheckout, done: viewDone, status: viewStatus, admin: viewAdmin };
@@ -3388,7 +3437,7 @@ function viewCheckout(){
   const dates = checkoutDates(), po = printsOnly();
   if (!S.coKeep) S.coStep = me.nickname && myGrade && mySec ? 2 : 1;   // returning customers start at Pickup
   S.coKeep = false;
-  if (S.me && S.me.name && !me.nickname) me.nickname = S.me.name;   // the school account's name, as on their ID
+  if (S.me && S.me.name && !me.nickname) me.nickname = S.me.name;   // the school account's name
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">${progress(2)}
     <a class="pilllink" href="#/cart" style="margin-bottom:18px">${ic('back', 18)}Back to my order</a>
     <form class="panel" id="orderForm" novalidate>
@@ -3726,7 +3775,7 @@ async function drawMine(){
   const lbl = { pending: 'Checking', approved: 'Approved', printing: 'Printing', ready: 'Ready', done: 'Picked up', cancelled: 'Cancelled', rejected: 'Not approved', noshow: 'Missed' };
   el.innerHTML = `<section class="panel mine"><div class="mine-h"><b>Your orders</b><span class="muted small">${esc(S.me.email)}</span><button type="button" class="linkbtn" data-act="xuOut">Sign out</button></div>
     ${list.length ? `<div class="mine-list">${list.map(o => `<button type="button" class="mine-row" data-act="openMine" data-code="${esc(o.code)}" data-nick="${esc(o.nickname)}">
-      <b class="num">${esc(o.code)}</b><span class="tag ${o.status === 'ready' ? 'ok' : ['cancelled', 'rejected', 'noshow'].includes(o.status) ? 'bad' : ''}">${lbl[o.status] || esc(o.status)}</span>
+      <b class="num">${esc(o.code)}</b><span class="tag ${o.status === 'ready' ? 'ok' : ['cancelled', 'rejected', 'noshow'].includes(o.status) ? 'bad' : ''}">${lbl[o.status] || esc(o.status)}</span>${(() => { const a = myAction(o); return a === 'confirm' ? `<span class="tag hot">Confirm by ${esc(dayWord(confirmBy(o)))}</span>` : a === 'here' ? `<span class="tag hot">Pickup today</span>` : ''; })()}
       <span class="muted small">${o.pickup_date ? esc(fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' })) : ''}</span><span class="num">${money(o.total)}</span>${ic('arrow', 16)}</button>`).join('')}</div>`
       : `<p class="muted small" style="margin:6px 0 0">No orders with this account yet. Orders placed before signing in can still be found with their code below.</p>`}</section>`;
 }
@@ -3818,6 +3867,12 @@ function rescheduleHTML(o){
 async function viewAdmin(){
   $('#app').innerHTML = `<main id="main" class="wrap narrow" style="padding-top:40px"><div class="sk" style="height:260px;border-radius:28px"></div></main>`;
   if (!(await api.session())) return drawLogin();
+  if (!(await api.isAdmin())) {
+    // signed in, but as a student (XU sign-in) or another non-admin account: show the admin login instead
+    const m = await api.me().catch(() => null);
+    drawLogin(m && m.email ? `You're signed in as <b>${esc(m.email)}</b>, which isn't an admin account. Log in with your admin email to continue.` : '');
+    return;
+  }
   $('#app').innerHTML = `<header class="top"><span class="mark">Stick<b>2</b>It</span>
       <button class="pilllink" type="button" data-act="logout">${ic('logout', 18)}Log out</button></header>
     <main id="main" class="wrap">
@@ -3829,9 +3884,10 @@ async function viewAdmin(){
       <div id="admBody">${'<div class="sk" style="height:180px;margin-bottom:16px;border-radius:18px"></div>'.repeat(3)}</div></main>`;
   await adminLoad();
 }
-function drawLogin(){
+function drawLogin(note){
   $('#app').innerHTML = `<main id="main" class="wrap narrow" style="padding-top:40px">
     <form class="panel" id="loginForm"><span class="mark" style="margin-bottom:14px">Stick<b>2</b>It</span><h2 style="margin:10px 0 18px">Admin log in</h2>
+      ${note ? `<p class="hint" style="margin:0 0 14px">${ic('warn', 18)}<span>${note}</span></p>` : ''}
       <div class="field"><label class="lab" for="em">Email</label><input class="inp" id="em" type="email" autocomplete="username"></div>
       <div class="field"><label class="lab" for="pw">Password</label><input class="inp" id="pw" type="password" autocomplete="current-password"></div>
       ${btn('Log in', { type: 'submit', cls: 'wide dark', icon: 'lock' })}<div class="formerr" id="logErr" role="alert"></div>
@@ -3886,20 +3942,26 @@ function whoLabel(actor, myEmail){
   const n = actor.split('@')[0].replace(/[._-]+/g, ' ').replace(/\d+/g, '').trim();
   return n ? n.replace(/\b\w/g, c => c.toUpperCase()) : actor;
 }
-async function drawLatest(){
-  const body = $('#admBody'); body.innerHTML = `<p class="muted" style="padding:20px 0">Loading…</p>`;
+async function drawLatest(quiet){
+  const body = $('#admBody'); if (!quiet) body.innerHTML = `<p class="muted" style="padding:20px 0">Loading…</p>`;
   let rows = [];
+  clearInterval(S.admin.latestPoll); S.admin.latestPoll = setInterval(() => { if (location.hash.includes('admin') && S.admin.tab === 'latest' && !document.hidden) drawLatest(true); else clearInterval(S.admin.latestPoll); }, 45000);
   try { rows = await api.latest(150); }
   catch (e) { body.innerHTML = `<div class="empty">${ic('warn', 36)}<b>Couldn't load the feed.</b><span>Run the newest schema.sql in Supabase, then refresh. (${esc(friendlyError(e))})</span></div>`; return; }
   const { key, email } = await latestSeenKey(); const seen = +(localStorage.getItem(key) || 0);
   if (!rows.length) { body.innerHTML = `<div class="empty">${ic('bell', 36)}<b>Nothing yet.</b><span>New orders and changes by any admin show up here.</span></div>`; return; }
   const dayOf = r => ymd(new Date(r.at)), today = ymd(new Date()), yest = ymd(new Date(Date.now() - 864e5));
   let lastDay = '';
-  body.innerHTML = `<p class="hint" style="margin-bottom:14px">${ic('bell', 18)}<span>Everything that happens, newest first: new orders, confirmations, arrivals, payments, and changes by any admin. <b>New since you last looked</b> have a gold dot.</span></p>
-    <div class="feed">${rows.map(r => {
+  const lf = S.admin.latestFilter || 'all', ORDER_KINDS = ['new', 'status', 'confirm', 'arrive', 'move', 'pay', 'note'];
+  const shown = rows.filter(r => lf === 'all' || (lf === 'orders' ? ORDER_KINDS.includes(r.kind) : !ORDER_KINDS.includes(r.kind)));
+  const newCount = rows.filter(r => r.id > seen).length;
+  body.innerHTML = `<p class="hint" style="margin-bottom:12px">${ic('bell', 18)}<span>Everything that happens, newest first. ${newCount ? `<b>${newCount} new</b> since you last looked (gold dots).` : 'You’re up to date.'}</span></p>
+    <div class="chips" style="margin-bottom:6px">${[['all', 'Everything'], ['orders', 'Orders'], ['changes', 'Admin changes']].map(([k, l]) => `<button type="button" class="chip ${lf === k ? 'on' : ''}" data-act="latestFilter" data-f="${k}">${l}</button>`).join('')}</div>
+    <div class="feed">${shown.length ? '' : `<p class="muted" style="padding:14px 4px">Nothing here yet.</p>`}${shown.map(r => {
       const d = dayOf(r); let head = '';
       if (d !== lastDay) { lastDay = d; head = `<div class="feed-day">${d === today ? 'Today' : d === yest ? 'Yesterday' : esc(fmtDate(d, { weekday: 'long', month: 'short', day: 'numeric' }))}</div>`; }
-      const t = new Date(r.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      const mins = Math.round((Date.now() - new Date(r.at)) / 60000);
+      const t = mins < 1 ? 'just now' : mins < 60 ? `${mins} min ago` : new Date(r.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
       return `${head}<div class="feed-row ${r.id > seen ? 'new' : ''}"><span class="feed-ic k-${esc(r.kind)}">${ic(LATEST_ICON[r.kind] || 'sparkle', 16)}</span>
         <span class="feed-t">${esc(r.text)}${r.code ? ` <button type="button" class="feed-code num" data-act="feedCode" data-code="${esc(r.code)}">${esc(r.code)}</button>` : ''}</span>
         <span class="feed-m"><b>${esc(whoLabel(r.actor, email))}</b> · ${esc(t)}</span></div>`; }).join('')}</div>`;
@@ -5092,10 +5154,17 @@ const ACTIONS = {
     try { await api.imHere(o.code, last.nickname); buzz([8, 30, 8]); toast("The seller's been told you're here."); await loadMyOrder(); if (location.hash === '#/status' && S.statusResult) lookup(); }
     catch (e) { t.disabled = false; toast(friendlyError(e)); } },
   xuIn: () => xuSignIn(),
-  xuOut: async () => { await api.signOut(); S.me = null; toast('Signed out.'); if (location.hash.startsWith('#/checkout')) viewCheckoutKeep(); else if (location.hash.startsWith('#/status')) drawMine(); },
+  xuOut: async () => { await api.signOut(); S.me = null; refreshTopAcct(); toast('Signed out.'); if (location.hash.startsWith('#/checkout')) viewCheckoutKeep(); else if (location.hash.startsWith('#/status')) drawMine(); },
   copySite: async () => { try { await navigator.clipboard.writeText(location.href.split('#')[0]); } catch {} toast('Link copied. Paste it in Safari or Chrome.'); },
   openMine: t => { $('#lc').value = t.dataset.code; $('#ln').value = t.dataset.nick; lookup(); },
+  latestFilter: t => { S.admin.latestFilter = t.dataset.f; drawLatest(true); },
   feedCode: async t => { try { await navigator.clipboard.writeText(t.dataset.code); } catch {} S.admin.tab = 'orders'; S.admin.filter = 'all'; viewAdmin(); setTimeout(() => { const c = [...document.querySelectorAll('.ocard')].find(x => x.textContent.includes(t.dataset.code)); if (c) { c.scrollIntoView({ block: 'center' }); c.classList.add('flash'); } else toast(`Copied ${t.dataset.code}.`); }, 600); },
+  logoTap: (t, e) => {
+    const now = Date.now(); S.logoTaps = (S.logoTaps || []).filter(x => now - x < 2500); S.logoTaps.push(now);
+    if (S.logoTaps.length >= 5) { S.logoTaps = []; if (e) e.preventDefault(); buzz([10, 40, 10]); location.hash = '#/admin'; return; }
+    if (!(location.hash === '' || location.hash === '#/' || location.hash === '#')) location.hash = '#/';   // otherwise the logo goes home as usual
+  },
+  acct: () => { if (S.me) location.hash = '#/status'; else xuSignIn(); },
   tgShow: () => { const i = $('#tgToken'); if (i) i.type = i.type === 'password' ? 'text' : 'password'; },
   tgFind: async t => {
     const tok = S.admin.tg.bot_token; if (!tok) return toast('Paste the bot token first.');
@@ -5235,7 +5304,7 @@ document.addEventListener('click', e => {
   }
   api = SupaBackend();
   if (await finishSignIn()) return;   // this was the sign-in window: it closes itself
-  refreshMe();
+  refreshMe().then(refreshTopAcct);
   try { const s = await api.settings(); S.settings.maxSheets = s.max_sheets; S.settings.productsRaw = s.products || {}; S.settings.configRaw = s.config || {}; applyShopConfig(s.config); CONFIG.maxNoShows = s.max_noshows || CONFIG.maxNoShows; S.settings.products = mergeProducts(s.products); S.settings.deals = Array.isArray(s.deals) ? s.deals : [];
     if (s.signal_verb) S.settings.signalVerb = s.signal_verb; if (s.signal_item) S.settings.signalItem = s.signal_item; }
   catch (e) { console.warn('Could not load settings, using CONFIG values', e); }
