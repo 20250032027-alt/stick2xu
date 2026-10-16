@@ -1301,10 +1301,99 @@ details.gtk ul{margin-top:10px}
 .actstrip.ok .in > svg{color:var(--ok)}
 a.pilllink.needs{position:relative}
 a.pilllink.needs::after{content:"";position:absolute;top:-2px;right:-2px;width:12px;height:12px;border-radius:50%;background:#ec282a;border:2px solid #fff;animation:lowpulse 2s ease-in-out infinite}
+
+/* XU sign-in */
+.xubox{display:grid;gap:8px;margin:0 0 16px;padding:14px;border:1.5px solid var(--line);border-radius:16px;background:#FAFBFD}
+.xunote{display:flex;gap:8px;align-items:flex-start;margin:0;font-size:14px;color:var(--muted)}
+.xunote svg{flex:none;margin-top:2px;color:var(--accent)}
+.gbtn{display:inline-flex;gap:10px;align-items:center;justify-content:center;min-height:48px;padding:10px 18px;border:1.5px solid #C9CFE0;border-radius:999px;background:#fff;color:#1F1F1F;font:600 16px var(--body);cursor:pointer;transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
+.gbtn:hover{border-color:#8E99BC;box-shadow:var(--shadow-sm)}
+.xuchip{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 16px;padding:10px 14px;border-radius:14px;background:var(--ok-soft);color:#0F5132;font-size:14px}
+.xuchip svg{color:var(--ok)}
+.xuchip span{flex:1;min-width:0;overflow-wrap:anywhere}
+.xuapp{margin:0;font-size:14px}
+.mine{margin-bottom:16px;padding:16px}
+.mine-h{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.mine-h .muted{flex:1}
+.mine-list{display:grid;gap:6px;margin-top:10px}
+.mine-row{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;text-align:left;font:inherit;color:var(--ink)}
+.mine-row:hover{border-color:#B9C3DD}
+.mine-row b.num{white-space:nowrap}
+.mine-row .muted{flex:1;min-width:90px;white-space:nowrap}
+.mine-row > svg{flex:none}
+.mine-in{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:0 0 12px;font-size:14px;color:var(--muted)}
+.mine-in svg{color:var(--accent)}
+
+/* Latest feed */
+.tab{position:relative}
+.newdot{position:absolute;top:4px;right:6px;width:9px;height:9px;border-radius:50%;background:#ec282a;border:2px solid #fff}
+.feed{display:grid;gap:2px}
+.feed-day{margin:14px 0 4px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.feed-row{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:9px 12px;border-radius:12px;background:#fff;border:1px solid var(--line)}
+.feed-row.new::before{content:"";position:absolute;left:-5px;top:50%;width:8px;height:8px;margin-top:-4px;border-radius:50%;background:#F2BC2E;box-shadow:0 0 0 2px #fff}
+.feed-ic{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#EEF1F8;color:var(--accent)}
+.feed-ic.k-new{background:#FFF4DC;color:#9A6B00}.feed-ic.k-arrive{background:#E3F4EA;color:#1E7A46}.feed-ic.k-pay{background:#E3F4EA;color:#1E7A46}
+.feed-ic.k-settings,.feed-ic.k-promo,.feed-ic.k-business,.feed-ic.k-telegram{background:#F0EDFA;color:#5B4BB3}
+.feed-t{font-size:14.5px;min-width:0;overflow-wrap:anywhere}
+.feed-m{font-size:12.5px;color:var(--muted);white-space:nowrap}
+.feed-code{margin-left:4px;padding:1px 7px;border:1px solid var(--line);border-radius:6px;background:#F7F8FC;color:var(--accent);font-size:12.5px;cursor:pointer}
+@media(max-width:600px){.feed-row{grid-template-columns:auto 1fr}.feed-m{grid-column:2}}
+.ocard.flash{animation:flashcard 1.6s var(--ease)}
+@keyframes flashcard{0%,40%{box-shadow:0 0 0 4px #F2BC2E}100%{box-shadow:none}}
+
+/* ---------- Little details (each one is switched by a class on <html>: d-<name>) ---------- */
+/* pickup pass: ticket notches at the tear line */
+.d-pass_ticket .pass{position:relative}
+.d-pass_ticket .pass::before,.d-pass_ticket .pass::after{content:"";position:absolute;left:119px;width:22px;height:22px;border-radius:50%;background:var(--bg);border:2px solid var(--ink);z-index:2}
+.d-pass_ticket .pass::before{top:-13px}
+.d-pass_ticket .pass::after{bottom:-13px}
+/* pickup pass: serial number along the edge */
+.pass .serial{display:none}
+.d-pass_serial .pass .serial{display:block;position:absolute;right:6px;top:50%;transform:translateY(-50%) rotate(90deg);transform-origin:center;font:700 9px/1 var(--body);letter-spacing:.18em;text-transform:uppercase;color:var(--ink);opacity:.28;white-space:nowrap;pointer-events:none;translate:48% 0}
+.d-pass_serial .pass{position:relative}
+.d-pass_serial .pass .body{padding-right:34px}
+/* pickup pass: ink stamps */
+.okstamp{position:absolute;z-index:3;right:18px;top:14px;padding:4px 10px;border:2.5px solid currentColor;border-radius:8px;font:800 15px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;transform:rotate(-8deg);opacity:.86;filter:url(#inkrough);pointer-events:none}
+.okstamp.s-approved{color:#3a52a3}.okstamp.s-printing{color:#7A5AC8}.okstamp.s-ready{color:#1E8A4C}
+.okstamp.thunk{animation:thunk .55s cubic-bezier(.2,1.6,.4,1) .25s both}
+@keyframes thunk{0%{transform:rotate(-8deg) scale(2.2);opacity:0}60%{opacity:.95}100%{transform:rotate(-8deg) scale(1);opacity:.86}}
+.d-stamps .stamp{filter:url(#inkrough)}
+/* pickup pass: prints in right after ordering */
+.pass.printin{animation:printin .9s cubic-bezier(.25,.8,.3,1) .15s both;clip-path:inset(0 0 0 0)}
+@keyframes printin{from{clip-path:inset(0 0 100% 0);transform:translateY(-10px)}to{clip-path:inset(0 0 0 0);transform:none}}
+/* "Save your code": a peeled corner */
+.d-save_peel .savecode{position:relative}
+.d-save_peel .savecode::after{content:"";position:absolute;top:-2px;right:-2px;width:30px;height:30px;border-top-right-radius:var(--r-lg);background:linear-gradient(225deg,var(--bg) 0 48%,#E9D9A6 50%,#FFF6D8 100%);box-shadow:-3px 3px 4px rgba(20,30,70,.14);pointer-events:none}
+/* empty screens: the icon as a little die-cut sticker */
+.d-sticker_icons .empty > svg:first-child{box-sizing:content-box;padding:12px;background:var(--gold-soft);color:var(--ink);border:4px solid #fff;border-radius:18px;box-shadow:0 4px 10px rgba(20,30,70,.16);transform:rotate(-6deg)}
+/* shop: die-cut edges around product pictures */
+.d-card_edges .pcard .illo{box-shadow:0 0 0 4px #fff,0 4px 10px rgba(20,30,70,.14)}
+/* countdown: a quick sheen on hover or tap */
+.d-cd_shine .cdc.next{overflow:hidden}
+.d-cd_shine .cdc.next::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(242,188,46,.35) 50%,transparent 65%);transform:translateX(-120%);pointer-events:none}
+.d-cd_shine .cdc.next:hover::after,.d-cd_shine .cdc.next:active::after,.d-cd_shine .cdc.next:focus-visible::after{animation:cdsheen .8s ease-out}
+@keyframes cdsheen{to{transform:translateX(120%)}}
+/* add to order: the Cart button bounces and the new item slides in */
+.bump{animation:bump .5s cubic-bezier(.3,1.8,.5,1)}
+@keyframes bump{30%{transform:scale(1.14)}60%{transform:scale(.96)}}
+.cline.justin{animation:justin .5s var(--ease) both}
+@keyframes justin{from{opacity:0;transform:translateY(-10px) scale(.98);background:#FFF6DA}}
+/* "I'm here": a ring goes out like a signal */
+.ripplefx{position:fixed;z-index:200;border:3px solid #F2BC2E;pointer-events:none;animation:ripple .9s ease-out both}
+@keyframes ripple{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(1.35)}}
+/* admin: new orders glow */
+.ocard.fresh{animation:freshglow 2.4s var(--ease)}
+@keyframes freshglow{0%,50%{box-shadow:0 0 0 4px #F2BC2E}100%{box-shadow:none}}
+/* admin: the Little details switches */
+.detgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.detsw span{display:grid;gap:2px}
+.detsw small{font-size:12.5px;color:var(--muted);font-weight:500}
+@media (prefers-reduced-motion: reduce){.pass.printin,.okstamp.thunk,.bump,.cline.justin,.ripplefx,.ocard.fresh,.d-cd_shine .cdc.next::after{animation:none!important}}
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="inkrough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="2.2"/></filter></svg>
 <div id="app"><main class="seo-fallback" style="max-width:720px;margin:40px auto;padding:0 20px;font-family:system-ui,sans-serif;color:#283971">
   <h1>Stick2It: your pictures, made into stickers and more</h1>
   <p>Custom stickers, pins, keychains, posters, and prints from your own pictures, for XU uptown students in Cagayan de Oro. Order online, pick up at school. Run by students.</p>
@@ -1411,6 +1500,7 @@ const CONFIG = {
   countdowns: [{ name: 'Christmas', date: '2026-12-25', yearly: true }, { name: 'New Year', date: '2027-01-01', yearly: true },
                { name: "Valentine's Day", date: '2027-02-14', yearly: true }, { name: 'Last day of classes', date: '', yearly: false }],
   facebookUrl: 'https://www.facebook.com/profile.php?id=61594155363888',   // the shop's Facebook page (editable in admin)
+  requireXu: false,         // only signed-in XU students (@my.xu.edu.ph) can order (admin switch)
   sellersAtPickup: 1,       // how many of you can be at pickup at the same time (= gates per time slot)
   maxPerSlot: 8,            // most orders for one pickup time (0 = no limit)
   maxPerDay: 15,            // most orders for one pickup day (0 = no limit)
@@ -1500,7 +1590,7 @@ const ICONS = {
   chart:'<path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/>', list:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
   ghost:'<path d="M5 21V10a7 7 0 0 1 14 0v11l-2.3-1.8-2.3 1.8-2.4-1.8-2.4 1.8-2.3-1.8z"/><path d="M9.5 10h.01M14.5 10h.01"/>',
   thumb:'<path d="M7 11v10H4V11zM7 11l4-8a2.5 2.5 0 0 1 3 3l-1 4h6a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 17.6 21H7"/>',
-  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>', search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
   warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17.5v.01"/>',
   copy:'<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
   download:'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>', lock:'<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
@@ -1644,6 +1734,7 @@ function friendlyError(e){
   if (m.includes('GATE_TAKEN')) return "At that time we'll be at a different gate. Pick the other gate, or another time.";
   if (m.includes('SLOT_FULL')) return 'That pickup time just filled up. Pick another time or day.';
   if (m.includes('DAY_FULL')) return 'That pickup day just filled up. Pick another day.';
+  if (m.includes('XU_ONLY')) return 'Please sign in with your XU school account (@my.xu.edu.ph) to order.';
   if (m.includes('OWN_CODE')) return "That's your own friend code. Share it with friends instead!";
   if (m.includes('NOT_FIRST')) return 'Friend codes are for first orders. Thanks for coming back!';
   if (m.includes('TOO_SOON')) return 'That pickup time is too soon to get it ready. Pick a later time or another day.';
@@ -1795,6 +1886,9 @@ function applyShopConfig(c){
   CONFIG.countdowns = Array.isArray(c.countdowns) ? c.countdowns : D.countdowns;
   CONFIG.countdownsOn = typeof c.countdowns_on === 'boolean' ? c.countdowns_on : true;
   CONFIG.facebookUrl = /^https:\/\/(www\.|m\.)?facebook\.com\//.test(c.facebook_url || '') ? c.facebook_url : (c.facebook_url === '' ? '' : D.facebookUrl);
+  CONFIG.requireXu = c.require_xu_signin === true;
+  CONFIG.details = (c.details && typeof c.details === 'object') ? c.details : {};
+  applyDetails();
   CONFIG.sellersAtPickup = Math.max(0, numOr(c.sellers_at_pickup, D.sellersAtPickup));
   CONFIG.maxPerSlot = Math.max(0, numOr(c.max_per_slot, D.maxPerSlot));
   CONFIG.maxPerDay = Math.max(0, numOr(c.max_per_day, D.maxPerDay));
@@ -2025,7 +2119,7 @@ const orderPaths = o => orderItems(o).flatMap(it => it.mode === 'pages' && it.pd
    Backend: Supabase
    ===================================================================== */
 function SupaBackend(){
-  const sb = window.supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseAnonKey);
+  const sb = window.supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseAnonKey, { auth: { flowType: 'pkce', detectSessionInUrl: true, persistSession: true, autoRefreshToken: true } });
   const B = CONFIG.bucket;
   const rpc = async (fn, args) => { const { data, error } = await sb.rpc(fn, args); if (error) throw new Error(error.message); return data; };
   async function wipeFolder(folder){
@@ -2068,6 +2162,11 @@ function SupaBackend(){
     async reschedule(code, nick, date, time){ await rpc('reschedule_order', { p_code: code, p_nickname: nick, p_date: date, p_time: time }); },
     async imHere(code, nick){ await rpc('mark_arrived', { p_code: code, p_nickname: nick }); },
     async session(){ const { data } = await sb.auth.getSession(); return !!data.session; },
+    async me(){ const { data } = await sb.auth.getSession(); const u = data.session && data.session.user; return u ? { email: (u.email || '').toLowerCase(), name: (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || '' } : null; },
+    async xuStart(){ const { data, error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/?signin=1', skipBrowserRedirect: true, queryParams: { hd: 'my.xu.edu.ph', prompt: 'select_account' } } }); if (error) throw error; return data.url; },
+    async signOut(){ await sb.auth.signOut(); },
+    async myOrders(){ return await rpc('my_orders', {}); },
+    async latest(limit = 150){ const { data, error } = await sb.from('activity').select('*').order('id', { ascending: false }).limit(limit); if (error) throw error; return data; },
     async login(email, pw){ const { error } = await sb.auth.signInWithPassword({ email, password: pw }); if (error) throw error; },
     async logout(){ await sb.auth.signOut(); },
     async listOrders(){ const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false }).limit(500); if (error) throw error; return data; },
@@ -2132,7 +2231,7 @@ function myAction(o){
 function actionStripHTML(){
   const o = S.myOrder, act = myAction(o); if (!act || location.hash.startsWith('#/admin')) return '';
   const short = v => fmtDate(v, { weekday: 'short', month: 'short', day: 'numeric' });
-  if (act === 'confirm') return `<div class="actstrip"><div class="in">${ic('thumb', 20)}<span><b>Confirm your order by ${esc(short(confirmBy(o)))}.</b> We only print confirmed orders.</span>
+  if (act === 'confirm') return `<div class="actstrip"><div class="in">${ic('thumb', 20)}<span><b>Confirm your order by ${esc(dayWord(confirmBy(o)))}.</b> We only print confirmed orders.</span>
     ${smallBtn("I'll be there", 'thumb', 'stripConfirm', 'dark')}</div></div>`;
   if (act === 'here') return `<div class="actstrip go"><div class="in">${ic('pin', 20)}<span><b>It's pickup day!</b> Your order is ready at ${esc(o.pickup)}, ${esc(o.pickup_time || '')}. At the gate, tap:</span>
     ${smallBtn("I'm here", 'pin', 'stripHere', 'dark')}</div></div>`;
@@ -2148,6 +2247,90 @@ function refreshActionStrip(){
   document.querySelectorAll('.actstrip').forEach(e => e.remove());
   const tw = document.querySelector('.topwrap'); if (tw) tw.insertAdjacentHTML('afterend', actionStripHTML());
   const btn = document.querySelector('a.pilllink[href="#/status"]'); if (btn) btn.classList.toggle('needs', !!myAction(S.myOrder) && myAction(S.myOrder) !== 'arrived');
+}
+/* ---------- XU sign-in (school Google accounts only) ---------- */
+const XU_DOMAIN = '@my.xu.edu.ph';
+const isXu = e => !!e && e.toLowerCase().endsWith(XU_DOMAIN);
+// Google blocks sign-in inside app browsers (TikTok, Facebook, Messenger, Instagram...)
+const inAppBrowser = () => /FBAN|FBAV|FB_IAB|Instagram|TikTok|musical_ly|Bytedance|Messenger|Line\/|Snapchat|Twitter/i.test(navigator.userAgent);
+async function refreshMe(){
+  try {
+    const m = await api.me();
+    S.me = m && isXu(m.email) ? m : null;
+  } catch { S.me = null; }
+  return S.me;
+}
+async function xuSignIn(){
+  if (inAppBrowser()) { toast('Open this page in Safari or Chrome to sign in. Google blocks sign-in inside apps.'); return; }
+  const w = window.open('', 's2i_signin', 'width=480,height=640');
+  try {
+    const url = await api.xuStart();
+    if (w) { w.location.href = url; toast('Sign in with your XU account in the new window.'); }
+    else { sessionStorage.setItem('s2i_return', location.hash || '#/'); location.href = url; }
+  } catch (e) { if (w) w.close(); toast(friendlyError(e)); }
+}
+function xuBoxHTML(){
+  if (S.me) return `<div class="xuchip">${ic('check', 18)}<span>Signed in as <b>${esc(S.me.email)}</b></span><button type="button" class="linkbtn" data-act="xuOut">Not you?</button></div>`;
+  const note = `<p class="xunote">${ic('school', 16)}<span>For <b>XU uptown</b> students (Pueblo de Oro): grade school, junior high, and senior high.</span></p>`;
+  if (inAppBrowser()) return `<div class="xubox">${note}<p class="xuapp"><b>Open this page in Safari or Chrome to ${CONFIG.requireXu ? 'order' : 'sign in'}.</b> Google doesn't allow sign-in inside apps like TikTok or Facebook. Tap the <b>⋯</b> menu and choose "Open in browser", or copy the link.</p>
+    <button type="button" class="pilllink" data-act="copySite">${ic('check', 16)}Copy link</button></div>`;
+  return `<div class="xubox">${note}
+    <button type="button" class="gbtn" data-act="xuIn"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Continue with your XU account</button>
+    <p class="help" style="margin:6px 0 0">${CONFIG.requireXu ? 'Required to order. Only school accounts ending in <b>' + XU_DOMAIN + '</b> work.' : 'Optional. Signing in keeps all your orders in one place, no codes needed.'}</p>
+    <p class="ferr" id="e-xu" role="alert"></p></div>`;
+}
+// The sign-in window lands back here (?signin=1&code=...): finish, check it's a school account, tell the shop page, and close
+async function finishSignIn(){
+  const q = new URLSearchParams(location.search);
+  if (!q.has('signin')) return false;
+  await api.session().catch(() => false);   // waits for the sign-in to complete
+  let me = await api.me().catch(() => null);
+  if (me && !isXu(me.email)) { await api.signOut().catch(() => {}); me = null; }
+  if (window.opener && !window.opener.closed) {
+    try { window.opener.postMessage({ s2i: me ? 'signedin' : 'notxu' }, location.origin); } catch {}
+    document.body.innerHTML = `<p style="font:16px system-ui;padding:40px;text-align:center;color:#283971">${me ? 'Signed in. You can close this window.' : 'Only XU school accounts (' + XU_DOMAIN + ') work. You can close this window and try again.'}</p>`;
+    setTimeout(() => window.close(), 500);
+    return true;
+  }
+  if (!me) setTimeout(() => toast('Only XU school accounts (' + XU_DOMAIN + ') work. Try again with your school account.'), 600);
+  history.replaceState(null, '', location.pathname + (sessionStorage.getItem('s2i_return') || '#/'));
+  sessionStorage.removeItem('s2i_return');
+  return false;
+}
+window.addEventListener('message', async e => {
+  if (e.origin !== location.origin || !e.data || !e.data.s2i) return;
+  if (e.data.s2i === 'notxu') { toast('Only XU school accounts (' + XU_DOMAIN + ') work. Try again with your school account.'); return; }
+  const before = !!S.me; await refreshMe();
+  if (S.me && !before) { toast(`Signed in as ${S.me.email}.`); buzz([8, 30, 8]); }
+  if (location.hash.startsWith('#/checkout')) viewCheckoutKeep(); else if (location.hash.startsWith('#/status')) drawMine();
+});
+/* ---------- Little details: small finishing touches, each with its own switch (admin → Settings → Little details) ---------- */
+const DETAILS = [
+  ['pass_ticket', 'Ticket notches on the pickup pass', 'Half-circle notches at the tear line, like a real ticket.'],
+  ['pass_serial', 'Serial number along the pass edge', 'The order code printed small and sideways, like a ticket number.'],
+  ['stamps', 'Ink stamps on the pickup pass', 'On My order: APPROVED, PRINTING, or READY as a tilted ink stamp.'],
+  ['ready_thunk', 'Ready stamp lands with a thunk', 'The first time someone sees their order is ready.'],
+  ['pass_print', 'Pickup pass "prints" in', 'Right after ordering, the pass slides up like it is coming out of a printer.'],
+  ['save_peel', 'Peeled corner on "Save your code"', 'A small lifted corner, like a sticker.'],
+  ['sticker_icons', 'Sticker icons on empty screens', 'The icon on empty lists becomes a small die-cut sticker.'],
+  ['card_edges', 'Die-cut edges on product pictures', 'A thin white sticker edge around each picture in the shop.'],
+  ['cd_shine', 'Shine on the nearest countdown', 'A quick sheen when you hover over or tap it.'],
+  ['cart_bounce', 'Add-to-order bounce', 'The Cart button bounces and the new item slides in.'],
+  ['here_ripple', 'Ripple when tapping "I\u2019m here"', 'A soft ring goes out from the button, like a signal.'],
+  ['tab_status', 'Order status in the browser tab', 'On My order, the tab says things like "Ready! · Stick2It".'],
+  ['friendly_dates', '"Today" and "tomorrow"', 'Used instead of the date when the pickup or deadline is today or tomorrow.'],
+  ['admin_new', 'Chime for new orders (admin)', 'While you are on To review, new orders chime softly and glow.'],
+  ['caught_up', '"All caught up" (admin)', 'When To review is empty, it says so with a check sticker.']
+];
+const D = k => !CONFIG.details || CONFIG.details[k] !== false;
+function applyDetails(){ DETAILS.forEach(([k]) => document.documentElement.classList.toggle('d-' + k, D(k))); }
+// "today" / "tomorrow" when it's close, otherwise the usual short date
+function dayWord(v, cap){
+  if (!v) return '';
+  const t = ymd(new Date()), tm = ymd(new Date(Date.now() + 864e5));
+  const w = D('friendly_dates') && (v === t ? 'today' : v === tm ? 'tomorrow' : '');
+  if (w) return cap ? w[0].toUpperCase() + w.slice(1) : w;
+  return fmtDate(v, { weekday: 'short', month: 'short', day: 'numeric' });
 }
 function noticeHTML(){
   const nt = CONFIG.notice; if (!nt || !nt.on || !String(nt.text || '').trim()) return '';
@@ -2176,7 +2359,9 @@ function adminErr(msg){ if (location.hash.startsWith('#/admin')) toast(`Somethin
 window.addEventListener('error', e => adminErr(e.message));
 window.addEventListener('unhandledrejection', e => adminErr(e.reason && e.reason.message || e.reason));
 function toTop(){ window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }
+const BASE_TITLE = document.title;
 function route(){
+  document.title = BASE_TITLE;
   const parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/'), page = parts[0];
   const views = { home: viewHome, shop: viewShop, design: viewDesign, make: () => viewMake(parts[1]), cart: viewCart, checkout: viewCheckout, done: viewDone, status: viewStatus, admin: viewAdmin };
   (views[page] || viewNotFound)();
@@ -2404,7 +2589,20 @@ function viewUnavailable(key){
 function cartUrls(){
   return { sticker: stickerURL, outlined: true, framed: d => { const im = imgById(d.imageId); return im ? im.url : ''; } };
 }
+/* A ring that goes out from a button, drawn on top of the page so it finishes even if the button is redrawn */
+function rippleFrom(el){
+  if (!el || !D('here_ripple') || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const r = el.getBoundingClientRect(), fx = document.createElement('span');
+  fx.className = 'ripplefx'; Object.assign(fx.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', borderRadius: getComputedStyle(el).borderRadius });
+  document.body.appendChild(fx); setTimeout(() => fx.remove(), 1000);
+}
+function cartBounce(){
+  if (!S.justAdded) return; S.justAdded = false;
+  setTimeout(() => { document.querySelectorAll('.cartpill, .totalrow b').forEach(b => { b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); });
+    const items = document.querySelectorAll('.cart .cline'); if (items.length) items[items.length - 1].classList.add('justin'); }, 30);
+}
 function viewCart(){
+  setTimeout(cartBounce, 0);
   if (!S.cart.length) { location.replace('#/shop'); return; }
   S.editing = null;
   const u = cartUrls();
@@ -2444,6 +2642,7 @@ function saveToCart(item){
   if (S.editing !== null && S.cart[S.editing] && S.cart[S.editing].type === item.type) S.cart[S.editing] = item;
   else S.cart.push(item);
   S.editing = null;
+  S.justAdded = D('cart_bounce');
   location.hash = '#/cart';
 }
 
@@ -3189,6 +3388,7 @@ function viewCheckout(){
   const dates = checkoutDates(), po = printsOnly();
   if (!S.coKeep) S.coStep = me.nickname && myGrade && mySec ? 2 : 1;   // returning customers start at Pickup
   S.coKeep = false;
+  if (S.me && S.me.name && !me.nickname) me.nickname = S.me.name;   // the school account's name, as on their ID
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">${progress(2)}
     <a class="pilllink" href="#/cart" style="margin-bottom:18px">${ic('back', 18)}Back to my order</a>
     <form class="panel" id="orderForm" novalidate>
@@ -3199,6 +3399,7 @@ function viewCheckout(){
       <section class="cstep" data-step="1">
         <div class="chead"><i>1</i><b>You</b><span class="csum" id="csum1"></span><button type="button" class="cchange" data-act="coGo" data-s="1">Change</button></div>
         <div class="cbody">
+      <div id="xuBox">${xuBoxHTML()}</div>
       <div class="field"><label class="lab" for="nick">Full name <span class="req">*</span></label>
         <input class="inp" id="nick" maxlength="60" autocomplete="name" placeholder="Juan Dela Cruz" value="${esc(me.nickname || '')}" aria-describedby="e-nick e-nickhelp">
         <div class="idprev" aria-hidden="true">
@@ -3308,7 +3509,7 @@ function viewCheckout(){
   $('#promo').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ACTIONS.promoApply(); } });
   // errors clear the moment they're fixed (while typing), so nothing moves when they tap Next
   ['nick','sec','grade','otherPlace'].forEach(id => $('#' + id) && ['input', 'change'].forEach(ev => $('#' + id).addEventListener(ev, () => { validate(false); coRender(); })));
-  form.addEventListener('submit', e => { if (S.coStep < 3) { e.preventDefault(); ACTIONS.coNext({ dataset: { s: String(S.coStep) } }); return; } submitOrder(e); });
+  form.addEventListener('submit', e => { if (CONFIG.requireXu && !S.me) { e.preventDefault(); S.coStep = 1; coRender(); toast('Sign in with your XU account first.'); return; } if (S.coStep < 3) { e.preventDefault(); ACTIONS.coNext({ dataset: { s: String(S.coStep) } }); return; } submitOrder(e); });
   coRender();
 }
 /* Checkout steps: only the current one is open; finished ones shrink to a one-line summary */
@@ -3399,7 +3600,7 @@ async function submitOrder(e){
     S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal };
     try { const real = await api.getOrder(code, nickname); if (real && real.total !== finalTotal) { S.lastOrder.total = real.total; if (real.total < finalTotal) setTimeout(() => toast(`Your friend credit took ${money(finalTotal - real.total)} off. New total: ${money(real.total)}.`), 900); } } catch {}
     S.promo = null;
-    S.celebrate = true; S.codeSaved = false; setTimeout(loadMyOrder, 800); buzz([12, 40, 18]);
+    S.celebrate = true; S.codeSaved = false; S.passPrint = true; setTimeout(loadMyOrder, 800); buzz([12, 40, 18]);
     safeLS.set('sk_me', JSON.stringify({ nickname, section }));
     safeLS.set('sk_last', JSON.stringify(S.lastOrder));
     S.images.forEach(i => revoke(i.url)); stickerCache.clear();
@@ -3414,9 +3615,12 @@ async function submitOrder(e){
 /* =====================================================================
    Done + status
    ===================================================================== */
-function passHTML(o, stamp){
+function passHTML(o, stamp, live){
   const d = o.pickup_date;
-  return `<div class="pass ${stamp ? 'void' : ''}">${stamp ? `<span class="stamp">${esc(stamp)}</span>` : ''}
+  const ok = !stamp && live && D('stamps') ? ({ approved: 'Approved', printing: 'Printing', ready: 'Ready!' })[o.status] : '';
+  let thunk = '';
+  if (ok && o.status === 'ready' && D('ready_thunk')) { const k = 's2i_ready_seen_' + o.code; if (!localStorage.getItem(k)) { thunk = 'thunk'; try { localStorage.setItem(k, '1'); } catch {} } }
+  return `<div class="pass ${stamp ? 'void' : ''} ${S.passPrint && D('pass_print') ? 'printin' : ''}">${stamp ? `<span class="stamp">${esc(stamp)}</span>` : ''}${ok ? `<span class="okstamp s-${esc(o.status)} ${thunk}">${esc(ok)}</span>` : ''}${D('pass_serial') ? `<span class="serial">No. ${esc(o.code)} · Stick2It</span>` : ''}
     <div class="side">${d ? `<span class="m">${fmtDate(d, { weekday: 'short' })}</span><span class="dd">${parseYmd(d).getDate()}</span><span class="m">${fmtDate(d, { month: 'short' })}</span>` : ic('box', 40)}</div>
     <div class="body"><div class="k">Pickup pass</div><div class="code">${esc(o.code)}</div>
       <div class="who">${esc(o.nickname)}${o.section ? ', ' + esc(o.section) : ''}</div>
@@ -3462,12 +3666,12 @@ function viewDone(){
       <div class="sc-code num">${esc(o.code)}</div>
       <div class="sc-btns">${btn('Save as picture', { act: 'savePass', icon: 'download', cls: 'dark' })}<button type="button" class="pilllink" data-act="copyCode">${ic('check', 16)}Copy code</button></div>
     </section>
-    ${passHTML(o)}
+    ${passHTML(o)}${(S.passPrint = false, '')}
     <section class="panel nextup" style="margin-top:18px">
       <h3>What's next</h3>
       <ol class="nsteps">
         ${confirmBy(o) && confirmBy(o) > ymd(new Date())
-          ? `<li><b>Confirm by ${esc(fmtDate(confirmBy(o), { weekday: 'short', month: 'short', day: 'numeric' }))}.</b> In My order, tap "I'll be there".</li>`
+          ? `<li><b>Confirm by ${esc(dayWord(confirmBy(o)))}.</b> In My order, tap "I'll be there".</li>`
           : `<li><b>You're confirmed.</b> We'll start on it right away.</li>`}
         <li><b>At the gate, tap "I'm here".</b> Look for ${esc(signal())}.</li>
         <li><b>Bring ${money(o.total)}${gcash ? ' (or your GCash reference)' : ''}</b> and your school ID.</li>
@@ -3491,7 +3695,9 @@ const STATUS = {
 };
 function viewStatus(){
   const last = readJSON('sk_last') || {};
+  setTimeout(() => refreshMe().then(drawMine), 0);
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">
+    <div id="mine"></div>
     <form class="panel" id="lookForm" novalidate>
       <h2 style="margin-bottom:18px">Check my order</h2>
       <div class="field"><label class="lab" for="lc">Order code</label><input class="inp" id="lc" value="${esc(last.code || '')}" autocapitalize="characters" autocomplete="off" aria-describedby="h-lc">
@@ -3511,6 +3717,18 @@ function compactLook(on){
   const bar = $('#lookBar');
   if (on) { const html = `<span class="lb-ic">${ic('box', 18)}</span><span class="lb-t"><b class="num">${esc($('#lc').value.trim().toUpperCase())}</b> · ${esc($('#ln').value.trim())}</span><button type="button" class="linkbtn" data-act="lookAnother">Look up another</button>`;
     if (bar) bar.innerHTML = html; else f.insertAdjacentHTML('afterbegin', `<div id="lookBar" class="lookbar">${html}</div>`); }
+}
+/* Signed-in students: all their orders at the top of My order */
+async function drawMine(){
+  const el = $('#mine'); if (!el) return;
+  if (!S.me) { el.innerHTML = inAppBrowser() ? '' : `<p class="mine-in">${ic('school', 16)}<span>Have an XU account?</span><button type="button" class="linkbtn" data-act="xuIn">Sign in to see all your orders</button></p>`; return; }
+  let list = []; try { list = await api.myOrders() || []; } catch {}
+  const lbl = { pending: 'Checking', approved: 'Approved', printing: 'Printing', ready: 'Ready', done: 'Picked up', cancelled: 'Cancelled', rejected: 'Not approved', noshow: 'Missed' };
+  el.innerHTML = `<section class="panel mine"><div class="mine-h"><b>Your orders</b><span class="muted small">${esc(S.me.email)}</span><button type="button" class="linkbtn" data-act="xuOut">Sign out</button></div>
+    ${list.length ? `<div class="mine-list">${list.map(o => `<button type="button" class="mine-row" data-act="openMine" data-code="${esc(o.code)}" data-nick="${esc(o.nickname)}">
+      <b class="num">${esc(o.code)}</b><span class="tag ${o.status === 'ready' ? 'ok' : ['cancelled', 'rejected', 'noshow'].includes(o.status) ? 'bad' : ''}">${lbl[o.status] || esc(o.status)}</span>
+      <span class="muted small">${o.pickup_date ? esc(fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' })) : ''}</span><span class="num">${money(o.total)}</span>${ic('arrow', 16)}</button>`).join('')}</div>`
+      : `<p class="muted small" style="margin:6px 0 0">No orders with this account yet. Orders placed before signing in can still be found with their code below.</p>`}</section>`;
 }
 async function lookup(){
   const code = $('#lc').value.trim().toUpperCase(), nick = $('#ln').value.trim();
@@ -3535,7 +3753,8 @@ function drawStatus(){
   else if (active && o.confirmed && o.status !== 'ready') confirmBox = `<p class="okline">${ic('check', 16)}You confirmed. We'll print it and see you on ${esc(short(o.pickup_date))}.</p>`;
   const missedBox = o.status === 'ready' && o.missed ? `<div class="note warn">${ic('calendar', 18)}<span><b>You missed your pickup.</b> We're holding your order until ${esc(short(o.pickup_date))}. If you miss this one too, it's forfeited.</span></div>` : '';
   const voidStamp = lapsed ? 'Released' : ({ cancelled: 'Cancelled', rejected: 'Not approved', noshow: 'Forfeited', done: 'Picked up' })[o.status] || '';
-  $('#statusOut').innerHTML = `${passHTML(o, voidStamp)}${voidStamp && o.status !== 'done' ? `<p class="voidnote">${ic('x', 16)}This pickup pass is no longer valid.</p>` : ''}
+  if (D('tab_status')) document.title = `${({ pending: 'Checking your design', approved: 'Approved', printing: 'Printing', ready: 'Ready!', done: 'Picked up', cancelled: 'Cancelled', rejected: 'Not approved', noshow: 'Missed' })[o.status] || 'My order'} · Stick2It`;
+  $('#statusOut').innerHTML = `${passHTML(o, voidStamp, true)}${voidStamp && o.status !== 'done' ? `<p class="voidnote">${ic('x', 16)}This pickup pass is no longer valid.</p>` : ''}
     <div class="panel" style="margin-top:22px">
       <div class="stmsg"><span class="ic">${ic(lapsed ? 'clock' : icon, 24)}</span>${esc(lapsed ? 'Released' : msg)}</div>
       ${at >= 0 && !lapsed ? `<div class="track">${flow.map((s, i) => `<div class="${i <= at ? 'on' : ''} ${i === at ? 'now' : ''}"><i></i>${lbl[s]}</div>`).join('')}</div>` : ''}
@@ -3603,8 +3822,8 @@ async function viewAdmin(){
       <button class="pilllink" type="button" data-act="logout">${ic('logout', 18)}Log out</button></header>
     <main id="main" class="wrap">
       <nav class="atabs" aria-label="Admin sections">
-        ${[['orders','list','Orders'],['money','chart','Business'],['posters','qr','Poster QR codes'],['settings','sliders','Settings']].map(([k, i, l]) =>
-          `<button class="tab ${S.admin.tab === k ? 'on' : ''}" type="button" data-act="admTab" data-tab="${k}" ${S.admin.tab === k ? 'aria-current="page"' : ''} style="display:inline-flex;gap:6px;align-items:center">${ic(i, 18)}${l}</button>`).join('')}
+        ${[['orders','list','Orders'],['latest','bell','Latest'],['money','chart','Business'],['posters','qr','Poster QR codes'],['settings','sliders','Settings']].map(([k, i, l]) =>
+          `<button class="tab ${S.admin.tab === k ? 'on' : ''}" type="button" data-act="admTab" data-tab="${k}" ${S.admin.tab === k ? 'aria-current="page"' : ''} style="display:inline-flex;gap:6px;align-items:center">${ic(i, 18)}${l}${k === 'latest' ? '<span class="newdot" id="latestDot" hidden></span>' : ''}</button>`).join('')}
         <button class="tab" type="button" data-act="admRefresh" style="display:inline-flex;gap:6px;align-items:center">${ic('refresh', 18)}Refresh</button>
       </nav>
       <div id="admBody">${'<div class="sk" style="height:180px;margin-bottom:16px;border-radius:18px"></div>'.repeat(3)}</div></main>`;
@@ -3653,7 +3872,43 @@ const inFilter = (o, f) => f === 'all' ? true : f === 'other' ? ['rejected','can
 const personKey = o => norm(o.nickname) + '|' + norm(o.grade_section);
 const REJECT_REASONS = ["This picture isn't allowed", 'Picture is too blurry to print', 'Text is too small to read'];
 
+/* ---------- Latest: what happened, newest first (orders and admin changes) ---------- */
+const LATEST_ICON = { new: 'box', status: 'printer', confirm: 'thumb', arrive: 'pin', move: 'calendar', pay: 'cash', note: 'edit', settings: 'sliders', promo: 'badge', business: 'chart', telegram: 'bell' };
+async function latestSeenKey(){ const m = await api.me().catch(() => null); return { key: 's2i_latest_seen_' + ((m && m.email) || 'admin'), email: (m && m.email) || '' }; }
+async function checkLatestDot(){
+  try { const { key } = await latestSeenKey(); const rows = await api.latest(1); const seen = +(localStorage.getItem(key) || 0);
+    const d = $('#latestDot'); if (d) d.hidden = !(rows[0] && rows[0].id > seen) || S.admin.tab === 'latest'; } catch {}
+}
+function whoLabel(actor, myEmail){
+  if (!actor || actor === 'customer') return 'Customer';
+  if (myEmail && actor === myEmail) return 'You';
+  if (actor.endsWith('@my.xu.edu.ph')) return 'Student';
+  const n = actor.split('@')[0].replace(/[._-]+/g, ' ').replace(/\d+/g, '').trim();
+  return n ? n.replace(/\b\w/g, c => c.toUpperCase()) : actor;
+}
+async function drawLatest(){
+  const body = $('#admBody'); body.innerHTML = `<p class="muted" style="padding:20px 0">Loading…</p>`;
+  let rows = [];
+  try { rows = await api.latest(150); }
+  catch (e) { body.innerHTML = `<div class="empty">${ic('warn', 36)}<b>Couldn't load the feed.</b><span>Run the newest schema.sql in Supabase, then refresh. (${esc(friendlyError(e))})</span></div>`; return; }
+  const { key, email } = await latestSeenKey(); const seen = +(localStorage.getItem(key) || 0);
+  if (!rows.length) { body.innerHTML = `<div class="empty">${ic('bell', 36)}<b>Nothing yet.</b><span>New orders and changes by any admin show up here.</span></div>`; return; }
+  const dayOf = r => ymd(new Date(r.at)), today = ymd(new Date()), yest = ymd(new Date(Date.now() - 864e5));
+  let lastDay = '';
+  body.innerHTML = `<p class="hint" style="margin-bottom:14px">${ic('bell', 18)}<span>Everything that happens, newest first: new orders, confirmations, arrivals, payments, and changes by any admin. <b>New since you last looked</b> have a gold dot.</span></p>
+    <div class="feed">${rows.map(r => {
+      const d = dayOf(r); let head = '';
+      if (d !== lastDay) { lastDay = d; head = `<div class="feed-day">${d === today ? 'Today' : d === yest ? 'Yesterday' : esc(fmtDate(d, { weekday: 'long', month: 'short', day: 'numeric' }))}</div>`; }
+      const t = new Date(r.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      return `${head}<div class="feed-row ${r.id > seen ? 'new' : ''}"><span class="feed-ic k-${esc(r.kind)}">${ic(LATEST_ICON[r.kind] || 'sparkle', 16)}</span>
+        <span class="feed-t">${esc(r.text)}${r.code ? ` <button type="button" class="feed-code num" data-act="feedCode" data-code="${esc(r.code)}">${esc(r.code)}</button>` : ''}</span>
+        <span class="feed-m"><b>${esc(whoLabel(r.actor, email))}</b> · ${esc(t)}</span></div>`; }).join('')}</div>`;
+  localStorage.setItem(key, String(rows[0].id));
+  const dot = $('#latestDot'); if (dot) dot.hidden = true;
+}
 async function drawAdminBody(){
+  checkLatestDot();
+  if (S.admin.tab === 'latest') return drawLatest();
   if (S.admin.tab === 'money') return drawMoney();
   if (S.admin.tab === 'posters') return drawPosters();
   if (S.admin.tab === 'settings') return drawSettings();
@@ -3662,6 +3917,7 @@ async function drawAdminBody(){
   if (f === 'ready') list.sort((a, b) => (b.arrived_at ? 1 : 0) - (a.arrived_at ? 1 : 0) || String(a.pickup_date).localeCompare(String(b.pickup_date)) || String(a.pickup_time).localeCompare(String(b.pickup_time)) || a.pickup.localeCompare(b.pickup));
   clearInterval(S.admin.poll);
   if (f === 'ready') S.admin.poll = setInterval(pollReady, S.admin.pickupMode ? 8000 : 15000);
+  if (f === 'pending' && D('admin_new')) S.admin.poll = setInterval(pollNew, 30000);
   if (f === 'approved') list.sort((a, b) => (b.confirmed ? 1 : 0) - (a.confirmed ? 1 : 0));
   const need = [...new Set(list.filter(o => !o.images_deleted).flatMap(orderPaths))].filter(p => !(p in S.admin.urls));
   if (need.length) { try { Object.assign(S.admin.urls, await api.imageUrls(need)); } catch (e) { console.warn(e); } }
@@ -3698,7 +3954,8 @@ async function drawAdminBody(){
       a.push(smallBtn(o.admin_note ? 'Edit note' : 'Add note', 'edit', 'aNote', 'plain', `data-id="${o.id}"`));
       if (o.payment === 'gcash' && o.paid && ['rejected','cancelled'].includes(o.status) && !o.refunded) a.push(smallBtn('Mark refunded', 'check', 'aRefund', 'ok', `data-id="${o.id}"`));
       a.push(smallBtn('Delete', 'trash', 'aDelete', 'plain', `data-id="${o.id}"`));
-      return `${head}<article class="ocard">
+      const isFresh = S.admin.fresh && S.admin.fresh.has(o.id);
+      return `${head}<article class="ocard${isFresh ? ' fresh' : ''}">
         <div class="ohead"><div class="pdot">${o.pickup_date ? `<small>${fmtDate(o.pickup_date, { month: 'short' })}</small><b>${parseYmd(o.pickup_date).getDate()}</b>` : ic('box', 24)}</div>
           <div><div class="ocode">${esc(o.code)}</div><div class="muted small">Pickup ${o.pickup_date ? esc(fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' })) + (o.pickup_time ? `, ${esc(o.pickup_time)}` : '') : 'date not set'}, ordered ${fmtTime(o.created_at)}</div></div>
           <span class="tag st ${stCls[o.status] || ''}">${ic(STATUS[o.status][0], 16)}${esc(o.status)}</span></div>
@@ -3741,7 +3998,7 @@ async function drawAdminBody(){
         console.error('order card', o && o.code, err);
         return `<article class="ocard broken"><b>${esc((o && o.code) || 'An order')}</b> couldn't be shown here. Try the All tab. If this keeps happening, screenshot this: <code>${esc(String(err && err.message || err))}</code></article>`;
       } }).join('')
-      : `<div class="empty">${ic('box', 36)}<b>${emptyMsg[f] || 'Nothing here yet.'}</b>${
+      : `<div class="empty">${f === 'pending' && D('caught_up') ? `${ic('check', 36)}<b>All caught up.</b>` : `${ic('box', 36)}<b>${emptyMsg[f] || 'Nothing here yet.'}</b>`}${
           f === 'approved' && all.some(o => o.status === 'printing') ? `<span>${all.filter(o => o.status === 'printing').length} order${all.filter(o => o.status === 'printing').length === 1 ? ' is' : 's are'} printing. When they're cut and bagged, mark them ready.</span>${smallBtn('Go to Printing', 'arrow', 'admFilter', 'dark', 'data-f="printing"')}`
           : f === 'printing' && all.some(o => o.status === 'ready') ? `<span>Ready orders wait under "Ready" for pickup day.</span>${smallBtn('Go to Ready', 'arrow', 'admFilter', 'dark', 'data-f="ready"')}`
           : '<span>New orders show up under "To review".</span>'}</div>`}</div>`;
@@ -3762,6 +4019,16 @@ async function keepAwake(on){
   } catch {}
 }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && S.admin && S.admin.pickupMode) keepAwake(true); });
+async function pollNew(){
+  if (!location.hash.includes('admin') || S.admin.tab !== 'orders' || S.admin.filter !== 'pending' || S.admin.rejecting) { if (!location.hash.includes('admin')) clearInterval(S.admin.poll); return; }
+  try {
+    const fresh = await api.listOrders(), before = new Set(S.admin.orders.map(o => o.id));
+    const added = fresh.filter(o => !before.has(o.id));
+    if (!added.length) return;
+    S.admin.orders = fresh; S.admin.fresh = new Set(added.map(o => o.id));
+    chime(); toast(`${added.length} new order${added.length > 1 ? 's' : ''}.`); await drawAdminBody();
+  } catch {}
+}
 async function pollReady(){
   if (!location.hash.includes('admin') || S.admin.tab !== 'orders' || S.admin.filter !== 'ready' || S.admin.rejecting) { if (!location.hash.includes('admin')) clearInterval(S.admin.poll); return; }
   try {
@@ -3927,7 +4194,7 @@ function drawSettings(){
   drawNoticeForm(); loadTelegram();
   S.admin.cfg = {
     pickup_weekdays: CONFIG.pickupWeekdays.slice(), pickup_times: clone(CONFIG.pickupTimes), pickup_places: CONFIG.pickupOptions.slice(),
-    countdowns: clone(CONFIG.countdowns || []), countdowns_on: CONFIG.countdownsOn !== false, facebook_url: CONFIG.facebookUrl, product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
+    countdowns: clone(CONFIG.countdowns || []), countdowns_on: CONFIG.countdownsOn !== false, details: { ...(CONFIG.details || {}) }, facebook_url: CONFIG.facebookUrl, require_xu_signin: CONFIG.requireXu, product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
     print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
@@ -4055,6 +4322,14 @@ function drawShopForm(){
         <label class="dnum"><span>Owner earns (₱ credit) when the friend picks up</span>${n('referral_reward', c.referral_reward, 0, 100)}</label></div>
       <p class="help" style="margin-top:6px">After ordering, each customer gets a code like FR-KAYE7Q2. A first-time customer who uses it gets money off. The owner earns credit once that friend picks up, and it comes off their next order by itself.</p></div>
 
+    <div class="cfgsec"><div class="sub">Little details</div>
+      <p class="help" style="margin-bottom:10px">Small finishing touches around the site. Try the ordering flow, and switch off anything that feels like too much.</p>
+      <div class="detgrid">${DETAILS.map(([k, label, help]) => `<label class="switch detsw"><input type="checkbox" data-detail="${k}" ${(c.details || {})[k] !== false ? 'checked' : ''}><span><b>${esc(label)}</b><small>${esc(help)}</small></span></label>`).join('')}</div></div>
+
+    <div class="cfgsec"><div class="sub">XU students only</div>
+      <label class="switch" style="margin-bottom:8px"><input type="checkbox" data-cfgbool="require_xu_signin" ${c.require_xu_signin ? 'checked' : ''}><span><b>Require XU sign-in to order</b></span></label>
+      <p class="help">When on, customers must sign in with their school Google account (<b>@my.xu.edu.ph</b>) before ordering. The database checks it too, so it can't be faked. When off, signing in is optional (it still shows all their orders in one place). Test it with your own XU account before turning it on.</p></div>
+
     <div class="cfgsec"><div class="sub">Facebook page</div>
       <input class="inp" id="cfgFb" inputmode="url" value="${esc(c.facebook_url || '')}" placeholder="https://www.facebook.com/...">
       <p class="help" style="margin-top:6px">Shown as "Follow us on Facebook" at the bottom of the home page. Leave empty to hide it.</p></div>
@@ -4116,6 +4391,7 @@ function drawShopForm(){
     else if (d.cd !== undefined) { const x = c.countdowns[+d.cd]; x[d.f] = ['yearly', 'show'].includes(d.f) ? t.checked : t.value; if (d.f === 'show') t.closest('.cdrow').classList.toggle('off', !t.checked); }
     else if (t.id === 'cfgSite') c.site_url = t.value.trim();
     else if (t.id === 'cfgFb') c.facebook_url = t.value.trim();
+    else if (d.detail) { c.details = c.details || {}; c.details[d.detail] = t.checked; CONFIG.details = { ...(CONFIG.details || {}), [d.detail]: t.checked }; applyDetails(); }
     else if (t.id === 'cfgGrades') c.grades = t.value.split(',').map(x => x.trim()).filter(Boolean);
   };
   form.onsubmit = async e => {
@@ -4799,6 +5075,7 @@ const ACTIONS = {
   coNext: t => {
     const n = +t.dataset.s;
     validate(true); setErr(null, 'e-promise', '');
+    if (n === 1 && CONFIG.requireXu && !S.me) { const e = $('#e-xu'); if (e) e.textContent = 'Sign in with your XU account first.'; const b = document.querySelector('[data-act="xuIn"]'); if (b) b.focus(); return; }
     const bad = n === 1 ? ['e-nick', 'e-sec'] : ['e-place'];
     if (bad.some(id => $('#' + id) && $('#' + id).textContent)) { const f = $('#orderForm [aria-invalid="true"]'); if (f) f.focus(); return; }
     S.coStep = n + 1; coRender(); buzz(6);
@@ -4811,9 +5088,14 @@ const ACTIONS = {
   stripConfirm: async t => { const o = S.myOrder, last = readJSON('sk_last'); if (!o || !last) return; t.disabled = true;
     try { await api.confirm(o.code, last.nickname); buzz([8, 30, 8]); toast("Thanks! You're confirmed. We'll print it."); await loadMyOrder(); if (location.hash === '#/status' && S.statusResult) lookup(); }
     catch (e) { t.disabled = false; toast(friendlyError(e)); } },
-  stripHere: async t => { const o = S.myOrder, last = readJSON('sk_last'); if (!o || !last) return; t.disabled = true;
+  stripHere: async t => { const o = S.myOrder, last = readJSON('sk_last'); if (!o || !last) return; rippleFrom(t); t.disabled = true;
     try { await api.imHere(o.code, last.nickname); buzz([8, 30, 8]); toast("The seller's been told you're here."); await loadMyOrder(); if (location.hash === '#/status' && S.statusResult) lookup(); }
     catch (e) { t.disabled = false; toast(friendlyError(e)); } },
+  xuIn: () => xuSignIn(),
+  xuOut: async () => { await api.signOut(); S.me = null; toast('Signed out.'); if (location.hash.startsWith('#/checkout')) viewCheckoutKeep(); else if (location.hash.startsWith('#/status')) drawMine(); },
+  copySite: async () => { try { await navigator.clipboard.writeText(location.href.split('#')[0]); } catch {} toast('Link copied. Paste it in Safari or Chrome.'); },
+  openMine: t => { $('#lc').value = t.dataset.code; $('#ln').value = t.dataset.nick; lookup(); },
+  feedCode: async t => { try { await navigator.clipboard.writeText(t.dataset.code); } catch {} S.admin.tab = 'orders'; S.admin.filter = 'all'; viewAdmin(); setTimeout(() => { const c = [...document.querySelectorAll('.ocard')].find(x => x.textContent.includes(t.dataset.code)); if (c) { c.scrollIntoView({ block: 'center' }); c.classList.add('flash'); } else toast(`Copied ${t.dataset.code}.`); }, 600); },
   tgShow: () => { const i = $('#tgToken'); if (i) i.type = i.type === 'password' ? 'text' : 'password'; },
   tgFind: async t => {
     const tok = S.admin.tg.bot_token; if (!tok) return toast('Paste the bot token first.');
@@ -4852,7 +5134,8 @@ const ACTIONS = {
   },
   prodAddAddon: t => { S.admin.prodDraft[t.dataset.k].addons.push({ id: uid(), label: '', note: '', price: 0, enabled: true }); drawProducts(); },
   prodDelAddon: t => { S.admin.prodDraft[t.dataset.k].addons.splice(+t.dataset.i, 1); drawProducts(); },
-  imHere: async t => {
+  imHere: async (t) => { rippleFrom(t); return ACTIONS._imHere(t); },
+  _imHere: async t => {
     t.disabled = true;
     try { await api.imHere(S.statusResult.code, S.statusNick); toast("The seller's been told you're here."); lookup(); loadMyOrder(); }
     catch (e) { t.disabled = false; toast(friendlyError(e)); }
@@ -4951,6 +5234,8 @@ document.addEventListener('click', e => {
     return;
   }
   api = SupaBackend();
+  if (await finishSignIn()) return;   // this was the sign-in window: it closes itself
+  refreshMe();
   try { const s = await api.settings(); S.settings.maxSheets = s.max_sheets; S.settings.productsRaw = s.products || {}; S.settings.configRaw = s.config || {}; applyShopConfig(s.config); CONFIG.maxNoShows = s.max_noshows || CONFIG.maxNoShows; S.settings.products = mergeProducts(s.products); S.settings.deals = Array.isArray(s.deals) ? s.deals : [];
     if (s.signal_verb) S.settings.signalVerb = s.signal_verb; if (s.signal_item) S.settings.signalItem = s.signal_item; }
   catch (e) { console.warn('Could not load settings, using CONFIG values', e); }

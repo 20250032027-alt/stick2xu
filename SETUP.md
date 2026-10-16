@@ -145,6 +145,17 @@ In Supabase, open **Database → Extensions**, search **pg_cron**, and turn it o
 4. **Facebook Sharing Debugger** (developers.facebook.com/tools/debug): paste the site address and tap **Scrape Again**.
 5. **Rich Results Test** (search.google.com/test/rich-results): it should find the FAQ with no errors.
 
+## 10. XU sign-in (Google)
+
+Done once, in Google Cloud and Supabase:
+- **Google Cloud project:** Stick2It.
+- **OAuth consent screen:** External and published. Authorised domains: `stick2it.me` and `afyniszezhjtycwdxhgh.supabase.co`. Privacy policy: `https://www.stick2it.me/privacy.html`.
+- **Web client:** origins `https://www.stick2it.me` and `https://stick2it.me`. Redirect URI: the Supabase callback URL.
+- **Supabase → Authentication → Providers → Google:** on, with the Client ID and secret.
+- **Supabase URL Configuration:** Site URL `https://www.stick2it.me`. Redirect URLs `https://www.stick2it.me/**`.
+
+Then run `schema.sql` again, upload the site, and test with your own XU account before turning on **Require XU sign-in to order**.
+
 ## Changing the web address to Stick2It
 
 The site still lives at stick2xu.vercel.app until you rename it:

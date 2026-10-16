@@ -96,7 +96,8 @@ alter table public.orders add column if not exists missed int not null default 0
 alter table public.orders add column if not exists reschedules int not null default 0;     -- times the customer moved their pickup
 alter table public.orders add column if not exists refunded boolean not null default false;
 alter table public.orders add column if not exists rush_fee int not null default 0;
-alter table public.orders add column if not exists amount_paid int not null default 0;   -- part payments (paid = all of it)
+alter table public.orders add column if not exists amount_paid int not null default 0;
+alter table public.orders add column if not exists customer_email text;   -- the XU school account they signed in with (if they did)   -- part payments (paid = all of it)
 alter table public.orders add column if not exists admin_note text;                      -- private note, only sellers see it
 alter table public.orders add column if not exists friend_code text;                     -- the friend code this order used
 alter table public.orders add column if not exists friend_credit_used int not null default 0;
@@ -242,6 +243,7 @@ declare
   v_item jsonb; v_prod jsonb; v_size jsonb; v_addon jsonb; v_addon_id text;
   v_units int; v_unit int; v_total int := 0; v_count int := 0; v_maxq int;
   v_friend public.friends; v_fcode text; v_credit int := 0; v_fon boolean;
+  v_email text := lower(coalesce(auth.jwt()->>'email', '')); v_xu boolean;
   v_tiles int; v_pages int; v_has_prints boolean := false; v_only_prints boolean := true;
   v_today date := (now() at time zone 'Asia/Manila')::date; v_next date; v_rush int := 0; v_tm text[]; v_mins int;
   v_lines jsonb := '[]'::jsonb; v_subtotal int; v_discount int := 0; v_labels jsonb := '[]'::jsonb;
@@ -444,17 +446,21 @@ begin
     exit when not exists (select 1 from public.orders where code = v_code);
   end loop;
 
+  -- XU uptown students only (when the admin switch is on): the person must be signed in with a school Google account
+  v_xu := v_email like '%@my.xu.edu.ph';
+  if coalesce((s.config->>'require_xu_signin')::boolean, false) and not v_xu then raise exception 'XU_ONLY'; end if;
+
   perform public.check_pickup(p_pickup_date, p_pickup_time, p_pickup, null);
 
   -- sheet_count holds the number of things in the order (sheets + pins + posters + keychains)
   insert into public.orders (code, nickname, grade_section, pickup, pickup_date, pickup_time, payment, gcash_ref,
-                             layout, folder, sheet_count, total, src, subtotal, discount, promo_code, deal_labels, rush_fee, confirmed, friend_code, friend_credit_used)
+                             layout, folder, sheet_count, total, src, subtotal, discount, promo_code, deal_labels, rush_fee, confirmed, friend_code, friend_credit_used, customer_email)
   values (v_code, trim(p_nickname), trim(p_grade_section), trim(p_pickup), p_pickup_date, trim(p_pickup_time), p_payment,
           nullif(trim(left(coalesce(p_gcash_ref, ''), 40)), ''),
           p_layout, p_folder, v_count, v_total,
           nullif(left(coalesce(p_src, ''), 40), ''), v_subtotal, v_discount, v_pcode, v_labels, v_rush,
           -- pickups inside the confirm window (like rush prints) count as confirmed right away
-          p_pickup_date - coalesce((s.config->>'confirm_days_before')::int, 1) <= v_today, v_fcode, v_credit);
+          p_pickup_date - coalesce((s.config->>'confirm_days_before')::int, 1) <= v_today, v_fcode, v_credit, case when v_xu then v_email end);
   return v_code;
 end $$;
 
@@ -862,3 +868,123 @@ do $$ begin
   perform cron.schedule('stick2it-morning', '0 23 * * *', 'select public.telegram_morning()');   -- 23:00 UTC = 7:00 AM in the Philippines
 exception when others then raise notice 'pg_cron is not available here. Turn it on in Supabase: Database > Extensions > pg_cron, then run this file again.';
 end $$;
+
+
+-- =====================================================================
+-- Signed-in students (XU Google account): their own orders, no codes needed
+-- =====================================================================
+create or replace function public.my_orders() returns json
+language sql stable security definer set search_path = public as $$
+  select coalesce(json_agg(x order by x.created_at desc), '[]'::json) from (
+    select code, nickname, status, pickup, pickup_date, pickup_time, total, paid, amount_paid, confirmed,
+           arrived_at is not null as arrived, created_at
+    from public.orders
+    where customer_email is not null and customer_email = lower(coalesce(auth.jwt()->>'email', ''))
+      and lower(coalesce(auth.jwt()->>'email', '')) like '%@my.xu.edu.ph'
+    order by created_at desc limit 30) x
+$$;
+grant execute on function public.my_orders() to authenticated;
+
+-- =====================================================================
+-- Latest: a feed of what happened (orders and admin changes), for the admin "Latest" tab
+-- =====================================================================
+create table if not exists public.activity (
+  id bigint generated always as identity primary key,
+  at timestamptz not null default now(),
+  actor text,            -- admin email, a student's school email, or 'customer'
+  kind text not null,    -- new, status, confirm, arrive, pay, note, move, settings, promo, business, telegram
+  code text,             -- order code, when it's about an order
+  text text not null
+);
+create index if not exists activity_at_idx on public.activity (at desc);
+alter table public.activity enable row level security;
+grant select on public.activity to authenticated;
+drop policy if exists "admins read activity" on public.activity;
+create policy "admins read activity" on public.activity for select to authenticated using (public.is_admin());
+
+create or replace function public.log_actor() returns text language sql stable as $$
+  select coalesce(nullif(lower(auth.jwt()->>'email'), ''), 'customer')
+$$;
+
+create or replace function public.log_orders() returns trigger
+language plpgsql security definer set search_path = public as $$
+declare who text := public.log_actor(); n text;
+begin
+  n := new.nickname || ' (' || new.grade_section || ')';
+  if tg_op = 'INSERT' then
+    insert into public.activity (actor, kind, code, text) values (who, 'new', new.code, 'New order from ' || n || ', ₱' || new.total);
+    return new;
+  end if;
+  if new.status is distinct from old.status then
+    insert into public.activity (actor, kind, code, text) values (who, 'status', new.code,
+      case new.status when 'approved' then 'Approved the design for ' || n
+                      when 'rejected' then 'Rejected ' || n || coalesce(': ' || new.reject_reason, '')
+                      when 'printing' then 'Printed ' || n
+                      when 'ready' then 'Marked ready: ' || n
+                      when 'done' then 'Picked up and paid: ' || n
+                      when 'noshow' then 'No-show: ' || n
+                      when 'cancelled' then case when new.reject_reason = 'Not confirmed in time' then 'Released (not confirmed in time): ' || n else 'Cancelled: ' || n end
+                      else n || ' is now ' || new.status end);
+  end if;
+  if new.confirmed and not old.confirmed and new.reschedules = old.reschedules then
+    insert into public.activity (actor, kind, code, text) values (who, 'confirm', new.code, n || ' confirmed (I''ll be there)');
+  end if;
+  if new.arrived_at is not null and old.arrived_at is null then
+    insert into public.activity (actor, kind, code, text) values (who, 'arrive', new.code, n || ' is at ' || new.pickup);
+  end if;
+  if new.reschedules > old.reschedules or (new.pickup_date is distinct from old.pickup_date and new.status = old.status and coalesce(new.missed, 0) = coalesce(old.missed, 0)) then
+    insert into public.activity (actor, kind, code, text) values (who, 'move', new.code, 'Pickup moved to ' || to_char(new.pickup_date, 'Dy, Mon FMDD') || ': ' || n);
+  end if;
+  if coalesce(new.missed, 0) > coalesce(old.missed, 0) then
+    insert into public.activity (actor, kind, code, text) values (who, 'move', new.code, 'Missed pickup, held for ' || to_char(new.pickup_date, 'Dy, Mon FMDD') || ': ' || n);
+  end if;
+  if new.paid is distinct from old.paid or new.amount_paid is distinct from old.amount_paid then
+    insert into public.activity (actor, kind, code, text) values (who, 'pay', new.code,
+      case when new.paid then 'Paid in full: ' || n when coalesce(new.amount_paid, 0) > 0 then 'Paid ₱' || new.amount_paid || ' of ₱' || new.total || ': ' || n else 'Marked unpaid: ' || n end);
+  end if;
+  if new.admin_note is distinct from old.admin_note then
+    insert into public.activity (actor, kind, code, text) values (who, 'note', new.code,
+      case when coalesce(new.admin_note, '') = '' then 'Removed the note on ' || n else 'Note on ' || n || ': ' || left(new.admin_note, 120) end);
+  end if;
+  if new.refunded and not old.refunded then
+    insert into public.activity (actor, kind, code, text) values (who, 'pay', new.code, 'GCash refund sent: ' || n);
+  end if;
+  return new;
+end $$;
+drop trigger if exists log_orders on public.orders;
+create trigger log_orders after insert or update on public.orders for each row execute function public.log_orders();
+
+create or replace function public.log_changes() returns trigger
+language plpgsql security definer set search_path = public as $$
+declare who text := public.log_actor(); what text;
+begin
+  if tg_table_name = 'shop_settings' then
+    what := concat_ws(', ',
+      case when new.products is distinct from old.products then 'products and prices' end,
+      case when new.deals is distinct from old.deals then 'deals' end,
+      case when new.config is distinct from old.config then 'shop details' end,
+      case when new.signal_verb is distinct from old.signal_verb or new.signal_item is distinct from old.signal_item then 'the pickup signal' end,
+      case when new.max_sheets is distinct from old.max_sheets or new.max_noshows is distinct from old.max_noshows then 'limits' end);
+    if coalesce(what, '') <> '' then insert into public.activity (actor, kind, text) values (who, 'settings', 'Changed ' || what); end if;
+  elsif tg_table_name = 'promo_codes' then
+    insert into public.activity (actor, kind, text) values (who, 'promo',
+      case tg_op when 'INSERT' then 'Added promo code ' || new.code when 'DELETE' then 'Removed promo code ' || old.code
+        else 'Changed promo code ' || new.code || case when new.active is distinct from old.active then case when new.active then ' (turned on)' else ' (turned off)' end else '' end end);
+  elsif tg_table_name = 'business' then
+    -- the Business tab saves as you type, so log at most once every 15 minutes per person
+    if not exists (select 1 from public.activity where kind = 'business' and actor = who and at > now() - interval '15 minutes') then
+      insert into public.activity (actor, kind, text) values (who, 'business', 'Updated the Business tab (supplies, costs, or money)');
+    end if;
+  elsif tg_table_name = 'telegram' then
+    insert into public.activity (actor, kind, text) values (who, 'telegram', 'Changed the Telegram alert settings');
+  end if;
+  return coalesce(new, old);
+end $$;
+drop trigger if exists log_settings on public.shop_settings;
+create trigger log_settings after update on public.shop_settings for each row execute function public.log_changes();
+drop trigger if exists log_promos on public.promo_codes;
+create trigger log_promos after insert or update or delete on public.promo_codes for each row execute function public.log_changes();
+drop trigger if exists log_business on public.business;
+create trigger log_business after update on public.business for each row execute function public.log_changes();
+drop trigger if exists log_telegram on public.telegram;
+create trigger log_telegram after update on public.telegram for each row execute function public.log_changes();

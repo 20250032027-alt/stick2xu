@@ -167,6 +167,47 @@ Built in, so Google, link previews, and AI assistants (ChatGPT, Gemini, Claude) 
 
 **Monthly (10 minutes):** check Google Search Console for what people searched, and keep the name, link, and handle the same everywhere (site, Facebook, TikTok).
 
+## XU students only (sign in with Google)
+
+At checkout, customers see **"Continue with your XU account"**. Only school Google accounts ending in **@my.xu.edu.ph** work. Other accounts are signed straight back out, and the database refuses their orders too, so it can't be faked. Signing in:
+- fills in their name from their school account,
+- shows **Your orders** at the top of My order, with no order codes needed,
+- saves their school email on the order (you see it in Latest).
+
+The switch is in **Settings → Shop details → XU students only → Require XU sign-in to order**:
+- **Off** (the start): signing in is optional.
+- **On:** customers must sign in before they can order.
+
+Test it with your own XU account first, then switch it on.
+
+**Inside TikTok, Facebook, Messenger, or Instagram,** Google doesn't allow signing in. The checkout explains how to open the page in Safari or Chrome, with a **Copy link** button.
+
+## Little details
+
+Small finishing touches, each with its own switch in **Settings → Shop details → Little details**. All are on to start. Go through the ordering flow and switch off anything that feels like too much.
+- **Pickup pass:** ticket notches at the tear line, and a serial number along the edge.
+- **Stamps:** APPROVED, PRINTING, or READY! as a tilted ink stamp on My order. The ready stamp lands with a thunk the first time.
+- **Ordering:** the pass "prints" in right after ordering, and "Save your code" has a peeled corner.
+- **Shop and home:** sticker-style icons on empty screens, die-cut edges on product pictures, and a quick shine on the nearest countdown.
+- **Cart:** the Cart button (or total) bounces and the new item slides in.
+- **Pickup day:** a ring goes out when someone taps "I'm here".
+- **My order:** the browser tab shows the order status ("Ready! · Stick2It"), and dates say "today" or "tomorrow" when they're close.
+- **Admin:** new orders chime and glow while you're on To review, and an empty To review says "All caught up."
+
+People who've turned on reduced motion on their phone never see the animations.
+
+## Latest (admin)
+
+The **Latest** tab is a feed of everything that happens, newest first:
+- new orders
+- approvals, printing, ready, and picked up
+- confirmations and arrivals
+- payments and notes
+- cancellations
+- changes to settings, deals, promo codes, Telegram, and the Business tab
+
+It shows who did each thing: You, another admin by name, a Student, or a Customer. Tap an order code to jump to that order. A red dot on the tab means there's something new since you last looked (each admin has their own).
+
 ## Customer reminders (so nobody misses a step)
 
 The customer's next step shows as a strip under the top bar **on every page**, using the order saved on their phone:
