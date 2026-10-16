@@ -1396,9 +1396,11 @@ a.pilllink.needs::after{content:"";position:absolute;top:-2px;right:-2px;width:1
 /* account button (top right) */
 .acctbtn{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:50%;border:2px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;box-shadow:2px 3px 0 var(--ink);transition:transform .15s var(--ease)}
 .acctbtn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink)}
-.acctbtn.in{background:var(--ink);color:#fff}
+.acctbtn.in{background:var(--ink);color:#fff;box-shadow:inset 0 0 0 2px #fff,2px 3px 0 var(--ink);overflow:hidden;padding:0}
 .acctbtn{order:9}
 .acctbtn.in b{font-family:var(--display);font-weight:800;font-size:18px;line-height:1}
+.acctbtn img{width:calc(100% - 4px);height:calc(100% - 4px);border-radius:50%;object-fit:cover;display:block}
+.acctbtn img + .ini{display:none}
 
 /* top bar on narrow phones: labels never wrap; icons only when space is tight */
 .topacts .pilllink{white-space:nowrap}
@@ -2177,7 +2179,7 @@ function SupaBackend(){
     async imHere(code, nick){ await rpc('mark_arrived', { p_code: code, p_nickname: nick }); },
     async session(){ const { data } = await sb.auth.getSession(); return !!data.session; },
     async isAdmin(){ try { return !!(await rpc('is_admin', {})); } catch { return true; } },   // if the check itself fails, don't lock admins out (the database still protects the data)
-    async me(){ const { data } = await sb.auth.getSession(); const u = data.session && data.session.user; return u ? { email: (u.email || '').toLowerCase(), name: (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || '' } : null; },
+    async me(){ const { data } = await sb.auth.getSession(); const u = data.session && data.session.user; return u ? { email: (u.email || '').toLowerCase(), name: (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || '', pic: (u.user_metadata && (u.user_metadata.avatar_url || u.user_metadata.picture)) || '' } : null; },
     async xuStart(){ const { data, error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/?signin=1', skipBrowserRedirect: true, queryParams: { hd: 'my.xu.edu.ph', prompt: 'select_account' } } }); if (error) throw error; return data.url; },
     async signOut(){ await sb.auth.signOut(); },
     async myOrders(){ return await rpc('my_orders', {}); },
@@ -2372,10 +2374,17 @@ function dayWord(v, cap){
   if (w) return cap ? w[0].toUpperCase() + w.slice(1) : w;
   return fmtDate(v, { weekday: 'short', month: 'short', day: 'numeric' });
 }
+function acctInner(){
+  if (!S.me) return ic('user', 18);
+  const ini = esc(((S.me.name || S.me.email).trim()[0] || '?').toUpperCase());
+  return S.me.pic && /^https:\/\//.test(S.me.pic)
+    ? `<img src="${esc(S.me.pic)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()"><b class="ini">${ini}</b>`
+    : `<b>${ini}</b>`;
+}
 function refreshTopAcct(){
   const b = document.querySelector('.acctbtn'); if (!b) return;
   b.classList.toggle('in', !!S.me);
-  b.innerHTML = S.me ? `<b>${esc(((S.me.name || S.me.email).trim()[0] || '?').toUpperCase())}</b>` : ic('user', 18);
+  b.innerHTML = acctInner();
   b.setAttribute('aria-label', S.me ? `Signed in as ${S.me.email}. Your orders` : 'Sign in with your XU account');
   b.title = S.me ? S.me.email : 'Sign in with your XU account';
 }
@@ -2391,7 +2400,7 @@ function topbar(){
   return `<div class="topwrap"><header class="top"><a class="mark" href="#/" data-act="logoTap" aria-label="${esc(CONFIG.shopName)} home">Stick<b>2</b>It</a>
     <div class="topacts ${n && !onCart ? 'has-cart' : ''}">
       ${n && !onCart ? `<a class="pilllink cartpill" href="#/cart" aria-label="Your order, ${n} item${n > 1 ? 's' : ''}">${ic('sticker', 18)}<span class="lbl">Cart</span><b class="badge-n num">${n}</b></a>` : ''}
-      <button type="button" class="acctbtn ${S.me ? 'in' : ''}" data-act="acct" aria-label="${S.me ? `Signed in as ${esc(S.me.email)}. Your orders` : 'Sign in with your XU account'}" title="${S.me ? esc(S.me.email) : 'Sign in with your XU account'}">${S.me ? `<b>${esc(((S.me.name || S.me.email).trim()[0] || '?').toUpperCase())}</b>` : ic('user', 18)}</button>
+      <button type="button" class="acctbtn ${S.me ? 'in' : ''}" data-act="acct" aria-label="${S.me ? `Signed in as ${esc(S.me.email)}. Your orders` : 'Sign in with your XU account'}" title="${S.me ? esc(S.me.email) : 'Sign in with your XU account'}">${acctInner()}</button>
       <a class="pilllink ${['confirm', 'here'].includes(myAction(S.myOrder)) ? 'needs' : ''}" href="#/status" aria-label="Check my order${['confirm', 'here'].includes(myAction(S.myOrder)) ? ' (something to do)' : ''}">${ic('box', 18)}<span class="lbl">My order</span></a>
     </div></header></div>${noticeHTML()}${actionStripHTML()}`;
 }
