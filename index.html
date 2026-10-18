@@ -1406,6 +1406,9 @@ a.pilllink.needs::after{content:"";position:absolute;top:-2px;right:-2px;width:1
 .topacts .pilllink{white-space:nowrap}
 @media(max-width:374px){.topacts .pilllink .lbl{display:none}.topacts .pilllink{padding-left:12px;padding-right:12px}}
 </style>
+<!-- Vercel Web Analytics: counts visits and pages, without cookies -->
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -3239,6 +3242,26 @@ function loadPdfJs(){
   });
   return pdfjsReady;
 }
+/* The print PDF as PNG pictures: each page drawn at 300 dpi (A4 = 2480 x 3508 px), so it matches the PDF exactly.
+   Several pages download one after another (the browser may ask once to allow multiple downloads). */
+async function pdfToPngs(doc, name){
+  toast('Making the PNG. This takes a few seconds.');
+  const lib = await loadPdfJs();
+  const pdf = await lib.getDocument({ data: doc.output('arraybuffer') }).promise;
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const pg = await pdf.getPage(i), vp = pg.getViewport({ scale: 300 / 72 });
+    const c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+    const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+    await pg.render({ canvasContext: ctx, viewport: vp }).promise;
+    const blob = await new Promise(r => c.toBlob(r, 'image/png'));
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = pdf.numPages > 1 ? `${name}-page-${i}.png` : `${name}.png`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    if (i < pdf.numPages) await new Promise(r => setTimeout(r, 500));
+  }
+  return pdf.numPages;
+}
 /* Count a PDF's pages and draw its first page small, for the preview */
 async function readPdf(blob){
   const lib = await loadPdfJs();
@@ -4017,9 +4040,9 @@ async function drawAdminBody(){
       if (f === 'ready' && !o.arrived_at && (!prev || prev.arrived_at || prev.pickup_date !== o.pickup_date)) head = `<div class="dayhead">${o.pickup_date ? esc(dayLabel(o.pickup_date)) : 'No date'}</div>`;
       if (o.status === 'pending') a.push(smallBtn('Approve', 'check', 'aApprove', 'ok', `data-id="${o.id}"`), smallBtn('Reject', 'x', 'aReject', 'plain', `data-id="${o.id}"`));
       if (['approved','printing'].includes(o.status)) a.push(o.confirmed || o.status === 'printing'
-        ? smallBtn('Download PDF', 'printer', 'aPdf', 'dark', `data-id="${o.id}"`)
+        ? smallBtn('Download PDF', 'printer', 'aPdf', 'dark', `data-id="${o.id}"`) + smallBtn('PNG', 'download', 'aPng', 'plain', `data-id="${o.id}"`)
         : smallBtn('Print anyway', 'printer', 'aPdfForce', 'plain', `data-id="${o.id}"`), smallBtn('Mark ready', 'box', 'aReady', '', `data-id="${o.id}"`));
-      if (o.status === 'ready') a.push(smallBtn('Picked up and paid', 'check', 'aDone', 'ok', `data-id="${o.id}"`), smallBtn(o.missed ? "Didn't show up again" : "Didn't show up", 'ghost', 'aNoshow', 'plain', `data-id="${o.id}"`), smallBtn('Reprint', 'printer', 'aPdf', 'plain', `data-id="${o.id}"`));
+      if (o.status === 'ready') a.push(smallBtn('Picked up and paid', 'check', 'aDone', 'ok', `data-id="${o.id}"`), smallBtn(o.missed ? "Didn't show up again" : "Didn't show up", 'ghost', 'aNoshow', 'plain', `data-id="${o.id}"`), smallBtn('Reprint', 'printer', 'aPdf', 'plain', `data-id="${o.id}"`), smallBtn('Reprint PNG', 'download', 'aPng', 'plain', `data-id="${o.id}"`));
       if (ACTIVE.includes(o.status)) a.push(smallBtn(o.paid ? 'Mark unpaid' : 'Mark paid', 'cash', 'aPaid', 'plain', `data-id="${o.id}"`));
       if (ACTIVE.includes(o.status) && !o.paid) a.push(smallBtn('Part payment', 'cash', 'aPart', 'plain', `data-id="${o.id}"`));
       a.push(smallBtn(o.admin_note ? 'Edit note' : 'Add note', 'edit', 'aNote', 'plain', `data-id="${o.id}"`));
@@ -4144,7 +4167,7 @@ async function batchPrint(date){
   toast(`PDF ready. Print at 100% ("Actual size"). These orders are now under Printing.${files.length ? ` Print these from their file buttons: ${files.join(', ')}.` : ''}${gone.length ? ` Couldn't make: ${gone.join(', ')}.` : ''}`);
   S.admin.filter = 'printing'; drawAdminBody();
 }
-async function makePdf(o, batch){
+async function makePdf(o, batch, asPng){
   if (!window.jspdf) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
   if (o.images_deleted) { if (!batch) toast('The pictures for this order were already cleaned up.'); return 'gone'; }
   const asIs = it => it.type === 'prints' || it.mode === 'pages';   // customer files we print exactly as they are
@@ -4238,6 +4261,11 @@ async function makePdf(o, batch){
     }
   }
   if (batch) { batch.doc = doc; return 'ok'; }
+  if (asPng) {
+    const n = await pdfToPngs(doc, o.code);
+    if (o.status === 'approved') setStatus(o.id, { status: 'printing' }, `${n === 1 ? 'PNG' : n + ' PNGs'} downloaded (300 dpi, A4). Print at 100% ("Actual size") and cut along the dotted lines.`);
+    return;
+  }
   doc.save(`${o.code}.pdf`);
   if (o.status === 'approved') setStatus(o.id, { status: 'printing' }, 'PDF downloaded. Print at 100% ("Actual size") and cut along the dotted lines.');
 }
@@ -5265,6 +5293,7 @@ const ACTIONS = {
   aBatch: t => batchPrint(t.dataset.date),
   tgMorning: async () => { try { const r = await api.telegramMorning(); toast(r === 'none' ? 'No pickups today. Sent a short note to Telegram.' : 'Sent. Check Telegram.'); } catch (e) { toast(friendlyError(e)); } },
   aPdf: t => makePdf(S.admin.orders.find(o => o.id === t.dataset.id)).catch(e => toast(friendlyError(e))),
+  aPng: t => makePdf(S.admin.orders.find(o => o.id === t.dataset.id), null, true).catch(e => toast(friendlyError(e))),
   aReady: async t => { const o = S.admin.orders.find(x => x.id === t.dataset.id); await setStatus(t.dataset.id, { status: 'ready' }, 'Marked ready.'); if (o) useStock(o); },
   aDone: t => setStatus(t.dataset.id, { status: 'done', paid: true }, 'Done.'),
   aNoshow: t => {
