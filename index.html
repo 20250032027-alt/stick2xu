@@ -564,6 +564,20 @@ th{color:var(--muted);font-weight:700}
 .choice .note{display:block;color:var(--muted);font-weight:500;font-size:14px}
 .pinstage{display:flex;gap:30px;align-items:center;justify-content:center;flex-wrap:wrap;width:100%}
 .pinedit,.pinprev{display:flex;flex-direction:column;align-items:center;gap:12px}
+.addtowrap{max-width:720px;margin:10px auto 0;padding:0 16px}.hint.addto{align-items:center}.hint.addto .linkbtn{flex:none;margin-left:auto}
+.pinsheet{display:flex;gap:14px;align-items:center;max-width:460px;margin:14px auto 0}
+.pinsheet{padding:0 6px}.pinsheet .help{margin:0;font-size:13px;flex:1;min-width:0}
+.ps-a4{position:relative;flex:none;width:92px;aspect-ratio:210/297;background:#fff;border:1px solid #D9DCE6;border-radius:3px;box-shadow:0 2px 6px rgba(40,57,113,.12)}
+.ps-pin,.ps-spot{position:absolute;aspect-ratio:1;border-radius:50%;overflow:hidden}
+.ps-pin{border:1px solid rgba(40,57,113,.35)}
+.ps-pin img{position:absolute;max-width:none}
+.ps-spot{border:1px dashed #C7CBD8}
+.ps-a4.psmini{width:34px;border-radius:2px;box-shadow:none}.ps-a4.psmini .ps-spot{border-width:.5px}
+.ps-fill{position:absolute;aspect-ratio:1;border-radius:50%;background:var(--xu-gold,#F2BC2E);border:.5px solid rgba(40,57,113,.5)}
+.pinbar .minis{display:flex;gap:4px;flex:none}
+.ps-pin.new{animation:psPop .35s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes psPop{from{transform:scale(0)}to{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.ps-pin.new{animation:none}}
 .pinedit{flex:1 1 300px;max-width:380px}
 .pinedit .pinwrap .frame{width:100%}
 .cap{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
@@ -1456,7 +1470,7 @@ const CONFIG = {
     pins: {
       name: 'Pins', blurb: 'Round button pins with your picture', unit: 'pin', enabled: false, maxQty: 60,   // big enough for a whole class
       // faceMm = the pin you hold. cutMm = the paper circle, which wraps around the edge. Match these to the pin machine.
-      sizes: [{ id: '44', label: '44 mm', price: 25, faceMm: 44, cutMm: 55 }, { id: '58', label: '58 mm', price: 35, faceMm: 58, cutMm: 70, enabled: false }],
+      sizes: [{ id: '44', label: '44 mm', price: 25, faceMm: 44, cutMm: 44 }, { id: '58', label: '58 mm', price: 35, faceMm: 58, cutMm: 70, enabled: false }],
       addons: []
     },
     posters: {
@@ -1744,7 +1758,7 @@ function armed(t, prompt){
 }
 function friendlyError(e){
   const m = String((e && (e.message || e.error_description)) || e || '');
-  if (m.includes('ACTIVE_ORDER')) return 'You already have an order in progress. Pick that one up first, then you can order again.';
+  if (m.includes('ACTIVE_ORDER')) return 'You already have 5 orders in progress. Pick some up first, then you can order again.';
   if (m.includes('BLOCKED')) return 'Orders are paused for this name because of missed pickups. Talk to the seller to sort it out.';
   if (m.includes('TOO_MANY_SHEETS')) return `You can order up to ${S.settings.maxSheets} sheets at a time.`;
   if (m.includes('NOT_FOUND')) return "No order matches that code and name. Check both and try again (your first name is enough).";
@@ -1759,6 +1773,7 @@ function friendlyError(e){
   if (m.includes('TOO_SOON')) return 'That pickup time is too soon to get it ready. Pick a later time or another day.';
   if (m.includes('BAD_DATE')) return "That day isn't open for pickup anymore. Pick another one.";
   if (m.includes('NO_RESCHEDULE')) return "This order can't be moved anymore. Talk to the seller at pickup.";
+  if (m.includes('NO_ADD_TO')) return "That order can't take more items now (it may be ready or picked up already). Place a new order instead.";
   if (m.includes('BAD_CODE')) return "That promo code doesn't work. Check the spelling, or it may have ended.";
   if (m.includes('CODE_MIN')) return 'Your order is too small for that promo code.';
   if (m.includes('CODE_USED_UP')) return 'That promo code has been used up.';
@@ -2014,7 +2029,7 @@ function cardDeal(key){
 }
 const cartUnits = () => S.cart.reduce((t, it) => t + itemUnits(it), 0);
 function itemTitle(it){
-  const p = CONFIG.products[it.type] || { name: it.type, sizes: [] }, n = it.type === 'stickers' ? (it.sheets || []).filter(s => (s.items || []).length).length : it.qty;
+  const p = CONFIG.products[it.type] || { name: it.type, sizes: [] }, n = it.type === 'stickers' ? ((it.sheets || []).filter(s => (s.items || []).length).length || +it.qty || 0) : it.qty;
   const sizeLabel = it.size_label || ((p.sizes.find(z => z.id === it.size) || {}).label) || '';
   if (it.type === 'stickers') return `Stickers, ${n} sheet${n === 1 ? '' : 's'}`;
   if (it.type === 'posters' && it.mode === 'pages') return `Poster from your PDF, ${it.pages} page${+it.pages === 1 ? '' : 's'}${+it.qty > 1 ? ` × ${it.qty}` : ''}`;
@@ -2066,9 +2081,9 @@ function posterRegrid(f){
 }
 const tileLabel = t => ({ 1: '1', 2: '2', 4: '2 × 2', 9: '3 × 3' })[t] || String(t);
 function frameMm(it){
-  if (it.mm) return it.mm;
+  if (it.mm && it.type !== 'pins') return it.mm;   // pins always use today's size, so older pin orders print at the right size too
   const z = P(it.type).sizes.find(s => s.id === it.size) || P(it.type).sizes[0];
-  if (it.type === 'pins') return { w: z.cutMm, h: z.cutMm, face: z.faceMm, round: true };
+  if (it.type === 'pins') return { w: z.cutMm, h: z.cutMm, face: z.cutMm, round: true };   // the whole printed circle is the pin
   if (it.type === 'posters' && +it.cols > 0 && +it.rows > 0) {
     // Like Rasterbator: sheets across x sheets down. orient is the direction of each sheet.
     const m = CONFIG.posterMarginMm; let sw = z.wMm, sh = z.hMm; if (it.orient === 'landscape') [sw, sh] = [sh, sw];
@@ -2171,17 +2186,28 @@ function SupaBackend(){
       }
       const layout = { items: serializeItems(p.items, pathFor) };
       const code = await rpc('place_order', { p_nickname: p.nickname, p_grade_section: p.section, p_pickup: p.pickup, p_payment: p.payment,
-        p_gcash_ref: p.gcashRef || null, p_layout: layout, p_folder: folder, p_src: p.src || null, p_pickup_date: p.pickupDate, p_pickup_time: p.pickupTime, p_promo_code: p.promo || null });
+        p_gcash_ref: p.gcashRef || null, p_layout: layout, p_folder: folder, p_src: p.src || null, p_pickup_date: p.pickupDate, p_pickup_time: p.pickupTime, p_promo_code: p.promo || null, p_add_to: p.addTo || null });
       return { code };
     },
     async getOrder(code, nick){ const d = await rpc('get_order', { p_code: code, p_nickname: nick }); if (!d) throw new Error('NOT_FOUND'); return d; },
     async confirm(code, nick){ await rpc('confirm_order', { p_code: code, p_nickname: nick }); },
     async cancel(code, nick){ await rpc('cancel_order', { p_code: code, p_nickname: nick }); },
+    async updateMine(code, nick, section, payment, ref){ return await rpc('update_my_order', { p_code: code, p_nickname: nick, p_grade_section: section, p_payment: payment, p_gcash_ref: ref || null }); },
     async availability(from, to){ const { data, error } = await sb.rpc('pickup_availability', { p_from: from, p_to: to }); if (error) throw error; return data || []; },
     async reschedule(code, nick, date, time){ await rpc('reschedule_order', { p_code: code, p_nickname: nick, p_date: date, p_time: time }); },
     async imHere(code, nick){ await rpc('mark_arrived', { p_code: code, p_nickname: nick }); },
     async session(){ const { data } = await sb.auth.getSession(); return !!data.session; },
-    async isAdmin(){ try { return !!(await rpc('is_admin', {})); } catch { return true; } },   // if the check itself fails, don't lock admins out (the database still protects the data)
+    async isAdmin(){ try { return !!(await rpc('is_admin', {})); } catch { return true; } },
+    async isAdminStrict(){ try { const { data } = await sb.auth.getSession(); if (!data.session) return false; return !!(await rpc('is_admin', {})); } catch { return false; } },   // for the shop pages: never true by mistake
+    async addSale(row){
+      for (let k = 0; k < 5; k++) {
+        const code = 'WLK-' + Array.from({ length: 4 }, () => 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 31)]).join('');
+        const { data, error } = await sb.from('orders').insert({ ...row, code }).select().single();
+        if (!error) return data;
+        if (!/duplicate|unique/i.test(error.message)) throw error;
+      }
+      throw new Error('Could not make a code. Try again.');
+    },   // if the check itself fails, don't lock admins out (the database still protects the data)
     async me(){ const { data } = await sb.auth.getSession(); const u = data.session && data.session.user; return u ? { email: (u.email || '').toLowerCase(), name: (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || '', pic: (u.user_metadata && (u.user_metadata.avatar_url || u.user_metadata.picture)) || '' } : null; },
     async xuStart(){ const { data, error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/?signin=1', skipBrowserRedirect: true, queryParams: { hd: 'my.xu.edu.ph', prompt: 'select_account' } } }); if (error) throw error; return data.url; },
     async signOut(){ await sb.auth.signOut(); },
@@ -2405,7 +2431,7 @@ function topbar(){
       ${n && !onCart ? `<a class="pilllink cartpill" href="#/cart" aria-label="Your order, ${n} item${n > 1 ? 's' : ''}">${ic('sticker', 18)}<span class="lbl">Cart</span><b class="badge-n num">${n}</b></a>` : ''}
       <button type="button" class="acctbtn ${S.me ? 'in' : ''}" data-act="acct" aria-label="${S.me ? `Signed in as ${esc(S.me.email)}. Your orders` : 'Sign in with your XU account'}" title="${S.me ? esc(S.me.email) : 'Sign in with your XU account'}">${acctInner()}</button>
       <a class="pilllink ${['confirm', 'here'].includes(myAction(S.myOrder)) ? 'needs' : ''}" href="#/status" aria-label="Check my order${['confirm', 'here'].includes(myAction(S.myOrder)) ? ' (something to do)' : ''}">${ic('box', 18)}<span class="lbl">My order</span></a>
-    </div></header></div>${noticeHTML()}${actionStripHTML()}`;
+    </div></header></div>${noticeHTML()}${actionStripHTML()}${S.addTo && !location.hash.startsWith('#/checkout') ? `<div class="addtowrap"><p class="hint addto">${ic('plus', 18)}<span><b>Adding to ${esc(S.addTo.code)}.</b> Same pickup: ${esc(S.addTo.pickup_date ? fmtDate(S.addTo.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' }) : '')}${S.addTo.pickup_time ? ', ' + esc(S.addTo.pickup_time) : ''}, ${esc(S.addTo.pickup || '')}. Design what you want to add, then check out.</span><button type="button" class="linkbtn" data-act="addToCancel">Stop adding</button></p></div>` : ''}`;
 }
 function progress(step){
   const names = ['Design', 'Details', 'Pickup pass'];
@@ -2979,7 +3005,7 @@ function activeDesign(){
   return f.front;
 }
 const maxQtyFor = key => (CONFIG.products[key] || {}).maxQty || CONFIG.maxQty;
-function setQty(n){ S.fd.qty = Math.max(1, Math.min(maxQtyFor(S.fd.type), Math.round(+n || 1))); drawFramedCtrl(); drawFramedBottom(); }
+function setQty(n){ S.fd.qty = Math.max(1, Math.min(maxQtyFor(S.fd.type), Math.round(+n || 1))); drawFramedCtrl(); drawFramedBottom(); drawPinSheet(); }
 function viewMake(key){
   if (!CONFIG.products[key]) return viewNotFound();
   if (!isLive(key)) return viewUnavailable(key);
@@ -3093,7 +3119,8 @@ function drawFramedStage(){
             ${im ? `<img id="fimg2" src="${im.url}" alt="" draggable="false">` : ''}</div><span class="pp-gloss"></span></div></div>
           <span class="cap">How it looks</span></div>
       </div>
-      <p class="under" style="max-width:460px">The shaded ring wraps around the back of the pin, so it won't show. Keep faces and words inside the dashed circle.</p>`;
+      <p class="under" style="max-width:460px">This circle is exactly what gets printed (${Math.round(mm.w)} mm). Keep faces and words a little in from the edge.</p>
+      <div class="pinsheet" id="pinSheet"></div>`;
   } else if (f.type === 'posters' && f.mode === 'pages' && f.pdf) {
     html = posterPagesStage(f);
   } else if (f.type === 'posters') {
@@ -3147,7 +3174,23 @@ function drawFramedStage(){
   $('#fstage').querySelectorAll('.filePick').forEach(i => i.addEventListener('change', onFiles));
   const frEl = $('#frame'); if (frEl) frEl.classList.toggle('has-img', !!$('#fimg'));
   const img = $('#fimg'); if (img) { if (img.complete) placeImg(); else img.onload = placeImg; }
-  bindPan();
+  bindPan();  drawPinSheet();
+}
+/* Pins: a small A4 showing where their pins go on the real print sheet (same grid the shop prints with) */
+function drawPinSheet(){
+  const el = $('#pinSheet'), f = S.fd; if (!el || !f || f.type !== 'pins') return;
+  const mm = frameMm(f), g = pinGrid(mm.w), n = Math.max(1, +f.qty || 1), here = Math.min(n, g.per), pages = Math.ceil(n / g.per);
+  const im = f.front.imageId && imgById(f.front.imageId), L = im ? layoutFrac(im, f.front, mm.w, mm.h) : null, bg = f.front.bg || '#ffffff';
+  const spots = Array.from({ length: g.per }, (_, i) => {
+    const x = (g.x0 + (i % g.cols) * (g.d + g.gap)) / 210 * 100, y = (g.y0 + Math.floor(i / g.cols) * (g.d + g.gap)) / 297 * 100;
+    const pos = `left:${x}%;top:${y}%;width:${g.d / 210 * 100}%`;
+    const fresh = i >= (S.psShown || 0) && i < here;   // only the pins just added pop in
+    return i < here ? `<span class="ps-pin${fresh ? ' new' : ''}" style="${pos};background:${bg};animation-delay:${fresh ? (i - (S.psShown || 0)) * 40 : 0}ms">${im ? `<img class="shimg" src="${im.url}" alt="" draggable="false" style="${fracStyle(L)}">` : ''}</span>`
+                    : `<span class="ps-spot" style="${pos}"></span>`;
+  }).join('');
+  const left = pages * g.per - n; S.psShown = im ? here : 0;
+  el.innerHTML = `<div class="ps-a4" aria-hidden="true">${spots}</div>
+    <p class="help"><b>On the print sheet:</b> ${n} pin${n === 1 ? '' : 's'}${pages > 1 ? ` across ${pages} sheets` : ''}, ${g.per} fit on one A4 sheet. ${left && left < g.per ? `Spots left over are filled with other people's pins, so nothing is wasted.` : 'A full sheet!'}</p>`;
 }
 function shownDesign(){
   const f = S.fd;
@@ -3160,6 +3203,7 @@ function placeImg(){
   const mm = frameMm(S.fd), L = layoutFrac(im, d, mm.w, mm.h);
   img.setAttribute('style', fracStyle(L));
   const img2 = $('#fimg2'); if (img2) img2.setAttribute('style', fracStyle(L));
+  document.querySelectorAll('#pinSheet .shimg').forEach(x => x.setAttribute('style', fracStyle(L)));
   // Let the page scroll in any direction the picture can't move in (e.g. a wide photo in a tall poster)
   const fr = $('#frame');
   if (fr) { const mx = Math.abs(L.dw - 1) > .002, my = Math.abs(L.dh - 1) > .002; fr.style.touchAction = mx && my ? 'none' : mx ? 'pan-y' : my ? 'pan-x' : 'pan-y'; }
@@ -3581,16 +3625,27 @@ function viewCheckout(){
       const taken = r.value === '__other' ? CONFIG.sellersAtPickup > 0 && st2.gates.length >= CONFIG.sellersAtPickup : slotState(ds, ts, gate).gateTaken;
       mark(r, !taken, `At this time we'll be at ${st2.gates.join(' or ')}`); });
     pickFirst('pickup');
-    $('#sumBox').innerHTML = checkoutSummary(ds);
-    if ($('#gcashAmt')) $('#gcashAmt').textContent = money(checkoutTotal(ds));
-    $('#promiseTxt').innerHTML = `I'll pick it up on <b>${esc(fmtDate(radio(form, 'pdate')))}</b>, <b>${esc(radio(form, 'ptime'))}</b>, at <b>${esc(place)}</b>`;
+    const dsx = S.addTo ? S.addTo.pickup_date : ds;   // an add-on uses its order's pickup
+    $('#sumBox').innerHTML = checkoutSummary(dsx);
+    if ($('#gcashAmt')) $('#gcashAmt').textContent = money(checkoutTotal(dsx));
+    $('#promiseTxt').innerHTML = S.addTo
+      ? `I'll pick it up with <b>${esc(S.addTo.code)}</b> on <b>${esc(fmtDate(S.addTo.pickup_date))}</b>, <b>${esc(S.addTo.pickup_time || '')}</b>, at <b>${esc(S.addTo.pickup || '')}</b>`
+      : `I'll pick it up on <b>${esc(fmtDate(radio(form, 'pdate')))}</b>, <b>${esc(radio(form, 'ptime'))}</b>, at <b>${esc(place)}</b>`;
   };
   form.addEventListener('change', sync); sync();
   loadAvail(dates).then(() => { if (document.body.contains(form)) sync(); });
   $('#promo').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ACTIONS.promoApply(); } });
   // errors clear the moment they're fixed (while typing), so nothing moves when they tap Next
   ['nick','sec','grade','otherPlace'].forEach(id => $('#' + id) && ['input', 'change'].forEach(ev => $('#' + id).addEventListener(ev, () => { validate(false); coRender(); })));
-  form.addEventListener('submit', e => { if (CONFIG.requireXu && !S.me) { e.preventDefault(); S.coStep = 1; coRender(); toast('Sign in with your XU account first.'); return; } if (S.coStep < 3) { e.preventDefault(); ACTIONS.coNext({ dataset: { s: String(S.coStep) } }); return; } submitOrder(e); });
+  form.addEventListener('submit', e => { if (CONFIG.requireXu && !S.me && !S.coAdmin) { e.preventDefault(); S.coStep = 1; coRender(); toast('Sign in with your XU account first.'); return; } if (S.coStep < 3) { e.preventDefault(); ACTIONS.coNext({ dataset: { s: String(S.coStep) } }); return; } submitOrder(e); });
+  checkoutAdminMode();
+  if (S.addTo) {
+    if (!$('#nick').value.trim()) $('#nick').value = S.addTo.nickname || '';
+    const st2 = document.querySelector('.cstep[data-step="2"]'); if (st2) st2.hidden = true;
+    const n3 = document.querySelector('.cstep[data-step="3"] .chead i'); if (n3) n3.textContent = '2';
+    if (S.coStep === 2) S.coStep = 3;
+    form.insertAdjacentHTML('afterbegin', `<p class="hint addto" style="margin-bottom:14px">${ic('plus', 18)}<span><b>Adding to ${esc(S.addTo.code)}.</b> Same pickup as that order, packed in one bag. Use the same name as on that order.</span></p>`);
+  }
   coRender();
 }
 /* Checkout steps: only the current one is open; finished ones shrink to a one-line summary */
@@ -3610,6 +3665,13 @@ function coRender(){
   if (ncn) ncn.textContent = nm ? `${nm}, ${g} - ${sec}` : '';
 }
 /* Re-render checkout but keep what the customer already typed */
+/* Admins ordering for someone else (people who message the page instead of ordering themselves) */
+function checkoutAdminMode(){
+  api.isAdminStrict().then(ok => {
+    S.coAdmin = ok; const f = $('#orderForm'); if (!ok || !f || $('#coAdminNote')) return;
+    f.insertAdjacentHTML('afterbegin', `<p class="hint" id="coAdminNote" style="margin-bottom:14px">${ic('user', 18)}<span><b>You're signed in as an admin: ordering for someone else.</b> Type <b>their</b> full name and section (not yours). XU sign-in isn't needed, the 5-order limit doesn't apply, and the order counts as confirmed. After you place it, send them the code or a screenshot of the pickup pass. It still shows under To review, so approve it like any order.</span></p>`);
+  });
+}
 function viewCheckoutKeep(){
   S.coKeep = true;
   const form = $('#orderForm'); const keep = {};
@@ -3656,7 +3718,7 @@ function validateFields(form, which){
     if (grade && sec.length >= 2) $('#sec').setAttribute('aria-invalid', 'false');
   }
   if (other && which.place) ok = setErr('otherPlace', 'e-place', $('#otherPlace').value.trim().length < 3 ? 'Tell us where in school to meet.' : '') && ok;
-  if (all) ok = setErr(null, 'e-promise', !radio(form, 'pdate') ? 'Pick a pickup date.' : $('#promise').checked ? '' : 'Tick the box to promise you will pick it up.') && ok;
+  if (all) ok = setErr(null, 'e-promise', !radio(form, 'pdate') && !S.addTo ? 'Pick a pickup date.' : $('#promise').checked ? '' : 'Tick the box to promise you will pick it up.') && ok;
   return ok;
 }
 async function submitOrder(e){
@@ -3666,7 +3728,8 @@ async function submitOrder(e){
   if (!validate(true)) { const bad = form.querySelector('[aria-invalid="true"]') || $('#promise'); bad.focus(); return; }
   const nickname = $('#nick').value.trim(), section = `${$('#grade').value} - ${$('#sec').value.trim()}`;
   let pickup = radio(form, 'pickup'); if (pickup === '__other') pickup = 'Other: ' + $('#otherPlace').value.trim();
-  const pickupDate = radio(form, 'pdate'), pickupTime = radio(form, 'ptime');
+  let pickupDate = radio(form, 'pdate'), pickupTime = radio(form, 'ptime');
+  if (S.addTo) { pickup = S.addTo.pickup; pickupDate = S.addTo.pickup_date; pickupTime = S.addTo.pickup_time; }   // same pickup as the order it adds to
   const payment = radio(form, 'pay'), gcashRef = $('#gref') ? $('#gref').value.trim() : '';
   const b = $('#placeBtn'); b.disabled = true; b.innerHTML = '<span>Sending your order</span><span class="bi"><span class="spin"></span></span>';
   try {
@@ -3677,13 +3740,16 @@ async function submitOrder(e){
       const d = prsDoc(f.id); if (d && d.kind === 'image' && d.canvas) pages[f.id] = await renderPrintPage(f, d, (it.addons || []).includes('color'));
     }
     const uploads = S.images.concat((S.docs || []).map(d => pages[d.id] || d)).filter(i => used.has(i.id));
-    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: SRC, promo: S.promo && sum.total >= S.promo.min_total ? S.promo.code : null, images: uploads, items: S.cart });
-    S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal };
+    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: SRC, promo: S.promo && sum.total >= S.promo.min_total ? S.promo.code : null, images: uploads, items: S.cart, addTo: S.addTo && S.addTo.code });
+    const addedTo = S.addTo && S.addTo.code; S.addTo = null;
+    S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal, add_to: addedTo || null, for_someone: !!S.coAdmin };
     try { const real = await api.getOrder(code, nickname); if (real && real.total !== finalTotal) { S.lastOrder.total = real.total; if (real.total < finalTotal) setTimeout(() => toast(`Your friend credit took ${money(finalTotal - real.total)} off. New total: ${money(real.total)}.`), 900); } } catch {}
     S.promo = null;
     S.celebrate = true; S.codeSaved = false; S.passPrint = true; setTimeout(loadMyOrder, 800); buzz([12, 40, 18]);
-    safeLS.set('sk_me', JSON.stringify({ nickname, section }));
-    safeLS.set('sk_last', JSON.stringify(S.lastOrder));
+    if (!S.coAdmin) {   // an admin ordering for someone else: don't make it "their" order on this phone
+      safeLS.set('sk_me', JSON.stringify({ nickname, section }));
+      safeLS.set('sk_last', JSON.stringify(S.lastOrder));
+    }
     S.images.forEach(i => revoke(i.url)); stickerCache.clear();
     Object.assign(S, { images: [], docs: [], pr: null, sheets: [{ items: [] }], cur: 0, selImage: null, selItem: null, cart: [], editing: null, stickerAddons: [], fd: null });
     location.hash = '#/done';
@@ -3741,7 +3807,9 @@ function viewDone(){
   setTimeout(() => fillFriendCard(o.code, o.nickname), 0);
   const gcash = o.payment === 'gcash';
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">${progress(3)}
-    <h2 style="margin:4px 0 12px">You're all set.</h2>
+    <h2 style="margin:4px 0 12px">${o.for_someone ? `Order placed for ${esc(o.nickname)}.` : "You're all set."}</h2>
+    ${o.add_to ? `<p class="hint addto" style="margin-bottom:14px">${ic('box', 18)}<span><b>Added to ${esc(o.add_to)}.</b> Same pickup, packed in the same bag. Keep both codes.</span></p>` : ''}
+    ${o.for_someone ? `<p class="hint" style="margin-bottom:14px">${ic('user', 18)}<span>Send ${esc(String(o.nickname).split(' ')[0])} the code below (or a screenshot of the pass). It's already confirmed, so it just needs your approval in admin.</span></p>` : ''}
     <section class="savecode" aria-labelledby="sch">
       <div class="sc-top">${ic('warn', 22)}<div><b id="sch">Save your code</b><span>You need it with your name to check and pick up your order.</span></div></div>
       <div class="sc-code num">${esc(o.code)}</div>
@@ -3854,8 +3922,20 @@ function drawStatus(){
       ${S.moving ? rescheduleHTML(o) : ''}
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:20px">
         ${canMove && !S.moving ? smallBtn('Change pickup day', 'calendar', 'moveOpen', 'plain') : ''}
+        ${['pending','approved','printing'].includes(o.status) && !lapsed && !o.add_to ? smallBtn('Add more to this order', 'plus', 'addToStart', 'dark') : ''}
+        ${['pending','approved'].includes(o.status) && !lapsed ? smallBtn('Fix my details', 'edit', 'fixOpen', 'plain') : ''}
         ${['pending','approved'].includes(o.status) && !lapsed ? smallBtn('Cancel my order', 'x', 'cancelOrder', 'plain') : ''}
       </div>
+      ${S.fixing ? `<form class="moveform" id="fixForm">
+        <b class="mh">${ic('edit', 18)}Fix my details</b>
+        <div class="field"><span class="lab">Grade and section</span><input class="inp" id="fxSec" maxlength="30" value="${esc(o.grade_section || '')}" placeholder="10 - Ruby"></div>
+        <div class="field"><span class="lab">Paying with</span><select class="inp" id="fxPay"><option value="cash" ${o.payment === 'cash' ? 'selected' : ''}>Cash at pickup</option><option value="gcash" ${o.payment === 'gcash' ? 'selected' : ''}>GCash</option></select></div>
+        <div class="field"><span class="lab">GCash reference (if you paid by GCash)</span><input class="inp" id="fxRef" maxlength="40" value="${esc(o.gcash_ref || '')}"></div>
+        <p class="help">Your name stays the same (it's how we find your order). To change a design, cancel this order and make a new one: your pictures are still on your phone.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">${btn('Save', { act: 'fixSave', cls: 'dark', icon: 'check' })}${smallBtn('Never mind', '', 'fixClose', 'plain')}</div>
+      </form>` : ''}
+      ${o.add_to ? `<p class="help" style="margin-top:12px">${ic('box', 14)} This adds to <b>${esc(o.add_to)}</b>. Same pickup, packed in one bag.</p>` : ''}
+      ${(o.add_ons || []).length ? `<p class="help" style="margin-top:12px">${ic('plus', 14)} Added to this order: <b>${(o.add_ons || []).map(esc).join(', ')}</b>. Same pickup, packed in one bag.</p>` : ''}
       ${active && !lapsed && saveCardHTML() ? `<div style="margin-top:18px">${saveCardHTML()}</div>` : ''}
       ${active && !lapsed ? `<p class="help" style="margin-top:10px">${(o.reschedules || 0) >= CONFIG.maxReschedules ? "You've already changed your pickup day the most times allowed. Talk to the seller if you need to move it again." : `You can change your pickup day ${CONFIG.maxReschedules - (o.reschedules || 0)} more time${CONFIG.maxReschedules - (o.reschedules || 0) === 1 ? '' : 's'}.`}</p>` : ''}
     </div>`;
@@ -4025,6 +4105,13 @@ async function drawAdminBody(){
       return `<button class="chip ${f === k ? 'on' : ''}" type="button" data-act="admFilter" data-f="${k}">${l}${c && ACTIVE.includes(k) ? `<span class="c num">${c}</span>` : ''}</button>`; }).join('')}</div>
     ${f === 'approved' ? (() => { const days = [...new Set(all.filter(o => ['approved', 'printing'].includes(o.status) && o.confirmed && o.pickup_date).map(o => o.pickup_date))].sort();
       return days.length ? `<div class="batchbar">${ic('printer', 18)}<span>Print everything for a pickup day in one PDF:</span>${days.map(d => smallBtn(`${fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' })} (${all.filter(o => ['approved', 'printing'].includes(o.status) && o.confirmed && o.pickup_date === d).length})`, 'printer', 'aBatch', 'dark', `data-date="${d}"`)).join('')}</div>` : ''; })() : ''}
+    ${f === 'approved' ? (() => { const po = all.filter(pinsWaiting);
+      const n = po.reduce((t, o) => t + orderItems(o).filter(it => it.type === 'pins').reduce((u, it) => u + (+it.qty || 0), 0), 0);
+      const per = pinGrid(frameMm({ type: 'pins', size: '44' }).w).per, sheets = Math.ceil(n / per), free = sheets * per - n;
+      const g = pinGrid(frameMm({ type: 'pins', size: '44' }).w), minis = Array.from({ length: Math.min(sheets, 4) }, (_, k) => { const filled = k < sheets - 1 ? per : n - per * (sheets - 1);
+        return `<span class="ps-a4 psmini" title="Sheet ${k + 1}: ${filled} of ${per}">${Array.from({ length: per }, (_, i) => `<span class="${i < filled ? 'ps-fill' : 'ps-spot'}" style="left:${(g.x0 + (i % g.cols) * (g.d + g.gap)) / 210 * 100}%;top:${(g.y0 + Math.floor(i / g.cols) * (g.d + g.gap)) / 297 * 100}%;width:${g.d / 210 * 100}%"></span>`).join('')}</span>`; }).join('');
+      return po.length ? `<div class="batchbar pinbar"><span class="minis">${minis}</span><span><b>${n} pin${n === 1 ? '' : 's'}</b> from ${po.length} order${po.length === 1 ? '' : 's'}, packed onto <b>${sheets} sheet${sheets === 1 ? '' : 's'}</b>${free ? ` (${free} spot${free === 1 ? '' : 's'} still free${sheets > 1 ? ' on the last' : ''})` : ', no spots wasted'}.</span>${smallBtn('Pins PDF', 'printer', 'aPinSheet', 'dark')}${smallBtn('PNG', 'download', 'aPinSheetPng', 'plain')}</div>` : ''; })() : ''}
+    ${['approved', 'printing', 'ready'].includes(f) ? `<div class="batchbar">${ic('edit', 18)}<span>Order codes and names on printouts: <b>${printLabels() ? 'on' : 'off'}</b></span>${smallBtn(printLabels() ? 'Turn off' : 'Turn on', '', 'aLabels', 'plain')}</div>` : ''}
     ${f === 'printing' && list.length ? `<p class="hint" style="margin-bottom:16px">${ic('box', 18)}<span><b>Next:</b> when an order is printed, cut, and bagged (code and full name on the bag), tap <b>Mark ready</b>. It moves to "Ready" for pickup day.</span></p>` : ''}
     ${f === 'approved' ? `<p class="hint" style="margin-bottom:16px">${ic('printer', 18)}<span>Print only orders marked <b>Confirmed</b>. Unconfirmed ones are released by themselves after their confirm-by day, so nothing gets wasted.</span></p>` : ''}
     ${f === 'ready' ? `<div class="pickupbar ${S.admin.pickupMode ? 'on' : ''}">
@@ -4038,13 +4125,18 @@ async function drawAdminBody(){
       let head = '';
       if (f === 'ready' && o.arrived_at && (!prev || !prev.arrived_at)) head = `<div class="dayhead"><span class="tag here">${ic('pin', 16)}Here now</span></div>`;
       if (f === 'ready' && !o.arrived_at && (!prev || prev.arrived_at || prev.pickup_date !== o.pickup_date)) head = `<div class="dayhead">${o.pickup_date ? esc(dayLabel(o.pickup_date)) : 'No date'}</div>`;
+      const walkin = !!(o.layout && o.layout.walkin);
       if (o.status === 'pending') a.push(smallBtn('Approve', 'check', 'aApprove', 'ok', `data-id="${o.id}"`), smallBtn('Reject', 'x', 'aReject', 'plain', `data-id="${o.id}"`));
+      if (['pending', 'approved'].includes(o.status) && !o.confirmed && o.pickup_date) a.push(smallBtn('Confirm for them', 'thumb', 'aConfirm', 'plain', `data-id="${o.id}"`));
       if (['approved','printing'].includes(o.status)) a.push(o.confirmed || o.status === 'printing'
         ? smallBtn('Download PDF', 'printer', 'aPdf', 'dark', `data-id="${o.id}"`) + smallBtn('PNG', 'download', 'aPng', 'plain', `data-id="${o.id}"`)
         : smallBtn('Print anyway', 'printer', 'aPdfForce', 'plain', `data-id="${o.id}"`), smallBtn('Mark ready', 'box', 'aReady', '', `data-id="${o.id}"`));
       if (o.status === 'ready') a.push(smallBtn('Picked up and paid', 'check', 'aDone', 'ok', `data-id="${o.id}"`), smallBtn(o.missed ? "Didn't show up again" : "Didn't show up", 'ghost', 'aNoshow', 'plain', `data-id="${o.id}"`), smallBtn('Reprint', 'printer', 'aPdf', 'plain', `data-id="${o.id}"`), smallBtn('Reprint PNG', 'download', 'aPng', 'plain', `data-id="${o.id}"`));
       if (ACTIVE.includes(o.status)) a.push(smallBtn(o.paid ? 'Mark unpaid' : 'Mark paid', 'cash', 'aPaid', 'plain', `data-id="${o.id}"`));
       if (ACTIVE.includes(o.status) && !o.paid) a.push(smallBtn('Part payment', 'cash', 'aPart', 'plain', `data-id="${o.id}"`));
+      if (!walkin && !o.images_deleted && orderPaths(o).length) a.push(smallBtn('Original files', 'download', 'aOrig', 'plain', `data-id="${o.id}"`));
+      if (!['rejected', 'cancelled'].includes(o.status)) a.push(smallBtn('Edit order', 'edit', 'aEdit', 'plain', `data-id="${o.id}"`));
+      const addOns = all.filter(x => x.add_to === o.code && !['cancelled', 'rejected'].includes(x.status)).map(x => x.code);
       a.push(smallBtn(o.admin_note ? 'Edit note' : 'Add note', 'edit', 'aNote', 'plain', `data-id="${o.id}"`));
       if (o.payment === 'gcash' && o.paid && ['rejected','cancelled'].includes(o.status) && !o.refunded) a.push(smallBtn('Mark refunded', 'check', 'aRefund', 'ok', `data-id="${o.id}"`));
       a.push(smallBtn('Delete', 'trash', 'aDelete', 'plain', `data-id="${o.id}"`));
@@ -4062,18 +4154,19 @@ async function drawAdminBody(){
             ${o.status === 'ready' && o.arrived_at ? `<span class="tag here">${ic('pin', 14)}Here now</span>` : ''}
             ${o.paid ? `<span class="tag ok">${ic('check', 14)}Paid</span>` : o.amount_paid ? `<span class="tag warn">${ic('cash', 14)}Paid ${money(o.amount_paid)} of ${money(o.total)}</span>` : ''}
             ${o.friend_code ? `<span class="tag">${ic('sparkle', 14)}Used a friend code</span>` : ''}${o.friend_credit_used ? `<span class="tag">${ic('sparkle', 14)}${money(o.friend_credit_used)} friend credit</span>` : ''}
-            ${o.confirmed ? `<span class="tag ok">${ic('thumb', 14)}Confirmed</span>` : ['pending','approved'].includes(o.status) && o.pickup_date ? `<span class="tag warn">${ic('clock', 14)}Not confirmed yet (by ${esc(fmtDate(confirmBy(o), { weekday: 'short', month: 'short', day: 'numeric' }))})</span>` : ''}
+            ${walkin ? '' : o.confirmed ? `<span class="tag ok">${ic('thumb', 14)}Confirmed</span>` : ['pending','approved'].includes(o.status) && o.pickup_date ? `<span class="tag warn">${ic('clock', 14)}Not confirmed yet (by ${esc(fmtDate(confirmBy(o), { weekday: 'short', month: 'short', day: 'numeric' }))})</span>` : ''}
             ${o.missed && o.status === 'ready' ? `<span class="tag warn">${ic('calendar', 14)}Missed once, held for this day</span>` : ''}
             ${o.reschedules ? `<span class="tag">${ic('calendar', 14)}Moved ${o.reschedules}×</span>` : ''}
             ${o.payment === 'gcash' && o.paid && ['rejected','cancelled'].includes(o.status) ? (o.refunded ? `<span class="tag ok">${ic('check', 14)}Refunded</span>` : `<span class="tag bad">${ic('cash', 14)}Refund ${money(o.total)} needed</span>`) : ''}
             ${sk ? `<span class="tag bad">${ic('warn', 14)}${sk} missed pickup${sk > 1 ? 's' : ''} before</span>` : ''}
-            ${o.src ? `<span class="tag">${ic('qr', 14)}Poster: ${esc(o.src)}</span>` : ''}
+            ${o.add_to ? `<span class="tag hot">${ic('box', 14)}Add-on to ${esc(o.add_to)}: bag together</span>` : ''}${addOns.length ? `<span class="tag hot">${ic('plus', 14)}Has add-on ${esc(addOns.join(', '))}: bag together</span>` : ''}
+            ${walkin ? `<span class="tag">${ic('cash', 14)}Sold in person</span>` : o.src ? `<span class="tag">${ic('qr', 14)}Poster: ${esc(o.src)}</span>` : ''}
             ${o.reject_reason ? `<span class="tag bad">Reason: ${esc(o.reject_reason)}</span>` : ''}
             ${o.discount ? `<span class="tag hot">${ic('sparkle', 14)}Saved ${money(o.discount)}: ${esc((o.deal_labels || []).join(', '))}</span>` : ''}
           </div>
           ${o.admin_note ? `<p class="onote">${ic('edit', 14)}<span>${esc(o.admin_note)}</span></p>` : ''}
           </div>
-        <div class="summary" style="margin:8px 0 0;align-items:center">${o.images_deleted ? miniSheet({ items: [] }, () => '', true) : orderItems(o).flatMap(it => it.type === 'stickers'
+        <div class="summary" style="margin:8px 0 0;align-items:center">${walkin ? '' : o.images_deleted ? miniSheet({ items: [] }, () => '', true) : orderItems(o).flatMap(it => it.type === 'stickers'
           ? (it.sheets || []).map(sh => miniSheet(sh, x => S.admin.urls[x.path], false))
           : it.mode === 'pages' && it.pdf ? (S.admin.urls[it.pdf.path]
               ? `<a class="filechip" href="${S.admin.urls[it.pdf.path]}" target="_blank" rel="noopener" download="${esc(o.code + '-' + (it.pdf.name || 'poster.pdf'))}">${ic('download', 16)}<span>${esc(it.pdf.name || 'poster.pdf')}<small>${it.pages} pages, print as it is</small></span></a>`
@@ -4153,6 +4246,64 @@ function renderFramed(img, d, mm, dpi, round){
   x.drawImage(img, L.left * pw, L.top * ph, L.dw * pw, L.dh * ph);
   return round ? { data: c.toDataURL('image/png'), fmt: 'PNG' } : { data: c.toDataURL('image/jpeg', 0.92), fmt: 'JPEG' };
 }
+/* Pins: as many paper circles as fit on A4, evenly spaced (4 across, 6 down at 44 mm) */
+function pinGrid(d){
+  const W = 210, H = 297, minM = 6, gap = 3.5;
+  const cols = Math.max(1, Math.floor((W - 2 * minM + gap) / (d + gap))), rows = Math.max(1, Math.floor((H - 2 * minM + gap) / (d + gap)));
+  const gw = cols * d + (cols - 1) * gap, gh = rows * d + (rows - 1) * gap;
+  return { cols, rows, per: cols * rows, d, gap, x0: (W - gw) / 2, y0: (H - gh) / 2 };
+}
+const printLabels = () => S.admin.labels !== false;
+// confirmed orders whose pins haven't gone onto a shared pin sheet yet
+const pinsWaiting = o => o.status === 'approved' && o.confirmed && !o.images_deleted && !(o.layout && o.layout.pins_on_sheet) && orderItems(o).some(it => it.type === 'pins' && it.front);   // names and codes on printouts (admin switch)
+/* Every confirmed pin waiting to print, from all orders, packed onto shared A4 sheets so no spot is wasted */
+async function pinSheets(asPng){
+  if (!window.jspdf) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
+  const list = S.admin.orders.filter(pinsWaiting);
+  if (!list.length) return toast('No confirmed pin orders waiting to print.');
+  toast(`Packing the pins from ${list.length} order${list.length === 1 ? '' : 's'}. This can take a bit.`);
+  const pieces = [], failed = [];
+  for (const o of list) {
+    const items = orderItems(o).filter(it => it.type === 'pins' && it.front);
+    const urls = await api.imageUrls([...new Set(items.map(it => it.front.path))]).catch(() => ({}));
+    for (let ii = 0; ii < items.length; ii++) {
+      const it = items[ii], img = urls[it.front.path] ? await loadImg(urls[it.front.path]).catch(() => null) : null;
+      if (!img) { failed.push(o.code); continue; }
+      const mm = frameMm(it), fr = renderFramed(img, it.front, mm, 600, true);
+      fr.alias = `pin_${o.code}_${ii}`;
+      for (let q = 0; q < (+it.qty || 0); q++) pieces.push({ fr, code: o.code, d: mm.w });
+    }
+  }
+  if (!pieces.length) return toast("Couldn't open the pictures for those pins.");
+  pieces.sort((a, b) => a.d - b.d);   // same-size pins share pages
+  const groups = []; pieces.forEach(pc => { const g = groups[groups.length - 1]; if (g && g.d === pc.d) g.list.push(pc); else groups.push({ d: pc.d, list: [pc] }); });
+  let doc = null, pageNo = 0;
+  const totalPages = groups.reduce((t, g) => t + Math.ceil(g.list.length / pinGrid(g.d).per), 0);
+  for (const g of groups) {
+    const gr = pinGrid(g.d);
+    for (let k = 0; k < g.list.length; k += gr.per) {
+      if (!doc) doc = new window.jspdf.jsPDF({ unit: 'mm', format: [210, 297], orientation: 'portrait' }); else doc.addPage([210, 297], 'portrait');
+      pageNo++;
+      g.list.slice(k, k + gr.per).forEach((pc, i) => {
+        const x = gr.x0 + (i % gr.cols) * (g.d + gr.gap), y = gr.y0 + Math.floor(i / gr.cols) * (g.d + gr.gap);
+        doc.addImage(pc.fr.data, pc.fr.fmt, x, y, g.d, g.d, pc.fr.alias, 'FAST');
+        doc.setDrawColor(160); doc.setLineCap('round'); doc.setLineWidth(0.45); doc.setLineDashPattern([0.2, 1.0], 0);
+        doc.circle(x + g.d / 2, y + g.d / 2, g.d / 2, 'S'); doc.setLineDashPattern([], 0); doc.setLineCap('butt');
+        if (printLabels()) { doc.setFontSize(5); doc.setTextColor(150); doc.text(pc.code, x + g.d / 2, y + g.d + 2.3, { align: 'center' }); }
+      });
+      if (printLabels()) { doc.setFontSize(6); doc.setTextColor(150); doc.text(`Pin sheet ${pageNo} of ${totalPages}`, 205, 3.2, { align: 'right' }); }
+    }
+  }
+  const name = `pins-${ymd(new Date())}`;
+  if (asPng) await pdfToPngs(doc, name); else doc.save(`${name}.pdf`);
+  const onlyPins = list.filter(o => orderItems(o).every(it => it.type === 'pins'));
+  for (const o of onlyPins) { try { await api.updateOrder(o.id, { status: 'printing' }); o.status = 'printing'; } catch (e) { console.warn(e); } }
+  for (const o of list.filter(x => !onlyPins.includes(x))) {   // mixed orders: remember their pins are done, so their own PDF skips them
+    try { const layout = { ...(o.layout || {}), pins_on_sheet: true }; await api.updateOrder(o.id, { layout }); o.layout = layout; } catch (e) { console.warn(e); } }
+  const mixed = list.filter(o => !onlyPins.includes(o)).map(o => o.code);
+  toast(`${pieces.length} pin${pieces.length === 1 ? '' : 's'} on ${pageNo} page${pageNo === 1 ? '' : 's'}. Print at 100% ("Actual size") and cut on the dotted circles.${onlyPins.length ? ` ${onlyPins.length} order${onlyPins.length === 1 ? ' is' : 's are'} now under Printing.` : ''}${mixed.length ? ` These also have other items, so print the rest from their own buttons (their pins are already on this sheet): ${mixed.join(', ')}.` : ''}${failed.length ? ` Couldn't open some pictures for: ${[...new Set(failed)].join(', ')}.` : ''}`);
+  drawAdminBody();
+}
 /* One PDF for every confirmed order picking up on one day */
 async function batchPrint(date){
   const list = S.admin.orders.filter(o => ['approved', 'printing'].includes(o.status) && o.confirmed && o.pickup_date === date);
@@ -4173,14 +4324,16 @@ async function makePdf(o, batch, asPng){
   const asIs = it => it.type === 'prints' || it.mode === 'pages';   // customer files we print exactly as they are
   if (orderItems(o).every(asIs)) { if (!batch) toast('This order is files to print as they are. Open them with the file buttons on the order.'); return 'files'; }
   if (!batch) toast('Making the PDF. This takes a few seconds. Customer PDFs are separate: use the file buttons.');
-  const items = orderItems(o).filter(it => !asIs(it)), urls = await api.imageUrls([...new Set(orderPaths(o))]), cache = {};
+  const pinsDone = !!(o.layout && o.layout.pins_on_sheet);   // its pins were already printed on a shared pin sheet
+  if (pinsDone && orderItems(o).every(it => asIs(it) || it.type === 'pins')) { if (!batch) toast('Its pins are already on a shared pin sheet. Nothing else to print here.'); return 'files'; }
+  const items = orderItems(o).filter(it => !asIs(it) && !(pinsDone && it.type === 'pins')), urls = await api.imageUrls([...new Set(orderPaths(o))]), cache = {};
   const getImg = async path => cache[path] || (cache[path] = await loadImg(urls[path]));
   const who = `${o.code}   ${o.nickname}, ${o.grade_section}   pickup ${o.pickup_date ? fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' }) : ''} ${o.pickup_time || ''} at ${o.pickup}`;
   let doc = batch ? batch.doc : null;
   const page = (w, h) => { const or = w > h ? 'landscape' : 'portrait'; if (!doc) doc = new window.jspdf.jsPDF({ unit: 'mm', format: [w, h], orientation: or }); else doc.addPage([w, h], or);
-    // the order code, tiny and light in the top-right corner, so pages never get mixed up
-    doc.setFontSize(6); doc.setTextColor(170); doc.text(o.code, w - 2.5, 2.8, { align: 'right' }); };
-  const foot = (txt, w, h) => { doc.setFontSize(8); doc.setTextColor(90); doc.text(`${who}   ${txt}`, 8, h - 3.5); };
+    // the order code, tiny and light in the top-right corner, so pages never get mixed up (unless labels are off)
+    if (printLabels()) { doc.setFontSize(6); doc.setTextColor(170); doc.text(o.code, w - 2.5, 2.8, { align: 'right' }); } };
+  const foot = (txt, w, h) => { if (!printLabels()) return; doc.setFontSize(8); doc.setTextColor(90); doc.text(`${who}   ${txt}`, 8, h - 3.5); };
   const cutLine = () => { doc.setDrawColor(160); doc.setLineWidth(0.2); };
   const A4W = 210, A4H = 297, M = 10, GAP = 4;
 
@@ -4199,7 +4352,7 @@ async function makePdf(o, batch, asPng){
       }
       continue;
     }
-    const mm = it.mm || frameMm(it);
+    const mm = it.type === 'pins' ? frameMm(it) : (it.mm || frameMm(it));
     if (it.type === 'posters') {
       const pm = frameMm(it), img = await getImg(it.front.path).catch(() => null);
       const cols = pm.cols || 1, rows = pm.rows || 1, iw = pm.iw || pm.w / cols, ih = pm.ih || pm.h / rows, ov = pm.ov || 0, sx = iw - ov, sy = ih - ov;
@@ -4240,19 +4393,20 @@ async function makePdf(o, batch, asPng){
     // pins and keychains: fill A4 pages with copies
     const pieces = [];
     const front = await getImg(it.front.path).catch(() => null);
-    const fr = front ? renderFramed(front, it.front, mm, 300, !!mm.round) : null;
+    const fr = front ? renderFramed(front, it.front, mm, mm.round ? 600 : 300, !!mm.round) : null;   // pins at 600 dpi: crisp even when cut small
     let bk = null;
     if (it.type === 'keychains' && it.back_mode !== 'blank') {
       if (it.back_mode === 'different' && it.back) { const b2 = await getImg(it.back.path).catch(() => null); bk = b2 ? renderFramed(b2, it.back, mm, 300, false) : null; }
       else bk = fr;
     }
     for (let q = 0; q < it.qty; q++) { pieces.push(fr); if (bk) pieces.push(bk); }
-    const cols = Math.max(1, Math.floor((A4W - 2 * M + GAP) / (mm.w + GAP))), rows = Math.max(1, Math.floor((A4H - 2 * M - 6 + GAP) / (mm.h + GAP)));
+    const grid = mm.round ? pinGrid(mm.w) : null;   // pins: the same 44 mm grid as the shared pin sheets
+    const cols = grid ? grid.cols : Math.max(1, Math.floor((A4W - 2 * M + GAP) / (mm.w + GAP))), rows = grid ? grid.rows : Math.max(1, Math.floor((A4H - 2 * M - 6 + GAP) / (mm.h + GAP)));
     const per = cols * rows, pages = Math.ceil(pieces.length / per);
     for (let pg = 0; pg < pages; pg++) {
       page(A4W, A4H); cutLine(); doc.setLineCap('round'); doc.setLineWidth(0.45); doc.setLineDashPattern([0.2, 1.0], 0);   // short round dashes = dots in every viewer and printer
       pieces.slice(pg * per, (pg + 1) * per).forEach((pc, i) => {
-        const x = M + (i % cols) * (mm.w + GAP), y = M + Math.floor(i / cols) * (mm.h + GAP);
+        const x = grid ? grid.x0 + (i % cols) * (mm.w + grid.gap) : M + (i % cols) * (mm.w + GAP), y = grid ? grid.y0 + Math.floor(i / cols) * (mm.h + grid.gap) : M + Math.floor(i / cols) * (mm.h + GAP);
         if (pc) doc.addImage(pc.data, pc.fmt, x, y, mm.w, mm.h, `p${ii}_${pieces.indexOf(pc)}`, 'FAST');
         if (mm.round) doc.circle(x + mm.w / 2, y + mm.h / 2, mm.w / 2, 'S'); else doc.rect(x, y, mm.w, mm.h, 'S');
       });
@@ -4472,7 +4626,7 @@ function drawShopForm(){
         ${CONFIG.products.pins.sizes.map(z => `<label class="dnum"><span>${esc(z.label)} pin: paper circle</span>${n('sizes.pins.' + z.id + '.cutMm', c.sizes.pins[z.id].cutMm, 10, 150)}</label>`).join('')}
         ${CONFIG.products.keychains.sizes.map(z => `<label class="dnum"><span>Keychain insert width</span>${n('sizes.keychains.' + z.id + '.wMm', c.sizes.keychains[z.id].wMm, 10, 150)}</label>
           <label class="dnum"><span>Keychain insert height</span>${n('sizes.keychains.' + z.id + '.hMm', c.sizes.keychains[z.id].hMm, 10, 150)}</label>`).join('')}</div>
-      <p class="help" style="margin-top:6px">Measure your pin machine's paper circle and your keychain inserts so prints fit exactly.</p></div>
+      <p class="help" style="margin-top:6px">Paper circle is the printed circle you cut out (44 mm prints right). Measure your keychain inserts so they fit exactly.</p></div>
 
     ${btn('Save shop details', { type: 'submit', cls: 'dark', icon: 'check' })}`;
   const form = $('#shopForm');
@@ -4747,7 +4901,7 @@ function orderLines(o){
   return orderItems(o).map(it => {
     if (it.type === 'prints') return { key: `prints:${it.size}${it.duplex ? ':duplex' : ''}`, units: (+it.qty || 0) * (+it.pages || 0) };
     if (it.type === 'posters') return { key: `posters:${it.size}`, units: (+it.qty || 0) * (+it.tiles || 1) };
-    return { key: `${it.type}:${it.size || (it.type === 'stickers' ? 'a4' : '')}`, units: it.type === 'stickers' ? (it.sheets || []).length : (+it.qty || 0) };
+    return { key: `${it.type}:${it.size || (it.type === 'stickers' ? 'a4' : '')}`, units: it.type === 'stickers' ? ((it.sheets || []).length || +it.qty || 0) : (+it.qty || 0) };
   });
 }
 const orderCost = (b, o) => orderLines(o).reduce((t, l) => t + l.units * unitCost(b, l.key), 0);
@@ -4855,6 +5009,7 @@ async function drawMoney(){
     return uses.length ? uses.filter(([k]) => k.live).slice(0, 2).map(([k, u]) => `${Math.max(0, Math.floor(s.stock / u[1]))} ${k.unit}${Math.floor(s.stock / u[1]) === 1 ? '' : 's'} (${k.label.toLowerCase()})`).join(', ') : ''; };
 
   $('#admBody').innerHTML = `
+    <div class="batchbar" style="margin-bottom:16px">${ic('cash', 18)}<span>Sold something in person, without a website order? Log it so it counts.</span>${smallBtn('Log a sale', 'plus', 'aSale', 'dark')}</div>
     <div class="stats">
       <div class="panel hero-stat"><span class="small">Profit this week</span><b class="num">${pmoney(Math.round(profitWeek))}</b><span class="small">${week.length} order${week.length === 1 ? '' : 's'} picked up, ${pmoney(Math.round(rev(week)))} in sales</span></div>
       <div class="panel"><span class="small muted">Profit so far</span><b class="num">${pmoney(Math.round(profitAll))}</b><span class="small muted">${pmoney(Math.round(rev(done)))} sales minus ${pmoney(Math.round(cost(done)))} supplies</span></div>
@@ -5174,10 +5329,10 @@ const ACTIONS = {
   coNext: t => {
     const n = +t.dataset.s;
     validate(true); setErr(null, 'e-promise', '');
-    if (n === 1 && CONFIG.requireXu && !S.me) { const e = $('#e-xu'); if (e) e.textContent = 'Sign in with your XU account first.'; const b = document.querySelector('[data-act="xuIn"]'); if (b) b.focus(); return; }
+    if (n === 1 && CONFIG.requireXu && !S.me && !S.coAdmin) { const e = $('#e-xu'); if (e) e.textContent = 'Sign in with your XU account first.'; const b = document.querySelector('[data-act="xuIn"]'); if (b) b.focus(); return; }
     const bad = n === 1 ? ['e-nick', 'e-sec'] : ['e-place'];
     if (bad.some(id => $('#' + id) && $('#' + id).textContent)) { const f = $('#orderForm [aria-invalid="true"]'); if (f) f.focus(); return; }
-    S.coStep = n + 1; coRender(); buzz(6);
+    S.coStep = n + 1 + (n === 1 && S.addTo ? 1 : 0); coRender(); buzz(6);   // an add-on skips Pickup
     const nx = document.querySelector(`.cstep[data-step="${n + 1}"]`); if (nx) nx.scrollIntoView({ block: 'start' });
   },
   coGo: t => { S.coStep = +t.dataset.s; coRender(); },
@@ -5250,6 +5405,20 @@ const ACTIONS = {
   moveClose: () => { S.moving = false; drawStatus(); },
   noticeClose: t => { try { sessionStorage.setItem(t.dataset.k, '1'); } catch {} const n = t.closest('.notice'); if (n) n.remove(); },
   confirmComing: async () => { try { await api.confirm(S.statusResult.code, S.statusNick); toast("Thanks. The seller knows you're coming."); lookup(); loadMyOrder(); } catch (e) { toast(friendlyError(e)); } },
+  addToStart: () => {
+    const o = S.statusResult; if (!o) return;
+    S.addTo = { code: o.code, nickname: o.nickname, section: o.grade_section, pickup: o.pickup, pickup_date: o.pickup_date, pickup_time: o.pickup_time };
+    toast(`Adding to ${o.code}. Design what you want to add.`); location.hash = '#/design';
+  },
+  addToCancel: () => { S.addTo = null; toast('Stopped adding. Your cart is now a new order.'); route(); },
+  fixOpen: () => { S.fixing = true; drawStatus(); },
+  fixClose: () => { S.fixing = false; drawStatus(); },
+  fixSave: async () => {
+    const sec = $('#fxSec').value.trim(), pay = $('#fxPay').value, ref = $('#fxRef').value.trim();
+    if (sec.length < 2) return toast('Type your grade and section.');
+    try { await api.updateMine(S.statusResult.code, S.statusNick, sec, pay, ref); S.fixing = false; toast('Saved.'); lookup(); }
+    catch (e) { toast(friendlyError(e)); }
+  },
   cancelOrder: async t => {
     if (!armed(t, 'Tap again to cancel')) return;
     try { await api.cancel(S.statusResult.code, S.statusNick); toast('Order cancelled.'); lookup(); } catch (e) { toast(friendlyError(e)); }
@@ -5291,6 +5460,88 @@ const ACTIONS = {
   friendShare: async t => { try { await navigator.share({ text: `Use my code ${t.dataset.code} on ${CONFIG.shopName} for ${money(CONFIG.referralFriendOff)} off your first order: ${CONFIG.siteUrl}` }); } catch {} },
   monthNav: t => { S.admin.month = Math.max(0, (S.admin.month || 0) + +t.dataset.d); drawMoney(); },
   aBatch: t => batchPrint(t.dataset.date),
+  aPinSheet: () => pinSheets(false).catch(e => toast(friendlyError(e))),
+  aPinSheetPng: () => pinSheets(true).catch(e => toast(friendlyError(e))),
+  aLabels: () => { S.admin.labels = !printLabels(); toast(printLabels() ? 'Codes and names will be on printouts.' : 'Printouts will have no codes or names. Keep them sorted yourself.'); drawAdminBody(); },
+  aEdit: t => {
+    const o = S.admin.orders.find(x => x.id === t.dataset.id); if (!o) return;
+    const items = orderItems(o), unit = it => (P(it.type).sizes.find(z => z.id === it.size) || {}).price || 0;
+    S.admin.editing = { id: o.id, base: o.total, items: items.map(it => ({ type: it.type, qty: +it.qty || 0, unit: unit(it) })) };
+    showSheet(`<h3 style="margin-bottom:4px">Edit ${esc(o.code)}</h3><p class="help" style="margin:0 0 10px">For when someone messages a change. Designs can't be swapped here: ask them to cancel and order again, or make it for them with Original files.</p>
+      <div class="pgrid2"><label class="dnum"><span>Full name</span><input class="inp" id="edNick" maxlength="60" value="${esc(o.nickname)}"></label>
+        <label class="dnum"><span>Grade and section</span><input class="inp" id="edSec" maxlength="30" value="${esc(o.grade_section)}"></label></div>
+      ${items.map((it, i) => it.type === 'stickers' ? `<p class="help">${esc(itemTitle(it))} (sheet count can't change here)</p>`
+        : `<label class="dnum"><span>${esc(itemTitle(it).replace(/ [^ ]+ \d+$/, ''))}: how many</span><input class="inp num" data-edq="${i}" type="number" min="0" max="500" value="${+it.qty || 0}" inputmode="numeric"></label>`).join('')}
+      <div class="pgrid2"><label class="dnum"><span>Total</span><span class="pricein"><input class="inp num" id="edTotal" type="number" min="0" value="${o.total}" inputmode="numeric"></span></label>
+        <label class="dnum"><span>Paying with</span><select class="inp" id="edPay"><option value="cash" ${o.payment === 'cash' ? 'selected' : ''}>Cash</option><option value="gcash" ${o.payment === 'gcash' ? 'selected' : ''}>GCash</option></select></label></div>
+      <p class="help" id="edHint">Change a quantity and the total updates by the regular price. Type over it for a special price.</p>
+      <div style="display:flex;gap:10px;margin-top:12px">${btn('Save changes', { act: 'aEditSave', icon: 'check', cls: 'dark', attrs: `data-id="${o.id}"` })}<button type="button" class="pilllink" data-act="sheetClose">Cancel</button></div>`);
+    document.querySelectorAll('[data-edq]').forEach(inp => inp.addEventListener('input', () => {
+      const E2 = S.admin.editing; let diff = 0;
+      document.querySelectorAll('[data-edq]').forEach(q => { const it = E2.items[+q.dataset.edq]; diff += (Math.max(0, Math.round(+q.value || 0)) - it.qty) * it.unit; });
+      $('#edTotal').value = Math.max(0, E2.base + diff);
+    }));
+  },
+  aEditSave: async t => {
+    const o = S.admin.orders.find(x => x.id === t.dataset.id); if (!o) return;
+    const nick = $('#edNick').value.trim(), sec = $('#edSec').value.trim();
+    if (nick.length < 2 || sec.length < 1) return toast('Type a name and a section.');
+    const layout = clone(o.layout || { items: orderItems(o) });
+    const items = layout.items || [];
+    document.querySelectorAll('[data-edq]').forEach(q => { const it = items[+q.dataset.edq]; if (it) it.qty = Math.max(0, Math.min(500, Math.round(+q.value || 0))); });
+    layout.items = items.filter(it => it.type === 'stickers' || +it.qty > 0);
+    if (!layout.items.length) return toast('An order needs at least one thing. To remove everything, delete or cancel it.');
+    const count = layout.items.reduce((n, it) => n + (it.type === 'stickers' ? ((it.sheets || []).length || +it.qty || 0) : it.type === 'prints' ? (+it.qty || 0) * (+it.pages || 1) : (+it.qty || 0)), 0);
+    const total = Math.max(0, Math.round(+$('#edTotal').value || 0)), pay = $('#edPay').value;   // read everything before the form closes
+    closeSheet();
+    const paidSoFar = o.paid ? Math.max(o.amount_paid || 0, o.total) : (o.amount_paid || 0);   // "Mark paid" doesn't always record an amount
+    await setStatus(o.id, { nickname: nick, grade_section: sec, payment: pay, layout, sheet_count: count, total,
+      paid: paidSoFar >= total, amount_paid: Math.min(paidSoFar, total) }, paidSoFar && paidSoFar < total ? `Order updated. They paid ${money(paidSoFar)}, so ${money(total - paidSoFar)} is left.` : 'Order updated.');
+  },
+  aConfirm: t => setStatus(t.dataset.id, { confirmed: true }, 'Confirmed for them. OK to print.'),
+  aOrig: async t => {
+    const o = S.admin.orders.find(x => x.id === t.dataset.id); if (!o) return;
+    const paths = [...new Set(orderPaths(o))]; toast(`Downloading ${paths.length} original file${paths.length === 1 ? '' : 's'}.`);
+    let urls = {}; try { urls = await api.imageUrls(paths); } catch (e) { return toast(friendlyError(e)); }
+    let n = 0;
+    for (let i = 0; i < paths.length; i++) {
+      try {
+        const blob = await (await fetch(urls[paths[i]])).blob(), ext = (paths[i].split('.').pop() || 'jpg').slice(0, 5);
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${o.code}-${i + 1}.${ext}`;
+        document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); n++;
+        if (i < paths.length - 1) await new Promise(r => setTimeout(r, 400));
+      } catch (e) { console.warn('download failed', paths[i], e); }
+    }
+    toast(n ? `Downloaded ${n} file${n === 1 ? '' : 's'}, exactly as the customer uploaded them (no frame or cut lines).` : "Couldn't download them. Try again.");
+  },
+  aSale: () => {
+    const opts = productKeys().filter(k => CONFIG.products[k]).flatMap(k => P(k).sizes.filter(z => z.enabled !== false).map(z => ({ v: `${k}|${z.id}`, label: `${P(k).name}${P(k).sizes.length > 1 ? ' ' + z.label : ''}`, price: z.price })));
+    showSheet(`<h3 style="margin-bottom:4px">Log a sale</h3><p class="help" style="margin:0 0 10px">For things you made and sold in person, without an order on the website. It counts in your sales, profit, and supplies.</p>
+      <div class="field"><span class="lab">What</span><select class="inp" id="slProd">${opts.map(o => `<option value="${esc(o.v)}" data-price="${o.price}">${esc(o.label)} (${money(o.price)})</option>`).join('')}</select></div>
+      <div class="pgrid2"><label class="dnum"><span>How many</span><input class="inp num" id="slQty" type="number" min="1" max="500" value="1" inputmode="numeric"></label>
+        <label class="dnum"><span>Total paid</span><span class="pricein"><input class="inp num" id="slTotal" type="number" min="0" value="${opts[0] ? opts[0].price : 0}" inputmode="numeric"></span></label></div>
+      <div class="pgrid2"><label class="dnum"><span>Paid with</span><select class="inp" id="slPay"><option value="cash">Cash</option><option value="gcash">GCash</option></select></label>
+        <label class="dnum"><span>Date</span><input class="inp" id="slDate" type="date" value="${ymd(new Date())}"></label></div>
+      <div class="field"><span class="lab">Who (optional)</span><input class="inp" id="slWho" maxlength="60" placeholder="Name, or leave blank"></div>
+      <div class="field"><span class="lab">Note (optional)</span><input class="inp" id="slNote" maxlength="200" placeholder="Like: 3 class pins for 10 - Ruby"></div>
+      <div style="display:flex;gap:10px;margin-top:12px">${btn('Save sale', { act: 'aSaleSave', icon: 'check', cls: 'dark' })}<button type="button" class="pilllink" data-act="sheetClose">Cancel</button></div>`);
+    const upd = () => { const o = $('#slProd').selectedOptions[0]; $('#slTotal').value = Math.max(0, Math.round((+o.dataset.price || 0) * Math.max(1, +$('#slQty').value || 1))); };
+    $('#slProd').addEventListener('change', upd); $('#slQty').addEventListener('input', upd);
+  },
+  aSaleSave: async () => {
+    const [type, size] = $('#slProd').value.split('|'), qty = Math.max(1, Math.min(500, Math.round(+$('#slQty').value || 1)));
+    const total = Math.max(0, Math.round(+$('#slTotal').value || 0)), day = $('#slDate').value || ymd(new Date()), who = $('#slWho').value.trim();
+    const z = P(type).sizes.find(x => x.id === size) || {};
+    const row = { nickname: who || 'Walk-in', grade_section: '-', pickup: 'In person', pickup_date: day, payment: $('#slPay').value,
+      layout: { walkin: true, items: [{ type, size, size_label: z.label || '', qty, addons: [], addon_labels: [], ...(type === 'prints' ? { pages: 1 } : {}) }] },
+      folder: 'walkin', sheet_count: qty, total, subtotal: total, status: 'done', paid: true, amount_paid: total, confirmed: true, src: 'Walk-in',
+      admin_note: $('#slNote').value.trim() || null };
+    closeSheet();
+    try {
+      const o = await api.addSale(row); S.admin.orders.unshift(o); useStock(o);
+      toast(`Sale saved: ${money(total)}. It's in your sales and profit.`); drawAdminBody();
+    } catch (e) { toast(friendlyError(e)); }
+  },
   tgMorning: async () => { try { const r = await api.telegramMorning(); toast(r === 'none' ? 'No pickups today. Sent a short note to Telegram.' : 'Sent. Check Telegram.'); } catch (e) { toast(friendlyError(e)); } },
   aPdf: t => makePdf(S.admin.orders.find(o => o.id === t.dataset.id)).catch(e => toast(friendlyError(e))),
   aPng: t => makePdf(S.admin.orders.find(o => o.id === t.dataset.id), null, true).catch(e => toast(friendlyError(e))),
