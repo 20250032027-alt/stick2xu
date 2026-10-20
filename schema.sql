@@ -101,6 +101,7 @@ alter table public.orders add column if not exists customer_email text;   -- the
 alter table public.orders add column if not exists admin_note text;                      -- private note, only sellers see it
 alter table public.orders add column if not exists friend_code text;                     -- the friend code this order used
 alter table public.orders add column if not exists friend_credit_used int not null default 0;
+alter table public.orders add column if not exists add_to text;   -- an add-on: the code of the order it goes with (same pickup, bagged together)
 
 
 -- Promo codes. Private: customers can only check one code at a time through check_promo().
@@ -181,6 +182,7 @@ create policy "admins edit settings" on public.shop_settings
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text);
+drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text);
 -- Friend codes: one per customer (name + section). A first-time customer using one gets money off;
 -- the owner earns credit when that order is picked up, used up automatically on their next order.
 create table if not exists public.friends (
@@ -233,7 +235,7 @@ grant execute on function public.pickup_availability(date, date) to anon, authen
 create or replace function public.place_order(
   p_nickname text, p_grade_section text, p_pickup text, p_payment text,
   p_gcash_ref text, p_layout jsonb, p_folder text, p_src text, p_pickup_date date, p_pickup_time text,
-  p_promo_code text default null
+  p_promo_code text default null, p_add_to text default null
 ) returns text
 language plpgsql security definer set search_path = public as $$
 declare
@@ -250,8 +252,22 @@ declare
   v_p text; v_n int; v_k int; v_save int; v_best int; v_best_label text; v_deal jsonb;
   v_promo public.promo_codes; v_pcode text := nullif(upper(trim(coalesce(p_promo_code, ''))), '');
   v_code text;
+  v_admin boolean := public.is_admin();   -- an admin placing an order for someone else
+  v_lead int; v_maxr int;                 -- rush pickups: free pickup starts this many days out; max rush orders a day
+  v_parent public.orders;                 -- "add more to my order": the order this one goes with
 begin
   select * into s from public.shop_settings where id = 1;
+
+  -- Adding to an existing order: same person, same pickup (date, time, place) as that order
+  if nullif(trim(coalesce(p_add_to, '')), '') is not null then
+    select * into v_parent from public.orders
+     where code = upper(trim(p_add_to)) and public.name_match(nickname, p_nickname)
+       and status in ('pending','approved','printing') limit 1;
+    if not found then raise exception 'NO_ADD_TO'; end if;
+    p_pickup := v_parent.pickup; p_pickup_date := v_parent.pickup_date; p_pickup_time := v_parent.pickup_time;
+    p_nickname := v_parent.nickname; p_grade_section := v_parent.grade_section;   -- same person, written the same way
+    v_nick := public.norm_text(p_nickname); v_sec := public.norm_text(p_grade_section);
+  end if;
 
   if length(v_nick) < 2 or length(v_nick) > 60
      or length(v_sec) < 2 or length(v_sec) > 30
@@ -411,8 +427,24 @@ begin
          < coalesce((s.config->>'prep_hours')::numeric, 2) * 60 then raise exception 'TOO_SOON'; end if;
     end if;
   end if;
+  -- Rush pickup for made things (stickers, pins, keychains, posters): any pickup day sooner than the free
+  -- lead time (normally tomorrow) costs extra, closes at a set hour the day before, and has a daily limit.
+  v_lead := coalesce((s.config->>'lead_days')::int, 2);
+  if not v_only_prints and p_pickup_date > v_today and p_pickup_date < v_today + v_lead then
+    if not coalesce((s.config->>'rush_on')::boolean, true) then raise exception 'TOO_SOON'; end if;
+    if not v_admin and extract(hour from now() at time zone 'Asia/Manila') >= coalesce((s.config->>'rush_cutoff_hour')::int, 18) then
+      raise exception 'RUSH_CLOSED';
+    end if;
+    v_maxr := coalesce((s.config->>'max_rush_per_day')::int, 5);
+    if not v_admin and v_maxr > 0 and (select count(*) from public.orders o
+        where o.pickup_date = p_pickup_date and o.rush_fee > 0 and o.status in ('pending','approved','printing','ready')
+          and exists (select 1 from jsonb_array_elements(coalesce(o.layout->'items', '[]'::jsonb)) i where i->>'type' <> 'prints')) >= v_maxr then
+      raise exception 'RUSH_FULL';
+    end if;
+    v_rush := coalesce((s.config->>'rush_make')::int, 20);
+    if v_rush > 0 then v_total := v_total + v_rush; v_labels := v_labels || to_jsonb('Rush pickup ₱' || v_rush); end if;
   -- Rush fee for prints: same day, or the next school day
-  if v_has_prints then
+  elsif v_has_prints then
     v_next := v_today + 1;
     while extract(dow from v_next) in (0, 6) loop v_next := v_next + 1; end loop;
     if p_pickup_date = v_today then v_rush := coalesce((s.config->>'rush_same_day')::int, 20);
@@ -421,15 +453,16 @@ begin
     if v_rush > 0 then v_total := v_total + v_rush; v_labels := v_labels || to_jsonb('Rush fee ₱' || v_rush); end if;
   end if;
 
-  -- One unfinished order per person
-  if exists (select 1 from public.orders
+  -- Several orders at once are fine (each one is still approved by hand). A cap of 5 unfinished orders
+  -- per person stops spam. Admins ordering for someone else skip this and the missed-pickup block.
+  if not v_admin and v_parent.id is null and (select count(*) from public.orders
              where public.norm_text(nickname) = v_nick and public.norm_text(grade_section) = v_sec
-               and status in ('pending','approved','printing','ready')) then
+               and status in ('pending','approved','printing','ready')) >= 5 then
     raise exception 'ACTIVE_ORDER';
   end if;
 
   -- Too many missed pickups
-  if (select count(*) from public.orders
+  if not v_admin and (select count(*) from public.orders
       where public.norm_text(nickname) = v_nick and public.norm_text(grade_section) = v_sec
         and status = 'noshow') >= s.max_noshows then
     raise exception 'BLOCKED';
@@ -448,19 +481,24 @@ begin
 
   -- XU uptown students only (when the admin switch is on): the person must be signed in with a school Google account
   v_xu := v_email like '%@my.xu.edu.ph';
-  if coalesce((s.config->>'require_xu_signin')::boolean, false) and not v_xu then raise exception 'XU_ONLY'; end if;
+  if coalesce((s.config->>'require_xu_signin')::boolean, false) and not v_xu and not v_admin then raise exception 'XU_ONLY'; end if;
 
-  perform public.check_pickup(p_pickup_date, p_pickup_time, p_pickup, null);
+  -- an add-on rides along with its order, so it doesn't take another pickup spot
+  if v_parent.id is null then perform public.check_pickup(p_pickup_date, p_pickup_time, p_pickup, null); end if;
 
   -- sheet_count holds the number of things in the order (sheets + pins + posters + keychains)
   insert into public.orders (code, nickname, grade_section, pickup, pickup_date, pickup_time, payment, gcash_ref,
-                             layout, folder, sheet_count, total, src, subtotal, discount, promo_code, deal_labels, rush_fee, confirmed, friend_code, friend_credit_used, customer_email)
+                             layout, folder, sheet_count, total, src, subtotal, discount, promo_code, deal_labels, rush_fee, confirmed, friend_code, friend_credit_used, customer_email,
+                             add_to, admin_note)
   values (v_code, trim(p_nickname), trim(p_grade_section), trim(p_pickup), p_pickup_date, trim(p_pickup_time), p_payment,
           nullif(trim(left(coalesce(p_gcash_ref, ''), 40)), ''),
           p_layout, p_folder, v_count, v_total,
           nullif(left(coalesce(p_src, ''), 40), ''), v_subtotal, v_discount, v_pcode, v_labels, v_rush,
           -- pickups inside the confirm window (like rush prints) count as confirmed right away
-          p_pickup_date - coalesce((s.config->>'confirm_days_before')::int, 1) <= v_today, v_fcode, v_credit, case when v_xu then v_email end);
+          -- (an admin ordering for someone counts as confirmed: they're arranging it with the person directly)
+          v_admin or coalesce(v_parent.confirmed, false) or p_pickup_date - coalesce((s.config->>'confirm_days_before')::int, 1) <= v_today,
+          v_fcode, v_credit, case when v_xu then v_email end,
+          v_parent.code, case when v_admin then 'Ordered for them by ' || coalesce(nullif(v_email, ''), 'an admin') end);
   return v_code;
 end $$;
 
@@ -470,7 +508,9 @@ language sql stable security definer set search_path = public as $$
   select json_build_object('code', code, 'nickname', nickname, 'status', status, 'pickup', pickup,
     'pickup_date', pickup_date, 'pickup_time', pickup_time, 'arrived', arrived_at is not null,
     'payment', payment, 'total', total, 'sheet_count', sheet_count, 'reject_reason', reject_reason,
-    'confirmed', confirmed, 'paid', paid, 'amount_paid', amount_paid, 'missed', missed, 'reschedules', reschedules, 'created_at', created_at)
+    'confirmed', confirmed, 'paid', paid, 'amount_paid', amount_paid, 'missed', missed, 'reschedules', reschedules, 'created_at', created_at,
+    'grade_section', grade_section, 'gcash_ref', gcash_ref, 'add_to', add_to,
+    'add_ons', (select coalesce(json_agg(a.code order by a.created_at), '[]'::json) from public.orders a where a.add_to = orders.code and a.status not in ('cancelled','rejected')))
   from public.orders
   where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname)
   limit 1;
@@ -501,6 +541,12 @@ begin
     raise exception 'BAD_DATE';
   end if;
   select pickup into v_pick from public.orders where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname);
+  -- orders not printed yet can't move into the rush window (that would skip the rush fee); prints-only orders can
+  if p_date < (now() at time zone 'Asia/Manila')::date + coalesce((s.config->>'lead_days')::int, 2)
+     and exists (select 1 from public.orders o where o.code = upper(trim(p_code)) and o.status in ('pending','approved') and coalesce(o.rush_fee, 0) = 0
+                 and exists (select 1 from jsonb_array_elements(coalesce(o.layout->'items', '[]'::jsonb)) i where i->>'type' <> 'prints')) then
+    raise exception 'BAD_DATE';
+  end if;
   if v_pick is not null then perform public.check_pickup(p_date, p_time, v_pick, upper(trim(p_code))); end if;
   update public.orders
      set pickup_date = p_date, pickup_time = trim(p_time), reschedules = reschedules + 1, arrived_at = null, confirmed = true
@@ -508,6 +554,17 @@ begin
      and status in ('pending','approved','printing','ready') and reschedules < v_max;
   if not found then raise exception 'NO_RESCHEDULE'; end if;
   return true;
+end $$;
+
+-- Customer fixes their own details before it's printed: grade and section, payment, GCash reference
+create or replace function public.update_my_order(p_code text, p_nickname text, p_grade_section text, p_payment text, p_gcash_ref text) returns boolean
+language plpgsql security definer set search_path = public as $$
+begin
+  if length(trim(coalesce(p_grade_section, ''))) < 2 or length(p_grade_section) > 30 or p_payment not in ('cash','gcash') then raise exception 'BAD_INPUT'; end if;
+  update public.orders
+     set grade_section = trim(p_grade_section), payment = p_payment, gcash_ref = nullif(trim(left(coalesce(p_gcash_ref, ''), 40)), '')
+   where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname) and status in ('pending','approved');
+  return found;
 end $$;
 
 -- Customer cancels before printing
@@ -549,7 +606,8 @@ begin
     'used_up', v.max_uses is not null and v_used >= v.max_uses);
 end $$;
 
-grant execute on function public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text) to anon, authenticated;
+grant execute on function public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text,text) to anon, authenticated;
+grant execute on function public.update_my_order(text,text,text,text,text) to anon, authenticated;
 grant execute on function public.check_promo(text) to anon, authenticated;
 grant execute on function public.reschedule_order(text,text,date,text) to anon, authenticated;
 grant execute on function public.mark_arrived(text,text) to anon, authenticated;
@@ -654,7 +712,7 @@ begin
 
   -- Order placed
   if tg_op = 'INSERT' then
-    if coalesce((n->>'new')::boolean, true) then
+    if new.status = 'pending' and coalesce((n->>'new')::boolean, true) then
       select string_agg('- ' ||
           case when it->>'type' = 'stickers'
                then 'Stickers, ' || jsonb_array_length(coalesce(it->'sheets', '[]'::jsonb))
@@ -674,6 +732,7 @@ begin
         || case when coalesce(new.rush_fee, 0) > 0 then ', includes rush fee ₱' || new.rush_fee else '' end
         || E'\n' || 'Payment: ' || case when new.payment = 'gcash' then 'GCash' || coalesce(', ref ' || public.tg_esc(new.gcash_ref), ', no ref yet') else 'Cash at pickup' end
         || E'\n' || 'Pickup: ' || v_when
+        || case when new.add_to is not null then E'\n' || 'Add-on to ' || new.add_to || ': bag them together.' else '' end
         || E'\n' || 'Needs your approval in admin.');
     end if;
     return new;
@@ -912,7 +971,10 @@ declare who text := public.log_actor(); n text;
 begin
   n := new.nickname || ' (' || new.grade_section || ')';
   if tg_op = 'INSERT' then
-    insert into public.activity (actor, kind, code, text) values (who, 'new', new.code, 'New order from ' || n || ', ₱' || new.total);
+    insert into public.activity (actor, kind, code, text) values (who, case when new.status = 'done' then 'pay' else 'new' end, new.code,
+      case when new.status = 'done' then 'Sold in person: ₱' || new.total || coalesce(' (' || nullif(new.nickname, 'Walk-in') || ')', '')
+           when new.add_to is not null then 'Add-on to ' || new.add_to || ' from ' || n || ', ₱' || new.total
+           else 'New order from ' || n || ', ₱' || new.total end);
     return new;
   end if;
   if new.status is distinct from old.status then
@@ -941,6 +1003,11 @@ begin
   if new.paid is distinct from old.paid or new.amount_paid is distinct from old.amount_paid then
     insert into public.activity (actor, kind, code, text) values (who, 'pay', new.code,
       case when new.paid then 'Paid in full: ' || n when coalesce(new.amount_paid, 0) > 0 then 'Paid ₱' || new.amount_paid || ' of ₱' || new.total || ': ' || n else 'Marked unpaid: ' || n end);
+  end if;
+  -- (pins_on_sheet is bookkeeping from the shared pin sheet, not an edit)
+  if new.status = old.status and (new.total is distinct from old.total
+     or (new.layout - 'pins_on_sheet') is distinct from (old.layout - 'pins_on_sheet')) then
+    insert into public.activity (actor, kind, code, text) values (who, 'note', new.code, 'Edited the order for ' || n || ', total now ₱' || new.total);
   end if;
   if new.admin_note is distinct from old.admin_note then
     insert into public.activity (actor, kind, code, text) values (who, 'note', new.code,
@@ -988,3 +1055,22 @@ drop trigger if exists log_business on public.business;
 create trigger log_business after update on public.business for each row execute function public.log_changes();
 drop trigger if exists log_telegram on public.telegram;
 create trigger log_telegram after update on public.telegram for each row execute function public.log_changes();
+
+-- The admin page asks "is this account an admin?" (a signed-in student is not)
+grant execute on function public.is_admin() to authenticated;
+
+
+-- ---------------------------------------------------------------------------------------------------
+-- Pins print at a 44 mm paper circle (measured from a pin sheet that printed right). The old setting was 55 mm.
+-- Only updates shops still on the old size, so running this again never undoes a later change in admin.
+update public.shop_settings
+   set config = jsonb_set(coalesce(config, '{}'::jsonb), '{sizes}',
+         coalesce(config->'sizes', '{}'::jsonb) || jsonb_build_object('pins',
+           coalesce(config->'sizes'->'pins', '{}'::jsonb) || jsonb_build_object('44', jsonb_build_object('faceMm', 44, 'cutMm', 44))))
+ where id = 1 and coalesce((config->'sizes'->'pins'->'44'->>'cutMm')::numeric, 55) = 55;
+
+-- Pickups every school day (Monday to Friday), not just Tuesday and Friday. Runs once (the weekdays_v2 flag), so
+-- changing the days in admin later is never undone by running this file again.
+update public.shop_settings
+   set config = coalesce(config, '{}'::jsonb) || '{"pickup_weekdays": [1, 2, 3, 4, 5], "weekdays_v2": true}'::jsonb
+ where id = 1 and not (coalesce(config, '{}'::jsonb) ? 'weekdays_v2');

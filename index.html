@@ -564,7 +564,8 @@ th{color:var(--muted);font-weight:700}
 .choice .note{display:block;color:var(--muted);font-weight:500;font-size:14px}
 .pinstage{display:flex;gap:30px;align-items:center;justify-content:center;flex-wrap:wrap;width:100%}
 .pinedit,.pinprev{display:flex;flex-direction:column;align-items:center;gap:12px}
-.addtowrap{max-width:720px;margin:10px auto 0;padding:0 16px}.hint.addto{align-items:center}.hint.addto .linkbtn{flex:none;margin-left:auto}
+.addtowrap{max-width:720px;margin:10px auto 0;padding:0 16px}.hint.addto{align-items:center}
+.choice.rushday:has(input:checked){border-color:var(--xu-red,#ec282a);box-shadow:0 0 0 3px rgba(236,40,42,.12)}.hint.addto .linkbtn{flex:none;margin-left:auto}
 .pinsheet{display:flex;gap:14px;align-items:center;max-width:460px;margin:14px auto 0}
 .pinsheet{padding:0 6px}.pinsheet .help{margin:0;font-size:13px;flex:1;min-width:0}
 .ps-a4{position:relative;flex:none;width:92px;aspect-ratio:210/297;background:#fff;border:1px solid #D9DCE6;border-radius:3px;box-shadow:0 2px 6px rgba(40,57,113,.12)}
@@ -1507,12 +1508,16 @@ const CONFIG = {
   ],
 
   // Pickup schedule. Day numbers: 0 = Sunday, 1 = Monday ... 6 = Saturday.
-  pickupWeekdays: [2, 5],        // Tuesday and Friday
+  pickupWeekdays: [1, 2, 3, 4, 5],   // every school day, Monday to Friday
   pickupTimes: [                 // customers pick one of these
     { label: 'Lunch', time: '12:30 PM' },
     { label: 'After class', time: '5:10 PM' },
   ],
-  leadDays: 2,                   // earliest pickup is this many days after ordering (time to check and print)
+  leadDays: 2,                   // free pickup starts this many days after ordering; sooner is a rush pickup
+  rushOn: true,                  // let customers pick up made things sooner (normally tomorrow) for a rush fee
+  rushMake: 20,                  // rush fee for stickers, pins, keychains, posters
+  rushCutoff: 18,                // rush pickups for tomorrow close at this hour today (18 = 6 PM)
+  maxRushPerDay: 5,              // most rush orders for one pickup day (0 = no limit)
   datesToShow: 3,                // how many upcoming pickup dates customers can choose from
   noPickupDates: [],             // skip these, e.g. ['2026-11-02'] for holidays or exam days
   pickupOptions: ['Gate 1', 'Gate 4'],
@@ -1580,7 +1585,10 @@ const fmtDate = (v, o = { weekday: 'long', month: 'long', day: 'numeric' }) => v
 const signal = () => `the person ${S.settings.signalVerb} ${S.settings.signalItem}`;
 const timeLabel = t => `${t.label} (${t.time})`;
 const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const pickupDaysText = () => CONFIG.pickupWeekdays.map(n => DAY_NAMES[n]).join(' and ');
+const pickupDaysText = () => { const w = CONFIG.pickupWeekdays.slice().sort();
+  if (w.join() === '1,2,3,4,5') return 'school day, Monday to Friday';
+  const n = w.map(x => DAY_NAMES[x]); return n.length > 1 ? n.slice(0, -1).join(', ') + ' or ' + n[n.length - 1] : n.join(''); };
+const hourLabel = h => `${(h % 12) || 12}${h < 12 || h === 24 ? ' AM' : ' PM'}`;
 function pickupDates(){
   const out = [], d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + CONFIG.leadDays);
   for (let i = 0; i < 42 && out.length < CONFIG.datesToShow; i++) {
@@ -1770,6 +1778,8 @@ function friendlyError(e){
   if (m.includes('XU_ONLY')) return 'Please sign in with your XU school account (@my.xu.edu.ph) to order.';
   if (m.includes('OWN_CODE')) return "That's your own friend code. Share it with friends instead!";
   if (m.includes('NOT_FIRST')) return 'Friend codes are for first orders. Thanks for coming back!';
+  if (m.includes('RUSH_CLOSED')) return `Rush pickups for tomorrow closed at ${hourLabel(CONFIG.rushCutoff)}. Pick another day.`;
+  if (m.includes('RUSH_FULL')) return 'Rush pickups for that day are full. Pick another day.';
   if (m.includes('TOO_SOON')) return 'That pickup time is too soon to get it ready. Pick a later time or another day.';
   if (m.includes('BAD_DATE')) return "That day isn't open for pickup anymore. Pick another one.";
   if (m.includes('NO_RESCHEDULE')) return "This order can't be moved anymore. Talk to the seller at pickup.";
@@ -1927,7 +1937,9 @@ function applyShopConfig(c){
   CONFIG.maxPerSlot = Math.max(0, numOr(c.max_per_slot, D.maxPerSlot));
   CONFIG.maxPerDay = Math.max(0, numOr(c.max_per_day, D.maxPerDay));
   CONFIG.prepHours = numOr(c.prep_hours, D.prepHours); CONFIG.rushSameDay = numOr(c.rush_same_day, D.rushSameDay);
-  CONFIG.rushNextDay = numOr(c.rush_next_day, D.rushNextDay); CONFIG.printCleanupDays = numOr(c.print_cleanup_days, D.printCleanupDays);
+  CONFIG.rushNextDay = numOr(c.rush_next_day, D.rushNextDay);
+  CONFIG.rushOn = c.rush_on !== false; CONFIG.rushMake = numOr(c.rush_make, D.rushMake);
+  CONFIG.rushCutoff = Math.max(0, Math.min(24, numOr(c.rush_cutoff_hour, D.rushCutoff))); CONFIG.maxRushPerDay = numOr(c.max_rush_per_day, D.maxRushPerDay); CONFIG.printCleanupDays = numOr(c.print_cleanup_days, D.printCleanupDays);
   CONFIG.posterExtraSheet = numOr(c.poster_extra_sheet, D.posterExtraSheet);
   CONFIG.posterMarginMm = Math.max(3, Math.min(15, numOr(c.poster_margin_mm, D.posterMarginMm)));
   CONFIG.posterOverlapMm = Math.max(0, Math.min(30, numOr(c.poster_overlap_mm, D.posterOverlapMm)));
@@ -3484,12 +3496,22 @@ function timeOk(ds, t){
   return mins !== null && mins - (now.getHours() * 60 + now.getMinutes()) >= CONFIG.prepHours * 60;
 }
 function nextSchoolDay(){ const d = new Date(); d.setHours(0, 0, 0, 0); do { d.setDate(d.getDate() + 1); } while (d.getDay() === 0 || d.getDay() === 6); return ymd(d); }
+/* Rush pickup for made things: a pickup day sooner than the free lead time (normally tomorrow) */
+const freeFrom = () => addDays(ymd(new Date()), CONFIG.leadDays);
+const rushOpenNow = () => CONFIG.rushOn && new Date().getHours() < CONFIG.rushCutoff;
+const isRushMake = ds => !!ds && !printsOnly() && ds > ymd(new Date()) && ds < freeFrom();
 function rushFee(ds){
+  if (isRushMake(ds)) return CONFIG.rushMake;
   if (!ds || !S.cart.some(it => it.type === 'prints')) return 0;
   return ds === ymd(new Date()) ? CONFIG.rushSameDay : ds === nextSchoolDay() ? CONFIG.rushNextDay : 0;
 }
 function checkoutDates(){
-  if (!printsOnly()) return pickupDates();
+  if (!printsOnly()) {
+    const rush = [];
+    if (rushOpenNow() && !S.addTo) for (let ds = addDays(ymd(new Date()), 1); ds < freeFrom(); ds = addDays(ds, 1))
+      if (CONFIG.pickupWeekdays.includes(parseYmd(ds).getDay()) && !CONFIG.noPickupDates.includes(ds)) rush.push(ds);
+    return rush.concat(pickupDates());
+  }
   const out = [], d = new Date(); d.setHours(0, 0, 0, 0);
   for (let i = 0; i < 40 && out.length < CONFIG.datesToShow + 1; i++, d.setDate(d.getDate() + 1)) {
     const ds = ymd(d);
@@ -3550,9 +3572,10 @@ function viewCheckout(){
         <div class="chead"><i>2</i><b>Pickup</b><span class="csum" id="csum2"></span><button type="button" class="cchange" data-act="coGo" data-s="2">Change</button></div>
         <div class="cbody">
       <fieldset><legend>When will you pick it up? <span class="req">*</span></legend>
-        ${dates.map((d, i) => `<label class="choice"><input type="radio" name="pdate" value="${d}" ${i === 0 ? 'checked' : ''}>${ic('calendar', 20)}<span><b>${d === ymd(new Date()) ? 'Today, ' : ''}${fmtDate(d)}</b>${rushFee(d) ? `<small class="rushtag">Rush, +${money(rushFee(d))}</small>` : ''}</span></label>`).join('')}
+        ${dates.map(d => `<label class="choice${isRushMake(d) ? ' rushday' : ''}"><input type="radio" name="pdate" value="${d}" ${d === (dates.find(x => !isRushMake(x)) || dates[0]) ? 'checked' : ''}>${ic('calendar', 20)}<span><b>${d === ymd(new Date()) ? 'Today, ' : d === addDays(ymd(new Date()), 1) ? 'Tomorrow, ' : ''}${fmtDate(d)}</b>${rushFee(d) ? `<small class="rushtag">${isRushMake(d) ? 'Rush pickup' : 'Rush'}, +${money(rushFee(d))}</small>` : ''}</span></label>`).join('')}
         <p class="help">${po ? `Prints can be picked up any school day. Same-day orders need at least ${CONFIG.prepHours} hour${CONFIG.prepHours === 1 ? '' : 's'} before the pickup time.`
-          : `Pickups happen every ${pickupDaysText()}. The first date gives us time to check and print your order.`}</p>
+          : rushOpenNow() && CONFIG.rushMake >= 0 ? `Pick up any ${pickupDaysText()}. Need it sooner? A rush pickup is +${money(CONFIG.rushMake)} and closes at ${hourLabel(CONFIG.rushCutoff)} today. From ${esc(fmtDate(pickupDates()[0] || freeFrom(), { weekday: 'long', month: 'short', day: 'numeric' }))}, no extra fee.`
+          : `Pick up any ${pickupDaysText()}. The first date gives us time to check and print your order.${CONFIG.rushOn ? ` (Rush pickups for tomorrow close at ${hourLabel(CONFIG.rushCutoff)}.)` : ''}`}</p>
       </fieldset>
 
       <fieldset><legend>What time? <span class="req">*</span></legend>
@@ -3690,7 +3713,7 @@ function checkoutSummary(ds){
   const form = $('#orderForm'); ds = ds || (form ? radio(form, 'pdate') : null);
   const sum = computeDeals(S.cart), rush = rushFee(ds);
   const short = S.promo && sum.total < S.promo.min_total ? `<p class="nudgebar">${ic('warn', 16)}<span>Spend ${money(S.promo.min_total)} or more to use code ${esc(S.promo.code)}.</span></p>` : '';
-  return `${short}${savingsHTML(sum, S.promo)}${rush ? `<div class="sv-row rushrow"><span>${ic('clock', 16)}Rush fee, ${ds === ymd(new Date()) ? 'same day' : 'next school day'}</span><b class="num">+${money(rush)}</b></div>` : ''}
+  return `${short}${savingsHTML(sum, S.promo)}${rush ? `<div class="sv-row rushrow"><span>${ic('clock', 16)}${isRushMake(ds) ? 'Rush pickup' : `Rush fee, ${ds === ymd(new Date()) ? 'same day' : 'next school day'}`}</span><b class="num">+${money(rush)}</b></div>` : ''}
     <div class="totalrow"><span>Total</span><b class="num">${money(checkoutTotal(ds))}</b></div>`;
 }
 function setErr(inputId, errId, msg){
@@ -4159,6 +4182,7 @@ async function drawAdminBody(){
             ${o.reschedules ? `<span class="tag">${ic('calendar', 14)}Moved ${o.reschedules}×</span>` : ''}
             ${o.payment === 'gcash' && o.paid && ['rejected','cancelled'].includes(o.status) ? (o.refunded ? `<span class="tag ok">${ic('check', 14)}Refunded</span>` : `<span class="tag bad">${ic('cash', 14)}Refund ${money(o.total)} needed</span>`) : ''}
             ${sk ? `<span class="tag bad">${ic('warn', 14)}${sk} missed pickup${sk > 1 ? 's' : ''} before</span>` : ''}
+            ${o.rush_fee && !walkin ? `<span class="tag warn">${ic('clock', 14)}Rush +${money(o.rush_fee)}</span>` : ''}
             ${o.add_to ? `<span class="tag hot">${ic('box', 14)}Add-on to ${esc(o.add_to)}: bag together</span>` : ''}${addOns.length ? `<span class="tag hot">${ic('plus', 14)}Has add-on ${esc(addOns.join(', '))}: bag together</span>` : ''}
             ${walkin ? `<span class="tag">${ic('cash', 14)}Sold in person</span>` : o.src ? `<span class="tag">${ic('qr', 14)}Poster: ${esc(o.src)}</span>` : ''}
             ${o.reject_reason ? `<span class="tag bad">Reason: ${esc(o.reject_reason)}</span>` : ''}
@@ -4450,7 +4474,7 @@ function drawSettings(){
     countdowns: clone(CONFIG.countdowns || []), countdowns_on: CONFIG.countdownsOn !== false, details: { ...(CONFIG.details || {}) }, facebook_url: CONFIG.facebookUrl, require_xu_signin: CONFIG.requireXu, product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
     print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
-    allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
+    allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, rush_on: CONFIG.rushOn, rush_make: CONFIG.rushMake, rush_cutoff_hour: CONFIG.rushCutoff, max_rush_per_day: CONFIG.maxRushPerDay, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
     grades: CONFIG.grades.slice(), gcash: { ...CONFIG.gcash }, cleanup_days: CONFIG.cleanupDays, max_pictures: CONFIG.maxPictures, max_noshows: CONFIG.maxNoShows,
     max_qty: Object.fromEntries(['pins', 'posters', 'keychains'].map(k => [k, maxQtyFor(k)])),
     sizes: { pins: Object.fromEntries(CONFIG.products.pins.sizes.map(z => [z.id, { faceMm: z.faceMm, cutMm: z.cutMm }])),
@@ -4536,11 +4560,17 @@ function drawShopForm(){
 
     <div class="cfgsec"><div class="sub">Pickup dates</div>
       <div class="pgrid2">
-        <label class="dnum"><span>Earliest pickup (days after ordering)</span>${n('lead_days', c.lead_days, 0, 30)}</label>
+        <label class="dnum"><span>Free pickup from (days after ordering)</span>${n('lead_days', c.lead_days, 1, 30)}</label>
         <label class="dnum"><span>Dates customers can choose from</span>${n('dates_to_show', c.dates_to_show, 1, 10)}</label>
         <label class="dnum"><span>Skip a date (holiday, exams)</span><input class="inp" type="date" id="skipDate"></label></div>
       <div class="tags" style="margin-top:8px">${c.no_pickup_dates.length ? c.no_pickup_dates.map((d, i) => `<span class="tag">${esc(fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' }))}
-        <button type="button" class="tagx" data-act="cfgDelSkip" data-i="${i}" aria-label="Remove date">${ic('x', 12)}</button></span>`).join('') : '<span class="help">No skipped dates.</span>'}</div></div>
+        <button type="button" class="tagx" data-act="cfgDelSkip" data-i="${i}" aria-label="Remove date">${ic('x', 12)}</button></span>`).join('') : '<span class="help">No skipped dates.</span>'}</div>
+      <label class="switch" style="margin-top:12px"><input type="checkbox" data-cfgbool="rush_on" ${c.rush_on ? 'checked' : ''}><span>Rush pickups (sooner than the free days, for a fee)</span></label>
+      <div class="pgrid2" style="margin-top:8px">
+        <label class="dnum"><span>Rush fee for stickers, pins, keychains, posters (₱)</span>${n('rush_make', c.rush_make, 0, 500)}</label>
+        <label class="dnum"><span>Rush orders close at (hour, 0-24; 18 = 6 PM)</span>${n('rush_cutoff_hour', c.rush_cutoff_hour, 0, 24)}</label>
+        <label class="dnum"><span>Most rush orders per day (0 = no limit)</span>${n('max_rush_per_day', c.max_rush_per_day, 0, 50)}</label></div>
+      <p class="help" style="margin-top:6px">With "free pickup from" at 2, tomorrow is the rush day and the day after is free. Pickup weekdays are set above. Rush orders count as confirmed right away.</p></div>
 
     <div class="cfgsec"><div class="sub">Prints and rush orders</div>
       <p class="help" style="margin-bottom:8px">Days prints can be picked up:</p>
