@@ -564,6 +564,29 @@ th{color:var(--muted);font-weight:700}
 .choice .note{display:block;color:var(--muted);font-weight:500;font-size:14px}
 .pinstage{display:flex;gap:30px;align-items:center;justify-content:center;flex-wrap:wrap;width:100%}
 .pinedit,.pinprev{display:flex;flex-direction:column;align-items:center;gap:12px}
+.fbcols{display:grid;grid-template-columns:1fr 1fr;gap:20px}@media(max-width:600px){.fbcols{grid-template-columns:1fr}}
+.fbavg{display:flex;gap:8px;align-items:center;margin:6px 0 8px}.fbavg b{font-size:28px}
+.fbbar{display:grid;grid-template-columns:18px 1fr 24px;gap:6px;align-items:center;font-size:13px;margin:3px 0}
+.fbbar i{display:block;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--xu-gold,#F2BC2E) var(--w),#EEF0F6 var(--w))}
+.fbwords{display:grid;gap:8px;margin-top:14px;border-top:1px solid #E6E8F0;padding-top:12px}
+.fbword{display:flex;gap:10px;align-items:flex-start;font-size:14px}.fbword small{display:block;color:var(--muted,#5b6386);font-size:12px}
+.fbword.low{background:#FFF1F1;border-radius:10px;padding:6px 8px}
+.tag svg{vertical-align:-3px;margin-right:2px}
+.fbcard{margin-top:18px;padding:16px;border:1.5px dashed #C9CEDF;border-radius:18px;background:#fff;animation:fbIn .5s ease 1.2s both}
+.fbcard.bye{opacity:0;transform:translateY(6px);transition:all .25s}
+@keyframes fbIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.fbhead{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.fbhead b{display:block;font-size:17px}.fbhead .linkbtn{white-space:nowrap;flex:none}.fbcard.rated .fbhead .linkbtn{display:none}.fbhead span{font-size:14px;color:var(--muted,#5b6386)}
+.fbfaces{display:flex;justify-content:space-between;gap:4px;margin-top:12px}
+.fbface{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;border:0;background:none;border-radius:14px;cursor:pointer;font:inherit;color:inherit;transition:transform .15s}
+.fbface small{font-size:12px;color:var(--muted,#5b6386)}
+.fbface:hover svg{transform:translateY(-2px) rotate(-6deg)}.fbface svg{transition:transform .2s cubic-bezier(.3,1.6,.5,1)}
+.fbcard.rated .fbface:not(.on){opacity:.35}.fbface.on{background:#FFF3D1}.fbface.on svg{transform:scale(1.15) rotate(-6deg)}
+.fbthanks{display:flex;gap:6px;align-items:center;margin:12px 0 8px;font-size:14px}
+.fbchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.fbacts{display:flex;gap:12px;align-items:center;margin-top:10px}
+.fbcard.done{border-style:solid;animation:none}.fbbye{display:flex;gap:12px;align-items:center;font-size:15px}
+@media (prefers-reduced-motion:reduce){.fbcard{animation:none}}
 .addtowrap{max-width:720px;margin:10px auto 0;padding:0 16px}.hint.addto{align-items:center}
 .choice.rushday:has(input:checked){border-color:var(--xu-red,#ec282a);box-shadow:0 0 0 3px rgba(236,40,42,.12)}.hint.addto .linkbtn{flex:none;margin-left:auto}
 .pinsheet{display:flex;gap:14px;align-items:center;max-width:460px;margin:14px auto 0}
@@ -1514,6 +1537,7 @@ const CONFIG = {
     { label: 'After class', time: '5:10 PM' },
   ],
   leadDays: 2,                   // free pickup starts this many days after ordering; sooner is a rush pickup
+  feedbackOn: true,              // ask "How was ordering?" after ordering and "How did it turn out?" after pickup
   rushOn: true,                  // let customers pick up made things sooner (normally tomorrow) for a rush fee
   rushMake: 20,                  // rush fee for stickers, pins, keychains, posters
   rushCutoff: 18,                // rush pickups for tomorrow close at this hour today (18 = 6 PM)
@@ -1938,7 +1962,7 @@ function applyShopConfig(c){
   CONFIG.maxPerDay = Math.max(0, numOr(c.max_per_day, D.maxPerDay));
   CONFIG.prepHours = numOr(c.prep_hours, D.prepHours); CONFIG.rushSameDay = numOr(c.rush_same_day, D.rushSameDay);
   CONFIG.rushNextDay = numOr(c.rush_next_day, D.rushNextDay);
-  CONFIG.rushOn = c.rush_on !== false; CONFIG.rushMake = numOr(c.rush_make, D.rushMake);
+  CONFIG.feedbackOn = c.feedback_on !== false; CONFIG.rushOn = c.rush_on !== false; CONFIG.rushMake = numOr(c.rush_make, D.rushMake);
   CONFIG.rushCutoff = Math.max(0, Math.min(24, numOr(c.rush_cutoff_hour, D.rushCutoff))); CONFIG.maxRushPerDay = numOr(c.max_rush_per_day, D.maxRushPerDay); CONFIG.printCleanupDays = numOr(c.print_cleanup_days, D.printCleanupDays);
   CONFIG.posterExtraSheet = numOr(c.poster_extra_sheet, D.posterExtraSheet);
   CONFIG.posterMarginMm = Math.max(3, Math.min(15, numOr(c.poster_margin_mm, D.posterMarginMm)));
@@ -2204,6 +2228,8 @@ function SupaBackend(){
     async getOrder(code, nick){ const d = await rpc('get_order', { p_code: code, p_nickname: nick }); if (!d) throw new Error('NOT_FOUND'); return d; },
     async confirm(code, nick){ await rpc('confirm_order', { p_code: code, p_nickname: nick }); },
     async cancel(code, nick){ await rpc('cancel_order', { p_code: code, p_nickname: nick }); },
+    async feedback(code, nick, stage, rating, tags, comment){ return await rpc('leave_feedback', { p_code: code, p_nickname: nick, p_stage: stage, p_rating: rating, p_tags: tags || [], p_comment: comment || null }); },
+    async feedbackList(){ const { data, error } = await sb.from('feedback').select('*').order('created_at', { ascending: false }).limit(500); if (error) throw error; return data || []; },
     async updateMine(code, nick, section, payment, ref){ return await rpc('update_my_order', { p_code: code, p_nickname: nick, p_grade_section: section, p_payment: payment, p_gcash_ref: ref || null }); },
     async availability(from, to){ const { data, error } = await sb.rpc('pickup_availability', { p_from: from, p_to: to }); if (error) throw error; return data || []; },
     async reschedule(code, nick, date, time){ await rpc('reschedule_order', { p_code: code, p_nickname: nick, p_date: date, p_time: time }); },
@@ -3688,6 +3714,51 @@ function coRender(){
   if (ncn) ncn.textContent = nm ? `${nm}, ${g} - ${sec}` : '';
 }
 /* Re-render checkout but keep what the customer already typed */
+/* ---------- Feedback: one tap counts, details are optional, never asked twice for the same order ---------- */
+const FB = {
+  ordering: { q: 'How was ordering?', sub: 'One tap is enough. It helps us make it easier.',
+    low: ['Designing was confusing', 'Too many steps', 'Picking a pickup', 'Prices weren\'t clear', 'The site was slow', 'Something else'],
+    high: ['Easy to use', 'Fast', 'Fun to design', 'Clear prices', 'Cute site'] },
+  pickup: { q: 'How did your order turn out?', sub: 'Your stickers, pins, or prints: how are they?',
+    low: ['Blurry print', 'Colors were off', 'Cut was off', 'Pickup was messy', 'Waited too long', 'Something else'],
+    high: ['Looks great', 'Colors popped', 'Clean cuts', 'Smooth pickup', 'Worth it'] },
+};
+const FACE_LABELS = ['Hard', 'Not great', 'Okay', 'Good', 'Loved it'];
+const fbKey = (code, stage) => `s2i_fb_${code}_${stage}`;
+function fbFace(n, size = 40){
+  // a gold sticker face: the mouth goes from a frown (1) to a big open smile (5)
+  const mouth = ['M14 29 Q20 22 26 29', 'M14 28 Q20 24.5 26 28', 'M14.5 26.5 L25.5 26.5', 'M14 25 Q20 30 26 25', 'M13 24 Q20 33 27 24 Z'][n - 1];
+  const brow = n === 1 ? '<path d="M11.5 13.5 L16 15.5 M28.5 13.5 L24 15.5" stroke="#283971" stroke-width="2" stroke-linecap="round"/>' : '';
+  return `<svg width="${size}" height="${size}" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="#F2BC2E" stroke="#fff" stroke-width="3" paint-order="stroke"/>
+    <circle cx="20" cy="20" r="17" fill="none" stroke="rgba(40,57,113,.25)" stroke-width="1"/>${brow}
+    <ellipse cx="14.5" cy="18" rx="2" ry="${n === 5 ? 1.2 : 2.4}" fill="#283971"/><ellipse cx="25.5" cy="18" rx="2" ry="${n === 5 ? 1.2 : 2.4}" fill="#283971"/>
+    <path d="${mouth}" stroke="#283971" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="${n === 5 ? '#ec282a' : 'none'}"/>
+    ${n >= 4 ? '<circle cx="11" cy="23" r="2" fill="#ec282a" opacity=".3"/><circle cx="29" cy="23" r="2" fill="#ec282a" opacity=".3"/>' : ''}</svg>`;
+}
+function feedbackHTML(stage, code, nick){
+  if (!CONFIG.feedbackOn || !code || !nick || safeLS.get(fbKey(code, stage))) return '';   // answered or "Not now": never ask again
+  const f = FB[stage];
+  return `<section class="fbcard" id="fb-${stage}" data-code="${esc(code)}" data-nick="${esc(nick)}" aria-labelledby="fbq-${stage}">
+    <div class="fbhead"><div><b id="fbq-${stage}">${esc(f.q)}</b><span>${esc(f.sub)}</span></div><button type="button" class="linkbtn" data-act="fbHide" data-stage="${stage}">Not now</button></div>
+    <div class="fbfaces" role="group" aria-label="${esc(f.q)}">${[1, 2, 3, 4, 5].map(n => `<button type="button" class="fbface" data-act="fbRate" data-stage="${stage}" data-r="${n}" aria-label="${FACE_LABELS[n - 1]}">${fbFace(n)}<small>${FACE_LABELS[n - 1]}</small></button>`).join('')}</div>
+    <div class="fbmore" id="fbmore-${stage}"></div></section>`;
+}
+function fbMoreHTML(stage){
+  const st = S.fb[stage], f = FB[stage], chips = st.r <= 3 ? f.low : f.high;
+  return `<p class="fbthanks">${ic('check', 16)}<span>Got it, thank you!${st.r <= 3 ? ' What could be better? (optional)' : ' What did you like? (optional)'}</span></p>
+    <div class="fbchips">${chips.map(c => `<button type="button" class="chip ${st.tags.includes(c) ? 'on' : ''}" data-act="fbTag" data-stage="${stage}" data-t="${esc(c)}" aria-pressed="${st.tags.includes(c)}">${esc(c)}</button>`).join('')}</div>
+    <textarea class="inp" id="fbtext-${stage}" rows="2" maxlength="300" placeholder="${st.r <= 3 ? 'Tell us what happened (optional)' : 'Anything else? (optional)'}">${esc(st.comment || '')}</textarea>
+    <div class="fbacts">${smallBtn('Send', 'check', 'fbSend', 'dark', `data-stage="${stage}"`)}<button type="button" class="linkbtn" data-act="fbDone" data-stage="${stage}">That's all</button></div>`;
+}
+function fbFinish(stage, sent){
+  const card = $('#fb-' + stage), st = S.fb[stage]; if (!card) return;
+  const sorry = st.r <= 2 && stage === 'pickup';
+  card.classList.add('done');
+  card.innerHTML = `<div class="fbbye">${fbFace(st.r, 34)}<span><b>${sent ? 'Thanks for telling us.' : 'Thanks!'}</b> ${sorry
+    ? `Sorry it wasn't right. We read every one of these.${CONFIG.facebookUrl ? ` Message us on <a href="${esc(CONFIG.facebookUrl)}" target="_blank" rel="noopener">Facebook</a> and we'll make it right.` : ' Talk to us at the next pickup and we\'ll make it right.'}`
+    : st.r <= 3 ? 'We read every one of these and use them to make Stick2It better.' : 'That made our day.'}</span></div>`;
+}
+
 /* Admins ordering for someone else (people who message the page instead of ordering themselves) */
 function checkoutAdminMode(){
   api.isAdminStrict().then(ok => {
@@ -3855,6 +3926,7 @@ function viewDone(){
         <li>${ic('calendar', 16)}<span>Can't make it? Change your pickup day in My order (up to ${CONFIG.maxReschedules} times), or cancel before it's printed.</span></li>
         <li>${ic('lock', 16)}<span>Only the sellers see your name and section. Your pictures are deleted ${CONFIG.cleanupDays} days after your order is done.</span></li></ul></details>
     </section>
+    ${o.for_someone ? '' : feedbackHTML('ordering', o.code, o.nickname)}
     <div id="friendCard" style="margin-top:18px"></div>
     <p style="text-align:center;margin:8px 0 0"><button type="button" class="linkbtn" data-act="leaveDone" data-href="#/">Back to start</button></p>
   </main>`;
@@ -3962,6 +4034,7 @@ function drawStatus(){
       ${active && !lapsed && saveCardHTML() ? `<div style="margin-top:18px">${saveCardHTML()}</div>` : ''}
       ${active && !lapsed ? `<p class="help" style="margin-top:10px">${(o.reschedules || 0) >= CONFIG.maxReschedules ? "You've already changed your pickup day the most times allowed. Talk to the seller if you need to move it again." : `You can change your pickup day ${CONFIG.maxReschedules - (o.reschedules || 0)} more time${CONFIG.maxReschedules - (o.reschedules || 0) === 1 ? '' : 's'}.`}</p>` : ''}
     </div>`;
+  if (o.status === 'done') $('#statusOut').insertAdjacentHTML('beforeend', feedbackHTML('pickup', o.code, S.statusNick));   // after pickup: how did it turn out?
   if (!['cancelled', 'rejected'].includes(o.status) && !lapsed) { $('#statusOut').insertAdjacentHTML('beforeend', '<div id="friendCard"></div>'); fillFriendCard(o.code, S.statusNick); }
   const mf = $('#moveForm');
   if (mf) {
@@ -4036,6 +4109,7 @@ function drawLogin(note){
 async function adminLoad(){
   try {
     S.admin.orders = await api.listOrders();
+    S.admin.fb = await api.feedbackList().catch(() => []);   // empty until schema.sql with feedback has been run
     if (!S.admin.cleaned) {
       const lapsed = S.admin.orders.filter(confirmMissed);
       for (const o of lapsed) { try { await api.updateOrder(o.id, { status: 'cancelled', reject_reason: 'Not confirmed in time' }); Object.assign(o, { status: 'cancelled', reject_reason: 'Not confirmed in time' }); } catch (e) { console.warn(e); } }
@@ -4064,7 +4138,7 @@ const personKey = o => norm(o.nickname) + '|' + norm(o.grade_section);
 const REJECT_REASONS = ["This picture isn't allowed", 'Picture is too blurry to print', 'Text is too small to read'];
 
 /* ---------- Latest: what happened, newest first (orders and admin changes) ---------- */
-const LATEST_ICON = { new: 'box', status: 'printer', confirm: 'thumb', arrive: 'pin', move: 'calendar', pay: 'cash', note: 'edit', settings: 'sliders', promo: 'badge', business: 'chart', telegram: 'bell' };
+const LATEST_ICON = { feedback: 'sparkle', new: 'box', status: 'printer', confirm: 'thumb', arrive: 'pin', move: 'calendar', pay: 'cash', note: 'edit', settings: 'sliders', promo: 'badge', business: 'chart', telegram: 'bell' };
 async function latestSeenKey(){ const m = await api.me().catch(() => null); return { key: 's2i_latest_seen_' + ((m && m.email) || 'admin'), email: (m && m.email) || '' }; }
 async function checkLatestDot(){
   try { const { key } = await latestSeenKey(); const rows = await api.latest(1); const seen = +(localStorage.getItem(key) || 0);
@@ -4087,7 +4161,7 @@ async function drawLatest(quiet){
   if (!rows.length) { body.innerHTML = `<div class="empty">${ic('bell', 36)}<b>Nothing yet.</b><span>New orders and changes by any admin show up here.</span></div>`; return; }
   const dayOf = r => ymd(new Date(r.at)), today = ymd(new Date()), yest = ymd(new Date(Date.now() - 864e5));
   let lastDay = '';
-  const lf = S.admin.latestFilter || 'all', ORDER_KINDS = ['new', 'status', 'confirm', 'arrive', 'move', 'pay', 'note'];
+  const lf = S.admin.latestFilter || 'all', ORDER_KINDS = ['new', 'status', 'confirm', 'arrive', 'move', 'pay', 'note', 'feedback'];
   const shown = rows.filter(r => lf === 'all' || (lf === 'orders' ? ORDER_KINDS.includes(r.kind) : !ORDER_KINDS.includes(r.kind)));
   const newCount = rows.filter(r => r.id > seen).length;
   body.innerHTML = `<p class="hint" style="margin-bottom:12px">${ic('bell', 18)}<span>Everything that happens, newest first. ${newCount ? `<b>${newCount} new</b> since you last looked (gold dots).` : 'You’re up to date.'}</span></p>
@@ -4182,6 +4256,7 @@ async function drawAdminBody(){
             ${o.reschedules ? `<span class="tag">${ic('calendar', 14)}Moved ${o.reschedules}×</span>` : ''}
             ${o.payment === 'gcash' && o.paid && ['rejected','cancelled'].includes(o.status) ? (o.refunded ? `<span class="tag ok">${ic('check', 14)}Refunded</span>` : `<span class="tag bad">${ic('cash', 14)}Refund ${money(o.total)} needed</span>`) : ''}
             ${sk ? `<span class="tag bad">${ic('warn', 14)}${sk} missed pickup${sk > 1 ? 's' : ''} before</span>` : ''}
+            ${(S.admin.fb || []).filter(x => x.order_code === o.code).map(x => `<span class="tag ${x.rating <= 2 ? 'bad' : x.rating >= 4 ? 'ok' : ''}" title="${esc((x.tags || []).join(', ') + (x.comment ? ' "' + x.comment + '"' : ''))}">${fbFace(x.rating, 16)}${x.stage === 'ordering' ? 'Ordering' : 'Order'} ${x.rating}/5${x.comment ? ' · ' + esc(x.comment.slice(0, 40)) + (x.comment.length > 40 ? '…' : '') : ''}</span>`).join('')}
             ${o.rush_fee && !walkin ? `<span class="tag warn">${ic('clock', 14)}Rush +${money(o.rush_fee)}</span>` : ''}
             ${o.add_to ? `<span class="tag hot">${ic('box', 14)}Add-on to ${esc(o.add_to)}: bag together</span>` : ''}${addOns.length ? `<span class="tag hot">${ic('plus', 14)}Has add-on ${esc(addOns.join(', '))}: bag together</span>` : ''}
             ${walkin ? `<span class="tag">${ic('cash', 14)}Sold in person</span>` : o.src ? `<span class="tag">${ic('qr', 14)}Poster: ${esc(o.src)}</span>` : ''}
@@ -4474,7 +4549,7 @@ function drawSettings(){
     countdowns: clone(CONFIG.countdowns || []), countdowns_on: CONFIG.countdownsOn !== false, details: { ...(CONFIG.details || {}) }, facebook_url: CONFIG.facebookUrl, require_xu_signin: CONFIG.requireXu, product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
     print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
-    allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, rush_on: CONFIG.rushOn, rush_make: CONFIG.rushMake, rush_cutoff_hour: CONFIG.rushCutoff, max_rush_per_day: CONFIG.maxRushPerDay, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
+    allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, feedback_on: CONFIG.feedbackOn, rush_on: CONFIG.rushOn, rush_make: CONFIG.rushMake, rush_cutoff_hour: CONFIG.rushCutoff, max_rush_per_day: CONFIG.maxRushPerDay, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
     grades: CONFIG.grades.slice(), gcash: { ...CONFIG.gcash }, cleanup_days: CONFIG.cleanupDays, max_pictures: CONFIG.maxPictures, max_noshows: CONFIG.maxNoShows,
     max_qty: Object.fromEntries(['pins', 'posters', 'keychains'].map(k => [k, maxQtyFor(k)])),
     sizes: { pins: Object.fromEntries(CONFIG.products.pins.sizes.map(z => [z.id, { faceMm: z.faceMm, cutMm: z.cutMm }])),
@@ -4570,6 +4645,7 @@ function drawShopForm(){
         <label class="dnum"><span>Rush fee for stickers, pins, keychains, posters (₱)</span>${n('rush_make', c.rush_make, 0, 500)}</label>
         <label class="dnum"><span>Rush orders close at (hour, 0-24; 18 = 6 PM)</span>${n('rush_cutoff_hour', c.rush_cutoff_hour, 0, 24)}</label>
         <label class="dnum"><span>Most rush orders per day (0 = no limit)</span>${n('max_rush_per_day', c.max_rush_per_day, 0, 50)}</label></div>
+      <label class="switch" style="margin-top:12px"><input type="checkbox" data-cfgbool="feedback_on" ${c.feedback_on ? 'checked' : ''}><span>Ask customers how it went (one tap, after ordering and after pickup)</span></label>
       <p class="help" style="margin-top:6px">With "free pickup from" at 2, tomorrow is the rush day and the day after is free. Pickup weekdays are set above. Rush orders count as confirmed right away.</p></div>
 
     <div class="cfgsec"><div class="sub">Prints and rush orders</div>
@@ -4695,10 +4771,10 @@ function drawShopForm(){
     } catch (ex) { toast(friendlyError(ex)); }
   };
 }
-const TG_EVENTS = [['morning', 'Morning summary on pickup days (7 AM)'], ['stock', 'Low stock'], ['new', 'New orders'], ['arrived', 'Customer at the gate'], ['confirmed', 'Confirmed ("I\'ll be there")'], ['moved', 'Pickup day moved'], ['cancelled', 'Cancelled or released']];
+const TG_EVENTS = [['morning', 'Morning summary on pickup days (7 AM)'], ['stock', 'Low stock'], ['new', 'New orders'], ['arrived', 'Customer at the gate'], ['confirmed', 'Confirmed ("I\'ll be there")'], ['moved', 'Pickup day moved'], ['cancelled', 'Cancelled or released'], ['feedback', 'Low ratings (1 or 2 out of 5)']];
 async function loadTelegram(){
   const box = $('#tgForm'); if (!box) return;
-  try { const t = await api.getTelegram(); S.admin.tg = { enabled: !!t.enabled, bot_token: t.bot_token || '', chat_id: t.chat_id || '', notify: { morning: true, stock: true, new: true, arrived: true, confirmed: true, moved: true, cancelled: true, ...(t.notify || {}) } }; }
+  try { const t = await api.getTelegram(); S.admin.tg = { enabled: !!t.enabled, bot_token: t.bot_token || '', chat_id: t.chat_id || '', notify: { morning: true, stock: true, new: true, arrived: true, confirmed: true, moved: true, cancelled: true, feedback: true, ...(t.notify || {}) } }; }
   catch (e) { box.innerHTML = `<h3>Telegram alerts</h3><div class="formerr">${esc(friendlyError(e))} Run the latest schema.sql in Supabase.</div>`; return; }
   S.admin.tgChats = null; drawTelegram();
 }
@@ -5014,6 +5090,28 @@ function countUp(root){
     requestAnimationFrame(step);
   });
 }
+/* Money tab: how customers feel, from the one-tap feedback */
+function feedbackPanelHTML(list){
+  if (!CONFIG.feedbackOn && !list.length) return '';
+  const recent = list.filter(x => Date.now() - new Date(x.created_at).getTime() < 30 * 864e5);
+  const col = (stage, title) => {
+    const l = recent.filter(x => x.stage === stage), n = l.length, avg = n ? l.reduce((t, x) => t + x.rating, 0) / n : 0;
+    const counts = [5, 4, 3, 2, 1].map(r => l.filter(x => x.rating === r).length), max = Math.max(1, ...counts);
+    const tags = {}; l.forEach(x => (x.tags || []).forEach(t => { tags[t] = (tags[t] || 0) + 1; }));
+    const top = Object.entries(tags).sort((a, b) => b[1] - a[1]).slice(0, 4);
+    return `<div class="fbcol"><span class="small muted">${title}</span>
+      ${n ? `<div class="fbavg">${fbFace(Math.max(1, Math.min(5, Math.round(avg))), 34)}<b class="num">${avg.toFixed(1)}</b><span class="small muted">out of 5, ${n} answer${n === 1 ? '' : 's'}</span></div>
+      ${counts.map((c, i) => `<div class="fbbar"><span>${fbFace(5 - i, 16)}</span><i style="--w:${Math.round(c / max * 100)}%"></i><b class="num">${c}</b></div>`).join('')}
+      ${top.length ? `<p class="small" style="margin:8px 0 0">Most said: ${top.map(([t, c]) => `<b>${esc(t)}</b> (${c})`).join(', ')}</p>` : ''}`
+      : '<p class="small muted" style="margin:8px 0 0">No answers in the last 30 days yet.</p>'}</div>`;
+  };
+  const words = list.filter(x => x.comment).slice(0, 6);
+  return `<div class="panel" style="margin-bottom:20px">
+    <div class="bizh"><h3>${ic('sparkle', 18)}How customers feel</h3><span class="small muted">Last 30 days</span></div>
+    <div class="fbcols">${col('ordering', 'Ordering on the site')}${col('pickup', 'The finished order')}</div>
+    ${words.length ? `<div class="fbwords">${words.map(x => `<div class="fbword ${x.rating <= 2 ? 'low' : ''}">${fbFace(x.rating, 22)}<span>"${esc(x.comment)}"<small>${esc(x.order_code)}, ${x.stage === 'ordering' ? 'ordering' : 'after pickup'}, ${esc(fmtTime(x.created_at))}</small></span></div>`).join('')}</div>` : ''}
+  </div>`;
+}
 async function drawMoney(){
   const mainEl = document.querySelector('main'); if (mainEl) mainEl.classList.add('wide');
   $('#admBody').innerHTML = '<div class="sk" style="height:220px;border-radius:18px"></div>';
@@ -5046,6 +5144,7 @@ async function drawMoney(){
       <div class="panel"><span class="small muted">Still to collect</span><b class="num">${pmoney(owed)}</b><span class="small muted">${all.filter(o => o.status === 'noshow').length} missed pickups so far</span></div>
     </div>
 
+    ${feedbackPanelHTML(S.admin.fb || [])}
     ${monthlyHTML(b, all)}
     ${(() => { const weeks = Array.from({ length: 8 }, (_, w) => { const end = Date.now() - w * 7 * 864e5, start = end - 7 * 864e5;
         const list = done.filter(o => { const t2 = doneAt(o); return t2 > start && t2 <= end; }); return { w, p: rev(list) - cost(list), n: list.length }; }).reverse();
@@ -5435,6 +5534,24 @@ const ACTIONS = {
   moveClose: () => { S.moving = false; drawStatus(); },
   noticeClose: t => { try { sessionStorage.setItem(t.dataset.k, '1'); } catch {} const n = t.closest('.notice'); if (n) n.remove(); },
   confirmComing: async () => { try { await api.confirm(S.statusResult.code, S.statusNick); toast("Thanks. The seller knows you're coming."); lookup(); loadMyOrder(); } catch (e) { toast(friendlyError(e)); } },
+  fbRate: async t => {
+    const stage = t.dataset.stage, card = $('#fb-' + stage); if (!card) return;
+    const r = +t.dataset.r; S.fb = S.fb || {}; S.fb[stage] = { r, tags: [], comment: '', code: card.dataset.code, nick: card.dataset.nick };
+    card.querySelectorAll('.fbface').forEach(b => b.classList.toggle('on', b === t)); card.classList.add('rated'); buzz(8);
+    safeLS.set(fbKey(card.dataset.code, stage), 'rated');
+    $('#fbmore-' + stage).innerHTML = fbMoreHTML(stage);
+    try { await api.feedback(card.dataset.code, card.dataset.nick, stage, r); } catch (e) { console.warn('feedback', e); }   // the tap alone counts
+  },
+  fbTag: t => { const st = S.fb[t.dataset.stage]; const tg = t.dataset.t; st.tags = st.tags.includes(tg) ? st.tags.filter(x => x !== tg) : st.tags.concat([tg]);
+    t.classList.toggle('on'); t.setAttribute('aria-pressed', String(st.tags.includes(tg))); },
+  fbSend: async t => {
+    const stage = t.dataset.stage, st = S.fb[stage]; if (!st) return;
+    st.comment = (($('#fbtext-' + stage) || {}).value || '').trim();
+    if (!st.tags.length && !st.comment) return fbFinish(stage, false);
+    try { await api.feedback(st.code, st.nick, stage, st.r, st.tags, st.comment); fbFinish(stage, true); } catch (e) { toast(friendlyError(e)); }
+  },
+  fbDone: t => fbFinish(t.dataset.stage, false),
+  fbHide: t => { const c = $('#fb-' + t.dataset.stage); if (!c) return; safeLS.set(fbKey(c.dataset.code, t.dataset.stage), 'skipped'); c.classList.add('bye'); setTimeout(() => c.remove(), 250); },
   addToStart: () => {
     const o = S.statusResult; if (!o) return;
     S.addTo = { code: o.code, nickname: o.nickname, section: o.grade_section, pickup: o.pickup, pickup_date: o.pickup_date, pickup_time: o.pickup_time };

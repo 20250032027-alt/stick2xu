@@ -1074,3 +1074,63 @@ update public.shop_settings
 update public.shop_settings
    set config = coalesce(config, '{}'::jsonb) || '{"pickup_weekdays": [1, 2, 3, 4, 5], "weekdays_v2": true}'::jsonb
  where id = 1 and not (coalesce(config, '{}'::jsonb) ? 'weekdays_v2');
+
+
+-- ---------------------------------------------------------------------------------------------------
+-- Feedback: "How was ordering?" right after ordering, and "How did your order turn out?" after pickup.
+-- One answer per order per moment (they can change it). Customers can only leave it for their own order
+-- (code + name, like My order). Admins read it in Money and Latest; low ratings ping Telegram.
+create table if not exists public.feedback (
+  id bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  order_code text not null,
+  stage text not null check (stage in ('ordering', 'pickup')),
+  rating int not null check (rating between 1 and 5),
+  tags jsonb not null default '[]'::jsonb,
+  comment text,
+  unique (order_code, stage)
+);
+alter table public.feedback enable row level security;
+drop policy if exists "admins read feedback" on public.feedback;
+create policy "admins read feedback" on public.feedback for select to authenticated using (public.is_admin());
+drop policy if exists "admins delete feedback" on public.feedback;
+create policy "admins delete feedback" on public.feedback for delete to authenticated using (public.is_admin());
+grant select, delete on public.feedback to authenticated;
+
+create or replace function public.leave_feedback(p_code text, p_nickname text, p_stage text, p_rating int,
+                                                 p_tags jsonb default '[]'::jsonb, p_comment text default null) returns boolean
+language plpgsql security definer set search_path = public as $$
+declare o public.orders; t public.telegram; v_tags jsonb; v_comment text; v_old public.feedback; v_face text;
+begin
+  if p_stage not in ('ordering', 'pickup') or p_rating not between 1 and 5 then raise exception 'BAD_INPUT'; end if;
+  select * into o from public.orders where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname) limit 1;
+  if not found then raise exception 'NOT_FOUND'; end if;
+  if p_stage = 'pickup' and o.status <> 'done' then raise exception 'BAD_INPUT'; end if;
+  -- keep it small and clean: at most 6 short tags, a 300-character comment
+  select coalesce(jsonb_agg(left(x, 30)), '[]'::jsonb) into v_tags
+    from (select x from jsonb_array_elements_text(case when jsonb_typeof(p_tags) = 'array' then p_tags else '[]'::jsonb end) x limit 6) z;
+  v_comment := nullif(left(trim(coalesce(p_comment, '')), 300), '');
+  select * into v_old from public.feedback where order_code = o.code and stage = p_stage;
+  insert into public.feedback (order_code, stage, rating, tags, comment) values (o.code, p_stage, p_rating, v_tags, v_comment)
+  on conflict (order_code, stage) do update set rating = excluded.rating, tags = excluded.tags, comment = excluded.comment, created_at = now();
+  v_face := (array['1/5 (hard)', '2/5', '3/5', '4/5', '5/5 (great)'])[p_rating];
+  -- one Latest line per answer: when they first tap, and again only if they add words or chips
+  if v_old.id is null or (v_comment is not null and v_comment is distinct from v_old.comment) then
+    insert into public.activity (actor, kind, code, text) values ('customer', 'feedback', o.code,
+      case when p_stage = 'ordering' then 'Ordering' else 'Their order' end || ' rated ' || v_face || ' by ' || o.nickname
+      || case when jsonb_array_length(v_tags) > 0 then ': ' || (select string_agg(x, ', ') from jsonb_array_elements_text(v_tags) x) else '' end
+      || coalesce(' "' || left(v_comment, 120) || '"', ''));
+  end if;
+  -- a low rating is worth a quick follow-up: tell the sellers on Telegram (once it has the details, or on the first tap)
+  if p_rating <= 2 and (v_old.id is null or v_comment is distinct from v_old.comment) then
+    select * into t from public.telegram where id = 1;
+    if t is not null and t.enabled and coalesce((t.notify->>'feedback')::boolean, true) then
+      perform public.tg_send('<b>Low rating: ' || o.code || '</b>' || E'\n' || public.tg_esc(o.nickname) || ', ' || public.tg_esc(o.grade_section)
+        || E'\n' || case when p_stage = 'ordering' then 'Ordering' else 'Their order' end || ': ' || v_face
+        || case when jsonb_array_length(v_tags) > 0 then E'\n' || public.tg_esc((select string_agg(x, ', ') from jsonb_array_elements_text(v_tags) x)) else '' end
+        || coalesce(E'\n' || '"' || public.tg_esc(v_comment) || '"', ''));
+    end if;
+  end if;
+  return true;
+end $$;
+grant execute on function public.leave_feedback(text, text, text, int, jsonb, text) to anon, authenticated;
