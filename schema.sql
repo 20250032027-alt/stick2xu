@@ -155,7 +155,9 @@ alter table public.promo_codes enable row level security;
 -- The row level security policies below still decide who can see which rows:
 -- customers can't read orders at all, and only emails in public.admins can.
 grant usage on schema public to anon, authenticated;
-grant select, update, delete on public.orders to authenticated;
+-- insert is for admins only (the policy below checks is_admin): "Log a sale" adds in-person sales this way.
+-- Customers still can't add orders directly; they go through place_order.
+grant select, insert, update, delete on public.orders to authenticated;
 grant select on public.shop_settings to anon, authenticated;
 grant update on public.shop_settings to authenticated;
 grant select, insert, update, delete on public.promo_codes to authenticated;
@@ -493,7 +495,9 @@ begin
   values (v_code, trim(p_nickname), trim(p_grade_section), trim(p_pickup), p_pickup_date, trim(p_pickup_time), p_payment,
           nullif(trim(left(coalesce(p_gcash_ref, ''), 40)), ''),
           p_layout, p_folder, v_count, v_total,
-          nullif(left(coalesce(p_src, ''), 40), ''), v_subtotal, v_discount, v_pcode, v_labels, v_rush,
+          -- poster tag: not for orders an admin places, or add-ons (those belong to the first order)
+          case when v_admin or v_parent.id is not null then null else nullif(left(coalesce(p_src, ''), 40), '') end,
+          v_subtotal, v_discount, v_pcode, v_labels, v_rush,
           -- pickups inside the confirm window (like rush prints) count as confirmed right away
           -- (an admin ordering for someone counts as confirmed: they're arranging it with the person directly)
           v_admin or coalesce(v_parent.confirmed, false) or p_pickup_date - coalesce((s.config->>'confirm_days_before')::int, 1) <= v_today,
@@ -1134,3 +1138,71 @@ begin
   return true;
 end $$;
 grant execute on function public.leave_feedback(text, text, text, int, jsonb, text) to anon, authenticated;
+
+
+-- =====================================================================
+-- Poster scans: how many people opened the site from each poster's QR code
+-- (the site counts one scan per poster per phone per day; admins' own scans aren't counted)
+-- =====================================================================
+create table if not exists public.poster_scans (
+  id bigserial primary key,
+  src text not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists poster_scans_src_time on public.poster_scans (src, created_at);
+alter table public.poster_scans enable row level security;
+drop policy if exists "admins read scans" on public.poster_scans;
+create policy "admins read scans" on public.poster_scans for select to authenticated using (public.is_admin());
+drop policy if exists "admins delete scans" on public.poster_scans;
+create policy "admins delete scans" on public.poster_scans for delete to authenticated using (public.is_admin());
+grant select, delete on public.poster_scans to authenticated;
+
+create or replace function public.log_scan(p_src text) returns boolean
+language plpgsql security definer set search_path = public as $$
+declare v_src text := left(regexp_replace(lower(coalesce(p_src, '')), '[^a-z0-9-]', '', 'g'), 40);
+begin
+  if v_src = '' or public.is_admin() then return false; end if;
+  -- spam guard: at most 300 scans a day per poster, 2,000 a day in total
+  if (select count(*) from public.poster_scans where src = v_src and created_at > now() - interval '1 day') >= 300
+     or (select count(*) from public.poster_scans where created_at > now() - interval '1 day') >= 2000 then return false; end if;
+  insert into public.poster_scans (src) values (v_src);
+  return true;
+end $$;
+grant execute on function public.log_scan(text) to anon, authenticated;
+
+create or replace function public.poster_scan_counts() returns table (src text, scans bigint, last_at timestamptz)
+language plpgsql security definer set search_path = public as $$
+begin
+  if not public.is_admin() then raise exception 'NOT_ADMIN'; end if;
+  return query select p.src, count(*), max(p.created_at) from public.poster_scans p group by p.src order by count(*) desc;
+end $$;
+revoke all on function public.poster_scan_counts() from public, anon;
+grant execute on function public.poster_scan_counts() to authenticated;
+
+-- =====================================================================
+-- Ready-made designs (templates): a link like stick2it.me/?t=fortis opens the designer
+-- with the picture already in, so people just pick how many and check out.
+-- The picture is stored here as an image data URL (the site keeps it under about 2 MB).
+-- =====================================================================
+create table if not exists public.templates (
+  slug text primary key check (slug ~ '^[a-z0-9-]{1,40}$'),
+  name text not null check (char_length(name) between 1 and 60),
+  type text not null check (type in ('pins', 'keychains', 'posters')),
+  size text,
+  image text not null check (image like 'data:image/%' and char_length(image) < 3000000),
+  enabled boolean not null default true,
+  created_at timestamptz not null default now()
+);
+alter table public.templates enable row level security;
+drop policy if exists "anyone reads switched-on templates" on public.templates;
+create policy "anyone reads switched-on templates" on public.templates for select to anon using (enabled);
+drop policy if exists "signed-in read templates" on public.templates;
+create policy "signed-in read templates" on public.templates for select to authenticated using (enabled or public.is_admin());
+drop policy if exists "admins add templates" on public.templates;
+create policy "admins add templates" on public.templates for insert to authenticated with check (public.is_admin());
+drop policy if exists "admins change templates" on public.templates;
+create policy "admins change templates" on public.templates for update to authenticated using (public.is_admin()) with check (public.is_admin());
+drop policy if exists "admins delete templates" on public.templates;
+create policy "admins delete templates" on public.templates for delete to authenticated using (public.is_admin());
+grant select on public.templates to anon, authenticated;
+grant insert, update, delete on public.templates to authenticated;
