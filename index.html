@@ -45,7 +45,9 @@
   "description": "Custom stickers, pins, keychains, posters, and prints from your own pictures, for XU uptown students in Cagayan de Oro. Order online, pick up at school. Run by students.",
   "slogan": "By students, for students.",
   "sameAs": [
-   "https://www.facebook.com/profile.php?id=61594155363888"
+   "https://www.facebook.com/profile.php?id=61594155363888",
+   "https://www.instagram.com/stick2it.me",
+   "https://www.tiktok.com/@stick2it.me"
   ],
   "areaServed": {
    "@type": "City",
@@ -1327,6 +1329,11 @@ details.gtk ul{margin-top:10px}
 .cdc small{font-size:10.5px;font-weight:500;color:var(--muted)}
 
 .fblink{display:inline-flex;gap:8px;align-items:center}
+.social{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center}
+.social > .muted{font-weight:700;flex-basis:100%;text-align:center}
+.soclink{display:inline-flex;gap:5px;align-items:center;padding:7px 9px;font-size:14px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-weight:700;text-decoration:none;color:inherit}
+.soclink:hover{border-color:currentColor}
+.soclink svg{flex:none}
 
 .ocard.broken{padding:14px 16px;border-style:dashed;color:var(--muted);font-size:14px}
 .ocard.broken code{display:block;margin-top:6px;font-size:12px;color:#B4232A;white-space:pre-wrap}
@@ -1518,7 +1525,7 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
   <h2>What you can make</h2><ul><li><b>Sticker sheet (A4)</b>: ₱45 per sheet</li><li><b>Button pin (44 mm)</b>: ₱30 per pin; buy 5, get 1 free</li><li><b>Acrylic keychain</b>: ₱45 per keychain</li><li><b>Poster (A4)</b>: ₱45 per poster; big multi-sheet posters cost more</li><li><b>Prints (A4, black and white)</b>: ₱5 per page; color is ₱10 per page</li></ul>
   <h2>How it works</h2><ol><li>Design your item on the website from your own pictures.</li><li>Pick a pickup day, time, and gate, and get your order code.</li><li>Confirm by the day before, then pick it up inside campus and pay with cash or GCash.</li></ol>
   <h2>Questions</h2><h3>What is Stick2It?</h3><p>Stick2It is a student-run shop for XU uptown students (grade school, junior high, and senior high at the Pueblo de Oro campus in Cagayan de Oro). You design custom stickers, pins, keychains, posters, and prints from your own pictures on the website, and pick them up at school.</p><h3>How do I order?</h3><p>Go to stick2it.me, design your item, then pick a pickup day, time, and gate. You'll get an order code. Confirm in My order by the day before, then pick it up and pay at school.</p><h3>How much does it cost?</h3><p>Sticker sheets are ₱45, 44 mm pins are ₱30 (buy 5, get 1 free), keychains are ₱45, A4 posters are ₱45, and prints are ₱5 a page in black and white or ₱10 in color.</p><h3>Who can order?</h3><p>Students of the XU uptown campus (Pueblo de Oro): grade school, junior high, and senior high.</p><h3>Where do I pick up my order?</h3><p>Inside campus, any school day from Monday to Friday. Need it tomorrow? That's a rush pickup for a small fee. Your exact gate and time are shown on your pickup pass after you order.</p><h3>How do I pay?</h3><p>Cash when you pick up, or GCash.</p><h3>Can I print documents?</h3><p>Yes. Upload PDFs or pictures for plain-paper prints. Same-day pickup is possible if you order at least 2 hours before the pickup time, for a small rush fee.</p><h3>Is Stick2It an official school service?</h3><p>No. Stick2It is run by students and isn't an official school service.</p>
-  <p><a href="https://www.stick2it.me/#/shop">Start designing</a> · <a href="https://www.facebook.com/profile.php?id=61594155363888">Stick2It on Facebook</a></p>
+  <p><a href="https://www.stick2it.me/#/shop">Start designing</a> · <a href="https://www.facebook.com/profile.php?id=61594155363888">Facebook</a> · <a href="https://www.instagram.com/stick2it.me">Instagram</a> · <a href="https://www.tiktok.com/@stick2it.me">TikTok</a></p>
 </main></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -1623,6 +1630,8 @@ const CONFIG = {
   countdowns: [{ name: 'Christmas', date: '2026-12-25', yearly: true }, { name: 'New Year', date: '2027-01-01', yearly: true },
                { name: "Valentine's Day", date: '2027-02-14', yearly: true }, { name: 'Last day of classes', date: '', yearly: false }],
   facebookUrl: 'https://www.facebook.com/profile.php?id=61594155363888',   // the shop's Facebook page (editable in admin)
+  instagramUrl: 'https://www.instagram.com/stick2it.me',   // editable in admin
+  tiktokUrl: 'https://www.tiktok.com/@stick2it.me',        // editable in admin
   requireXu: false,         // only signed-in XU students (@my.xu.edu.ph) can order (admin switch)
   sellersAtPickup: 1,       // how many of you can be at pickup at the same time (= gates per time slot)
   maxPerSlot: 8,            // most orders for one pickup time (0 = no limit)
@@ -2018,6 +2027,8 @@ function applyShopConfig(c){
   CONFIG.countdowns = Array.isArray(c.countdowns) ? c.countdowns : D.countdowns;
   CONFIG.countdownsOn = typeof c.countdowns_on === 'boolean' ? c.countdowns_on : true;
   CONFIG.facebookUrl = /^https:\/\/(www\.|m\.)?facebook\.com\//.test(c.facebook_url || '') ? c.facebook_url : (c.facebook_url === '' ? '' : D.facebookUrl);
+  CONFIG.instagramUrl = /^https:\/\/(www\.)?instagram\.com\//.test(c.instagram_url || '') ? c.instagram_url : (c.instagram_url === '' ? '' : D.instagramUrl);
+  CONFIG.tiktokUrl = /^https:\/\/(www\.)?tiktok\.com\/@/.test(c.tiktok_url || '') ? c.tiktok_url : (c.tiktok_url === '' ? '' : D.tiktokUrl);
   CONFIG.requireXu = c.require_xu_signin === true;
   CONFIG.details = (c.details && typeof c.details === 'object') ? c.details : {};
   applyDetails();
@@ -2396,6 +2407,17 @@ async function openTemplate(){
     location.hash = designRoute(t.type);
   } catch (e) { console.warn('template', e); toast("That design didn't open. You can still make your own."); }
 }
+// "Follow us" buttons for the home page footer
+const SOCIAL_ICONS = {
+  facebook: '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#1877F2" d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg>',
+  instagram: '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="igG" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEC564"/><stop offset=".45" stop-color="#E1306C"/><stop offset="1" stop-color="#7B3FE4"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#igG)"/><circle cx="12" cy="12" r="4.3" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.3" fill="#fff"/></svg>',
+  tiktok: '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#111"/><path fill="#25F4EE" d="M10.2 10.6v-.7a5 5 0 0 0-.7 0 4.6 4.6 0 0 0-2.6 8.4 4.6 4.6 0 0 1 3.3-7.7z"/><path fill="#FE2C55" d="M14.9 4.9h-.6v8.6a2.6 2.6 0 0 1-4.6 1.7 2.6 2.6 0 0 0 3.8-2.3V4.3h2.1c.1.2.1.4.2.6zM17.9 7.5v.7a4.6 4.6 0 0 1-2.8-1 4.6 4.6 0 0 0 2.8.3z"/><path fill="#fff" d="M16.8 7.2a2.9 2.9 0 0 1-1.6-2.3h-1.5v8.6a1.9 1.9 0 0 1-3.4 1.2 1.9 1.9 0 0 1 2-3.1V9.9a4 4 0 0 0-3.6 6.8 4 4 0 0 0 6.6-3.1V9.2a5.3 5.3 0 0 0 3.1 1V8.1a3.1 3.1 0 0 1-1.6-.9z"/></svg>'
+};
+function socialHTML(){
+  const links = [['facebook', 'Facebook', CONFIG.facebookUrl], ['instagram', 'Instagram', CONFIG.instagramUrl], ['tiktok', 'TikTok', CONFIG.tiktokUrl]].filter(([, , u]) => u);
+  if (!links.length) return '';
+  return `<div class="social"><span class="muted">Follow us</span>${links.map(([k, name, u]) => `<a class="soclink" href="${esc(u)}" target="_blank" rel="noopener" aria-label="${CONFIG.shopName ? esc(CONFIG.shopName) + ' on ' : ''}${name}">${SOCIAL_ICONS[k]}<span>${name}</span></a>`).join('')}</div>`;
+}
 function forgetPoster(){ SRC = ''; safeLS.del('sk_src'); }
 async function countScan(){   // one scan per poster per phone per day; admins testing their own posters don't count
   if (!SRC_NEW || !api) return;
@@ -2674,7 +2696,7 @@ function viewHome(){
       </div>
       ${heroArt()}
     </section>
-    <footer><span>${esc(CONFIG.shopName)} is run by students. It isn't an official school service.</span>${CONFIG.facebookUrl ? `<a class="fblink" href="${esc(CONFIG.facebookUrl)}" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#1877F2" d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg>Follow us on Facebook</a>` : ''}</footer>
+    <footer><span>${esc(CONFIG.shopName)} is run by students. It isn't an official school service.</span>${socialHTML()}</footer>
   </main>`;
 }
 
@@ -4657,7 +4679,7 @@ function drawSettings(){
   drawNoticeForm(); loadTelegram();
   S.admin.cfg = {
     pickup_weekdays: CONFIG.pickupWeekdays.slice(), pickup_times: clone(CONFIG.pickupTimes), pickup_places: CONFIG.pickupOptions.slice(),
-    countdowns: clone(CONFIG.countdowns || []), countdowns_on: CONFIG.countdownsOn !== false, details: { ...(CONFIG.details || {}) }, facebook_url: CONFIG.facebookUrl, require_xu_signin: CONFIG.requireXu, product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
+    countdowns: clone(CONFIG.countdowns || []), countdowns_on: CONFIG.countdownsOn !== false, details: { ...(CONFIG.details || {}) }, facebook_url: CONFIG.facebookUrl, instagram_url: CONFIG.instagramUrl, tiktok_url: CONFIG.tiktokUrl, require_xu_signin: CONFIG.requireXu, product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
     print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, feedback_on: CONFIG.feedbackOn, rush_on: CONFIG.rushOn, rush_make: CONFIG.rushMake, rush_cutoff_hour: CONFIG.rushCutoff, max_rush_per_day: CONFIG.maxRushPerDay, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
@@ -4805,9 +4827,11 @@ function drawShopForm(){
       <label class="switch" style="margin-bottom:8px"><input type="checkbox" data-cfgbool="require_xu_signin" ${c.require_xu_signin ? 'checked' : ''}><span><b>Require XU sign-in to order</b></span></label>
       <p class="help">When on, customers must sign in with their school Google account (<b>@my.xu.edu.ph</b>) before ordering. The database checks it too, so it can't be faked. When off, signing in is optional (it still shows all their orders in one place). Test it with your own XU account before turning it on.</p></div>
 
-    <div class="cfgsec"><div class="sub">Facebook page</div>
-      <input class="inp" id="cfgFb" inputmode="url" value="${esc(c.facebook_url || '')}" placeholder="https://www.facebook.com/...">
-      <p class="help" style="margin-top:6px">Shown as "Follow us on Facebook" at the bottom of the home page. Leave empty to hide it.</p></div>
+    <div class="cfgsec"><div class="sub">Social media</div>
+      <label class="dnum" style="display:block"><span>Facebook page</span><input class="inp" id="cfgFb" inputmode="url" value="${esc(c.facebook_url || '')}" placeholder="https://www.facebook.com/..."></label>
+      <label class="dnum" style="display:block;margin-top:10px"><span>Instagram</span><input class="inp" id="cfgIg" inputmode="url" value="${esc(c.instagram_url || '')}" placeholder="https://www.instagram.com/..."></label>
+      <label class="dnum" style="display:block;margin-top:10px"><span>TikTok</span><input class="inp" id="cfgTt" inputmode="url" value="${esc(c.tiktok_url || '')}" placeholder="https://www.tiktok.com/@..."></label>
+      <p class="help" style="margin-top:6px">Shown as "Follow us" buttons at the bottom of the home page. Leave one empty to hide it.</p></div>
 
     <div class="cfgsec"><div class="sub">Website address</div>
       ${/^https?:$/.test(location.protocol) && c.site_url && !c.site_url.startsWith(location.origin) ? `<div class="note warn" style="margin:0 0 8px">${ic('warn', 18)}<span>You're on <b>${esc(location.origin)}</b>, but the saved address is <b>${esc(c.site_url)}</b>. New QR codes would point to the old one.
@@ -4866,6 +4890,8 @@ function drawShopForm(){
     else if (d.cd !== undefined) { const x = c.countdowns[+d.cd]; x[d.f] = ['yearly', 'show'].includes(d.f) ? t.checked : t.value; if (d.f === 'show') t.closest('.cdrow').classList.toggle('off', !t.checked); }
     else if (t.id === 'cfgSite') c.site_url = t.value.trim();
     else if (t.id === 'cfgFb') c.facebook_url = t.value.trim();
+    else if (t.id === 'cfgIg') c.instagram_url = t.value.trim();
+    else if (t.id === 'cfgTt') c.tiktok_url = t.value.trim().replace(/\?.*$/, '');   // drop TikTok's share-tracking bits
     else if (d.detail) { c.details = c.details || {}; c.details[d.detail] = t.checked; CONFIG.details = { ...(CONFIG.details || {}), [d.detail]: t.checked }; applyDetails(); }
     else if (t.id === 'cfgGrades') c.grades = t.value.split(',').map(x => x.trim()).filter(Boolean);
   };
@@ -4878,6 +4904,8 @@ function drawShopForm(){
     if (!c.grades.length) return toast('Add at least one grade.');
     if (c.site_url && !/^https?:\/\/\S+$/.test(c.site_url)) return toast('The website address should start with https://');
     if (c.facebook_url && !/^https:\/\/(www\.|m\.)?facebook\.com\//.test(c.facebook_url)) return toast('The Facebook link should start with https://www.facebook.com/');
+    if (c.instagram_url && !/^https:\/\/(www\.)?instagram\.com\//.test(c.instagram_url)) return toast('The Instagram link should start with https://www.instagram.com/');
+    if (c.tiktok_url && !/^https:\/\/(www\.)?tiktok\.com\/@/.test(c.tiktok_url)) return toast('The TikTok link should look like https://www.tiktok.com/@yourname');
     if (c.gcash.enabled && (!c.gcash.name.trim() || !c.gcash.number.trim())) return toast('Fill in the GCash name and number, or turn GCash off.');
     const { max_noshows, ...config } = c;
     try {
