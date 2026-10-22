@@ -199,7 +199,7 @@ create table if not exists public.friends (
 
 -- =====================================================================
 -- Pickup capacity: one gate per time slot for each person on pickup duty, and limits per slot and per day.
--- Settings (admin → Shop details → Pickup rules): sellers_at_pickup, max_per_slot, max_per_day (0 = no limit).
+-- Settings (admin → Shop details → Pickup rules): sellers_at_pickup, max_per_slot (per spot at one time), max_per_day (0 = no limit).
 -- =====================================================================
 create or replace function public.check_pickup(p_date date, p_time text, p_pickup text, p_skip_code text default null) returns void
 language plpgsql security definer set search_path = public as $$
@@ -209,11 +209,12 @@ begin
   perform pg_advisory_xact_lock(hashtext('stick2xu-pickup-' || p_date::text));
   select * into s from public.shop_settings where id = 1;
   v_sellers := coalesce((s.config->>'sellers_at_pickup')::int, 1);
-  v_slot := coalesce((s.config->>'max_per_slot')::int, 8);
+  v_slot := coalesce((s.config->>'max_per_slot')::int, 5);
   v_day := coalesce((s.config->>'max_per_day')::int, 15);
   if v_day > 0 and (select count(*) from public.orders where pickup_date = p_date and status in ('pending','approved','printing','ready')
                     and code is distinct from p_skip_code) >= v_day then raise exception 'DAY_FULL'; end if;
-  if v_slot > 0 and (select count(*) from public.orders where pickup_date = p_date and pickup_time = trim(p_time)
+  -- the limit is per spot at each time: Gate 4 at lunch can have v_slot orders, Gate 1 at lunch another v_slot
+  if v_slot > 0 and (select count(*) from public.orders where pickup_date = p_date and pickup_time = trim(p_time) and pickup = trim(p_pickup)
                      and status in ('pending','approved','printing','ready') and code is distinct from p_skip_code) >= v_slot then raise exception 'SLOT_FULL'; end if;
   if v_sellers > 0 and not exists (select 1 from public.orders where pickup_date = p_date and pickup_time = trim(p_time) and pickup = trim(p_pickup)
                                    and status in ('pending','approved','printing','ready') and code is distinct from p_skip_code) then
@@ -1206,3 +1207,40 @@ drop policy if exists "admins delete templates" on public.templates;
 create policy "admins delete templates" on public.templates for delete to authenticated using (public.is_admin());
 grant select on public.templates to anon, authenticated;
 grant insert, update, delete on public.templates to authenticated;
+
+-- =====================================================================
+-- Log book: sales and expenses the admins type in themselves.
+-- Website orders are NOT added automatically; an admin taps "Add to log book" on a done order.
+-- Each entry is its own row, so two admins logging at the same moment never overwrite each other.
+-- =====================================================================
+create table if not exists public.logbook (
+  id uuid primary key default gen_random_uuid(),
+  kind text not null check (kind in ('sale', 'expense')),
+  day date not null default current_date,
+  item text not null check (char_length(trim(item)) between 1 and 120),
+  qty integer not null default 1 check (qty between 1 and 10000),
+  amount numeric(10,2) not null check (amount >= 0 and amount <= 1000000),
+  method text check (method in ('cash', 'gcash', 'other')),
+  who text check (char_length(who) <= 80),
+  note text check (char_length(note) <= 300),
+  order_code text,                                   -- set when it came from a website order
+  created_by text default (auth.jwt() ->> 'email'),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create unique index if not exists logbook_one_per_order on public.logbook (order_code) where order_code is not null;   -- an order can't be logged twice
+create index if not exists logbook_day on public.logbook (day desc);
+alter table public.logbook enable row level security;
+drop policy if exists "admins use the log book" on public.logbook;
+create policy "admins use the log book" on public.logbook for all to authenticated using (public.is_admin()) with check (public.is_admin());
+grant select, insert, update, delete on public.logbook to authenticated;
+
+-- Fresh start (Oct 2026): the old "Log a sale" entries were saved as orders marked walk-in.
+-- They're cleared so the Done list only has real website orders. New sales go in the log book instead.
+delete from public.orders where layout ->> 'walkin' = 'true';
+
+
+-- Oct 2026: the pickup limit became "per spot at one time", set to 5. Done once, so a later change in Settings sticks.
+update public.shop_settings
+   set config = coalesce(config, '{}'::jsonb) || '{"max_per_slot": 5, "slot_rule": "per_spot"}'::jsonb
+ where id = 1 and coalesce(config->>'slot_rule', '') <> 'per_spot';

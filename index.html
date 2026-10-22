@@ -1183,8 +1183,6 @@ main.wrap.wide{max-width:1400px}
 .uline select.inp{min-width:0;text-overflow:ellipsis}
 
 /* item costs folded, with profit chips; compact supply rows */
-.costfold summary{flex-wrap:wrap;justify-content:flex-start}
-.profchips{display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:0}
 .pchip{font-size:12.5px;padding:3px 9px;border-radius:999px;background:var(--ok-soft);color:#0F5F34;font-weight:600;white-space:nowrap}
 .pchip b{font-family:var(--display)}
 .pchip.neg{background:#FDECEC;color:#B4232A}
@@ -1457,60 +1455,120 @@ a.pilllink.needs::after{content:"";position:absolute;top:-2px;right:-2px;width:1
 
 /* phone fixes (Oct 21): nothing pokes out of its card, the page never scrolls sideways */
 #admBody{overflow-x:clip}
-#admBody .panel,.bizrow > *{min-width:0}
+#admBody .panel{min-width:0}
 input[type=date].inp{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;max-width:100%;box-sizing:border-box;text-align:left}
 input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .dnum{min-width:0}
 .dnum .inp,.dnum .pricein{width:100%;min-width:0;box-sizing:border-box}
 .sheetbox .pgrid2{margin-bottom:14px}
 @media(max-width:600px){.pgrid2{grid-template-columns:repeat(2,minmax(0,1fr))}}
-/* "What each item costs": title and arrow on one line, profit chips underneath (Safari put them side by side) */
-.costfold summary{flex-wrap:wrap}
-.costfold summary h3{flex:1 1 auto;min-width:0;order:0}
-.costfold summary .foldhint{order:1;flex:none;margin-left:0}
-.costfold summary .profchips{order:2;flex:1 1 100%;min-width:0}
-.pchip{white-space:normal;max-width:100%}
-/* Supplies on phones: each supply is its own little card instead of a wide table */
-@media(max-width:600px){
-  table.biz.sup,table.biz.sup tbody{display:block;width:100%}
-  table.biz.sup thead{display:none}
-  table.biz.sup tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 10px;padding:12px 0;border-bottom:1px solid var(--line)}
-  table.biz.sup td:nth-child(3){grid-column:span 2}
-  table.biz.sup td{display:block;padding:0!important;border:0!important;min-width:0}
-  table.biz.sup td[data-l]::before{content:attr(data-l);display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:3px}
-  table.biz.sup td:first-child{grid-column:1/-1}
-  table.biz.sup .inp,table.biz.sup td:first-child .inp,table.biz.sup .pricein .inp{min-width:0!important;width:100%;box-sizing:border-box}
-  table.biz.sup .unitin{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}
-  table.biz.sup td.acts{grid-column:1/-1;display:flex;gap:6px;justify-content:flex-end;white-space:normal}
-  table.biz.sup small{max-width:none;white-space:normal}
-  table.biz.sup tr.low{background:#FFF8E6;border-radius:12px;padding:12px 10px}
-  table.biz.sup tr.low td{background:none}
-  /* purchases: what on top, then date, amount and delete on one line */
-  table.biz.buys tr{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 36px!important}
-  table.biz.buys td:nth-child(2){grid-column:1/-1;order:-1}
-  .buyadd{grid-template-columns:minmax(0,1fr) auto!important}
-  .buyadd > .inp{grid-column:1/-1}
-  .equip{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 40px!important}
-  .equip > input:first-child{grid-column:1/-1}
-  .equip .btn{width:36px;height:36px;min-height:36px!important;padding:0!important;justify-content:center;border-radius:50%;box-shadow:none}
-  .bizfold .tbl th,.bizfold .tbl td{padding:8px 6px;font-size:14px}
-}
-/* quick log card: sale and expense side by side */
-.quicklog{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.quicklog > span:not(.qbtns){flex:1 1 220px;min-width:0}
-.quicklog .qbtns{display:flex;gap:8px;flex-wrap:wrap}
-@media(max-width:600px){.quicklog .qbtns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));flex:1 1 100%}.quicklog .qbtns .btn{justify-content:center;padding-left:8px;padding-right:8px;gap:6px;min-width:0;white-space:nowrap}}
-.buymeta{display:block;font-size:12px;color:var(--muted);margin-top:3px}
-.exnote{font-size:13px;color:var(--muted);margin:-6px 0 12px}
-#exAddF[hidden],#exWhatF[hidden]{display:none}
+/* log book */
+.lbtop{display:flex;flex-direction:column;gap:14px;margin-bottom:18px}
+.lbmonth{display:flex;align-items:center;justify-content:center;gap:14px}
+.lbmonth b{font-family:var(--fd,inherit);font-size:20px;min-width:160px;text-align:center}
+.lbnav{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--ink)}
+.lbnav:disabled{opacity:.35;cursor:default}
+.lbnav:first-child svg{transform:none}
+.lbhero{background:#283971;color:#fff;border-radius:24px;padding:20px 22px;box-shadow:6px 6px 0 #1C2A57;display:flex;flex-direction:column;gap:4px}
+.lbhero > .small{opacity:.85}
+.lbnet{font-size:44px;line-height:1.05;letter-spacing:-1px}
+.lbflow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.lbflow > span{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.1);border-radius:16px;padding:12px}
+.lbflow i{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center}
+.lbin i{background:#3DBB6E;color:#fff}.lbin i svg{transform:rotate(-90deg)}
+.lbout i{background:#F05A5C;color:#fff}.lbout i svg{transform:rotate(90deg)}
+.lbflow span span{display:flex;flex-direction:column;min-width:0}
+.lbflow small{font-size:12.5px;opacity:.8}
+.lbflow b{font-size:22px;line-height:1.2}
+.lbsplit{margin-top:12px;height:8px;border-radius:99px;background:#7FA3F2;overflow:hidden}
+.lbsplit span{display:block;height:100%;width:var(--w);background:#F2BC2E}
+.lbsplitl{display:flex;justify-content:space-between;margin-top:6px;opacity:.9}
+.lbsplitl span:first-child::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:#F2BC2E;margin-right:6px}
+.lbsplitl span:last-child::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:#7FA3F2;margin-right:6px}
+.lbacts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(max-width:374px){.lbbig{font-size:14.5px;gap:4px;padding:0 6px}.lbbig svg{width:18px;height:18px}}
+.lbbig{display:flex;align-items:center;justify-content:center;gap:6px;min-height:58px;padding:0 10px;border-radius:18px;font:inherit;font-weight:800;font-size:16px;white-space:nowrap;cursor:pointer;border:2px solid #283971;box-shadow:4px 4px 0 #283971}
+.lbbig.in{background:#283971;color:#fff}.lbbig.in svg{color:#F2BC2E}
+.lbbig.out{background:#fff;color:#283971}.lbbig.out svg{color:#D7151B}
+.lbbig:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #283971}
+.lbbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.lbbar .chips{margin:0}
+@media(max-width:420px){.lbbar .btn{margin-left:auto}}
+.lbday{display:flex;justify-content:space-between;align-items:baseline;padding:16px 4px 6px;font-weight:800;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.lbday .num{color:#1E8E4A;text-transform:none;letter-spacing:0}.lbday .neg,.lball .neg{color:#D7151B}
+.lbrow{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:8px;cursor:pointer}
+.lbrow:hover{border-color:#283971}
+.lbic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-style:normal}
+.lbrow.sale .lbic{background:#E3F6EA;color:#1E8E4A}.lbrow.expense .lbic{background:#FDE7E7;color:#D7151B}
+.lbtxt{display:flex;flex-direction:column;min-width:0}
+.lbtxt b{font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lbtxt small{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lbamt{font-size:17px}.lbrow.sale .lbamt{color:#1E8E4A}.lbrow.expense .lbamt{color:#D7151B}
+.lball{text-align:center;margin:18px 0 6px;line-height:1.9}
+.linkbtn{background:none;border:0;padding:0;font:inherit;font-weight:700;color:#283971;text-decoration:underline;text-underline-offset:3px;cursor:pointer;display:inline-flex;gap:5px;align-items:center}
+.lbtrend{display:inline-flex;align-self:flex-start;gap:5px;align-items:center;margin-top:6px;padding:4px 11px;border-radius:999px;font-size:13.5px;font-weight:700}
+.lbtrend.up{background:rgba(61,187,110,.22);color:#B9F3CF}.lbtrend.up svg{transform:rotate(-90deg)}
+.lbtrend.down{background:rgba(240,90,92,.22);color:#FFC9CA}.lbtrend.down svg{transform:rotate(90deg)}
+.lbchart{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2px;height:56px;margin-top:14px;align-items:stretch}
+.lbchart span{display:grid;grid-template-rows:1fr 1px 0.55fr;border-radius:3px;position:relative}
+.lbchart span::after{content:"";grid-row:2;background:rgba(255,255,255,.18)}
+.lbchart .u{grid-row:1;align-self:end;background:#F2BC2E;border-radius:3px 3px 0 0;min-height:0}
+.lbchart .d{grid-row:3;align-self:start;background:#F05A5C;border-radius:0 0 3px 3px;max-height:100%}
+.lbchart .today .u{background:#fff}
+.lbchart .future{opacity:.35}
+.lbsheet{display:flex;flex-direction:column;gap:10px}
+.lbsheet h3{margin-bottom:4px}
+.lbsheet .inp{display:block;width:100%;box-sizing:border-box}.lbsheet .stepper .inp{width:100%}
+.lbsheet .lbl{display:block;font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:4px 0 6px}
+.lbquick{display:flex;flex-wrap:wrap;gap:8px}
+.lbquick button{display:inline-flex;gap:6px;align-items:center;font:inherit;font-weight:700;font-size:15px;padding:9px 13px;border-radius:14px;border:1.5px solid var(--line);background:#fff;color:#283971;cursor:pointer}
+.lbquick button small{font-weight:700;color:var(--muted);font-size:13px}
+.lbquick button.on{background:#283971;border-color:#283971;color:#fff}.lbquick button.on small{color:#F2BC2E}
+.lbquick button:active{transform:scale(.97)}
+.lbrow2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.lbrow2.one{grid-template-columns:1fr}
+.stepper{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;border:2px solid #283971;border-radius:14px;overflow:hidden;background:#fff}
+.stepper button{border:0;background:#F1F3F8;color:#283971;display:grid;place-items:center;cursor:pointer}
+.stepper .inp{border:0;border-radius:0;text-align:center;min-width:0;padding-left:0;padding-right:0;box-shadow:none}
+.pricein.big .inp{font-size:22px;font-weight:800}
+.lbseg{display:grid;grid-template-columns:repeat(3,1fr);border:2px solid #283971;border-radius:14px;overflow:hidden}
+.lbseg button{font:inherit;font-weight:700;padding:11px 0;border:0;background:#fff;color:#283971;cursor:pointer}
+.lbseg button + button{border-left:1.5px solid var(--line)}
+.lbseg button.on{background:#283971;color:#fff}
+.lbmore summary{list-style:none;cursor:pointer;font-weight:700;color:#283971;display:inline-flex;gap:6px;align-items:center;padding:4px 0}
+.lbmore summary::-webkit-details-marker{display:none}
+.lbmore[open] summary{display:none}
+.lbmore label{display:block;margin-top:6px}
+.lbsave{display:flex;gap:10px;align-items:center;margin-top:8px}.lbsave .btn.dark{flex:1;justify-content:center}
+.donebar{display:block;height:6px;border-radius:99px;background:#E1E6F2;overflow:hidden;margin-top:8px;max-width:260px}
+.donebar i{display:block;height:100%;background:#1E8E4A;border-radius:99px}
+.donesum{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 16px;margin-bottom:14px;border-radius:18px;background:#F4F7FF;border:1.5px solid var(--line)}
+.donesum > div{display:flex;flex-direction:column}
+.donesum b.num{font-size:26px;line-height:1.1}
+.oprice{font-size:21px;color:#1E8E4A;white-space:nowrap;margin-left:auto}
 .tplnote{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;margin-bottom:14px;border-radius:14px;background:#FFF6DA;border:1.5px solid #F2BC2E;font-size:15px;line-height:1.4}
 .tplnote svg{flex:none;color:#C9951A;margin-top:2px}
-.tplrow{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
-.tplrow img{width:64px;height:64px;object-fit:contain;border-radius:12px;background:#F1F3F8;border:1px solid var(--line)}
+.tplhead{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}
+.tplhead > div{flex:1 1 260px}
+.tplrow{display:grid;grid-template-columns:68px minmax(0,1fr);gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.tplrow.off{opacity:.6}
+.tplthumb{width:68px;height:68px;border-radius:16px;background:#F1F3F8;border:1px solid var(--line);display:grid;place-items:center;overflow:hidden}
+.tplthumb.round{border-radius:50%;border:4px solid #fff;box-shadow:0 0 0 1px var(--line),3px 4px 0 #283971}
+.tplthumb img{width:100%;height:100%;object-fit:cover}
+.tplinfo{display:flex;flex-direction:column;min-width:0;gap:2px}
+.tplinfo b{font-size:17px}
 .tplrow .acts{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
-.tplrow .url{font-size:13px;word-break:break-all}
-.quicklog .qbtns .btn svg{flex:none}
-@media(max-width:374px){.quicklog .qbtns .btn{font-size:13.5px}}
+.tplempty{display:flex;gap:14px;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;margin-top:8px;padding:18px;border:2px dashed #283971;border-radius:18px;background:#F7F9FF;cursor:pointer}
+.tplempty > svg{flex:none;color:#283971}.tplempty span{display:flex;flex-direction:column}.tplempty small{color:var(--muted);font-size:14px}
+.tplstep{display:flex;gap:10px;align-items:center;margin:16px 0 8px;font-size:16px}
+.tplstep i{font-style:normal;width:28px;height:28px;border-radius:50%;background:#F2BC2E;color:#283971;display:grid;place-items:center;font-weight:800;font-size:15px}
+.tplpick{display:flex;gap:14px;align-items:center;cursor:pointer}
+.tplpv{flex:none;width:110px;height:110px;border-radius:18px;border:2px dashed #283971;background:#F7F9FF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#283971;overflow:hidden}
+.tplpick.has .tplpv{border-style:solid}
+.tplpv small{font-weight:700;font-size:13px}
+.tplpv img{width:100%;height:100%;object-fit:cover}.tplpv img.round{border-radius:50%}
+.tplchips{flex-wrap:wrap;overflow:visible}
+.tplsave{display:flex;flex-direction:column;gap:10px;margin-top:20px}.tplsave > *{width:100%;justify-content:center}
+.tplsticker{display:block;width:100%;max-width:340px;margin:0 auto;border-radius:22px;box-shadow:0 8px 24px rgba(20,30,70,.25)}
 </style>
 <!-- Vercel Web Analytics: counts visits and pages, without cookies -->
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
@@ -1634,7 +1692,7 @@ const CONFIG = {
   tiktokUrl: 'https://www.tiktok.com/@stick2it.me',        // editable in admin
   requireXu: false,         // only signed-in XU students (@my.xu.edu.ph) can order (admin switch)
   sellersAtPickup: 1,       // how many of you can be at pickup at the same time (= gates per time slot)
-  maxPerSlot: 8,            // most orders for one pickup time (0 = no limit)
+  maxPerSlot: 5,            // most orders for one pickup spot at one time, like Gate 4 at lunch (0 = no limit)
   maxPerDay: 15,            // most orders for one pickup day (0 = no limit)
   confirmDaysBefore: 1,     // customers tap "I'll be there" by this many days before pickup; only confirmed orders get printed
   maxReschedules: 2,        // how many times a customer can move their own pickup day
@@ -1867,7 +1925,7 @@ function friendlyError(e){
   if (m.includes('BAD_INPUT')) return 'Some details are missing. Fill in every box and try again.';
   if (m.includes('NO_PGNET')) return 'Turn on pg_net in Supabase first: Database → Extensions → search "pg_net" → enable. Then try again.';
   if (m.includes('GATE_TAKEN')) return "At that time we'll be at a different gate. Pick the other gate, or another time.";
-  if (m.includes('SLOT_FULL')) return 'That pickup time just filled up. Pick another time or day.';
+  if (m.includes('SLOT_FULL')) return 'That spot just filled up for this time. Pick another spot, time or day.';
   if (m.includes('DAY_FULL')) return 'That pickup day just filled up. Pick another day.';
   if (m.includes('XU_ONLY')) return 'Please sign in with your XU school account (@my.xu.edu.ph) to order.';
   if (m.includes('OWN_CODE')) return "That's your own friend code. Share it with friends instead!";
@@ -2274,9 +2332,6 @@ function SupaBackend(){
   }
   return {
     async settings(){ const { data, error } = await sb.from('shop_settings').select('*').eq('id', 1).single(); if (error) throw error; return data; },
-    async getBusiness(){ const { data, error } = await sb.from('business').select('*').eq('id', 1).maybeSingle(); if (error) throw error; return (data && data.data) || {}; },
-    async saveBusiness(d){ const { error } = await sb.from('business').upsert({ id: 1, data: d, updated_at: new Date().toISOString() }); if (error) throw error; },
-    async stockAlert(text){ try { await rpc('business_alert', { p_text: text }); } catch (e) { console.warn('stock alert', e); } },
     async myFriendCode(code, nick){ try { return await rpc('my_friend_code', { p_code: code, p_nickname: nick }); } catch { return null; } },
     async telegramMorning(){ return await rpc('telegram_morning_now', {}); },
     async getTelegram(){ const { data, error } = await sb.from('telegram').select('*').eq('id', 1).maybeSingle(); if (error) throw error; return data || { enabled: false, notify: {} }; },
@@ -2312,6 +2367,11 @@ function SupaBackend(){
     async delTemplate(slug){ const { error } = await sb.from('templates').delete().eq('slug', slug); if (error) throw error; },
     async logScan(src){ return !!(await rpc('log_scan', { p_src: src })); },
     async scanCounts(){ return (await rpc('poster_scan_counts', {})) || []; },
+    async logbook(){ const { data, error } = await sb.from('logbook').select('*').order('day', { ascending: false }).order('created_at', { ascending: false }).limit(5000); if (error) throw error; return data || []; },
+    async logAdd(row){ const { data, error } = await sb.from('logbook').insert(row).select().single(); if (error) throw error; return data; },
+    async logAddMany(rows){ const { error } = await sb.from('logbook').insert(rows); if (error) throw error; },
+    async logUpdate(id, row){ const { error } = await sb.from('logbook').update({ ...row, updated_at: new Date().toISOString() }).eq('id', id); if (error) throw error; },
+    async logDelete(id){ const { error } = await sb.from('logbook').delete().eq('id', id); if (error) throw error; },
     async feedbackList(){ const { data, error } = await sb.from('feedback').select('*').order('created_at', { ascending: false }).limit(500); if (error) throw error; return data || []; },
     async updateMine(code, nick, section, payment, ref){ return await rpc('update_my_order', { p_code: code, p_nickname: nick, p_grade_section: section, p_payment: payment, p_gcash_ref: ref || null }); },
     async availability(from, to){ const { data, error } = await sb.rpc('pickup_availability', { p_from: from, p_to: to }); if (error) throw error; return data || []; },
@@ -2320,28 +2380,6 @@ function SupaBackend(){
     async session(){ const { data } = await sb.auth.getSession(); return !!data.session; },
     async isAdmin(){ try { return !!(await rpc('is_admin', {})); } catch { return true; } },
     async isAdminStrict(){ try { const { data } = await sb.auth.getSession(); if (!data.session) return false; return !!(await rpc('is_admin', {})); } catch { return false; } },   // for the shop pages: never true by mistake
-    async addSale(row){
-      for (let k = 0; k < 5; k++) {
-        const code = 'WLK-' + Array.from({ length: 4 }, () => 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 31)]).join('');
-        const { data, error } = await sb.from('orders').insert({ ...row, code }).select().single();
-        if (!error) return data;
-        if (!/duplicate|unique/i.test(error.message)) throw error;
-      }
-      throw new Error('Could not make a code. Try again.');
-    },   // if the check itself fails, don't lock admins out (the database still protects the data)
-    async me(){ const { data } = await sb.auth.getSession(); const u = data.session && data.session.user; return u ? { email: (u.email || '').toLowerCase(), name: (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || '', pic: (u.user_metadata && (u.user_metadata.avatar_url || u.user_metadata.picture)) || '' } : null; },
-    async xuStart(){ const { data, error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/?signin=1', skipBrowserRedirect: true, queryParams: { hd: 'my.xu.edu.ph', prompt: 'select_account' } } }); if (error) throw error; return data.url; },
-    async signOut(){ await sb.auth.signOut(); },
-    async myOrders(){ return await rpc('my_orders', {}); },
-    async latest(limit = 150){ const { data, error } = await sb.from('activity').select('*').order('id', { ascending: false }).limit(limit); if (error) throw error; return data; },
-    async login(email, pw){ const { error } = await sb.auth.signInWithPassword({ email, password: pw }); if (error) throw error; },
-    async logout(){ await sb.auth.signOut(); },
-    async listOrders(){ const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false }).limit(500); if (error) throw error; return data; },
-    async updateOrder(id, patch){ const { error } = await sb.from('orders').update(patch).eq('id', id); if (error) throw error; },
-    async deleteOrder(o){
-      try { await wipeFolder(o.folder); } catch (e) { console.warn('could not remove pictures', e); }
-      const { error } = await sb.from('orders').delete().eq('id', o.id); if (error) throw error;
-    },
     async imageUrls(paths){
       if (!paths.length) return {};
       const { data, error } = await sb.storage.from(B).createSignedUrls(paths, 3600);
@@ -3626,10 +3664,15 @@ function slotState(ds, time, gate, skip){
   const av = (S.avail || []).map(x => ({ ...x, n: skip && x.pickup_date === skip.date && x.pickup_time === skip.time && x.pickup === skip.gate ? x.n - 1 : x.n })).filter(x => x.n > 0);
   const day = av.filter(x => x.pickup_date === ds), slot = day.filter(x => x.pickup_time === time);
   const dayFull = CONFIG.maxPerDay > 0 && day.reduce((t, x) => t + x.n, 0) >= CONFIG.maxPerDay;
-  const slotFull = CONFIG.maxPerSlot > 0 && slot.reduce((t, x) => t + x.n, 0) >= CONFIG.maxPerSlot;
+  // the limit is per spot at each time (Gate 4 at lunch can have 5, Gate 1 at lunch another 5)
   const gates = [...new Set(slot.map(x => x.pickup))];
-  const gateTaken = !!gate && CONFIG.sellersAtPickup > 0 && !gates.includes(gate) && gates.length >= CONFIG.sellersAtPickup;
-  return { dayFull, slotFull, gateTaken, gates };
+  const spotFull = g => CONFIG.maxPerSlot > 0 && slot.filter(x => x.pickup === g).reduce((t, x) => t + x.n, 0) >= CONFIG.maxPerSlot;
+  const taken = g => CONFIG.sellersAtPickup > 0 && !gates.includes(g) && gates.length >= CONFIG.sellersAtPickup;
+  const gateTaken = !!gate && taken(gate);
+  // with a spot: is that spot full? Without one: is every spot at this time full or unreachable?
+  const spots = (CONFIG.pickupOptions || []).length ? CONFIG.pickupOptions : gates;
+  const slotFull = gate ? spotFull(gate) : spots.length > 0 && spots.every(g => spotFull(g) || taken(g));
+  return { dayFull, slotFull, gateTaken, gates, spotFull };
 }
 async function loadAvail(dates){
   if (!dates.length) return;
@@ -3793,8 +3836,9 @@ function viewCheckout(){
     // one gate per time slot for each person on pickup duty
     const ts = radio(form, 'ptime'), st2 = slotState(ds, ts);
     form.querySelectorAll('input[name="pickup"]').forEach(r => { const gate = r.value === '__other' ? null : r.value;
-      const taken = r.value === '__other' ? CONFIG.sellersAtPickup > 0 && st2.gates.length >= CONFIG.sellersAtPickup : slotState(ds, ts, gate).gateTaken;
-      mark(r, !taken, `At this time we'll be at ${st2.gates.join(' or ')}`); });
+      const sg = gate ? slotState(ds, ts, gate) : null, full = !!sg && sg.slotFull;
+      const taken = r.value === '__other' ? CONFIG.sellersAtPickup > 0 && st2.gates.length >= CONFIG.sellersAtPickup : sg.gateTaken;
+      mark(r, !taken && !full, full ? 'Full at this time' : `At this time we'll be at ${st2.gates.join(' or ')}`); });
     pickFirst('pickup');
     const dsx = S.addTo ? S.addTo.pickup_date : ds;   // an add-on uses its order's pickup
     $('#sumBox').innerHTML = checkoutSummary(dsx);
@@ -4208,7 +4252,7 @@ async function viewAdmin(){
       <button class="pilllink" type="button" data-act="logout">${ic('logout', 18)}Log out</button></header>
     <main id="main" class="wrap">
       <nav class="atabs" aria-label="Admin sections">
-        ${[['orders','list','Orders'],['latest','bell','Latest'],['money','chart','Business'],['posters','qr','Poster QR codes'],['settings','sliders','Settings']].map(([k, i, l]) =>
+        ${[['orders','list','Orders'],['latest','bell','Latest'],['money','doc','Log book'],['posters','qr','Poster QR codes'],['settings','sliders','Settings']].map(([k, i, l]) =>
           `<button class="tab ${S.admin.tab === k ? 'on' : ''}" type="button" data-act="admTab" data-tab="${k}" ${S.admin.tab === k ? 'aria-current="page"' : ''} style="display:inline-flex;gap:6px;align-items:center">${ic(i, 18)}${l}${k === 'latest' ? '<span class="newdot" id="latestDot" hidden></span>' : ''}</button>`).join('')}
         <button class="tab" type="button" data-act="admRefresh" style="display:inline-flex;gap:6px;align-items:center">${ic('refresh', 18)}Refresh</button>
       </nav>
@@ -4281,15 +4325,15 @@ async function drawLatest(quiet){
   try { rows = await api.latest(150); }
   catch (e) { body.innerHTML = `<div class="empty">${ic('warn', 36)}<b>Couldn't load the feed.</b><span>Run the newest schema.sql in Supabase, then refresh. (${esc(friendlyError(e))})</span></div>`; return; }
   const { key, email } = await latestSeenKey(); const seen = +(localStorage.getItem(key) || 0);
-  if (!rows.length) { body.innerHTML = `<div class="empty">${ic('bell', 36)}<b>Nothing yet.</b><span>New orders and changes by any admin show up here.</span></div>`; return; }
+  if (!rows.length && (S.admin.latestFilter || 'all') !== 'feedback') { body.innerHTML = `<div class="empty">${ic('bell', 36)}<b>Nothing yet.</b><span>New orders and changes by any admin show up here.</span></div>`; return; }
   const dayOf = r => ymd(new Date(r.at)), today = ymd(new Date()), yest = ymd(new Date(Date.now() - 864e5));
   let lastDay = '';
   const lf = S.admin.latestFilter || 'all', ORDER_KINDS = ['new', 'status', 'confirm', 'arrive', 'move', 'pay', 'note', 'feedback'];
   const shown = rows.filter(r => lf === 'all' || (lf === 'orders' ? ORDER_KINDS.includes(r.kind) : !ORDER_KINDS.includes(r.kind)));
   const newCount = rows.filter(r => r.id > seen).length;
   body.innerHTML = `<p class="hint" style="margin-bottom:12px">${ic('bell', 18)}<span>Everything that happens, newest first. ${newCount ? `<b>${newCount} new</b> since you last looked (gold dots).` : 'You’re up to date.'}</span></p>
-    <div class="chips" style="margin-bottom:6px">${[['all', 'Everything'], ['orders', 'Orders'], ['changes', 'Admin changes']].map(([k, l]) => `<button type="button" class="chip ${lf === k ? 'on' : ''}" data-act="latestFilter" data-f="${k}">${l}</button>`).join('')}</div>
-    <div class="feed">${shown.length ? '' : `<p class="muted" style="padding:14px 4px">Nothing here yet.</p>`}${shown.map(r => {
+    <div class="chips" style="margin-bottom:6px">${[['all', 'Everything'], ['orders', 'Orders'], ['feedback', 'Feedback'], ['changes', 'Admin changes']].map(([k, l]) => `<button type="button" class="chip ${lf === k ? 'on' : ''}" data-act="latestFilter" data-f="${k}">${l}</button>`).join('')}</div>
+    ${lf === 'feedback' ? '<div id="fbPanel"><p class="muted" style="padding:14px 4px">Loading…</p></div>' : ''}<div class="feed" ${lf === 'feedback' ? 'hidden' : ''}>${shown.length ? '' : `<p class="muted" style="padding:14px 4px">Nothing here yet.</p>`}${shown.map(r => {
       const d = dayOf(r); let head = '';
       if (d !== lastDay) { lastDay = d; head = `<div class="feed-day">${d === today ? 'Today' : d === yest ? 'Yesterday' : esc(fmtDate(d, { weekday: 'long', month: 'short', day: 'numeric' }))}</div>`; }
       const mins = Math.round((Date.now() - new Date(r.at)) / 60000);
@@ -4297,13 +4341,14 @@ async function drawLatest(quiet){
       return `${head}<div class="feed-row ${r.id > seen ? 'new' : ''}"><span class="feed-ic k-${esc(r.kind)}">${ic(LATEST_ICON[r.kind] || 'sparkle', 16)}</span>
         <span class="feed-t">${esc(r.text)}${r.code ? ` <button type="button" class="feed-code num" data-act="feedCode" data-code="${esc(r.code)}">${esc(r.code)}</button>` : ''}</span>
         <span class="feed-m"><b>${esc(whoLabel(r.actor, email))}</b> · ${esc(t)}</span></div>`; }).join('')}</div>`;
-  localStorage.setItem(key, String(rows[0].id));
+  if (rows[0]) localStorage.setItem(key, String(rows[0].id));
+  if (lf === 'feedback') api.feedbackList().then(l => { const el = $('#fbPanel'); if (el) el.innerHTML = feedbackPanelHTML(l) || '<p class="muted" style="padding:14px 4px">No feedback yet. Customers can rate their order after ordering and after pickup.</p>'; }).catch(e => { const el = $('#fbPanel'); if (el) el.innerHTML = `<div class="formerr">${esc(friendlyError(e))}</div>`; });
   const dot = $('#latestDot'); if (dot) dot.hidden = true;
 }
 async function drawAdminBody(){
   checkLatestDot();
   if (S.admin.tab === 'latest') return drawLatest();
-  if (S.admin.tab === 'money') return drawMoney();
+  if (S.admin.tab === 'money') return drawLogbook();
   if (S.admin.tab === 'posters') return drawPosters();
   if (S.admin.tab === 'settings') return drawSettings();
   const all = S.admin.orders, f = S.admin.filter;
@@ -4316,6 +4361,9 @@ async function drawAdminBody(){
   const need = [...new Set(list.filter(o => !o.images_deleted).flatMap(orderPaths))].filter(p => !(p in S.admin.urls));
   if (need.length) { try { Object.assign(S.admin.urls, await api.imageUrls(need)); } catch (e) { console.warn(e); } }
   const strikes = {}; all.forEach(o => { if (o.status === 'noshow') strikes[personKey(o)] = (strikes[personKey(o)] || 0) + 1; });
+  const lbCodes = new Set(f === 'done' || f === 'all' ? (await loadLogbook().catch(() => [])).filter(r => r.order_code).map(r => r.order_code) : []);
+  const doneM = f === 'done' ? all.filter(o => o.status === 'done' && o.done_at && lbMonthOf(ymd(new Date(o.done_at))) === lbMonthOf(ymd(new Date()))) : [];
+  const doneTodo = doneM.filter(o => !lbCodes.has(o.code));
   const stCls = { pending:'warn', ready:'ok', done:'ok', rejected:'bad', noshow:'bad', cancelled:'bad' };
   const emptyMsg = { pending:'No designs waiting for review.', approved:'Nothing to print right now.', printing:'Nothing is printing.', ready:'No orders waiting for pickup.' };
 
@@ -4332,6 +4380,7 @@ async function drawAdminBody(){
         return `<span class="ps-a4 psmini" title="Sheet ${k + 1}: ${filled} of ${per}">${Array.from({ length: per }, (_, i) => `<span class="${i < filled ? 'ps-fill' : 'ps-spot'}" style="left:${(g.x0 + (i % g.cols) * (g.d + g.gap)) / 210 * 100}%;top:${(g.y0 + Math.floor(i / g.cols) * (g.d + g.gap)) / 297 * 100}%;width:${g.d / 210 * 100}%"></span>`).join('')}</span>`; }).join('');
       return po.length ? `<div class="batchbar pinbar"><span class="minis">${minis}</span><span><b>${n} pin${n === 1 ? '' : 's'}</b> from ${po.length} order${po.length === 1 ? '' : 's'}, packed onto <b>${sheets} sheet${sheets === 1 ? '' : 's'}</b>${free ? ` (${free} spot${free === 1 ? '' : 's'} still free${sheets > 1 ? ' on the last' : ''})` : ', no spots wasted'}.</span>${smallBtn('Pins PDF', 'printer', 'aPinSheet', 'dark')}${smallBtn('PNG', 'download', 'aPinSheetPng', 'plain')}</div>` : ''; })() : ''}
     ${['approved', 'printing', 'ready'].includes(f) ? `<div class="batchbar">${ic('edit', 18)}<span>Order codes, names and cut lines on printouts: <b>${printLabels() ? 'on' : 'off'}</b></span>${smallBtn(printLabels() ? 'Turn off' : 'Turn on', '', 'aLabels', 'plain')}</div>` : ''}
+    ${f === 'done' && doneM.length ? `<div class="donesum"><div><span class="small muted">Picked up this month</span><b class="num">${peso(doneM.reduce((t, o) => t + (+o.total || 0), 0))}</b><span class="small muted">${doneM.length} order${doneM.length === 1 ? '' : 's'}${doneTodo.length ? `, <b>${doneTodo.length} not in the log book yet</b>` : ', all in the log book'}</span><span class="donebar" aria-hidden="true"><i style="width:${Math.round((doneM.length - doneTodo.length) / doneM.length * 100)}%"></i></span></div>${doneTodo.length ? smallBtn(`Add ${doneTodo.length === 1 ? 'it' : 'all ' + doneTodo.length} to log book`, 'plus', 'lbAllDone', 'dark') : `<span class="tag ok">${ic('check', 14)}All logged</span>`}</div>` : ''}
     ${f === 'printing' && list.length ? `<p class="hint" style="margin-bottom:16px">${ic('box', 18)}<span><b>Next:</b> when an order is printed, cut, and bagged (code and full name on the bag), tap <b>Mark ready</b>. It moves to "Ready" for pickup day.</span></p>` : ''}
     ${f === 'approved' ? `<p class="hint" style="margin-bottom:16px">${ic('printer', 18)}<span>Print only orders marked <b>Confirmed</b>. Unconfirmed ones are released by themselves after their confirm-by day, so nothing gets wasted.</span></p>` : ''}
     ${f === 'ready' ? `<div class="pickupbar ${S.admin.pickupMode ? 'on' : ''}">
@@ -4351,6 +4400,7 @@ async function drawAdminBody(){
       if (['approved','printing'].includes(o.status)) a.push(o.confirmed || o.status === 'printing'
         ? smallBtn('Download PDF', 'printer', 'aPdf', 'dark', `data-id="${o.id}"`) + smallBtn('PNG', 'download', 'aPng', 'plain', `data-id="${o.id}"`)
         : smallBtn('Print anyway', 'printer', 'aPdfForce', 'plain', `data-id="${o.id}"`), smallBtn('Mark ready', 'box', 'aReady', '', `data-id="${o.id}"`));
+      if (o.status === 'done') a.push(lbCodes.has(o.code) ? `<span class="tag ok">${ic('check', 14)}In log book</span>` : smallBtn('Add to log book', 'plus', 'lbFromOrder', 'dark', `data-id="${o.id}"`));
       if (o.status === 'ready') a.push(smallBtn('Picked up and paid', 'check', 'aDone', 'ok', `data-id="${o.id}"`), smallBtn(o.missed ? "Didn't show up again" : "Didn't show up", 'ghost', 'aNoshow', 'plain', `data-id="${o.id}"`), smallBtn('Reprint', 'printer', 'aPdf', 'plain', `data-id="${o.id}"`), smallBtn('Reprint PNG', 'download', 'aPng', 'plain', `data-id="${o.id}"`));
       if (ACTIVE.includes(o.status)) a.push(smallBtn(o.paid ? 'Mark unpaid' : 'Mark paid', 'cash', 'aPaid', 'plain', `data-id="${o.id}"`));
       if (ACTIVE.includes(o.status) && !o.paid) a.push(smallBtn('Part payment', 'cash', 'aPart', 'plain', `data-id="${o.id}"`));
@@ -4364,7 +4414,7 @@ async function drawAdminBody(){
       return `${head}<article class="ocard${isFresh ? ' fresh' : ''}">
         <div class="ohead"><div class="pdot">${o.pickup_date ? `<small>${fmtDate(o.pickup_date, { month: 'short' })}</small><b>${parseYmd(o.pickup_date).getDate()}</b>` : ic('box', 24)}</div>
           <div><div class="ocode">${esc(o.code)}</div><div class="muted small">Pickup ${o.pickup_date ? esc(fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' })) + (o.pickup_time ? `, ${esc(o.pickup_time)}` : '') : 'date not set'}, ordered ${fmtTime(o.created_at)}</div></div>
-          <span class="tag st ${stCls[o.status] || ''}">${ic(STATUS[o.status][0], 16)}${esc(o.status)}</span></div>
+          ${o.status === 'done' ? `<b class="oprice num">${peso(o.total)}</b>` : `<span class="tag st ${stCls[o.status] || ''}">${ic(STATUS[o.status][0], 16)}${esc(o.status)}</span>`}</div>
         <div class="ometa">
           <div><span><b>${esc(o.nickname)}</b>, ${esc(o.grade_section)}</span></div>
           <div>${ic('pin', 18)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span></div>
@@ -4860,7 +4910,7 @@ function drawShopForm(){
     <div class="cfgsec"><div class="sub">Pickup rules</div>
       <div class="pgrid2">
         <label class="dnum"><span>People at pickup at the same time</span>${n('sellers_at_pickup', c.sellers_at_pickup, 0, 5)}</label>
-        <label class="dnum"><span>Most orders per pickup time (0 = no limit)</span>${n('max_per_slot', c.max_per_slot, 0, 200)}</label>
+        <label class="dnum"><span>Most orders per spot at one time (0 = no limit)</span>${n('max_per_slot', c.max_per_slot, 0, 200)}</label>
         <label class="dnum"><span>Most orders per pickup day (0 = no limit)</span>${n('max_per_day', c.max_per_day, 0, 500)}</label>
         <label class="dnum"><span>Customers confirm by (days before pickup)</span>${n('confirm_days_before', c.confirm_days_before, 0, 7)}</label>
         <label class="dnum"><span>Times a customer can move their pickup</span>${n('max_reschedules', c.max_reschedules, 0, 5)}</label>
@@ -4907,7 +4957,8 @@ function drawShopForm(){
     if (c.instagram_url && !/^https:\/\/(www\.)?instagram\.com\//.test(c.instagram_url)) return toast('The Instagram link should start with https://www.instagram.com/');
     if (c.tiktok_url && !/^https:\/\/(www\.)?tiktok\.com\/@/.test(c.tiktok_url)) return toast('The TikTok link should look like https://www.tiktok.com/@yourname');
     if (c.gcash.enabled && (!c.gcash.name.trim() || !c.gcash.number.trim())) return toast('Fill in the GCash name and number, or turn GCash off.');
-    const { max_noshows, ...config } = c;
+    const { max_noshows, ...rest } = c;
+    const config = { ...(S.settings.configRaw || {}), ...rest };   // keep keys this form doesn't manage (one-time markers etc.)
     try {
       await api.saveSettings({ config, max_noshows: Math.max(1, max_noshows || 2) }); S.settings.configRaw = config;
       applyShopConfig(config); CONFIG.maxNoShows = Math.max(1, max_noshows || 2); S.settings.products = mergeProducts(S.settings.productsRaw || {});
@@ -4915,7 +4966,7 @@ function drawShopForm(){
     } catch (ex) { toast(friendlyError(ex)); }
   };
 }
-const TG_EVENTS = [['morning', 'Morning summary on pickup days (7 AM)'], ['stock', 'Low stock'], ['new', 'New orders'], ['arrived', 'Customer at the gate'], ['confirmed', 'Confirmed ("I\'ll be there")'], ['moved', 'Pickup day moved'], ['cancelled', 'Cancelled or released'], ['feedback', 'Low ratings (1 or 2 out of 5)']];
+const TG_EVENTS = [['morning', 'Morning summary on pickup days (7 AM)'], ['new', 'New orders'], ['arrived', 'Customer at the gate'], ['confirmed', 'Confirmed ("I\'ll be there")'], ['moved', 'Pickup day moved'], ['cancelled', 'Cancelled or released'], ['feedback', 'Low ratings (1 or 2 out of 5)']];
 async function loadTelegram(){
   const box = $('#tgForm'); if (!box) return;
   try { const t = await api.getTelegram(); S.admin.tg = { enabled: !!t.enabled, bot_token: t.bot_token || '', chat_id: t.chat_id || '', notify: { morning: true, stock: true, new: true, arrived: true, confirmed: true, moved: true, cancelled: true, feedback: true, ...(t.notify || {}) } }; }
@@ -5079,170 +5130,7 @@ async function drawPromos(){
   });
 }
 
-/* =====================================================================
-   Business: supplies, what each item costs to make, profit, paying back equipment
-   ===================================================================== */
-const SUPPLY_UNITS = ['sheet', 'set', 'page', 'piece', 'ml'];
-function defaultBusiness(){
-  const today = ymd(new Date());
-  return {
-    supplies: [
-      { id: 'sticker_paper', name: 'Sticker paper', unit: 'sheet', packPrice: 220, packSize: 20, stock: 20, lowAt: 5 },
-      { id: 'photo_paper', name: 'Photo paper (posters)', unit: 'sheet', packPrice: 50, packSize: 20, stock: 20, lowAt: 5 },
-      { id: 'inkjet_paper', name: 'Inkjet glossy paper (pins)', unit: 'sheet', packPrice: 180, packSize: 20, stock: 20, lowAt: 3 },
-      { id: 'pin_parts', name: 'Pin parts', unit: 'set', packPrice: 400, packSize: 100, stock: 100, lowAt: 20 },
-      { id: 'ink', name: 'Printer ink', unit: 'page', packPrice: 1500, packSize: 600, stock: 600, lowAt: 100 },
-      { id: 'bond_paper', name: 'Bond paper (A4)', unit: 'sheet', packPrice: 250, packSize: 500, stock: 500, lowAt: 50 }
-    ],
-    // how much of each supply ONE item uses. Pins: 24 of the 44 mm paper circles fit on a sheet; a 58 mm one fits about 6.
-    usage: {
-      'stickers:a4': [['sticker_paper', 1], ['ink', 1]],
-      'pins:44': [['pin_parts', 1], ['inkjet_paper', 0.0417], ['ink', 0.0417]],
-      'pins:58': [['pin_parts', 1], ['inkjet_paper', 0.1667], ['ink', 0.1667]],
-      'posters:a4': [['photo_paper', 1], ['ink', 1]],
-      'posters:a3': [['ink', 2]],
-      'keychains:std': [['photo_paper', 0.1], ['ink', 0.1]],
-      ...printUsageDefaults()
-    },
-    partners: ['Partner 1', 'Partner 2', 'Partner 3'],
-    equipment: [{ id: 'pinmaker', name: 'Pin maker (44 mm)', cost: 2000, date: today, split: [666.67, 666.67, 666.66] }],
-    purchases: [{ id: uid(), date: today, item: 'Starting supplies and pin maker', amount: 2100 }],
-    paybackWeeks: 8
-  };
-}
-/* Plain-paper prints: one sheet per printed side (half a sheet when double-sided); text pages use little ink */
-function printUsageDefaults(){
-  const out = {};
-  for (const z of CONFIG.products.prints.sizes) { out[`prints:${z.id}`] = [['bond_paper', 1], ['ink', 0.2]]; out[`prints:${z.id}:duplex`] = [['bond_paper', 0.5], ['ink', 0.2]]; }
-  return out;
-}
-/* Shops that saved Business data before prints existed get the new supply and recipes added once */
-function ensureBusinessDefaults(b){
-  b.supplies = b.supplies || []; b.usage = b.usage || {};
-  if (!b.supplies.some(x => x.id === 'bond_paper')) b.supplies.push({ id: 'bond_paper', name: 'Bond paper (A4)', unit: 'sheet', packPrice: 250, packSize: 500, stock: 0, lowAt: 50 });
-  for (const [k, v] of Object.entries(printUsageDefaults())) if (!b.usage[k]) b.usage[k] = v;
-  // once: add any recipes and supplies that didn't exist when this data was first saved (new supplies start at 0 stock)
-  // once: the 5 starting purchases were placeholders (₱2,350, including ink you already had). Swap them for the real ₱2,100.
-  if (!b.defaultsV3) {
-    const guess = ['Sticker paper (20 sheets)', 'Photo paper (20 sheets)', 'Inkjet glossy paper (20 sheets)', 'Pin parts (100 sets)', 'Printer ink'];
-    const ps = b.purchases || [];
-    if (ps.length === 5 && guess.every(g => ps.some(x => x.item === g))) b.purchases = [{ id: uid(), date: ps[0].date || ymd(new Date()), item: 'Starting supplies and pin maker', amount: 2100 }];
-    b.defaultsV3 = true;
-  }
-  // once: pins now print 24 to a sheet (44 mm circles), not 12, so the paper and ink per pin halves (only if still the old default)
-  if (!b.defaultsV4) {
-    const u = b.usage['pins:44'] || [];
-    if (u.some(([id, amt]) => id === 'inkjet_paper' && Math.abs(amt - 0.0833) < 0.001))
-      b.usage['pins:44'] = u.map(([id, amt]) => [id, (id === 'inkjet_paper' || id === 'ink') && Math.abs(amt - 0.0833) < 0.001 ? 0.0417 : amt]);
-    b.defaultsV4 = true;
-  }
-  if (!b.defaultsV2) {
-    const d = defaultBusiness();
-    for (const x of d.supplies) if (!b.supplies.some(y => y.id === x.id)) b.supplies.push({ ...x, stock: 0 });
-    for (const [k, v] of Object.entries(d.usage)) if (!b.usage[k] || !b.usage[k].length) b.usage[k] = v;
-    b.defaultsV2 = true;
-  }
-  // what each partner put in. First time: from the old equipment splits, or ₱700 each (₱2,100 for three)
-  b.partners = b.partners && b.partners.length ? b.partners : ['Partner 1', 'Partner 2', 'Partner 3'];
-  if (!Array.isArray(b.invest)) {
-    const fromEq = b.partners.map((_, i) => (b.equipment || []).reduce((t, e) => t + (+((e.split || [])[i]) || 0), 0));
-    b.invest = fromEq.some(v => v > 0) ? fromEq : b.partners.map(() => b.partners.length === 3 ? 700 : 0);
-  }
-  while (b.invest.length < b.partners.length) b.invest.push(0);
-  return b;
-}
-const supCost = s => s.packSize > 0 ? s.packPrice / s.packSize : 0;
-const supById = (b, id) => (b.supplies || []).find(x => x.id === id);
-function unitCost(b, key){ return ((b.usage || {})[key] || []).reduce((t, [id, amt]) => { const s = supById(b, id); return t + (s ? supCost(s) * amt : 0); }, 0); }
-function orderLines(o){
-  return orderItems(o).map(it => {
-    if (it.type === 'prints') return { key: `prints:${it.size}${it.duplex ? ':duplex' : ''}`, units: (+it.qty || 0) * (+it.pages || 0) };
-    if (it.type === 'posters') return { key: `posters:${it.size}`, units: (+it.qty || 0) * (+it.tiles || 1) };
-    return { key: `${it.type}:${it.size || (it.type === 'stickers' ? 'a4' : '')}`, units: it.type === 'stickers' ? ((it.sheets || []).length || +it.qty || 0) : (+it.qty || 0) };
-  });
-}
-const orderCost = (b, o) => orderLines(o).reduce((t, l) => t + l.units * unitCost(b, l.key), 0);
-function usageKeys(){
-  return Object.entries(CONFIG.products).flatMap(([k, p]) => p.sizes.flatMap(z => {
-    const base = { key: `${k}:${z.id}`, label: `${p.name}${p.sizes.length > 1 ? ' ' + z.label : ''}`, unit: p.unit, price: (P(k).sizes.find(x => x.id === z.id) || z).price, live: isLive(k) && (P(k).sizes.find(x => x.id === z.id) || {}).enabled !== false };
-    return k === 'prints' ? [{ ...base, label: base.label + ', one side' }, { ...base, key: base.key + ':duplex', label: base.label + ', double-sided' }] : [base];
-  }));
-}
-const pmoney = n => (n < 0 ? '−' : '') + CONFIG.currency + Math.abs(n).toLocaleString(undefined, { maximumFractionDigits: n % 1 && Math.abs(n) < 100 ? 2 : 0 });
-async function loadBusiness(){
-  if (S.admin.biz) return S.admin.biz;
-  const d = await api.getBusiness();
-  S.admin.biz = ensureBusinessDefaults(d && d.supplies ? d : defaultBusiness());
-  return S.admin.biz;
-}
-let bizSaveTimer;
-function saveBiz(msg){
-  clearTimeout(bizSaveTimer);
-  const dot = () => $('#bizSaved'), set = (cls, txt) => { const d = dot(); if (d) { d.className = 'savedot ' + cls; d.innerHTML = txt; } };
-  S.admin.bizSaving = true; set('saving', 'Saving…');
-  bizSaveTimer = setTimeout(async () => {
-    try { await api.saveBusiness(S.admin.biz); S.admin.bizSaving = false; set('', `${ic('check', 14)}All changes saved`); if (msg) toast(msg); }
-    catch (e) { S.admin.bizSaving = false; set('err', `${ic('warn', 14)}Not saved`); toast(friendlyError(e)); }
-  }, 600);
-}
-/* Take one printed order's supplies out of stock (once), and warn when something runs low */
-async function useStock(o){
-  if (o.stock_used) return;
-  try {
-    const b = await loadBusiness(), low = [];
-    for (const l of orderLines(o)) for (const [id, amt] of (b.usage || {})[l.key] || []) {
-      const s = supById(b, id); if (!s) continue;
-      const before = s.stock; s.stock = Math.round((s.stock - amt * l.units) * 100) / 100;
-      if (before > s.lowAt && s.stock <= s.lowAt) low.push(s);
-    }
-    await api.saveBusiness(b); await api.updateOrder(o.id, { stock_used: true }); o.stock_used = true;
-    if (low.length) {
-      const txt = 'Low stock: ' + low.map(s => `${s.name}, ${Math.max(0, Math.floor(s.stock))} ${s.unit}${Math.floor(s.stock) === 1 ? '' : 's'} left`).join('; ') + '. Restock soon.';
-      toast(txt); api.stockAlert(txt);
-    }
-  } catch (e) { console.warn('stock', e); toast('Marked ready, but supplies could not be updated. Check the Business tab.'); }
-}
-/* Monthly report: one month at a time, compared with the month before */
-function monthlyHTML(b, all){
-  const off = S.admin.month || 0, now = new Date(), start = new Date(now.getFullYear(), now.getMonth() - off, 1);
-  const end = new Date(start.getFullYear(), start.getMonth() + 1, 1), prev = new Date(start.getFullYear(), start.getMonth() - 1, 1);
-  const at = o => new Date(o.done_at || o.updated_at).getTime(), within = (t, a, z) => t >= a.getTime() && t < z.getTime();
-  const done = all.filter(o => o.status === 'done'), m = done.filter(o => within(at(o), start, end)), pm = done.filter(o => within(at(o), prev, start));
-  const otherM = (b.purchases || []).filter(x => x.kind === 'other' && within(new Date((x.date || '') + 'T12:00:00').getTime(), start, end)).reduce((t, x) => t + (+x.amount || 0), 0);
-  const sales = l => l.reduce((t, o) => t + (o.total || 0), 0), profit = l => sales(l) - l.reduce((t, o) => t + orderCost(b, o), 0) - (l === m ? otherM : 0);
-  const units = {}; m.forEach(o => orderItems(o).forEach(it => { const nm = (CONFIG.products[it.type] || {}).name || it.type; units[nm] = (units[nm] || 0) + (it.type === 'stickers' ? (it.sheets || []).length : +it.qty || 0); }));
-  const best = Object.entries(units).sort((a, z) => z[1] - a[1])[0];
-  const days = {}; m.forEach(o => { if (o.pickup_date) { const k = fmtDate(o.pickup_date, { weekday: 'long' }); days[k] = (days[k] || 0) + 1; } });
-  const busiest = Object.entries(days).sort((a, z) => z[1] - a[1])[0];
-  const lost = all.filter(o => ['noshow', 'cancelled'].includes(o.status) && within(new Date(o.created_at).getTime(), start, end)).length;
-  const ch = sales(pm) > 0 ? Math.round((sales(m) - sales(pm)) / sales(pm) * 100) : null;
-  const label = start.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
-  const cell = (k, v, sub) => `<div class="mcell"><span>${k}</span><b class="num">${v}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
-  return `<div class="panel monthly" style="margin-bottom:16px">
-    <div class="bizh"><h3>${ic('calendar', 18)}Monthly report</h3>
-      <div class="mnav"><button type="button" class="ob2" data-act="monthNav" data-d="1" aria-label="Previous month">◀</button><b>${esc(label)}</b><button type="button" class="ob2" data-act="monthNav" data-d="-1" ${off === 0 ? 'disabled' : ''} aria-label="Next month">▶</button></div></div>
-    <div class="mgrid2">
-      ${cell('Sales', pmoney(sales(m)), ch === null ? (m.length ? 'First month with sales' : '') : `<span class="${ch >= 0 ? 'good' : 'bad'}">${ch >= 0 ? '▲' : '▼'} ${Math.abs(ch)}%</span> vs last month`)}
-      ${cell('Profit', pmoney(Math.round(profit(m))), m.length ? `${Math.round(profit(m) / Math.max(1, sales(m)) * 100)}% of sales` : '')}
-      ${cell('Orders picked up', m.length, m.length ? `about ${pmoney(Math.round(sales(m) / m.length))} each` : '')}
-      ${cell('Best seller', best ? esc(best[0]) : '—', best ? `${best[1]} sold` : '')}
-      ${cell('Busiest pickup day', busiest ? esc(busiest[0]) : '—', busiest ? `${busiest[1]} pickup${busiest[1] === 1 ? '' : 's'}` : '')}
-      ${cell('Missed or cancelled', lost, '')}
-    </div></div>`;
-}
-/* Big numbers count up quickly when the Business tab opens */
-function countUp(root){
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  root.querySelectorAll('.stats b.num').forEach(el => {
-    const txt = el.textContent, m = txt.match(/^(−?)(\D*)([\d,]+)$/); if (!m) return;
-    const target = +m[3].replace(/,/g, ''); if (!target) return;
-    const t0 = performance.now(), dur = 700;
-    const step = now => { const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
-      el.textContent = m[1] + m[2] + Math.round(target * e).toLocaleString(); if (k < 1) requestAnimationFrame(step); else el.textContent = txt; };
-    requestAnimationFrame(step);
-  });
-}
-/* Money tab: how customers feel, from the one-tap feedback */
+/* Latest → Feedback: how customers feel, from the one-tap feedback */
 function feedbackPanelHTML(list){
   if (!CONFIG.feedbackOn && !list.length) return '';
   const recent = list.filter(x => Date.now() - new Date(x.created_at).getTime() < 30 * 864e5);
@@ -5264,183 +5152,247 @@ function feedbackPanelHTML(list){
     ${words.length ? `<div class="fbwords">${words.map(x => `<div class="fbword ${x.rating <= 2 ? 'low' : ''}">${fbFace(x.rating, 22)}<span>"${esc(x.comment)}"<small>${esc(x.order_code)}, ${x.stage === 'ordering' ? 'ordering' : 'after pickup'}, ${esc(fmtTime(x.created_at))}</small></span></div>`).join('')}</div>` : ''}
   </div>`;
 }
-async function drawMoney(){
-  const mainEl = document.querySelector('main'); if (mainEl) mainEl.classList.add('wide');
-  $('#admBody').innerHTML = '<div class="sk" style="height:220px;border-radius:18px"></div>';
-  let b; try { b = await loadBusiness(); } catch (e) { $('#admBody').innerHTML = `<div class="formerr">${esc(friendlyError(e))} Run the latest schema.sql in Supabase.</div>`; return; }
-  const scans = {}; (await api.scanCounts().catch(() => [])).forEach(r => { scans[r.src] = +r.scans || 0; });   // empty until the new schema.sql is run
-  const all = S.admin.orders, done = all.filter(o => o.status === 'done');
-  const doneAt = o => new Date(o.done_at || o.updated_at).getTime();   // picked-up time (set once)
-  const inWeek = o => Date.now() - doneAt(o) < 7 * 864e5;
-  const rev = list => list.reduce((t, o) => t + (o.total || 0), 0), cost = list => list.reduce((t, o) => t + orderCost(b, o), 0);
-  const week = done.filter(inWeek), waiting = all.filter(o => ACTIVE.includes(o.status) && !o.paid);
-  const owed = waiting.reduce((t, o) => t + (o.total || 0) - (o.amount_paid || 0), 0);
-  // "other" expenses (not supply restocks) come straight off profit on the day they were paid
-  const exAt = x => new Date((x.date || ymd(new Date())) + 'T12:00:00').getTime();
-  const others = (b.purchases || []).filter(x => x.kind === 'other'), otherIn = (a, z) => others.filter(x => exAt(x) > a && exAt(x) <= z).reduce((t, x) => t + (+x.amount || 0), 0);
-  const otherAll = others.reduce((t, x) => t + (+x.amount || 0), 0), otherWeek = otherIn(Date.now() - 7 * 864e5, Date.now() + 864e5);
-  const profitAll = rev(done) - cost(done) - otherAll, profitWeek = rev(week) - cost(week) - otherWeek;
-  const eqTotal = (b.equipment || []).reduce((t, e) => t + (+e.cost || 0), 0);
-  const capital = (b.invest || []).reduce((t, v) => t + (+v || 0), 0);   // what the partners put in
-  const paidBack = Math.max(0, Math.min(capital, profitAll)), pct = capital ? paidBack / capital : 1;
-  const remaining = Math.max(0, capital - profitAll), perWeek = remaining / Math.max(1, b.paybackWeeks || 8);
-  const keys = usageKeys(), liveKeys = keys.filter(k => k.live);
-  const per = k => k.price - unitCost(b, k.key);
-  const moneyOut = (b.purchases || []).reduce((t, x) => t + (+x.amount || 0), 0) + eqTotal;
-  const contributed = (b.partners || []).map((n, i) => +((b.invest || [])[i]) || 0);
-  const src = {};
-  // add-on orders belong to their first order, so they're not counted as a new order from a poster
-  all.filter(o => !(o.layout && o.layout.walkin) && !o.add_to).forEach(o => { const k = o.src || 'No poster (direct link)'; src[k] = src[k] || { n: 0, done: 0, rev: 0 }; src[k].n++; if (o.status === 'done') { src[k].done++; src[k].rev += o.total; } });
-  Object.keys(scans).forEach(k => { src[k] = src[k] || { n: 0, done: 0, rev: 0 }; });
-  const enough = s => { const uses = keys.map(k => [k, ((b.usage || {})[k.key] || []).find(([id]) => id === s.id)]).filter(([, u]) => u && u[1] > 0);
-    return uses.length ? uses.filter(([k]) => k.live).slice(0, 2).map(([k, u]) => `${Math.max(0, Math.floor(s.stock / u[1]))} ${k.unit}${Math.floor(s.stock / u[1]) === 1 ? '' : 's'} (${k.label.toLowerCase()})`).join(', ') : ''; };
-
-  $('#admBody').innerHTML = `
-    <div class="batchbar quicklog" style="margin-bottom:16px">${ic('cash', 18)}<span>Sold something in person, or paid for something for the shop? Log it so your numbers stay right.</span><span class="qbtns">${smallBtn('Log a sale', 'plus', 'aSale', 'dark')}${smallBtn('Log an expense', 'minus', 'aExpense', 'plain')}</span></div>
-    <div class="stats">
-      <div class="panel hero-stat"><span class="small">Profit this week</span><b class="num">${pmoney(Math.round(profitWeek))}</b><span class="small">${week.length} order${week.length === 1 ? '' : 's'} picked up, ${pmoney(Math.round(rev(week)))} in sales${otherWeek ? `, ${pmoney(Math.round(otherWeek))} other costs` : ''}</span></div>
-      <div class="panel"><span class="small muted">Profit so far</span><b class="num">${pmoney(Math.round(profitAll))}</b><span class="small muted">${pmoney(Math.round(rev(done)))} sales minus about ${pmoney(Math.round(cost(done)))} it cost to make them${otherAll ? `, and ${pmoney(Math.round(otherAll))} other costs` : ''}</span></div>
-      <div class="panel"><span class="small muted">Still to collect</span><b class="num">${pmoney(owed)}</b><span class="small muted">${all.filter(o => o.status === 'noshow').length} missed pickups so far</span></div>
-    </div>
-    <p class="help" style="margin:-4px 0 18px"><b>Cost to make</b> is worked out, not logged: the paper, ink and pin parts each picked-up order used, priced from your Supplies list (a sticker sheet is about ${pmoney(Math.round(unitCost(b, 'stickers:a4') * 100) / 100)}). Expenses you log are separate: restocks show in Money in and out, and "other cost" expenses come off profit on their own.</p>
-
-    ${feedbackPanelHTML(S.admin.fb || [])}
-    ${monthlyHTML(b, all)}
-    ${(() => { const weeks = Array.from({ length: 8 }, (_, w) => { const end = Date.now() - w * 7 * 864e5, start = end - 7 * 864e5;
-        const list = done.filter(o => { const t2 = doneAt(o); return t2 > start && t2 <= end; }); return { w, p: rev(list) - cost(list) - otherIn(start, end), n: list.length }; }).reverse();
-      const max = Math.max(1, ...weeks.map(x => Math.abs(x.p)));
-      return `<div class="panel" style="margin-bottom:20px"><div class="bizh"><h3>${ic('chart', 18)}Profit by week</h3><span class="small muted">Last 8 weeks</span></div>
-        <div class="wchart" role="img" aria-label="Profit for each of the last 8 weeks">${weeks.map(x => `<div class="wcol ${x.w === 0 ? 'now' : ''}" title="${x.w === 0 ? 'This week' : x.w + ' week' + (x.w > 1 ? 's' : '') + ' ago'}: ${pmoney(Math.round(x.p))}, ${x.n} order${x.n === 1 ? '' : 's'}">
-          <span class="wv num">${x.p ? pmoney(Math.round(x.p)) : ''}</span><i style="--h:${Math.max(x.p > 0 ? 4 : 2, Math.round(Math.max(0, x.p) / max * 100))}%"></i><span class="wl">${x.w === 0 ? 'Now' : '-' + x.w + 'w'}</span></div>`).join('')}</div>
-        ${weeks.every(x => !x.n) ? '<p class="help" style="margin-top:6px">Bars show up here as orders get picked up.</p>' : ''}</div>`; })()}
-    <div class="panel" style="margin-bottom:20px">
-      <div class="bizh"><h3>${ic('cash', 18)}Paying back what you put in</h3><span class="tag ${pct >= 1 ? 'ok' : ''}">${capital ? Math.round(pct * 100) + '% paid back' : 'Add what you put in'}</span></div>
-      <div class="bar"><b style="--w:${Math.round(pct * 100)}%"></b></div>
-      <p style="margin:10px 0 0">${!capital ? 'Type how much each of you put in below.' : pct >= 1 ? `<b>Everything you put in is paid back.</b> From here on, it's all profit.`
-        : `<b>${pmoney(Math.round(remaining))}</b> left to pay back. To finish in <input class="inp num inl" type="number" min="1" max="52" data-biz="paybackWeeks" value="${b.paybackWeeks || 8}"> weeks, you need about <b>${pmoney(Math.ceil(perWeek))} profit a week</b>.`}</p>
-      ${pct < 1 && liveKeys.length ? `<p class="help" style="margin-top:6px">That's roughly ${liveKeys.filter(k => per(k) > 0).slice(0, 3).map(k => `<b>${Math.ceil(perWeek / per(k))} ${esc(k.label.toLowerCase())}${k.unit === 'sheet' ? ' sheets' : ''}</b>`).join(' or ')} a week.</p>` : ''}
-      <div class="partners">${(b.partners || []).map((n, i) => `<div class="pcell"><div class="pn"><input class="inp" data-partner="${i}" value="${esc(n)}" aria-label="Partner name">${(b.partners || []).length > 1 ? smallBtn('', 'x', 'bizDelPartner', 'plain', `data-i="${i}" aria-label="Remove partner"`) : ''}</div>
-        <label class="putin"><span>Put in</span><span class="pricein"><input class="inp num" type="number" min="0" step="any" data-invest="${i}" value="${contributed[i]}" aria-label="${esc(n)} put in"></span></label>
-        ${capital ? `<span class="small muted">Paid back <b class="num">${pmoney(Math.round(paidBack * contributed[i] / capital))}</b> of ${pmoney(Math.round(contributed[i]))}</span>` : ''}</div>`).join('')}</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px"><p class="help" style="margin:0">Total put in: <b class="num">${pmoney(capital)}</b>. Paid back is shared by how much each person put in.</p>${smallBtn('Add a partner', 'plus', 'bizAddPartner', 'plain')}</div>
-    </div>
-
-    <div class="panel" style="margin-bottom:20px">
-      <div class="bizh"><h3>${ic('box', 18)}Supplies</h3>${smallBtn('Add a supply', 'plus', 'bizAddSupply', 'plain')}</div>
-      <p class="help" style="margin-bottom:12px">Stock goes down by itself when you tap <b>Mark ready</b> on an order. Tap <b>Restock</b> when you buy more. <b>Pack price</b> is what the next pack costs. For ink, "one pack has" means how many pages one refill prints (600 is a guess: check the ink box, and remember colorful sticker sheets use more ink than text).</p>
-      <div class="tbl"><table class="biz sup"><thead><tr><th>Supply</th><th>Pack price</th><th>One pack has</th><th>Cost each</th><th>In stock</th><th>Warn at</th><th></th></tr></thead><tbody>
-      ${(b.supplies || []).map((x, i) => `<tr class="${x.stock <= x.lowAt ? 'low' : ''}">
-        <td><input class="inp" data-sup="${i}" data-f="name" value="${esc(x.name)}" aria-label="Supply name">${enough(x) ? `<small class="muted">Enough for ${esc(enough(x))}</small>` : ''}</td>
-        <td data-l="Pack price"><span class="pricein"><input class="inp num" type="number" min="0" data-sup="${i}" data-f="packPrice" value="${x.packPrice}" aria-label="Pack price"></span></td>
-        <td data-l="One pack has"><div class="unitin"><input class="inp num" type="number" min="1" data-sup="${i}" data-f="packSize" value="${x.packSize}" aria-label="Amount per pack"><select class="inp" data-sup="${i}" data-f="unit" aria-label="Unit">${SUPPLY_UNITS.map(u => `<option ${u === x.unit ? 'selected' : ''}>${u}</option>`).join('')}</select></div></td>
-        <td class="num" data-l="Cost each">${pmoney(Math.round(supCost(x) * 100) / 100)}</td>
-        <td data-l="In stock"><input class="inp num" type="number" step="any" data-sup="${i}" data-f="stock" value="${Math.round(x.stock * 100) / 100}" aria-label="In stock">${x.stock <= x.lowAt ? `<small class="lowtag">${ic('warn', 12)}Low</small>` : ''}</td>
-        <td data-l="Warn at"><input class="inp num" type="number" min="0" data-sup="${i}" data-f="lowAt" value="${x.lowAt}" aria-label="Warn when at or below"></td>
-        <td class="acts">${smallBtn('Restock', 'plus', 'bizRestock', 'plain', `data-i="${i}"`)}${smallBtn('', 'trash', 'bizDelSupply', 'plain', `data-i="${i}" aria-label="Remove supply"`)}</td></tr>`).join('')}
-      </tbody></table></div>
-    </div>
-
-    <details class="panel bizfold costfold" style="margin-bottom:20px" ${S.admin.costOpen ? 'open' : ''} ontoggle="S.admin.costOpen=this.open">
-      <summary><h3>${ic('sticker', 18)}What each item costs to make</h3>
-        <span class="profchips">${keys.filter(k => k.live).map(k => { const pr = k.price - unitCost(b, k.key); return `<span class="pchip ${pr >= 0 ? '' : 'neg'}">${esc(k.label)} <b class="num">${pmoney(Math.round(pr * 100) / 100)}</b> <small>${k.price ? Math.round(pr / k.price * 100) + '%' : ''}</small></span>`; }).join('')}</span>
-        <span class="foldhint">${ic('arrow', 14)}</span></summary>
-      <p class="help" style="margin-bottom:12px">How much of each supply one item uses. A 44 mm pin uses 1/12 of a sheet because 12 fit on one sheet.</p>
-      ${(() => { const card = k => { const lines = (b.usage || {})[k.key] || [], c = unitCost(b, k.key), pr = k.price - c;
-        return `<div class="ucard ${k.live ? '' : 'off'}"><div class="ucard-h"><b>${esc(k.label)}</b>${k.live ? '' : '<span class="tag">Hidden</span>'}</div>
-          ${lines.map(([id, amt], j) => `<div class="uline"><select class="inp" data-use="${esc(k.key)}" data-j="${j}" data-f="id" aria-label="Supply">${(b.supplies || []).map(x => `<option value="${esc(x.id)}" ${x.id === id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select>
-            <input class="inp num" type="number" step="any" min="0" data-use="${esc(k.key)}" data-j="${j}" data-f="amt" value="${amt}" aria-label="Amount">${smallBtn('', 'x', 'bizDelUse', 'plain', `data-k="${esc(k.key)}" data-j="${j}" aria-label="Remove"`)}</div>`).join('')}
-          ${smallBtn('Add a supply', 'plus', 'bizAddUse', 'plain', `data-k="${esc(k.key)}"`)}
-          <div class="umath"><span>Sells for <b class="num">${pmoney(k.price)}</b></span><span>Costs <b class="num">${pmoney(Math.round(c * 100) / 100)}</b></span><span class="${pr >= 0 ? 'good' : 'bad'}">Profit <b class="num">${pmoney(Math.round(pr * 100) / 100)}</b>${k.price ? ` (${Math.round(pr / k.price * 100)}%)` : ''}</span></div></div>`; }, on = keys.filter(k => k.live), off = keys.filter(k => !k.live);
-        return `<div class="ucards">${on.map(card).join('') || '<p class="help">Nothing is on sale yet.</p>'}</div>
-          ${off.length ? `<details class="hiddenitems"><summary>${ic('eye', 16)}Hidden products (${off.length}) <span class="muted small">Not on sale right now</span></summary><div class="ucards">${off.map(card).join('')}</div></details>` : ''}`; })()}
-    </details>
-
-    <div class="panel" style="margin-bottom:20px">
-      <div class="bizh"><h3>${ic('printer', 18)}Equipment</h3>${smallBtn('Add equipment', 'plus', 'bizAddEquip', 'plain')}</div>
-      <p class="help" style="margin-bottom:12px">Things you buy once, like the pin maker. It's a record of what you bought; what each person put in is above.</p>
-      ${(b.equipment || []).map((e, i) => `<div class="equip">
-        <input class="inp" data-eq="${i}" data-f="name" value="${esc(e.name)}" aria-label="Equipment name">
-        <input class="inp" type="date" data-eq="${i}" data-f="date" value="${esc(e.date || '')}" aria-label="Date bought">
-        <span class="pricein"><input class="inp num" type="number" min="0" data-eq="${i}" data-f="cost" value="${e.cost}" aria-label="Cost"></span>
-        ${smallBtn('', 'trash', 'bizDelEquip', 'plain', `data-i="${i}" aria-label="Remove ${esc(e.name)}"`)}
-      </div>`).join('') || `<div class="bizempty">${ic('box', 22)}<span>Nothing here yet. Add things you bought once, like the pin maker.</span></div>`}
-    </div>
-
-    <div class="panel" style="margin-bottom:20px">
-      <div class="bizh"><h3>${ic('chart', 18)}Money in and out</h3></div>
-      <div class="inout"><div><span class="small muted">Money in (picked-up orders)</span><b class="num">${pmoney(rev(done))}</b></div>
-        <div><span class="small muted">Money out (supplies, equipment, expenses)</span><b class="num">${pmoney(moneyOut)}</b></div>
-        <div><span class="small muted">Difference</span><b class="num ${rev(done) - moneyOut >= 0 ? 'good' : 'bad'}">${pmoney(rev(done) - moneyOut)}</b></div></div>
-      <details style="margin-top:12px" ${S.admin.buysOpen ? 'open' : ''} ontoggle="S.admin.buysOpen=this.open"><summary class="lab" style="cursor:pointer">Purchases and expenses (${(b.purchases || []).length})</summary>
-        <div class="tbl" style="margin-top:8px"><table class="biz buys"><tbody>${(b.purchases || []).slice().reverse().map(x => `<tr><td><input class="inp" type="date" data-buy="${esc(x.id)}" data-f="date" value="${esc(x.date || '')}" aria-label="Date"></td><td><input class="inp" data-buy="${esc(x.id)}" data-f="item" value="${esc(x.item)}" aria-label="What you bought">${x.kind || x.paidBy || x.note ? `<small class="buymeta">${[x.kind === 'other' ? 'Other cost, comes off profit' : x.kind === 'supply' ? 'Supply restock' : '', x.paidBy ? 'paid by ' + esc(x.paidBy) : '', x.note ? esc(x.note) : ''].filter(Boolean).join(', ')}</small>` : ''}</td><td><span class="pricein"><input class="inp num" type="number" min="0" step="any" data-buy="${esc(x.id)}" data-f="amount" value="${+x.amount || 0}" aria-label="Amount"></span></td><td>${smallBtn('', 'trash', 'bizDelBuy', 'plain', `data-id="${esc(x.id)}" aria-label="Remove purchase"`)}</td></tr>`).join('') || '<tr><td class="muted">No purchases yet.</td></tr>'}</tbody></table></div>
-        <div class="buyadd"><input class="inp" id="buyItem" placeholder="What you bought"><span class="pricein"><input class="inp num" id="buyAmt" type="number" min="0" placeholder="0"></span>${smallBtn('Add', 'plus', 'bizAddBuy', 'plain')}</div>
-      </details>
-      <p class="help" style="margin-top:8px">"Profit" above counts the supplies each order used, plus "other cost" expenses. This box is the plain cash view: everything earned minus everything spent.</p>
-    </div>
-
-    <details class="panel bizfold"><summary><h3>${ic('qr', 18)}Which posters bring orders</h3><span class="muted small">${Object.keys(src).length} source${Object.keys(src).length === 1 ? '' : 's'}</span></summary>
-      <p class="help" style="margin:0 0 8px">Scans: people who opened the site from that poster (once a day per phone, your own scans don't count). Orders: orders placed within 7 days of scanning.</p>
-      <div class="tbl"><table><thead><tr><th>Poster</th><th>Scans</th><th>Orders</th><th>Finished</th><th>Earned</th></tr></thead><tbody>
-      ${Object.entries(src).sort((a, b2) => b2[1].n - a[1].n || (scans[b2[0]] || 0) - (scans[a[0]] || 0)).map(([k, v]) => `<tr><td>${esc(k)}</td><td class="num">${k in scans ? scans[k] : '—'}</td><td class="num">${v.n}</td><td class="num">${v.done}</td><td class="num">${money(v.rev)}</td></tr>`).join('') || '<tr><td colspan="5" class="muted">No orders yet</td></tr>'}
-      </tbody></table></div></details>`;
-
-  countUp($('#admBody'));
-  // dashboard: put related sections side by side, so less scrolling
-  const bodyEl = $('#admBody'), pick = t => [...bodyEl.querySelectorAll(':scope > .panel')].find(x => (x.querySelector('h3') || {}).textContent && x.querySelector('h3').textContent.includes(t));
-  const row = (cls, ...els) => { els = els.filter(Boolean); if (!els.length) return; const r = document.createElement('div'); r.className = cls; els[0].before(r); els.forEach(e => r.appendChild(e)); return r; };
-  row('bizrow', pick('Paying back'), pick('Profit by week'));
-  // supplies is a wide table, so it gets the full width; money in/out and equipment sit side by side under it
-  const sup = pick('Supplies'), mio = pick('Money in and out'), eq = pick('Equipment');
-  if (sup) sup.classList.add('bizfull');
-  const r2 = row('bizrow', mio, eq); if (r2 && sup) sup.after(r2);
-  bodyEl.insertAdjacentHTML('afterbegin', `<div class="bizbar"><span class="savedot ${S.admin.bizSaving ? 'saving' : ''}" id="bizSaved">${S.admin.bizSaving ? 'Saving…' : `${ic('check', 14)}All changes saved`}</span><span class="muted small">Every number here can be changed. Changes save by themselves.</span></div>`);
-  if (capital && pct >= 1 && !b.celebratedPayback) { b.celebratedPayback = true; saveBiz(); setTimeout(confetti, 300); toast('Everything you put in is paid back. Nice work!'); }
+/* ===== Log book: sales and expenses, typed in by the admins ===== */
+const LB_METHOD = { cash: 'Cash', gcash: 'GCash', other: 'Other' };
+const lbMonthOf = d => String(d).slice(0, 7);
+const lbMonthLabel = k => { const [y, m] = k.split('-').map(Number); return new Date(y, m - 1, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' }); };
+const lbShift = (k, n) => { const [y, m] = k.split('-').map(Number), d = new Date(y, m - 1 + n, 1); return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}`; };
+const peso = n => '₱' + (Math.round(+n * 100) / 100).toLocaleString(undefined, { maximumFractionDigits: 2 });
+// an icon for each entry, so pins and stickers are easy to tell apart at a glance
+const lbIcon = r => { const t = String(r.item || '').toLowerCase();
+  if (r.kind === 'expense') return /ink|print|paper|bond/.test(t) ? 'printer' : /pin part|pin/.test(t) ? 'badge' : 'cash';
+  return /sticker/.test(t) ? 'sticker' : /pin/.test(t) ? 'badge' : /keychain|key/.test(t) ? 'key' : /poster/.test(t) ? 'image' : /print/.test(t) ? 'doc' : r.order_code ? 'box' : 'cash'; };
+async function loadLogbook(force){
+  if (!force && S.admin.lb && Date.now() - (S.admin.lbAt || 0) < 20000) return S.admin.lb;
+  S.admin.lb = await api.logbook(); S.admin.lbAt = Date.now(); return S.admin.lb;
+}
+function lbDayLabel(d){
+  const today = ymd(new Date()), yest = ymd(new Date(Date.now() - 864e5));
+  return d === today ? 'Today' : d === yest ? 'Yesterday' : fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' });
+}
+async function drawLogbook(){
   const body = $('#admBody');
-  body.onchange = e => {
-    const t = e.target, d = t.dataset, num = v => { const n = parseFloat(v); return Number.isFinite(n) ? n : 0; };
-    if (d.sup !== undefined) { const x = b.supplies[+d.sup]; x[d.f] = ['name', 'unit'].includes(d.f) ? t.value : num(t.value); }
-    else if (d.use !== undefined) { const l = b.usage[d.use][+d.j]; if (d.f === 'id') l[0] = t.value; else l[1] = num(t.value); }
-    else if (d.eq !== undefined) { const e2 = b.equipment[+d.eq]; if (d.split !== undefined) { e2.split = e2.split || []; e2.split[+d.split] = num(t.value); } else e2[d.f] = ['name', 'date'].includes(d.f) ? t.value : num(t.value); }
-    else if (d.partner !== undefined) b.partners[+d.partner] = t.value || `Partner ${+d.partner + 1}`;
-    else if (d.invest !== undefined) { b.invest = b.invest || []; b.invest[+d.invest] = Math.max(0, num(t.value)); }
-    else if (d.buy !== undefined) { const x = (b.purchases || []).find(p2 => p2.id === d.buy); if (!x) return; x[d.f] = d.f === 'amount' ? num(t.value) : t.value; }
-    else if (d.biz) b[d.biz] = Math.max(1, Math.round(num(t.value)));
-    else return;
-    saveBiz('Saved.'); drawMoney();
-  };
+  if (!S.admin.lb) body.innerHTML = '<div class="sk" style="height:200px;border-radius:22px"></div>';
+  let rows; try { rows = await loadLogbook(true); }
+  catch (e) { body.innerHTML = `<div class="formerr">${esc(friendlyError(e))} Run the latest schema.sql in Supabase, then refresh.</div>`; return; }
+  const now = lbMonthOf(ymd(new Date())), mk = S.admin.lbMonth || now, f = S.admin.lbFilter || 'all';
+  const first = rows.length ? rows.map(r => lbMonthOf(r.day)).sort()[0] : now;
+  const inM = rows.filter(r => lbMonthOf(r.day) === mk);
+  const sum = (l, k, m) => l.filter(r => r.kind === k && (!m || r.method === m)).reduce((t, r) => t + (+r.amount || 0), 0);
+  const mIn = sum(inM, 'sale'), mOut = sum(inM, 'expense'), net = mIn - mOut, nS = inM.filter(r => r.kind === 'sale').length, nE = inM.length - nS;
+  const allNet = sum(rows, 'sale') - sum(rows, 'expense');
+  // compared with the month before (only when that month has entries)
+  const pk = lbShift(mk, -1), inP = rows.filter(r => lbMonthOf(r.day) === pk), pNet = sum(inP, 'sale') - sum(inP, 'expense'), dNet = net - pNet;
+  const trend = inP.length ? `<span class="lbtrend ${dNet >= 0 ? 'up' : 'down'}">${ic('arrow', 13)}${peso(Math.abs(dNet))} ${dNet >= 0 ? 'more' : 'less'} than ${esc(lbMonthLabel(pk).split(' ')[0])}</span>` : '';
+  // one bar per day: money in up, money out down
+  const [yy, mm] = mk.split('-').map(Number), nDays = new Date(yy, mm, 0).getDate(), todayD = mk === now ? new Date().getDate() : 0;
+  const perDay = Array.from({ length: nDays }, (_, i) => { const d = `${mk}-${pad2(i + 1)}`, l = inM.filter(r => r.day === d); return { i: sum(l, 'sale'), o: sum(l, 'expense') }; });
+  const top = Math.max(1, ...perDay.map(x => Math.max(x.i, x.o)));
+  const chart = inM.length ? `<div class="lbchart" role="img" aria-label="Money in and out for each day of ${esc(lbMonthLabel(mk))}">${perDay.map((x, k) => `<span class="${k + 1 === todayD ? 'today' : ''} ${todayD && k + 1 > todayD ? 'future' : ''}" title="${k + 1}: +${peso(x.i)} / −${peso(x.o)}"><i class="u" style="height:${Math.round(x.i / top * 100)}%"></i><i class="d" style="height:${Math.round(x.o / top * 100)}%"></i></span>`).join('')}</div>` : '';
+  const shown = inM.filter(r => f === 'all' || r.kind === f);
+  const days = [...new Set(shown.map(r => r.day))].sort().reverse();
+  body.innerHTML = `
+    <div class="lbtop">
+      <div class="lbmonth"><button type="button" class="lbnav" data-act="lbMonth" data-n="-1" ${mk <= first ? 'disabled' : ''} aria-label="Month before">${ic('back', 18)}</button>
+        <b>${esc(lbMonthLabel(mk))}</b>
+        <button type="button" class="lbnav" data-act="lbMonth" data-n="1" ${mk >= now ? 'disabled' : ''} aria-label="Month after">${ic('arrow', 18)}</button></div>
+      <div class="lbhero">
+        <span class="small">${net >= 0 ? 'Left over this month' : 'Spent more than came in'}</span>
+        <b class="num lbnet">${net < 0 ? '−' : ''}${peso(Math.abs(net))}</b>${trend}${chart}
+        <div class="lbflow">
+          <span class="lbin"><i>${ic('arrow', 14)}</i><span><small>Money in</small><b class="num">${peso(mIn)}</b><small>${nS} sale${nS === 1 ? '' : 's'}</small></span></span>
+          <span class="lbout"><i>${ic('arrow', 14)}</i><span><small>Money out</small><b class="num">${peso(mOut)}</b><small>${nE} expense${nE === 1 ? '' : 's'}</small></span></span>
+        </div>
+        ${mIn ? `<div class="lbsplit"><span style="--w:${Math.round(sum(inM, 'sale', 'cash') / mIn * 100)}%"></span></div><div class="lbsplitl small"><span>Cash ${peso(sum(inM, 'sale', 'cash'))}</span><span>GCash ${peso(sum(inM, 'sale', 'gcash'))}${sum(inM, 'sale', 'other') ? ` · Other ${peso(sum(inM, 'sale', 'other'))}` : ''}</span></div>` : ''}
+      </div>
+      <div class="lbacts">
+        <button type="button" class="lbbig in" data-act="lbAdd" data-kind="sale">${ic('plus', 22)}<span>Add sale</span></button>
+        <button type="button" class="lbbig out" data-act="lbAdd" data-kind="expense">${ic('minus', 22)}<span>Add expense</span></button>
+      </div>
+    </div>
+    <div class="lbbar"><div class="chips">${[['all', 'Everything'], ['sale', 'Sales'], ['expense', 'Expenses']].map(([k, l]) => `<button type="button" class="chip ${f === k ? 'on' : ''}" data-act="lbFilter" data-f="${k}">${l}</button>`).join('')}</div>
+</div>
+    <div class="lblist">${days.length ? days.map(d => {
+      const l = shown.filter(r => r.day === d), dn = sum(l, 'sale') - sum(l, 'expense');
+      return `<div class="lbday"><span>${esc(lbDayLabel(d))}</span><span class="num ${dn < 0 ? 'neg' : ''}">${dn < 0 ? '−' : '+'}${peso(Math.abs(dn))}</span></div>
+        ${l.map(r => `<button type="button" class="lbrow ${r.kind}" data-act="lbEdit" data-id="${r.id}">
+          <i class="lbic">${ic(lbIcon(r), 17)}</i>
+          <span class="lbtxt"><b>${esc(r.item)}${r.kind === 'sale' && r.qty > 1 ? ` × ${r.qty}` : ''}</b>
+            <small>${[r.kind === 'sale' ? LB_METHOD[r.method] || '' : r.who ? 'Paid by ' + esc(r.who) : '', r.kind === 'sale' && r.who ? esc(r.who) : '', r.order_code ? `Order ${esc(r.order_code)}` : '', r.note ? esc(r.note) : ''].filter(Boolean).join(' · ')}</small></span>
+          <b class="lbamt num">${r.kind === 'sale' ? '+' : '−'}${peso(r.amount)}</b></button>`).join('')}`;
+    }).join('') : `<div class="empty">${ic('doc', 36)}<b>${rows.length ? 'Nothing here for ' + esc(lbMonthLabel(mk)) + '.' : 'Your log book is empty.'}</b><span>Tap <b>Add sale</b> when someone pays you, and <b>Add expense</b> when you buy something for the shop. Done website orders have an <b>Add to log book</b> button.</span></div>`}</div>
+    ${rows.length ? `<p class="small muted lball">Since the first entry (${esc(lbMonthLabel(first))}): ${peso(sum(rows, 'sale'))} in, ${peso(sum(rows, 'expense'))} out, <b class="${allNet < 0 ? 'neg' : ''}">${allNet < 0 ? '−' : ''}${peso(Math.abs(allNet))} left</b>.<br><button type="button" class="linkbtn" data-act="lbCsv">${ic('download', 14)} Download as a spreadsheet</button></p>` : ''}`;
+}
+function lbSheet(kind, r, pre){
+  r = r || pre || {}; const sale = kind === 'sale', edit = !!r.id, today = ymd(new Date());
+  const prods = Object.keys(CONFIG.products || {}).map(k => ({ k, p: P(k) })).filter(x => x.p && isLive(x.k)).map(({ k, p }) => ({ k, name: p.name, price: ((p.sizes || [])[0] || {}).price || 0 }));
+  const quick = sale ? prods : ['Printer ink', 'Sticker paper', 'Photo paper', 'Pin parts', 'Bond paper'].map(name => ({ name }));
+  const whos = [...new Set((S.admin.lb || []).filter(x => x.kind === 'expense' && x.who).map(x => x.who))];
+  const extra = !!(r.who || r.note);
+  showSheet(`<div class="lbsheet ${kind}"><h3>${edit ? (sale ? 'Edit sale' : 'Edit expense') : (sale ? 'Add a sale' : 'Add an expense')}</h3>
+    <span class="lbl">${sale ? 'What was sold' : 'What for'}</span>
+    <div class="lbquick">${quick.map(q => `<button type="button" class="${String(r.item || '').toLowerCase() === q.name.toLowerCase() ? 'on' : ''}" data-name="${esc(q.name)}" data-price="${q.price || ''}">${sale ? ic({ stickers: 'sticker', pins: 'badge', keychains: 'key', posters: 'image', prints: 'doc' }[q.k] || 'box', 16) : ''}<span>${esc(q.name)}</span>${q.price ? `<small>${money(q.price)}</small>` : ''}</button>`).join('')}</div>
+    <input class="inp" id="lbItem" maxlength="120" value="${esc(r.item || '')}" placeholder="${sale ? 'Or type something else' : 'Or type what it was'}" aria-label="${sale ? 'What was sold' : 'What for'}">
+    <div class="lbrow2 ${sale ? '' : 'one'}">${sale ? `<label><span class="lbl">How many</span><span class="stepper"><button type="button" data-step="-1" aria-label="One less">${ic('minus', 16)}</button><input class="inp num" id="lbQty" type="number" min="1" max="10000" inputmode="numeric" value="${r.qty || 1}"><button type="button" data-step="1" aria-label="One more">${ic('plus', 16)}</button></span></label>` : ''}
+      <label><span class="lbl">${sale ? 'Total paid' : 'Amount'}</span><span class="pricein big"><input class="inp num" id="lbAmt" type="number" min="0" step="any" inputmode="decimal" value="${r.amount != null ? +r.amount : ''}" placeholder="0"></span></label></div>
+    ${sale ? `<span class="lbl">Paid with</span><div class="lbseg" id="lbMethodSeg">${Object.entries(LB_METHOD).map(([k, l]) => `<button type="button" data-m="${k}" class="${(r.method || 'cash') === k ? 'on' : ''}">${l}</button>`).join('')}</div><input type="hidden" id="lbMethod" value="${esc(r.method || 'cash')}">` : ''}
+    <label><span class="lbl">Date</span><input class="inp" id="lbDay" type="date" max="${today}" value="${esc(r.day || today)}"></label>
+    <details class="lbmore" ${extra ? 'open' : ''}><summary>${ic('plus', 14)} ${sale ? 'Add a name or note' : 'Add who paid or a note'}</summary>
+      <label><span class="lbl">${sale ? 'Who bought it' : 'Who paid'}</span><input class="inp" id="lbWho" maxlength="80" list="lbWhos" value="${esc(r.who || '')}" placeholder="${sale ? 'Name' : 'Like: shop money, or a name'}"><datalist id="lbWhos">${sale ? '' : ['Shop money', ...whos.filter(w => w !== 'Shop money')].map(w => `<option value="${esc(w)}">`).join('')}</datalist></label>
+      <label><span class="lbl">Note</span><input class="inp" id="lbNote" maxlength="300" value="${esc(r.note || '')}" placeholder="${sale ? 'Like: class pins for 7-Ruby' : 'Like: bought at the mall'}"></label></details>
+    ${r.order_code ? `<p class="small muted" style="margin:0">${ic('box', 14)} From website order <b>${esc(r.order_code)}</b></p>` : ''}
+    <input type="hidden" id="lbKind" value="${kind}"><input type="hidden" id="lbId" value="${esc(r.id || '')}"><input type="hidden" id="lbOrder" value="${esc(r.order_code || '')}">
+    <div class="lbsave">${btn(edit ? 'Save changes' : sale ? 'Save sale' : 'Save expense', { act: 'lbSave', icon: 'check', cls: 'dark' })}${edit ? smallBtn('Delete', 'trash', 'lbDelete', 'plain', `data-id="${esc(r.id)}"`) : `<button type="button" class="pilllink" data-act="sheetClose">Cancel</button>`}</div></div>`);
+  let typed = r.amount != null && r.amount !== '';
+  const priceOf = () => { const q = quick.find(x => x.name.toLowerCase() === $('#lbItem').value.trim().toLowerCase()); return q && q.price ? q.price : 0; };
+  const fill = () => { if (!sale || typed) return; const p = priceOf(); if (p) $('#lbAmt').value = p * Math.max(1, +$('#lbQty').value || 1); };
+  document.querySelectorAll('.lbquick button').forEach(b => b.addEventListener('click', () => {
+    $('#lbItem').value = b.dataset.name; document.querySelectorAll('.lbquick button').forEach(x => x.classList.toggle('on', x === b));
+    if (sale && !edit) typed = false; fill(); if (!sale || !b.dataset.price) $('#lbAmt').focus(); }));
+  $('#lbItem').addEventListener('input', () => { document.querySelectorAll('.lbquick button').forEach(x => x.classList.toggle('on', x.dataset.name.toLowerCase() === $('#lbItem').value.trim().toLowerCase())); fill(); });
+  $('#lbAmt').addEventListener('input', () => { typed = true; });
+  if (sale) {
+    $('#lbQty').addEventListener('input', fill);
+    document.querySelectorAll('.stepper [data-step]').forEach(b => b.addEventListener('click', () => { const q = $('#lbQty'); q.value = Math.max(1, (+q.value || 1) + +b.dataset.step); fill(); }));
+    document.querySelectorAll('#lbMethodSeg button').forEach(b => b.addEventListener('click', () => { $('#lbMethod').value = b.dataset.m; document.querySelectorAll('#lbMethodSeg button').forEach(x => x.classList.toggle('on', x === b)); }));
+  }
+}
+function lbFromOrderRow(o){
+  const titles = orderItems(o).map(it => `${itemTitle(it)}${it.type !== 'stickers' && +it.qty > 1 ? ` × ${it.qty}` : ''}`).join(', ');
+  const done = o.done_at ? ymd(new Date(o.done_at)) : ymd(new Date());
+  return { kind: 'sale', item: (titles || 'Website order').slice(0, 120), qty: 1, amount: +o.total || 0, method: o.payment === 'gcash' ? 'gcash' : 'cash', who: (o.nickname || '').slice(0, 80), day: done, order_code: o.code };
 }
 function spotsHTML(srcs, sc){
   const keys = [...new Set([...Object.keys(srcs), ...Object.keys(sc)])];
   if (!keys.length) return '';
   return `<p class="lab" style="margin-top:22px">Your poster spots</p><div class="tags">${keys.sort((a, z) => (srcs[z] || 0) - (srcs[a] || 0) || (sc[z] || 0) - (sc[a] || 0)).map(k => `<span class="tag">${esc(k)}: ${sc[k] || 0} scan${sc[k] === 1 ? '' : 's'}, ${srcs[k] || 0} order${srcs[k] === 1 ? '' : 's'}</span>`).join('')}</div>`;
 }
+const tplLink = t => `${CONFIG.siteUrl || (location.origin + location.pathname)}?t=${t.slug}&src=${t.slug}-sticker`;
+const tplPrice = t => { const p = P(t.type); if (!p) return 0; const z = (p.sizes || []).find(x => x.id === t.size) || (p.sizes || [])[0]; return z ? z.price : 0; };
 function drawTemplates(base){
   const box = $('#tplList'); if (!box) return;
   const paint = list => {
-    S.admin.tpls = list;
-    box.innerHTML = list.length ? list.map(t => `<div class="tplrow"><img src="${esc(t.image)}" alt="">
-      <div><b>${esc(t.name)}</b> <span class="tag">${esc(P(t.type) ? P(t.type).name : t.type)}</span>${t.enabled ? '' : ' <span class="tag">Off</span>'}
-        <div class="url muted">${esc(base)}?t=${esc(t.slug)}</div></div>
-      <div class="acts">${smallBtn(t.enabled ? 'Turn off' : 'Turn on', t.enabled ? 'eye' : 'check', 'tplToggle', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('Try it', 'arrow', 'tplTry', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('', 'trash', 'tplDel', 'plain', `data-slug="${esc(t.slug)}" aria-label="Delete ${esc(t.name)}"`)}</div></div>`).join('')
-      : '<p class="help">None yet. Add one below.</p>';
+    S.admin.tpls = list; const sc = S.admin.scans || {};
+    box.innerHTML = list.length ? list.map(t => { const src = `${t.slug}-sticker`, n = S.admin.orders.filter(o => o.src === src).length;
+      return `<div class="tplrow ${t.enabled ? '' : 'off'}"><span class="tplthumb ${t.type === 'pins' ? 'round' : ''}"><img src="${esc(t.image)}" alt=""></span>
+      <div class="tplinfo"><b>${esc(t.name)}</b><span class="small muted">${esc(P(t.type) ? P(t.type).name : t.type)}${tplPrice(t) ? ' · ' + money(tplPrice(t)) : ''}${t.enabled ? '' : ' · <b>off</b>'}</span>
+        <span class="small muted">${sc[src] || 0} scan${sc[src] === 1 ? '' : 's'} · ${n} order${n === 1 ? '' : 's'}</span></div>
+      <div class="acts">${smallBtn('Sticker', 'download', 'tplSticker', 'dark', `data-slug="${esc(t.slug)}"`)}${smallBtn('QR only', 'qr', 'tplQr', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('Copy link', 'copy', 'tplCopy', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('Try it', 'arrow', 'tplTry', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn(t.enabled ? 'Turn off' : 'Turn on', t.enabled ? 'eye' : 'check', 'tplToggle', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('', 'trash', 'tplDel', 'plain', `data-slug="${esc(t.slug)}" aria-label="Delete ${esc(t.name)}"`)}</div></div>`; }).join('')
+      : `<button type="button" class="tplempty" data-act="tplNew">${ic('plus', 26)}<span><b>Make your first one</b><small>Pick a picture, give it a name, done. Takes a minute.</small></span></button>`;
     const sel = $('#qrOpens'); if (sel && sel.options.length !== list.filter(t => t.enabled).length + 1) { const v = sel.value; sel.innerHTML = `<option value="">The shop's home page</option>${list.filter(t => t.enabled).map(t => `<option value="${esc(t.slug)}">Ready-made: ${esc(t.name)}</option>`).join('')}`; sel.value = v; }
   };
   api.listTemplates().then(paint).catch(e => { box.innerHTML = `<div class="formerr">${esc(friendlyError(e))} Run the latest schema.sql in Supabase.</div>`; });
+}
+/* the 3-step "new ready-made design" sheet */
+function tplNewSheet(){
+  const types = ['pins', 'keychains', 'posters'].filter(k => CONFIG.products[k]);
+  S.admin.tplDraft = { type: types[0] || 'pins', file: null };
+  showSheet(`<h3 style="margin-bottom:4px">New ready-made design</h3><p class="help" style="margin:0 0 14px">Three quick steps. Anyone who scans its sticker goes straight to ordering it.</p>
+    <div class="tplstep"><i>1</i><b>Pick the picture</b></div>
+    <label class="tplpick" id="tplPick"><input type="file" id="tplFile" accept="image/*" hidden><span class="tplpv" id="tplPv">${ic('image', 30)}<small>Tap to choose</small></span><span class="small muted">A PNG with a see-through background looks best for logos.</span></label>
+    <div class="tplstep"><i>2</i><b>Name people will see</b></div>
+    <input class="inp" id="tplName" maxlength="60" placeholder="Like: Fortis pin">
+    <div class="tplstep"><i>3</i><b>It’s a…</b></div>
+    <div class="chips tplchips" id="tplTypes">${types.map(k => `<button type="button" class="chip ${k === S.admin.tplDraft.type ? 'on' : ''}" data-act="tplType" data-k="${k}">${esc(P(k).name)}${isLive(k) ? '' : ' (hidden now)'}</button>`).join('')}</div>
+    <div class="tplsave">${btn('Save and make sticker', { act: 'tplSave', icon: 'check', cls: 'dark' })}<button type="button" class="pilllink" data-act="sheetClose">Cancel</button></div>`);
+  $('#tplFile').addEventListener('change', e => { const f = e.target.files[0]; if (!f) return; S.admin.tplDraft.file = f;
+    $('#tplPv').innerHTML = `<img src="${URL.createObjectURL(f)}" alt="" class="${S.admin.tplDraft.type === 'pins' ? 'round' : ''}">`; $('#tplPick').classList.add('has');
+    if (!$('#tplName').value) $('#tplName').focus(); });
+}
+/* QR code as a canvas (navy on white, high error correction so it still scans when printed small) */
+function qrCanvas(text, px){
+  const d = document.createElement('div'); d.style.cssText = 'position:fixed;left:-9999px;top:0'; document.body.appendChild(d);
+  new QRCode(d, { text, width: px, height: px, colorDark: '#283971', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+  const c = d.querySelector('canvas'); d.remove(); return c;
+}
+function saveBlob(blob, name){ const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
+/* the promo sticker: the design as the product, its name, a big QR code and the price. Square, ready for a sticker sheet. */
+async function tplStickerCanvas(t){
+  if (!window.QRCode) throw new Error("The QR tool didn't load. Refresh the page.");
+  try { await Promise.all([document.fonts.load('800 80px "Cabinet Grotesk"'), document.fonts.load('700 30px Satoshi')]); } catch {}
+  const W = 1200, c = document.createElement('canvas'); c.width = c.height = W; const x = c.getContext('2d');
+  const N = '#283971', DEEP = '#1C2A57', GOLD = '#F2BC2E', D = s => `800 ${s}px "Cabinet Grotesk", "Arial Black", sans-serif`, B = s => `700 ${s}px Satoshi, system-ui, sans-serif`;
+  const rr = (X, Y, w, h, r) => { x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + w, Y, X + w, Y + h, r); x.arcTo(X + w, Y + h, X, Y + h, r); x.arcTo(X, Y + h, X, Y, r); x.arcTo(X, Y, X + w, Y, r); x.closePath(); };
+  // background: navy with the dot pattern
+  x.fillStyle = N; rr(0, 0, W, W, 70); x.fill(); x.save(); rr(0, 0, W, W, 70); x.clip();
+  x.fillStyle = 'rgba(255,255,255,.08)'; for (let Y = 26; Y < W; Y += 52) for (let X = 26; X < W; X += 52) { x.beginPath(); x.arc(X, Y, 4, 0, 7); x.fill(); }
+  x.restore();
+  // stitched edge, like the posters' stickers
+  x.save(); x.setLineDash([26, 18]); x.lineWidth = 6; x.strokeStyle = 'rgba(255,255,255,.28)'; rr(34, 34, W - 68, W - 68, 46); x.stroke(); x.restore();
+  const spark = (X, Y, r, fill) => { x.save(); x.translate(X, Y); x.beginPath(); for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4 - Math.PI / 2, rad = k % 2 ? r * .32 : r; x.lineTo(Math.cos(a) * rad, Math.sin(a) * rad); } x.closePath();
+    x.fillStyle = fill; x.fill(); x.restore(); };
+  // heading
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+  x.font = B(40); x.fillStyle = GOLD; x.fillText('GET YOUR OWN', W / 2, 118);
+  let fs = 132; x.font = D(fs); while (x.measureText(t.name).width > 1060 && fs > 64) { fs -= 4; x.font = D(fs); }
+  x.fillStyle = '#fff'; x.fillText(t.name, W / 2, 118 + fs * 0.98);
+  const top = 118 + fs * 0.98 + 60;
+  spark(130, 120, 34, GOLD); spark(1080, 90, 22, '#fff'); spark(1110, 200, 14, GOLD); spark(80, top + 600, 18, '#fff');
+  // the design, shown as the product
+  const img = await loadImg(t.image), cx = 330, cy = top + 290, R = 250;
+  const cover = (X, Y, w, h, fit) => { const k = (fit ? Math.min : Math.max)(w / img.naturalWidth, h / img.naturalHeight), dw = img.naturalWidth * k, dh = img.naturalHeight * k; x.drawImage(img, X + (w - dw) / 2, Y + (h - dh) / 2, dw, dh); };
+  x.save(); x.shadowColor = 'rgba(10,16,40,.55)'; x.shadowOffsetX = 14; x.shadowOffsetY = 18; x.shadowBlur = 0;
+  if (t.type === 'pins') {
+    x.fillStyle = '#fff'; x.beginPath(); x.arc(cx, cy, R + 18, 0, 7); x.fill(); x.restore();
+    x.save(); x.beginPath(); x.arc(cx, cy, R, 0, 7); x.clip(); x.fillStyle = '#fff'; x.fillRect(cx - R, cy - R, 2 * R, 2 * R); cover(cx - R, cy - R, 2 * R, 2 * R, false);
+    const g = x.createRadialGradient(cx - R * .45, cy - R * .55, 10, cx - R * .3, cy - R * .4, R * 1.1); g.addColorStop(0, 'rgba(255,255,255,.55)'); g.addColorStop(.35, 'rgba(255,255,255,.08)'); g.addColorStop(1, 'rgba(0,0,0,.18)');
+    x.fillStyle = g; x.fillRect(cx - R, cy - R, 2 * R, 2 * R); x.restore();
+  } else if (t.type === 'keychains') {
+    const kw = 300, kh = 400, kx = cx - kw / 2, ky = cy - kh / 2 + 30;
+    x.restore(); x.strokeStyle = '#C9CFDB'; x.lineWidth = 16; x.beginPath(); x.arc(cx, ky - 70, 42, 0, 7); x.stroke();
+    x.save(); x.shadowColor = 'rgba(10,16,40,.55)'; x.shadowOffsetX = 14; x.shadowOffsetY = 18; x.fillStyle = 'rgba(232,238,249,.95)'; rr(kx - 22, ky - 22, kw + 44, kh + 44, 46); x.fill(); x.restore();
+    x.save(); rr(kx, ky, kw, kh, 26); x.clip(); x.fillStyle = '#fff'; x.fillRect(kx, ky, kw, kh); cover(kx + 14, ky + 14, kw - 28, kh - 28, true); x.restore();
+  } else {
+    const pw = 340, ph = 460, px0 = cx - pw / 2, py0 = cy - ph / 2;
+    x.fillStyle = '#fff'; x.fillRect(px0 - 14, py0 - 14, pw + 28, ph + 28); x.restore();
+    x.save(); x.beginPath(); x.rect(px0, py0, pw, ph); x.clip(); cover(px0 + 16, py0 + 16, pw - 32, ph - 32, true); x.restore();
+  }
+  // QR card
+  const qs = 480, qx = 640, qy = top + 30;
+  x.save(); x.shadowColor = 'rgba(10,16,40,.55)'; x.shadowOffsetX = 14; x.shadowOffsetY = 18; x.fillStyle = '#fff'; rr(qx - 30, qy - 30, qs + 60, qs + 120, 42); x.fill(); x.restore();
+  x.drawImage(qrCanvas(tplLink(t), qs), qx, qy, qs, qs);
+  x.fillStyle = N; x.font = D(46); x.fillText('SCAN ME', qx + qs / 2, qy + qs + 66);
+  spark(qx + qs + 28, qy - 26, 34, GOLD);
+  // price + shop
+  const price = tplPrice(t), line = price ? `${money(price)} · pick up at school` : 'Pick up at school';
+  x.font = D(54); const lw = x.measureText(line).width + 90, ly = top + 660;
+  x.fillStyle = DEEP; rr((W - lw) / 2 + 8, ly + 8, lw, 96, 48); x.fill(); x.fillStyle = GOLD; rr((W - lw) / 2, ly, lw, 96, 48); x.fill();
+  x.fillStyle = N; x.fillText(line, W / 2, ly + 68);
+  // the shop's die-cut logo, which is also the web address
+  x.save(); x.translate(W / 2, Math.min(W - 70, ly + 172)); x.rotate(-3 * Math.PI / 180); x.font = D(62); x.textAlign = 'left';
+  const parts = [['Stick', N], ['2', GOLD], ['It', N], ['.me', N]], lw2 = parts.reduce((t, [p]) => t + x.measureText(p).width, 0);
+  x.lineJoin = 'round'; x.lineWidth = 20; x.strokeStyle = DEEP; x.strokeText('Stick2It.me', -lw2 / 2 + 6, 7); x.strokeStyle = '#fff'; x.strokeText('Stick2It.me', -lw2 / 2, 0);
+  let lx = -lw2 / 2; for (const [p, col] of parts) { x.fillStyle = col; x.fillText(p, lx, 0); lx += x.measureText(p).width; } x.restore();
+  return c;
+}
+async function tplDownloadSticker(t){
+  try { const c = await tplStickerCanvas(t); c.toBlob(b => saveBlob(b, `sticker-${t.slug}.png`), 'image/png'); toast('Sticker downloaded. Put it on a sticker sheet like any picture.'); }
+  catch (e) { toast(e.message || friendlyError(e)); }
 }
 async function templateImage(file){   // logos stay sharp PNGs (see-through kept); photos become JPEGs. Max 1400 px.
   const img = await loadImg(URL.createObjectURL(file));
   const k = Math.min(1, 1400 / Math.max(img.naturalWidth, img.naturalHeight)), c = document.createElement('canvas');
   c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-  return /png|webp|gif|svg/.test(file.type) ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', 0.9);
+  // keep PNG only when the picture really has see-through parts (logos); everything else is a much smaller JPEG,
+  // so the design opens fast for whoever scans its sticker
+  let clear = false;
+  if (/png|webp|gif|svg/.test(file.type)) { const px = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; for (let i = 3; i < px.length; i += 16) if (px[i] < 250) { clear = true; break; } }
+  return clear ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', 0.92);
 }
 function drawPosters(){
   const base = CONFIG.siteUrl || (location.origin + location.pathname);
   const bad = !CONFIG.siteUrl && !/^https?:/.test(location.origin);
   const srcs = {}; S.admin.orders.forEach(o => { if (o.src && !(o.layout && o.layout.walkin) && !o.add_to) srcs[o.src] = (srcs[o.src] || 0) + 1; });
   const q = S.admin.qr;
-  $('#admBody').innerHTML = `<div class="panel">
+  $('#admBody').innerHTML = `<div class="panel tplpanel">
+    <div class="tplhead"><div><h3 style="margin-bottom:6px">Ready-made designs</h3>
+      <p class="help" style="margin:0">A design people can order in one tap, like your cluster’s logo on a pin. Each one gets its own QR sticker: scan it, and the design is already in.</p></div>
+      ${btn('New design', { act: 'tplNew', icon: 'plus', cls: 'dark' })}</div>
+    <div id="tplList"><p class="help">Loading…</p></div>
+  </div>
+  <div class="panel" style="margin-top:16px">
     <h3 style="margin-bottom:6px">Make a QR code for a poster</h3>
-    <p class="help">Give each poster spot its own name. The Business tab then shows which spots bring in orders.</p>
+    <p class="help">Give each poster spot its own name. Each spot's scans and orders show below.</p>
     ${bad ? `<div class="formerr">Set siteUrl in CONFIG to the real website address before printing QR codes.</div>` : ''}
     <form id="qrForm" style="margin-top:18px">
       <label class="lab" for="qrName" style="display:block;margin-bottom:8px">Poster spot</label>
@@ -5455,15 +5407,6 @@ function drawPosters(){
         ${smallBtn('Copy link', 'copy', 'copyLink', 'plain')}</div>
         <p class="help">Print it at least 4 cm wide, and scan it with a phone before putting the poster up.</p></div></div>` : ''}
     <div id="spotList">${spotsHTML(srcs, S.admin.scans || {})}</div>
-  </div>
-  <div class="panel" style="margin-top:16px"><h3 style="margin-bottom:6px">Ready-made designs</h3>
-    <p class="help">A design you made, like a club or cluster logo pin. Its link opens the designer with it already in, so people just pick how many and check out. Make a QR code for it above.</p>
-    <div id="tplList"><p class="help">Loading…</p></div>
-    <details style="margin-top:14px" ${S.admin.tplOpen ? 'open' : ''} ontoggle="S.admin.tplOpen=this.open"><summary class="lab" style="cursor:pointer">Add a ready-made design</summary>
-      <div class="pgrid2" style="margin-top:12px"><label class="dnum"><span>Name people see</span><input class="inp" id="tplName" maxlength="60" placeholder="Like: Fortis pin"></label>
-        <label class="dnum"><span>Product</span><select class="inp" id="tplType">${['pins', 'keychains', 'posters'].filter(k => CONFIG.products[k]).map(k => `<option value="${k}">${esc(P(k).name)}${isLive(k) ? '' : ' (hidden now)'}</option>`).join('')}</select></label></div>
-      <label class="dnum" style="display:block;margin-top:12px"><span>Picture (a PNG with a see-through background works best for logos)</span><input class="inp" id="tplFile" type="file" accept="image/*"></label>
-      <div style="margin-top:12px">${btn('Save design', { act: 'tplSave', icon: 'check', cls: 'dark' })}</div></details>
   </div>`;
   drawTemplates(base);
   api.scanCounts().then(rows => { const sc = {}; rows.forEach(r => { sc[r.src] = +r.scans || 0; }); S.admin.scans = sc; const el = $('#spotList'); if (el) el.innerHTML = spotsHTML(srcs, sc); }).catch(() => {});
@@ -5604,25 +5547,6 @@ const ACTIONS = {
   cfgAddPlace: () => { S.admin.cfg.pickup_places.push(''); drawShopForm(); },
   cfgDelPlace: t => { S.admin.cfg.pickup_places.splice(+t.dataset.i, 1); drawShopForm(); },
   cfgDelSkip: t => { S.admin.cfg.no_pickup_dates.splice(+t.dataset.i, 1); drawShopForm(); },
-  bizRestock: t => {
-    const b = S.admin.biz, x = b.supplies[+t.dataset.i]; x.stock = Math.round((x.stock + x.packSize) * 100) / 100;
-    const buy = { id: uid(), date: ymd(new Date()), item: `${x.name} (${x.packSize} ${x.unit}${x.packSize === 1 ? '' : 's'})`, amount: x.packPrice };
-    b.purchases = (b.purchases || []).concat([buy]); saveBiz(); drawMoney();
-    toast(`Added ${x.packSize} ${x.unit}s of ${x.name} and logged ${pmoney(x.packPrice)}.`, () => { x.stock -= x.packSize; b.purchases = b.purchases.filter(p => p.id !== buy.id); saveBiz(); drawMoney(); });
-  },
-  bizAddPartner: () => { const b = S.admin.biz; b.partners = (b.partners || []).concat([`Partner ${(b.partners || []).length + 1}`]); b.invest = (b.invest || []).concat([0]); saveBiz(); drawMoney(); },
-  bizDelPartner: t => { if (!armed(t, 'Tap again')) return; const i = +t.dataset.i, b = S.admin.biz; b.partners.splice(i, 1); (b.invest || []).splice(i, 1); saveBiz(); drawMoney(); },
-  bizAddSupply: () => { const b = S.admin.biz; b.supplies.push({ id: 's_' + uid(), name: 'New supply', unit: 'piece', packPrice: 0, packSize: 1, stock: 0, lowAt: 0 }); saveBiz(); drawMoney(); },
-  bizDelSupply: t => { if (!armed(t, 'Tap again')) return; const b = S.admin.biz, x = b.supplies.splice(+t.dataset.i, 1)[0]; for (const k of Object.keys(b.usage || {})) b.usage[k] = b.usage[k].filter(([id]) => id !== x.id); saveBiz('Removed.'); drawMoney(); },
-  bizAddUse: t => { const b = S.admin.biz; b.usage[t.dataset.k] = (b.usage[t.dataset.k] || []).concat([[(b.supplies[0] || {}).id, 1]]); saveBiz(); drawMoney(); },
-  bizDelUse: t => { const b = S.admin.biz; b.usage[t.dataset.k].splice(+t.dataset.j, 1); saveBiz(); drawMoney(); },
-  bizAddEquip: () => { const b = S.admin.biz; b.equipment = (b.equipment || []).concat([{ id: uid(), name: 'Pin maker', cost: 0, date: ymd(new Date()) }]); saveBiz(); drawMoney(); },
-  bizDelEquip: t => { if (!armed(t, 'Tap again')) return; S.admin.biz.equipment.splice(+t.dataset.i, 1); saveBiz('Removed.'); drawMoney(); },
-  bizEven: t => { const b = S.admin.biz, e = b.equipment[+t.dataset.i], n = (b.partners || []).length || 1, each = Math.floor(e.cost / n * 100) / 100;
-    e.split = Array(n).fill(each); e.split[n - 1] = Math.round((e.cost - each * (n - 1)) * 100) / 100; saveBiz('Split evenly.'); drawMoney(); },
-  bizAddBuy: () => { const item = $('#buyItem').value.trim(), amount = parseFloat($('#buyAmt').value); if (!item || !(amount >= 0)) return toast('Type what you bought and how much.');
-    const b = S.admin.biz; b.purchases = (b.purchases || []).concat([{ id: uid(), date: ymd(new Date()), item, amount }]); saveBiz('Added.'); drawMoney(); },
-  bizDelBuy: t => { const b = S.admin.biz; b.purchases = b.purchases.filter(p => p.id !== t.dataset.id); saveBiz('Removed.'); drawMoney(); },
   installApp: async () => { if (!installEvt) return; installEvt.prompt(); const r = await installEvt.userChoice.catch(() => null); installEvt = null;
     if (r && r.outcome === 'accepted') { safeLS.set('sk_save_hide', '1'); document.querySelectorAll('.savecard').forEach(c => c.remove()); toast('Saved to your home screen.'); } },
   saveHide: () => { safeLS.set('sk_save_hide', '1'); document.querySelectorAll('.savecard').forEach(c => c.remove()); },
@@ -5803,7 +5727,6 @@ const ACTIONS = {
   },
   friendCopy: async t => { try { await navigator.clipboard.writeText(t.dataset.code); } catch {} toast(`Copied ${t.dataset.code}. Send it to your friends!`); },
   friendShare: async t => { try { await navigator.share({ text: `Use my code ${t.dataset.code} on ${CONFIG.shopName} for ${money(CONFIG.referralFriendOff)} off your first order: ${CONFIG.siteUrl}` }); } catch {} },
-  monthNav: t => { S.admin.month = Math.max(0, (S.admin.month || 0) + +t.dataset.d); drawMoney(); },
   aBatch: t => batchPrint(t.dataset.date),
   aPinSheet: () => pinSheets(false).catch(e => toast(friendlyError(e))),
   aPinSheetPng: () => pinSheets(true).catch(e => toast(friendlyError(e))),
@@ -5886,89 +5809,81 @@ const ACTIONS = {
     const a = document.createElement('a'); a.href = f.url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
   },
 
-  aSale: () => {
-    const opts = productKeys().filter(k => CONFIG.products[k]).flatMap(k => P(k).sizes.filter(z => z.enabled !== false).map(z => ({ v: `${k}|${z.id}`, label: `${P(k).name}${P(k).sizes.length > 1 ? ' ' + z.label : ''}`, price: z.price })));
-    showSheet(`<h3 style="margin-bottom:4px">Log a sale</h3><p class="help" style="margin:0 0 10px">For things you made and sold in person, without an order on the website. It counts in your sales, profit, and supplies.</p>
-      <div class="field"><span class="lab">What</span><select class="inp" id="slProd">${opts.map(o => `<option value="${esc(o.v)}" data-price="${o.price}">${esc(o.label)} (${money(o.price)})</option>`).join('')}</select></div>
-      <div class="pgrid2"><label class="dnum"><span>How many</span><input class="inp num" id="slQty" type="number" min="1" max="500" value="1" inputmode="numeric"></label>
-        <label class="dnum"><span>Total paid</span><span class="pricein"><input class="inp num" id="slTotal" type="number" min="0" value="${opts[0] ? opts[0].price : 0}" inputmode="numeric"></span></label></div>
-      <div class="pgrid2"><label class="dnum"><span>Paid with</span><select class="inp" id="slPay"><option value="cash">Cash</option><option value="gcash">GCash</option></select></label>
-        <label class="dnum"><span>Date</span><input class="inp" id="slDate" type="date" value="${ymd(new Date())}"></label></div>
-      <div class="field"><span class="lab">Who (optional)</span><input class="inp" id="slWho" maxlength="60" placeholder="Name, or leave blank"></div>
-      <div class="field"><span class="lab">Note (optional)</span><input class="inp" id="slNote" maxlength="200" placeholder="Like: 3 class pins for 10 - Ruby"></div>
-      <div style="display:flex;gap:10px;margin-top:12px">${btn('Save sale', { act: 'aSaleSave', icon: 'check', cls: 'dark' })}<button type="button" class="pilllink" data-act="sheetClose">Cancel</button></div>`);
-    const upd = () => { const o = $('#slProd').selectedOptions[0]; $('#slTotal').value = Math.max(0, Math.round((+o.dataset.price || 0) * Math.max(1, +$('#slQty').value || 1))); };
-    $('#slProd').addEventListener('change', upd); $('#slQty').addEventListener('input', upd);
+  lbAdd: t => lbSheet(t.dataset.kind),
+  lbEdit: t => { const r = (S.admin.lb || []).find(x => x.id === t.dataset.id); if (r) lbSheet(r.kind, r); },
+  lbFilter: t => { S.admin.lbFilter = t.dataset.f; drawLogbook(); },
+  lbMonth: t => { const now = lbMonthOf(ymd(new Date())); S.admin.lbMonth = lbShift(S.admin.lbMonth || now, +t.dataset.n); drawLogbook(); },
+  lbSave: async () => {
+    const kind = $('#lbKind').value, id = $('#lbId').value, item = $('#lbItem').value.trim(), amount = Math.round((parseFloat($('#lbAmt').value) || 0) * 100) / 100;
+    if (!item) { toast(kind === 'sale' ? 'Type what was sold.' : 'Type what it was for.'); $('#lbItem').focus(); return; }
+    if (!(amount > 0)) { toast('Type the amount.'); $('#lbAmt').focus(); return; }
+    if (($('#lbDay').value || '') > ymd(new Date())) { toast("That date hasn't happened yet."); $('#lbDay').focus(); return; }
+    // catch typos like ₱4500 for ₱45: compare with the price list when we know the product, else ask for anything big
+    const unit = kind === 'sale' ? ((Object.keys(CONFIG.products || {}).map(k => P(k)).find(p => p && p.name.toLowerCase() === item.toLowerCase()) || {}).sizes || [])[0] : null;
+    const expected = unit && unit.price ? unit.price * Math.max(1, +$('#lbQty').value || 1) : 0;
+    if (expected && amount > expected * 3 && !confirm(`${peso(amount)} for ${item}? At the usual price it would be ${peso(expected)}. Save it anyway?`)) { $('#lbAmt').focus(); return; }
+    if (!expected && amount >= 5000 && !confirm(`${peso(amount)} is a lot. Is that right?`)) { $('#lbAmt').focus(); return; }
+    const row = { kind, item, amount, day: $('#lbDay').value || ymd(new Date()), who: $('#lbWho').value.trim() || null, note: $('#lbNote').value.trim() || null,
+      qty: kind === 'sale' ? Math.max(1, Math.min(10000, Math.round(+$('#lbQty').value || 1))) : 1, method: kind === 'sale' ? $('#lbMethod').value : null, order_code: $('#lbOrder').value || null };
+    closeSheet();
+    try {
+      if (id) await api.logUpdate(id, row); else await api.logAdd(row);
+      S.admin.lbAt = 0; toast(id ? 'Saved.' : kind === 'sale' ? `Sale logged: ${peso(amount)}.` : `Expense logged: ${peso(amount)}.`);
+      if (S.admin.tab === 'money') { if (!id) S.admin.lbMonth = lbMonthOf(row.day); drawLogbook(); } else drawAdminBody();
+    } catch (e) { toast(/logbook_one_per_order|duplicate/.test(String(e.message || e)) ? 'That order is already in the log book.' : friendlyError(e)); }
   },
+  lbDelete: async t => {
+    const r = (S.admin.lb || []).find(x => x.id === t.dataset.id); if (!r || !confirm(`Delete "${r.item}" (${peso(r.amount)}) from the log book?`)) return;
+    closeSheet(); try { await api.logDelete(r.id); S.admin.lbAt = 0; toast('Deleted.'); S.admin.tab === 'money' ? drawLogbook() : drawAdminBody(); } catch (e) { toast(friendlyError(e)); }
+  },
+  lbCsv: () => {
+    const q = v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
+    const lines = [['Date', 'Type', 'What', 'How many', 'Amount', 'Paid with', 'Who', 'Note', 'Order', 'Logged by'].map(q).join(',')]
+      .concat([...(S.admin.lb || [])].sort((a, b) => String(a.day).localeCompare(String(b.day))).map(r => [r.day, r.kind === 'sale' ? 'Sale' : 'Expense', r.item, r.qty, r.kind === 'sale' ? +r.amount : -r.amount, LB_METHOD[r.method] || '', r.who, r.note, r.order_code, r.created_by].map(q).join(',')));
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv' })); a.download = `stick2it-log-book-${ymd(new Date())}.csv`; document.body.appendChild(a); a.click(); a.remove();
+  },
+  lbFromOrder: t => { const o = S.admin.orders.find(x => x.id === t.dataset.id); if (o) lbSheet('sale', null, lbFromOrderRow(o)); },
+  lbAllDone: async () => {
+    const logged = new Set((S.admin.lb || []).filter(r => r.order_code).map(r => r.order_code));
+    const todo = S.admin.orders.filter(o => o.status === 'done' && !logged.has(o.code) && lbMonthOf(o.done_at ? ymd(new Date(o.done_at)) : '') === lbMonthOf(ymd(new Date())));
+    if (!todo.length || !confirm(`Add ${todo.length} done order${todo.length === 1 ? '' : 's'} from this month to the log book (${peso(todo.reduce((t, o) => t + (+o.total || 0), 0))})?`)) return;
+    try { await api.logAddMany(todo.map(lbFromOrderRow)); S.admin.lbAt = 0; toast(`Added ${todo.length} to the log book.`); drawAdminBody(); }
+    catch (e) { toast(/duplicate|one_per_order/.test(String(e.message || e)) ? 'Some were already logged. Refresh and try again.' : friendlyError(e)); }
+  },
+  tplNew: () => tplNewSheet(),
+  tplType: t => { S.admin.tplDraft.type = t.dataset.k; document.querySelectorAll('#tplTypes .chip').forEach(c => c.classList.toggle('on', c.dataset.k === t.dataset.k));
+    const im = $('#tplPv img'); if (im) im.classList.toggle('round', t.dataset.k === 'pins'); },
   tplSave: async () => {
-    const name = $('#tplName').value.trim(), type = $('#tplType').value, file = $('#tplFile').files[0];
+    const dft = S.admin.tplDraft || {}, name = $('#tplName').value.trim(), file = dft.file, type = dft.type;
+    if (!file || !file.type.startsWith('image/')) { toast('Pick the picture first.'); return; }
     if (!name) { toast('Type a name, like "Fortis pin".'); $('#tplName').focus(); return; }
-    if (!file || !file.type.startsWith('image/')) { toast('Choose the picture for it.'); return; }
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'design';
+    if ((S.admin.tpls || []).some(x => x.slug === slug) && !confirm(`There's already a design called "${name}". Replace it?`)) return;
+    const b = $('#sheet [data-act=tplSave]'); if (b) { b.disabled = true; b.querySelector('span').textContent = 'Saving…'; }
     try {
       const image = await templateImage(file);
-      if (image.length > 2800000) { toast('That picture is too big. Try a smaller one.'); return; }
-      await api.saveTemplate({ slug, name, type, size: liveSizes(type)[0] ? liveSizes(type)[0].id : null, image, enabled: true });
-      S.admin.tplOpen = false; toast(`Saved. Its link is ${(CONFIG.siteUrl || location.origin + '/')}?t=${slug}`); drawPosters();
-    } catch (e) { toast(friendlyError(e)); }
+      if (image.length > 2800000) { toast('That picture is too big. Try a smaller one.'); if (b) b.disabled = false; return; }
+      const sizes = liveSizes(type), t = { slug, name, type, size: sizes[0] ? sizes[0].id : null, image, enabled: true };
+      await api.saveTemplate(t);
+      const c = await tplStickerCanvas(t);
+      $('#sheet .sheetbox').innerHTML = `<h3 style="margin-bottom:4px">${ic('check', 20)} ${esc(name)} is ready</h3>
+        <p class="help" style="margin:0 0 12px">Here’s its sticker. Print it on a sticker sheet (add it like any picture), and scan it once with a phone to test.</p>
+        <img class="tplsticker" src="${c.toDataURL('image/png')}" alt="Sticker for ${esc(name)}">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px">${smallBtn('Download sticker', 'download', 'tplSticker', 'dark', `data-slug="${esc(slug)}"`)}${smallBtn('QR only', 'qr', 'tplQr', 'plain', `data-slug="${esc(slug)}"`)}${smallBtn('Copy link', 'copy', 'tplCopy', 'plain', `data-slug="${esc(slug)}"`)}<button type="button" class="pilllink" data-act="sheetClose">Done</button></div>`;
+      S.admin.tpls = (S.admin.tpls || []).filter(x => x.slug !== slug).concat([t]);
+      drawTemplates();
+    } catch (e) { toast(friendlyError(e)); if (b) b.disabled = false; }
   },
+  tplSticker: el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (t) tplDownloadSticker(t); },
+  tplQr: el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t || !window.QRCode) return; qrCanvas(tplLink(t), 1000).toBlob(b => saveBlob(b, `qr-${t.slug}.png`), 'image/png'); },
+  tplCopy: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t) return; try { await navigator.clipboard.writeText(tplLink(t)); toast('Link copied.'); } catch { toast(tplLink(t)); } },
   tplToggle: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t) return; try { await api.setTemplate(t.slug, { enabled: !t.enabled }); drawPosters(); } catch (e) { toast(friendlyError(e)); } },
   tplDel: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t || !confirm(`Delete "${t.name}"? QR codes that open it will go to the home page instead.`)) return; try { await api.delTemplate(t.slug); drawPosters(); } catch (e) { toast(friendlyError(e)); } },
   tplTry: el => { window.open(`${CONFIG.siteUrl || location.origin + location.pathname}?t=${encodeURIComponent(el.dataset.slug)}`, '_blank'); },
-  aExpense: async () => {
-    let b; try { b = await loadBusiness(); } catch (e) { toast(friendlyError(e)); return; }
-    const sup = b.supplies || [], who = b.partners || [];
-    showSheet(`<h3 style="margin-bottom:4px">Log an expense</h3><p class="help" style="margin:0 0 10px">Money spent for the shop, like ink, tape, or a ride to buy supplies.</p>
-      <div class="field"><span class="lab">What for</span><select class="inp" id="exKind"><option value="other">Something else (tape, transport, food…)</option>${sup.map(x => `<option value="${esc(x.id)}">Restock: ${esc(x.name)}</option>`).join('')}</select></div>
-      <div class="field" id="exWhatF"><span class="lab">What</span><input class="inp" id="exWhat" maxlength="80" placeholder="Like: packing tape"></div>
-      <div class="pgrid2"><label class="dnum"><span>Amount</span><span class="pricein"><input class="inp num" id="exAmt" type="number" min="0" step="any" inputmode="decimal" placeholder="0"></span></label>
-        <label class="dnum"><span>Date</span><input class="inp" id="exDate" type="date" value="${ymd(new Date())}"></label></div>
-      <div class="pgrid2" id="exAddF" hidden><label class="dnum"><span id="exAddLab">Adds to stock</span><input class="inp num" id="exAdd" type="number" min="0" step="any" inputmode="decimal"></label></div>
-      <div class="field"><span class="lab">Paid by</span><select class="inp" id="exWho"><option value="">Shop money</option>${who.map(n => `<option>${esc(n)}</option>`).join('')}</select></div>
-      <p class="exnote" id="exHow"></p>
-      <div class="field"><span class="lab">Note (optional)</span><input class="inp" id="exNote" maxlength="200" placeholder="Like: bought at the mall"></div>
-      <div style="display:flex;gap:10px;margin-top:12px">${btn('Save expense', { act: 'aExpenseSave', icon: 'check', cls: 'dark' })}<button type="button" class="pilllink" data-act="sheetClose">Cancel</button></div>`);
-    const upd = () => {
-      const x = sup.find(y => y.id === $('#exKind').value);
-      $('#exWhatF').hidden = !!x; $('#exAddF').hidden = !x;
-      if (x) { $('#exAddLab').textContent = `Adds how many ${x.unit}s`; $('#exAdd').value = x.packSize; if (!$('#exAmt').value) $('#exAmt').placeholder = String(x.packPrice); }
-      else $('#exAmt').placeholder = '0';
-      $('#exHow').textContent = x ? `Counts as money out now, and the ${x.name.toLowerCase()} goes into stock. Profit takes it bit by bit, as orders use it up.` : 'Counts as money out and comes off your profit right away.';
-    };
-    $('#exKind').addEventListener('change', upd); upd();
-  },
-  aExpenseSave: () => {
-    const b = S.admin.biz; if (!b) return;
-    const kind = $('#exKind').value, x = (b.supplies || []).find(y => y.id === kind), amount = Math.round((parseFloat($('#exAmt').value) || 0) * 100) / 100;
-    const date = $('#exDate').value || ymd(new Date()), paidBy = $('#exWho').value, note = $('#exNote').value.trim(), what = $('#exWhat').value.trim(), add = Math.max(0, parseFloat($('#exAdd').value) || 0);
-    if (!(amount > 0)) { toast('Type how much it cost.'); $('#exAmt').focus(); return; }
-    if (!x && !what) { toast('Type what it was for.'); $('#exWhat').focus(); return; }
-    closeSheet();
-    const buy = { id: uid(), date, amount, paidBy: paidBy || '', note, kind: x ? 'supply' : 'other',
-      item: x ? `${x.name} (${add} ${x.unit}${add === 1 ? '' : 's'})` : what, ...(x ? { supplyId: x.id, added: add } : {}) };
-    if (x) x.stock = Math.round((x.stock + add) * 100) / 100;
-    b.purchases = (b.purchases || []).concat([buy]); S.admin.buysOpen = true; saveBiz(); drawMoney();
-    toast(x ? `Logged ${pmoney(amount)} for ${x.name} and added ${add} to stock.` : `Logged ${pmoney(amount)} for ${what}. It's off your profit.`, () => {
-      if (x) x.stock = Math.round((x.stock - add) * 100) / 100; b.purchases = b.purchases.filter(p => p.id !== buy.id); saveBiz(); drawMoney(); });
-  },
-  aSaleSave: async () => {
-    const [type, size] = $('#slProd').value.split('|'), qty = Math.max(1, Math.min(500, Math.round(+$('#slQty').value || 1)));
-    const total = Math.max(0, Math.round(+$('#slTotal').value || 0)), day = $('#slDate').value || ymd(new Date()), who = $('#slWho').value.trim();
-    const z = P(type).sizes.find(x => x.id === size) || {};
-    const row = { nickname: who || 'Walk-in', grade_section: '-', pickup: 'In person', pickup_date: day, payment: $('#slPay').value,
-      layout: { walkin: true, items: [{ type, size, size_label: z.label || '', qty, addons: [], addon_labels: [], ...(type === 'prints' ? { pages: 1 } : {}) }] },
-      folder: 'walkin', sheet_count: qty, total, subtotal: total, status: 'done', paid: true, amount_paid: total, confirmed: true, src: 'Walk-in',
-      admin_note: $('#slNote').value.trim() || null };
-    closeSheet();
-    try {
-      const o = await api.addSale(row); S.admin.orders.unshift(o); useStock(o);
-      toast(`Sale saved: ${money(total)}. It's in your sales and profit.`); drawAdminBody();
-    } catch (e) { toast(friendlyError(e)); }
-  },
   tgMorning: async () => { try { const r = await api.telegramMorning(); toast(r === 'none' ? 'No pickups today. Sent a short note to Telegram.' : 'Sent. Check Telegram.'); } catch (e) { toast(friendlyError(e)); } },
   aPdf: t => makePdf(S.admin.orders.find(o => o.id === t.dataset.id)).catch(e => toast(friendlyError(e))),
   aPng: t => makePdf(S.admin.orders.find(o => o.id === t.dataset.id), null, true).catch(e => toast(friendlyError(e))),
-  aReady: async t => { const o = S.admin.orders.find(x => x.id === t.dataset.id); await setStatus(t.dataset.id, { status: 'ready' }, 'Marked ready.'); if (o) useStock(o); },
+  aReady: t => setStatus(t.dataset.id, { status: 'ready' }, 'Marked ready.'),
   aDone: t => setStatus(t.dataset.id, { status: 'done', paid: true }, 'Done.'),
   aNoshow: t => {
     const o = S.admin.orders.find(x => x.id === t.dataset.id); if (!o) return;
