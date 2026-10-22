@@ -2380,6 +2380,19 @@ function SupaBackend(){
     async session(){ const { data } = await sb.auth.getSession(); return !!data.session; },
     async isAdmin(){ try { return !!(await rpc('is_admin', {})); } catch { return true; } },
     async isAdminStrict(){ try { const { data } = await sb.auth.getSession(); if (!data.session) return false; return !!(await rpc('is_admin', {})); } catch { return false; } },   // for the shop pages: never true by mistake
+    async me(){ const { data } = await sb.auth.getSession(); const u = data.session && data.session.user; return u ? { email: (u.email || '').toLowerCase(), name: (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || '', pic: (u.user_metadata && (u.user_metadata.avatar_url || u.user_metadata.picture)) || '' } : null; },
+    async xuStart(){ const { data, error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/?signin=1', skipBrowserRedirect: true, queryParams: { hd: 'my.xu.edu.ph', prompt: 'select_account' } } }); if (error) throw error; return data.url; },
+    async signOut(){ await sb.auth.signOut(); },
+    async myOrders(){ return await rpc('my_orders', {}); },
+    async latest(limit = 150){ const { data, error } = await sb.from('activity').select('*').order('id', { ascending: false }).limit(limit); if (error) throw error; return data; },
+    async login(email, pw){ const { error } = await sb.auth.signInWithPassword({ email, password: pw }); if (error) throw error; },
+    async logout(){ await sb.auth.signOut(); },
+    async listOrders(){ const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false }).limit(500); if (error) throw error; return data; },
+    async updateOrder(id, patch){ const { error } = await sb.from('orders').update(patch).eq('id', id); if (error) throw error; },
+    async deleteOrder(o){
+      try { await wipeFolder(o.folder); } catch (e) { console.warn('could not remove pictures', e); }
+      const { error } = await sb.from('orders').delete().eq('id', o.id); if (error) throw error;
+    },
     async imageUrls(paths){
       if (!paths.length) return {};
       const { data, error } = await sb.storage.from(B).createSignedUrls(paths, 3600);
