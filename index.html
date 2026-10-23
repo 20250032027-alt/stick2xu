@@ -595,8 +595,6 @@ th{color:var(--muted);font-weight:700}
 @media (prefers-reduced-motion:reduce){.fbcard{animation:none}}
 .addtowrap{max-width:720px;margin:10px auto 0;padding:0 16px}.hint.addto{align-items:center}
 .choice.rushday:has(input:checked){border-color:var(--xu-red,#ec282a);box-shadow:0 0 0 3px rgba(236,40,42,.12)}.hint.addto .linkbtn{flex:none;margin-left:auto}
-.pinsheet{display:flex;gap:14px;align-items:center;max-width:460px;margin:14px auto 0}
-.pinsheet{padding:0 6px}.pinsheet .help{margin:0;font-size:13px;flex:1;min-width:0}
 .ps-a4{position:relative;flex:none;width:92px;aspect-ratio:210/297;background:#fff;border:1px solid #D9DCE6;border-radius:3px;box-shadow:0 2px 6px rgba(40,57,113,.12)}
 .ps-pin,.ps-spot{position:absolute;aspect-ratio:1;border-radius:50%;overflow:hidden}
 .ps-pin{border:1px solid rgba(40,57,113,.35)}
@@ -3220,7 +3218,7 @@ function activeDesign(){
   return f.front;
 }
 const maxQtyFor = key => (CONFIG.products[key] || {}).maxQty || CONFIG.maxQty;
-function setQty(n){ S.fd.qty = Math.max(1, Math.min(maxQtyFor(S.fd.type), Math.round(+n || 1))); drawFramedCtrl(); drawFramedBottom(); drawPinSheet(); }
+function setQty(n){ S.fd.qty = Math.max(1, Math.min(maxQtyFor(S.fd.type), Math.round(+n || 1))); drawFramedCtrl(); drawFramedBottom(); }
 function viewMake(key){
   if (!CONFIG.products[key]) return viewNotFound();
   if (!isLive(key)) return viewUnavailable(key);
@@ -3334,8 +3332,7 @@ function drawFramedStage(){
             ${im ? `<img id="fimg2" src="${im.url}" alt="" draggable="false">` : ''}</div><span class="pp-gloss"></span></div></div>
           <span class="cap">How it looks</span></div>
       </div>
-      <p class="under" style="max-width:460px">This circle is exactly what gets printed (${Math.round(mm.w)} mm). Keep faces and words a little in from the edge.</p>
-      <div class="pinsheet" id="pinSheet"></div>`;
+      <p class="under" style="max-width:460px">This circle is exactly what gets printed (${Math.round(mm.w)} mm). Keep faces and words a little in from the edge.</p>`;
   } else if (f.type === 'posters' && f.mode === 'pages' && f.pdf) {
     html = posterPagesStage(f);
   } else if (f.type === 'posters') {
@@ -3389,24 +3386,9 @@ function drawFramedStage(){
   $('#fstage').querySelectorAll('.filePick').forEach(i => i.addEventListener('change', onFiles));
   const frEl = $('#frame'); if (frEl) frEl.classList.toggle('has-img', !!$('#fimg'));
   const img = $('#fimg'); if (img) { if (img.complete) placeImg(); else img.onload = placeImg; }
-  bindPan();  drawPinSheet();
+  bindPan();
 }
 /* Pins: a small A4 showing where their pins go on the real print sheet (same grid the shop prints with) */
-function drawPinSheet(){
-  const el = $('#pinSheet'), f = S.fd; if (!el || !f || f.type !== 'pins') return;
-  const mm = frameMm(f), g = pinGrid(mm.w), n = Math.max(1, +f.qty || 1), here = Math.min(n, g.per), pages = Math.ceil(n / g.per);
-  const im = f.front.imageId && imgById(f.front.imageId), L = im ? layoutFrac(im, f.front, mm.w, mm.h) : null, bg = f.front.bg || '#ffffff';
-  const spots = Array.from({ length: g.per }, (_, i) => {
-    const x = (g.x0 + (i % g.cols) * (g.d + g.gap)) / 210 * 100, y = (g.y0 + Math.floor(i / g.cols) * (g.d + g.gap)) / 297 * 100;
-    const pos = `left:${x}%;top:${y}%;width:${g.d / 210 * 100}%`;
-    const fresh = i >= (S.psShown || 0) && i < here;   // only the pins just added pop in
-    return i < here ? `<span class="ps-pin${fresh ? ' new' : ''}" style="${pos};background:${bg};animation-delay:${fresh ? (i - (S.psShown || 0)) * 40 : 0}ms">${im ? `<img class="shimg" src="${im.url}" alt="" draggable="false" style="${fracStyle(L)}">` : ''}</span>`
-                    : `<span class="ps-spot" style="${pos}"></span>`;
-  }).join('');
-  S.psShown = im ? here : 0;
-  el.innerHTML = `<div class="ps-a4" aria-hidden="true">${spots}</div>
-    <p class="help"><b>On the print sheet:</b> ${n} pin${n === 1 ? '' : 's'}${pages > 1 ? ` across ${pages} sheets` : ''}, ${g.per} fit on one A4 sheet.</p>`;
-}
 function shownDesign(){
   const f = S.fd;
   if (f.type === 'keychains' && f.side === 'back') return f.backMode === 'same' ? f.front : f.backMode === 'different' ? f.back : null;
@@ -3418,7 +3400,6 @@ function placeImg(){
   const mm = frameMm(S.fd), L = layoutFrac(im, d, mm.w, mm.h);
   img.setAttribute('style', fracStyle(L));
   const img2 = $('#fimg2'); if (img2) img2.setAttribute('style', fracStyle(L));
-  document.querySelectorAll('#pinSheet .shimg').forEach(x => x.setAttribute('style', fracStyle(L)));
   // Let the page scroll in any direction the picture can't move in (e.g. a wide photo in a tall poster)
   const fr = $('#frame');
   if (fr) { const mx = Math.abs(L.dw - 1) > .002, my = Math.abs(L.dh - 1) > .002; fr.style.touchAction = mx && my ? 'none' : mx ? 'pan-y' : my ? 'pan-x' : 'pan-y'; }
