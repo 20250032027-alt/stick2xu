@@ -1638,15 +1638,17 @@ const CONFIG = {
     },
     keychains: {
       name: 'Keychains', blurb: 'Your picture inside a clear acrylic keychain', unit: 'keychain', enabled: false,
-      // Size of the paper insert that slides into the case. Measure your cases and change these.
-      sizes: [{ id: 'std', label: 'Standard', price: 45, wMm: 35, hMm: 45 }],
+      // The paper insert that slides into the case, measured from the real keychains: 3.2 cm wide x 5 cm tall.
+      sizes: [{ id: 'std', label: '5 × 3.2 cm', price: 45, wMm: 32, hMm: 50 }],
       addons: []
     }
   },
   maxNoShows: 2,
 
   // Match this to the sticker paper (A4 = 210 x 297 mm).
-  sheet: { widthMm: 210, heightMm: 297, cols: 4, rows: 6, marginMm: 4, gapMm: 1.5 },   // 4 mm edge: about as close as home printers print
+  sheet: { widthMm: 210, heightMm: 297, cols: 4, rows: 6, marginMm: 4, gapMm: 1.5 },
+  pinGapMm: 7,             // space between pins on a pin sheet (room to cut around each circle)
+  kcGapMm: 4,              // space between keychain inserts on a keychain sheet   // 4 mm edge: about as close as home printers print
   outlineMm: 2.2,          // thickness of the white sticker border
 
   sizes: [
@@ -2099,6 +2101,8 @@ function applyShopConfig(c){
   CONFIG.rushCutoff = Math.max(0, Math.min(24, numOr(c.rush_cutoff_hour, D.rushCutoff))); CONFIG.maxRushPerDay = numOr(c.max_rush_per_day, D.maxRushPerDay); CONFIG.printCleanupDays = numOr(c.print_cleanup_days, D.printCleanupDays);
   CONFIG.posterExtraSheet = numOr(c.poster_extra_sheet, D.posterExtraSheet);
   CONFIG.posterMarginMm = Math.max(3, Math.min(15, numOr(c.poster_margin_mm, D.posterMarginMm)));
+  CONFIG.pinGapMm = Math.max(2, Math.min(20, numOr(c.pin_gap_mm, D.pinGapMm)));
+  CONFIG.kcGapMm = Math.max(1, Math.min(20, numOr(c.kc_gap_mm, D.kcGapMm)));
   CONFIG.sheet = { ...D.sheet, marginMm: Math.max(3, Math.min(15, numOr(c.sticker_margin_mm, D.sheet.marginMm))), gapMm: Math.max(0.5, Math.min(6, numOr(c.sticker_gap_mm, D.sheet.gapMm))) };
   CONFIG.posterOverlapMm = Math.max(0, Math.min(30, numOr(c.poster_overlap_mm, D.posterOverlapMm)));
   CONFIG.siteUrl = /^https?:\/\/\S+$/.test(c.site_url || '') ? c.site_url : (/^https?:$/.test(location.protocol) ? location.origin + '/' : D.siteUrl);
@@ -2251,7 +2255,7 @@ function posterRegrid(f){
 }
 const tileLabel = t => ({ 1: '1', 2: '2', 4: '2 × 2', 9: '3 × 3' })[t] || String(t);
 function frameMm(it){
-  if (it.mm && it.type !== 'pins') return it.mm;   // pins always use today's size, so older pin orders print at the right size too
+  if (it.mm && it.type !== 'pins' && it.type !== 'keychains') return it.mm;   // pins and keychains always use today's size, so older orders print to fit the real parts
   const z = P(it.type).sizes.find(s => s.id === it.size) || P(it.type).sizes[0];
   if (it.type === 'pins') return { w: z.cutMm, h: z.cutMm, face: z.cutMm, round: true };   // the whole printed circle is the pin
   if (it.type === 'posters' && +it.cols > 0 && +it.rows > 0) {
@@ -3379,7 +3383,7 @@ function drawFramedStage(){
     const clear = showBack && f.backMode === 'blank';
     html = `<div class="kc"><span class="ring"></span><span class="loop"></span><div class="case">
         <div class="frame ${clear ? 'clear' : ''}" id="frame" style="aspect-ratio:${mm.w}/${mm.h};${clear ? '' : `background:${bg}`}" data-locked="${showBack && f.backMode !== 'different'}">${clear ? '' : frameInner(d, showBack && f.backMode === 'different' ? 'Choose the back picture' : 'Choose a picture')}</div></div></div>
-      <p class="under">${showBack ? (f.backMode === 'same' ? 'The back shows the same picture.' : f.backMode === 'blank' ? 'The back stays clear.' : 'This is the back of the keychain.') : 'This is the front. Tap "Back" to choose the other side.'}</p>`;
+      <p class="under">${showBack ? (f.backMode === 'same' ? 'The back shows the same picture.' : f.backMode === 'blank' ? 'The back stays clear.' : 'This is the back of the keychain.') : `This is the front, shown at its real shape: ${mm.w / 10} × ${mm.h / 10} cm, the size of the insert. Tap "Back" to choose the other side.`}</p>`;
   }
   $('#fstage').innerHTML = html + `<div id="reswarn"></div>`;
   $('#fstage').querySelectorAll('.filePick').forEach(i => i.addEventListener('change', onFiles));
@@ -4392,6 +4396,11 @@ async function drawAdminBody(){
       const g = pinGrid(frameMm({ type: 'pins', size: '44' }).w), minis = Array.from({ length: Math.min(sheets, 4) }, (_, k) => { const filled = k < sheets - 1 ? per : n - per * (sheets - 1);
         return `<span class="ps-a4 psmini" title="Sheet ${k + 1}: ${filled} of ${per}">${Array.from({ length: per }, (_, i) => `<span class="${i < filled ? 'ps-fill' : 'ps-spot'}" style="left:${(g.x0 + (i % g.cols) * (g.d + g.gap)) / 210 * 100}%;top:${(g.y0 + Math.floor(i / g.cols) * (g.d + g.gap)) / 297 * 100}%;width:${g.d / 210 * 100}%"></span>`).join('')}</span>`; }).join('');
       return po.length ? `<div class="batchbar pinbar"><span class="minis">${minis}</span><span><b>${n} pin${n === 1 ? '' : 's'}</b> from ${po.length} order${po.length === 1 ? '' : 's'}, packed onto <b>${sheets} sheet${sheets === 1 ? '' : 's'}</b>${free ? ` (${free} spot${free === 1 ? '' : 's'} still free${sheets > 1 ? ' on the last' : ''})` : ', no spots wasted'}.</span>${smallBtn('Pins PDF', 'printer', 'aPinSheet', 'dark')}${smallBtn('PNG', 'download', 'aPinSheetPng', 'plain')}</div>` : ''; })() : ''}
+    ${f === 'approved' ? (() => { const ko = all.filter(kcWaiting); if (!ko.length) return '';
+      const n = ko.reduce((t, o) => t + kcCount(o), 0), mm = frameMm({ type: 'keychains', size: 'std' });
+      const units = ko.flatMap(o => orderItems(o).filter(it => it.type === 'keychains' && it.front).flatMap(it => Array.from({ length: +it.qty || 0 }, () => ({ bk: it.back_mode !== 'blank' }))));
+      const paired = units.some(u => u.bk), sheets = kcPlace(units, kcGrid(mm.w, mm.h, false)).length;
+      return `<div class="batchbar pinbar">${ic('key', 18)}<span><b>${n} keychain${n === 1 ? '' : 's'}</b> from ${ko.length} order${ko.length === 1 ? '' : 's'}, on <b>${sheets} sheet${sheets === 1 ? '' : 's'}</b>${paired ? ' (front and back side by side)' : ''}. Each insert is ${mm.w / 10} × ${mm.h / 10} cm.</span>${smallBtn('Keychains PDF', 'printer', 'aKcSheet', 'dark')}${smallBtn('PNG', 'download', 'aKcSheetPng', 'plain')}</div>`; })() : ''}
     ${['approved', 'printing', 'ready'].includes(f) ? `<div class="batchbar">${ic('edit', 18)}<span>Order codes, names and cut lines on printouts: <b>${printLabels() ? 'on' : 'off'}</b></span>${smallBtn(printLabels() ? 'Turn off' : 'Turn on', '', 'aLabels', 'plain')}</div>` : ''}
     ${f === 'done' && doneM.length ? `<div class="donesum"><div><span class="small muted">Picked up this month</span><b class="num">${peso(doneM.reduce((t, o) => t + (+o.total || 0), 0))}</b><span class="small muted">${doneM.length} order${doneM.length === 1 ? '' : 's'}${doneTodo.length ? `, <b>${doneTodo.length} not in the log book yet</b>` : ', all in the log book'}</span><span class="donebar" aria-hidden="true"><i style="width:${Math.round((doneM.length - doneTodo.length) / doneM.length * 100)}%"></i></span></div>${doneTodo.length ? smallBtn(`Add ${doneTodo.length === 1 ? 'it' : 'all ' + doneTodo.length} to log book`, 'plus', 'lbAllDone', 'dark') : `<span class="tag ok">${ic('check', 14)}All logged</span>`}</div>` : ''}
     ${f === 'printing' && list.length ? `<p class="hint" style="margin-bottom:16px">${ic('box', 18)}<span><b>Next:</b> when an order is printed, cut, and bagged (code and full name on the bag), tap <b>Mark ready</b>. It moves to "Ready" for pickup day.</span></p>` : ''}
@@ -4533,10 +4542,37 @@ function renderFramed(img, d, mm, dpi, round){
 }
 /* Pins: as many paper circles as fit on A4, evenly spaced (4 across, 6 down at 44 mm) */
 function pinGrid(d){
-  const W = 210, H = 297, minM = 6, gap = 3.5;
+  const W = 210, H = 297, minM = 6, gap = CONFIG.pinGapMm || 7;
   const cols = Math.max(1, Math.floor((W - 2 * minM + gap) / (d + gap))), rows = Math.max(1, Math.floor((H - 2 * minM + gap) / (d + gap)));
   const gw = cols * d + (cols - 1) * gap, gh = rows * d + (rows - 1) * gap;
   return { cols, rows, per: cols * rows, d, gap, x0: (W - gw) / 2, y0: (H - gh) / 2 };
+}
+/* Keychains: inserts in a grid. paired = front and back side by side, so the columns come in twos */
+function kcGrid(w, h, paired){
+  const W = 210, H = 297, minM = 6, gap = CONFIG.kcGapMm || 4;
+  let cols = Math.max(1, Math.floor((W - 2 * minM + gap) / (w + gap))); if (paired && cols > 1 && cols % 2) cols--;
+  const rows = Math.max(1, Math.floor((H - 2 * minM + gap) / (h + gap)));
+  const gw = cols * w + (cols - 1) * gap, gh = rows * h + (rows - 1) * gap;
+  return { cols, rows, per: cols * rows, w, h, gap, x0: (W - gw) / 2, y0: (H - gh) / 2 };
+}
+/* Where each keychain insert goes. Two-sided ones sit in a pair of neighbouring columns (never split across rows);
+   one-sided ones fill the odd column at the end of each row and any spot left over. Returns pages of [{ cell, unit, side }]. */
+function kcPlace(units, g){
+  const pairs = units.filter(u => u.bk), singles = units.filter(u => !u.bk), pages = [];
+  const pairSlots = Math.floor(g.cols / 2);
+  while (pairs.length || singles.length) {
+    const page = [];
+    for (let r = 0; r < g.rows; r++) {
+      for (let p = 0; p < pairSlots; p++) {
+        const c0 = r * g.cols + p * 2;
+        if (pairs.length) { const u = pairs.shift(); page.push({ cell: c0, unit: u, side: 'front' }, { cell: c0 + 1, unit: u, side: 'back' }); }
+        else { if (singles.length) page.push({ cell: c0, unit: singles.shift(), side: '' }); if (singles.length) page.push({ cell: c0 + 1, unit: singles.shift(), side: '' }); }
+      }
+      if (g.cols % 2 && singles.length) page.push({ cell: r * g.cols + g.cols - 1, unit: singles.shift(), side: '' });
+    }
+    pages.push(page);
+  }
+  return pages;
 }
 const printLabels = () => S.admin.labels !== false;
 // confirmed orders whose pins haven't gone onto a shared pin sheet yet
@@ -4581,12 +4617,65 @@ async function pinSheets(asPng){
   }
   const name = `pins-${ymd(new Date())}`;
   if (asPng) await pdfToPngs(doc, name); else doc.save(`${name}.pdf`);
-  const onlyPins = list.filter(o => orderItems(o).every(it => it.type === 'pins'));
+  const onlyPins = list.filter(o => orderItems(o).every(it => it.type === 'pins' || (it.type === 'keychains' && o.layout && o.layout.kc_on_sheet)));
   for (const o of onlyPins) { try { await api.updateOrder(o.id, { status: 'printing' }); o.status = 'printing'; } catch (e) { console.warn(e); } }
   for (const o of list.filter(x => !onlyPins.includes(x))) {   // mixed orders: remember their pins are done, so their own PDF skips them
     try { const layout = { ...(o.layout || {}), pins_on_sheet: true }; await api.updateOrder(o.id, { layout }); o.layout = layout; } catch (e) { console.warn(e); } }
   const mixed = list.filter(o => !onlyPins.includes(o)).map(o => o.code);
   toast(`${pieces.length} pin${pieces.length === 1 ? '' : 's'} on ${pageNo} page${pageNo === 1 ? '' : 's'}. Print at 100% ("Actual size") and cut on the dotted circles.${onlyPins.length ? ` ${onlyPins.length} order${onlyPins.length === 1 ? ' is' : 's are'} now under Printing.` : ''}${mixed.length ? ` These also have other items, so print the rest from their own buttons (their pins are already on this sheet): ${mixed.join(', ')}.` : ''}${failed.length ? ` Couldn't open some pictures for: ${[...new Set(failed)].join(', ')}.` : ''}`);
+  drawAdminBody();
+}
+// confirmed orders whose keychains haven't gone onto a shared keychain sheet yet
+const kcWaiting = o => o.status === 'approved' && o.confirmed && !o.images_deleted && !(o.layout && o.layout.kc_on_sheet) && orderItems(o).some(it => it.type === 'keychains' && it.front);
+const kcCount = o => orderItems(o).filter(it => it.type === 'keychains' && it.front).reduce((t, it) => t + (+it.qty || 0), 0);
+// an order is fully printed by the shared sheets when everything in it is pins or keychains already on a sheet
+const sheetsCoverOrder = o => { const l = o.layout || {}; return orderItems(o).every(it => (it.type === 'pins' && l.pins_on_sheet) || (it.type === 'keychains' && l.kc_on_sheet)); };
+/* Every confirmed keychain waiting to print, from all orders, on shared A4 sheets. Two-sided ones: front and back side by side. */
+async function kcSheets(asPng){
+  if (!window.jspdf) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
+  const list = S.admin.orders.filter(kcWaiting);
+  if (!list.length) return toast('No confirmed keychain orders waiting to print.');
+  toast(`Packing the keychains from ${list.length} order${list.length === 1 ? '' : 's'}. This can take a bit.`);
+  const units = [], failed = [];
+  for (const o of list) {
+    const items = orderItems(o).filter(it => it.type === 'keychains' && it.front);
+    const urls = await api.imageUrls([...new Set(items.flatMap(it => [it.front.path, it.back && it.back.path].filter(Boolean)))]).catch(() => ({}));
+    for (let ii = 0; ii < items.length; ii++) {
+      const it = items[ii], mm = frameMm(it), img = urls[it.front.path] ? await loadImg(urls[it.front.path]).catch(() => null) : null;
+      if (!img) { failed.push(o.code); continue; }
+      const fr = renderFramed(img, it.front, mm, 400, false); fr.alias = `kc_${o.code}_${ii}_f`;
+      let bk = null;
+      if (it.back_mode !== 'blank') {
+        if (it.back_mode === 'different' && it.back) { const b2 = urls[it.back.path] ? await loadImg(urls[it.back.path]).catch(() => null) : null; if (b2) { bk = renderFramed(b2, it.back, mm, 400, false); bk.alias = `kc_${o.code}_${ii}_b`; } }
+        else bk = fr;
+      }
+      for (let q = 0; q < (+it.qty || 0); q++) units.push({ fr, bk, code: o.code, w: mm.w, h: mm.h });
+    }
+  }
+  if (!units.length) return toast("Couldn't open the pictures for those keychains.");
+  const w = units[0].w, h = units[0].h, paired = units.some(u => u.bk), g = kcGrid(w, h, false), placed = kcPlace(units, g);
+  const pages = placed.length; let doc = null;
+  for (let pgi = 0; pgi < pages; pgi++) {
+    if (!doc) doc = new window.jspdf.jsPDF({ unit: 'mm', format: [210, 297], orientation: 'portrait' }); else doc.addPage([210, 297], 'portrait');
+    placed[pgi].forEach(c => { c.u = c.unit; const i = c.cell;
+      const x = g.x0 + (i % g.cols) * (w + g.gap), y = g.y0 + Math.floor(i / g.cols) * (h + g.gap), pic = c.side === 'back' ? c.u.bk : c.u.fr;
+      doc.addImage(pic.data, pic.fmt, x, y, w, h, pic.alias, 'FAST');
+      if (printLabels()) {
+        doc.setDrawColor(160); doc.setLineCap('round'); doc.setLineWidth(0.4); doc.setLineDashPattern([0.2, 1.0], 0); doc.rect(x, y, w, h, 'S'); doc.setLineDashPattern([], 0); doc.setLineCap('butt');
+        doc.setFontSize(5); doc.setTextColor(150); doc.text(`${c.u.code}${c.side ? ' ' + c.side : ''}`, x + w / 2, y + h + Math.min(2.4, g.gap - 0.6), { align: 'center' });
+      }
+    });
+    if (printLabels()) { doc.setFontSize(6); doc.setTextColor(150); doc.text(`Keychain sheet ${pgi + 1} of ${pages}${paired ? ' · front and back side by side: put them back to back in the case' : ''}`, 205, 3.2, { align: 'right' }); }
+  }
+  const name = `keychains-${ymd(new Date())}`;
+  if (asPng) await pdfToPngs(doc, name); else doc.save(`${name}.pdf`);
+  for (const o of list) {
+    try { const layout = { ...(o.layout || {}), kc_on_sheet: true }; const patch = { layout }; o.layout = layout;
+      if (sheetsCoverOrder(o)) patch.status = 'printing';
+      await api.updateOrder(o.id, patch); if (patch.status) o.status = 'printing'; } catch (e) { console.warn(e); }
+  }
+  const n = units.length;
+  toast(`${n} keychain${n === 1 ? '' : 's'} on ${pages} page${pages === 1 ? '' : 's'}. Print at 100% ("Actual size") and cut on the dotted lines. Each insert is exactly ${w / 10} × ${h / 10} cm.${failed.length ? ` Couldn't open the pictures for: ${[...new Set(failed)].join(', ')}.` : ''}`);
   drawAdminBody();
 }
 /* One PDF for every confirmed order picking up on one day */
@@ -4609,9 +4698,10 @@ async function makePdf(o, batch, asPng){
   const asIs = it => it.type === 'prints' || it.mode === 'pages';   // customer files we print exactly as they are
   if (orderItems(o).every(asIs)) { if (!batch) toast('This order is files to print as they are. Open them with the file buttons on the order.'); return 'files'; }
   if (!batch) toast('Making the PDF. This takes a few seconds. Customer PDFs are separate: use the file buttons.');
-  const pinsDone = !!(o.layout && o.layout.pins_on_sheet);   // its pins were already printed on a shared pin sheet
-  if (pinsDone && orderItems(o).every(it => asIs(it) || it.type === 'pins')) { if (!batch) toast('Its pins are already on a shared pin sheet. Nothing else to print here.'); return 'files'; }
-  const items = orderItems(o).filter(it => !asIs(it) && !(pinsDone && it.type === 'pins')), urls = await api.imageUrls([...new Set(orderPaths(o))]), cache = {};
+  const pinsDone = !!(o.layout && o.layout.pins_on_sheet), kcDone = !!(o.layout && o.layout.kc_on_sheet);   // already printed on a shared pin / keychain sheet
+  const onSheet = it => (pinsDone && it.type === 'pins') || (kcDone && it.type === 'keychains');
+  if (orderItems(o).every(it => asIs(it) || onSheet(it)) && (pinsDone || kcDone)) { if (!batch) toast('Its pins and keychains are already on shared sheets. Nothing else to print here.'); return 'files'; }
+  const items = orderItems(o).filter(it => !asIs(it) && !onSheet(it)), urls = await api.imageUrls([...new Set(orderPaths(o))]), cache = {};
   const getImg = async path => cache[path] || (cache[path] = await loadImg(urls[path]));
   const who = `${o.code}   ${o.nickname}, ${o.grade_section}   pickup ${o.pickup_date ? fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' }) : ''} ${o.pickup_time || ''} at ${o.pickup}`;
   let doc = batch ? batch.doc : null;
@@ -4621,7 +4711,7 @@ async function makePdf(o, batch, asPng){
     if (printLabels() && !noCorner) { doc.setFontSize(6); doc.setTextColor(170); doc.text(o.code, w - 2.5, 2.8, { align: 'right' }); } };
   const foot = (txt, w, h) => { if (!printLabels()) return; doc.setFontSize(8); doc.setTextColor(90); doc.text(`${who}   ${txt}`, 8, h - 3.5); };
   const cutLine = () => { doc.setDrawColor(160); doc.setLineWidth(0.2); };
-  const A4W = 210, A4H = 297, M = 10, GAP = 4;
+  const A4W = 210, A4H = 297;
 
   for (let ii = 0; ii < items.length; ii++) {
     const it = items[ii], label = `item ${ii + 1} of ${items.length}: ${itemTitle(it)}${itemDetails(it) ? ' (' + itemDetails(it) + ')' : ''}`;
@@ -4695,13 +4785,13 @@ async function makePdf(o, batch, asPng){
       else bk = fr;
     }
     for (let q = 0; q < it.qty; q++) { pieces.push(fr); if (bk) pieces.push(bk); }
-    const grid = mm.round ? pinGrid(mm.w) : null;   // pins: the same 44 mm grid as the shared pin sheets
-    const cols = grid ? grid.cols : Math.max(1, Math.floor((A4W - 2 * M + GAP) / (mm.w + GAP))), rows = grid ? grid.rows : Math.max(1, Math.floor((A4H - 2 * M - 6 + GAP) / (mm.h + GAP)));
+    const grid = mm.round ? pinGrid(mm.w) : kcGrid(mm.w, mm.h, !!bk);   // the same grids as the shared pin and keychain sheets
+    const cols = grid.cols, rows = grid.rows;
     const per = cols * rows, pages = Math.ceil(pieces.length / per);
     for (let pg = 0; pg < pages; pg++) {
       page(A4W, A4H); cutLine(); doc.setLineCap('round'); doc.setLineWidth(0.45); doc.setLineDashPattern([0.2, 1.0], 0);   // short round dashes = dots in every viewer and printer
       pieces.slice(pg * per, (pg + 1) * per).forEach((pc, i) => {
-        const x = grid ? grid.x0 + (i % cols) * (mm.w + grid.gap) : M + (i % cols) * (mm.w + GAP), y = grid ? grid.y0 + Math.floor(i / cols) * (mm.h + grid.gap) : M + Math.floor(i / cols) * (mm.h + GAP);
+        const x = grid.x0 + (i % cols) * (mm.w + grid.gap), y = grid.y0 + Math.floor(i / cols) * (mm.h + grid.gap);
         if (pc) doc.addImage(pc.data, pc.fmt, x, y, mm.w, mm.h, `p${ii}_${pieces.indexOf(pc)}`, 'FAST');
         if (printLabels()) { if (mm.round) doc.circle(x + mm.w / 2, y + mm.h / 2, mm.w / 2, 'S'); else doc.rect(x, y, mm.w, mm.h, 'S'); }
       });
@@ -4744,7 +4834,7 @@ function drawSettings(){
     pickup_weekdays: CONFIG.pickupWeekdays.slice(), pickup_times: clone(CONFIG.pickupTimes), pickup_places: CONFIG.pickupOptions.slice(),
     countdowns: clone(CONFIG.countdowns || []), countdowns_on: CONFIG.countdownsOn !== false, details: { ...(CONFIG.details || {}) }, facebook_url: CONFIG.facebookUrl, instagram_url: CONFIG.instagramUrl, tiktok_url: CONFIG.tiktokUrl, require_xu_signin: CONFIG.requireXu, product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
-    print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
+    print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, pin_gap_mm: CONFIG.pinGapMm, kc_gap_mm: CONFIG.kcGapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, feedback_on: CONFIG.feedbackOn, rush_on: CONFIG.rushOn, rush_make: CONFIG.rushMake, rush_cutoff_hour: CONFIG.rushCutoff, max_rush_per_day: CONFIG.maxRushPerDay, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
     grades: CONFIG.grades.slice(), gcash: { ...CONFIG.gcash }, cleanup_days: CONFIG.cleanupDays, max_pictures: CONFIG.maxPictures, max_noshows: CONFIG.maxNoShows,
     max_qty: Object.fromEntries(['pins', 'posters', 'keychains'].map(k => [k, maxQtyFor(k)])),
@@ -4853,6 +4943,11 @@ function drawShopForm(){
         <label class="dnum"><span>Rush fee, next school day (₱)</span>${n('rush_next_day', c.rush_next_day, 0, 500)}</label>
         <label class="dnum"><span>Delete print files after (days)</span>${n('print_cleanup_days', c.print_cleanup_days, 1, 60)}</label></div>
       <p class="help" style="margin-top:6px">Per-page prices and paper sizes are under Products → Prints. Color is the "Color" extra there.</p></div>
+
+    <div class="cfgsec"><div class="sub">Pin and keychain sheets</div>
+      <div class="pgrid2"><label class="dnum"><span>Space between pins (mm)</span>${n('pin_gap_mm', c.pin_gap_mm, 2, 20)}</label>
+        <label class="dnum"><span>Space between keychains (mm)</span>${n('kc_gap_mm', c.kc_gap_mm, 1, 20)}</label></div>
+      <p class="help" style="margin-top:6px">More space is easier to cut but fits fewer on a page. At 7 mm, 20 pins fit on one A4 sheet; at 3.5 mm, 24.</p></div>
 
     <div class="cfgsec"><div class="sub">Sticker sheets</div>
       <div class="pgrid2"><label class="dnum"><span>Blank edge around the sheet (mm)</span>${n('sticker_margin_mm', c.sticker_margin_mm, 3, 15)}</label>
@@ -5743,6 +5838,8 @@ const ACTIONS = {
   aBatch: t => batchPrint(t.dataset.date),
   aPinSheet: () => pinSheets(false).catch(e => toast(friendlyError(e))),
   aPinSheetPng: () => pinSheets(true).catch(e => toast(friendlyError(e))),
+  aKcSheet: () => kcSheets(false).catch(e => toast(friendlyError(e))),
+  aKcSheetPng: () => kcSheets(true).catch(e => toast(friendlyError(e))),
   aLabels: () => { S.admin.labels = !printLabels(); toast(printLabels() ? 'Codes, names and cut lines will be on printouts.' : 'Clean printouts: no codes, names or cut lines. Stickers keep their white border. Keep orders sorted yourself.'); drawAdminBody(); },
   aEdit: t => {
     const o = S.admin.orders.find(x => x.id === t.dataset.id); if (!o) return;
