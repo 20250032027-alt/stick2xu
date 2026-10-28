@@ -1537,6 +1537,10 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .lbmore[open] summary{display:none}
 .lbmore label{display:block;margin-top:6px}
 .lbsave{display:flex;gap:10px;align-items:center;margin-top:8px}.lbsave .btn.dark{flex:1;justify-content:center}
+.kcseg{display:inline-flex;border:1.5px solid #283971;border-radius:999px;overflow:hidden;flex:none}
+.kcseg button{font:inherit;font-size:13.5px;font-weight:700;padding:7px 12px;border:0;background:#fff;color:#283971;cursor:pointer}
+.kcseg button.on{background:#283971;color:#fff}
+.pinbar{flex-wrap:wrap}
 .againbar{flex-wrap:wrap}.againbar > span:nth-child(2){flex:1 1 260px;min-width:0}.againbtns{display:flex;gap:8px;flex-wrap:wrap}
 .donebar{display:block;height:6px;border-radius:99px;background:#E1E6F2;overflow:hidden;margin-top:8px;max-width:260px}
 .donebar i{display:block;height:100%;background:#1E8E4A;border-radius:99px}
@@ -1767,7 +1771,7 @@ const dayLabel = v => v === ymd(new Date()) ? 'Today' : fmtDate(v, { weekday: 'l
 
 /* Line icons, one stroke weight */
 const ICONS = {
-  plus:'<path d="M12 5v14M5 12h14"/>', minus:'<path d="M5 12h14"/>', arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>', keychain:'<circle cx="7.2" cy="5.6" r="3.6"/><path d="M9.8 8.2l2.3 2.1"/><g transform="rotate(-10 14.6 16)"><rect x="9" y="9.6" width="11.2" height="12.8" rx="2.4"/><path d="M11.4 19.6l2.3-2.7 1.9 1.9 1.2-1.1 1.8 1.9"/><circle cx="16.9" cy="13.3" r="1"/></g>', minus:'<path d="M5 12h14"/>', arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
   check:'<path d="M5 12.5l4.5 4.5L19 7"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>',
   image:'<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/>',
   trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/>',
@@ -4382,14 +4386,15 @@ async function drawAdminBody(){
     ${f === 'approved' ? (() => { const ko = all.filter(kcWaiting); if (!ko.length) return '';
       const n = ko.reduce((t, o) => t + kcCount(o), 0), mm = frameMm({ type: 'keychains', size: 'std' });
       const units = ko.flatMap(o => orderItems(o).filter(it => it.type === 'keychains' && it.front).flatMap(it => Array.from({ length: +it.qty || 0 }, () => ({ bk: it.back_mode !== 'blank' }))));
-      const paired = units.some(u => u.bk), sheets = kcPlace(units, kcGrid(mm.w, mm.h, false)).length;
-      return `<div class="batchbar pinbar">${ic('key', 18)}<span><b>${n} keychain${n === 1 ? '' : 's'}</b> from ${ko.length} order${ko.length === 1 ? '' : 's'}, on <b>${sheets} sheet${sheets === 1 ? '' : 's'}</b>${paired ? ' (front and back side by side)' : ''}. Each insert is ${mm.w / 10} × ${mm.h / 10} cm.</span>${smallBtn('Keychains PDF', 'printer', 'aKcSheet', 'dark')}${smallBtn('PNG', 'download', 'aKcSheetPng', 'plain')}</div>`; })() : ''}
+      const paired = units.some(u => u.bk), sheets = kcPlace(units, kcGrid(mm.w, mm.h, false), kcStack()).length;
+      return `<div class="batchbar pinbar">${ic('keychain', 18)}<span><b>${n} keychain${n === 1 ? '' : 's'}</b> from ${ko.length} order${ko.length === 1 ? '' : 's'}, on <b>${sheets} sheet${sheets === 1 ? '' : 's'}</b>. Each insert prints at <b>${mm.w / 10} × ${mm.h / 10} cm</b>.</span>${paired ? kcLayoutSwitch() : ''}${smallBtn('Keychains PDF', 'printer', 'aKcSheet', 'dark')}${smallBtn('PNG', 'download', 'aKcSheetPng', 'plain')}</div>`; })() : ''}
     ${['approved', 'printing', 'ready'].includes(f) ? `<div class="batchbar">${ic('edit', 18)}<span>Order codes, names and cut lines on printouts: <b>${printLabels() ? 'on' : 'off'}</b></span>${smallBtn(printLabels() ? 'Turn off' : 'Turn on', '', 'aLabels', 'plain')}</div>` : ''}
     ${f === 'done' && doneM.length ? `<div class="donesum"><div><span class="small muted">Picked up this month</span><b class="num">${peso(doneM.reduce((t, o) => t + (+o.total || 0), 0))}</b><span class="small muted">${doneM.length} order${doneM.length === 1 ? '' : 's'}${doneTodo.length ? `, <b>${doneTodo.length} not in the log book yet</b>` : ', all in the log book'}</span><span class="donebar" aria-hidden="true"><i style="width:${Math.round((doneM.length - doneTodo.length) / doneM.length * 100)}%"></i></span></div>${doneTodo.length ? smallBtn(`Add ${doneTodo.length === 1 ? 'it' : 'all ' + doneTodo.length} to log book`, 'plus', 'lbAllDone', 'dark') : `<span class="tag ok">${ic('check', 14)}All logged</span>`}</div>` : ''}
     ${f === 'printing' ? (() => { const ko = all.filter(kcAgain), po = all.filter(pinsAgain); if (!ko.length && !po.length) return '';
       const nk = ko.reduce((t, o) => t + kcCount(o), 0), np = po.reduce((t, o) => t + orderItems(o).filter(it => it.type === 'pins').reduce((u, it) => u + (+it.qty || 0), 0), 0);
-      return `<div class="batchbar againbar">${ic('refresh', 18)}<span><b>Need to print them again?</b> Makes the shared sheets again for orders already printing. Nothing about the orders changes.</span>
-        <span class="againbtns">${nk ? `${smallBtn(`${nk} keychain${nk === 1 ? '' : 's'}`, 'key', 'aKcAgain', 'plain')}${smallBtn('PNG', 'download', 'aKcAgainPng', 'plain')}` : ''}${np ? `${smallBtn(`${np} pin${np === 1 ? '' : 's'}`, 'badge', 'aPinAgain', 'plain')}${smallBtn('PNG', 'download', 'aPinAgainPng', 'plain')}` : ''}</span></div>`; })() : ''}
+      const kmm = frameMm({ type: 'keychains', size: 'std' }), anyPair = ko.some(o => orderItems(o).some(it => it.type === 'keychains' && it.back_mode !== 'blank'));
+      return `<div class="batchbar againbar">${ic('refresh', 18)}<span><b>Need to print them again?</b> Makes the shared sheets again for orders already printing. Nothing about the orders changes.${nk ? ` Keychain inserts print at <b>${kmm.w / 10} × ${kmm.h / 10} cm</b>.` : ''}</span>${nk && anyPair ? kcLayoutSwitch() : ''}
+        <span class="againbtns">${nk ? `${smallBtn(`${nk} keychain${nk === 1 ? '' : 's'}`, 'keychain', 'aKcAgain', 'plain')}${smallBtn('PNG', 'download', 'aKcAgainPng', 'plain')}` : ''}${np ? `${smallBtn(`${np} pin${np === 1 ? '' : 's'}`, 'badge', 'aPinAgain', 'plain')}${smallBtn('PNG', 'download', 'aPinAgainPng', 'plain')}` : ''}</span></div>`; })() : ''}
     ${f === 'printing' && list.length ? `<p class="hint" style="margin-bottom:16px">${ic('box', 18)}<span><b>Next:</b> when an order is printed, cut, and bagged (code and full name on the bag), tap <b>Mark ready</b>. It moves to "Ready" for pickup day.</span></p>` : ''}
     ${f === 'approved' ? `<p class="hint" style="margin-bottom:16px">${ic('printer', 18)}<span>Print only orders marked <b>Confirmed</b>. Unconfirmed ones are released by themselves after their confirm-by day, so nothing gets wasted.</span></p>` : ''}
     ${f === 'ready' ? `<div class="pickupbar ${S.admin.pickupMode ? 'on' : ''}">
@@ -4428,7 +4433,7 @@ async function drawAdminBody(){
           <div><span><b>${esc(o.nickname)}</b>, ${esc(o.grade_section)}</span></div>
           <div>${ic('pin', 18)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span></div>
           <div>${ic('cash', 18)}<span class="num">${money(o.total)}${!o.paid && o.amount_paid ? ` (paid ${money(o.amount_paid)}, owes ${money(o.total - o.amount_paid)})` : ''}, ${o.payment === 'gcash' ? `GCash${o.gcash_ref ? ` (ref ${esc(o.gcash_ref)})` : ', no ref yet'}` : 'cash'}</span></div>
-          <ul class="ilist">${orderItems(o).map(it => `<li>${ic(it.type === 'stickers' ? 'sticker' : it.type === 'pins' ? 'badge' : it.type === 'posters' ? 'image' : it.type === 'prints' ? 'doc' : 'key', 18)}<span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `, ${esc(itemDetails(it))}` : ''}</span></li>`).join('')}</ul>
+          <ul class="ilist">${orderItems(o).map(it => `<li>${ic(it.type === 'stickers' ? 'sticker' : it.type === 'pins' ? 'badge' : it.type === 'posters' ? 'image' : it.type === 'prints' ? 'doc' : 'keychain', 18)}<span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `, ${esc(itemDetails(it))}` : ''}</span></li>`).join('')}</ul>
           <div class="tags">
             ${o.status === 'ready' && o.arrived_at ? `<span class="tag here">${ic('pin', 14)}Here now</span>` : ''}
             ${o.paid ? `<span class="tag ok">${ic('check', 14)}Paid</span>` : o.amount_paid ? `<span class="tag warn">${ic('cash', 14)}Paid ${money(o.amount_paid)} of ${money(o.total)}</span>` : ''}
@@ -4544,11 +4549,21 @@ function kcGrid(w, h, paired){
 }
 /* Where each keychain insert goes. Two-sided ones sit in a pair of neighbouring columns (never split across rows);
    one-sided ones fill the odd column at the end of each row and any spot left over. Returns pages of [{ cell, unit, side }]. */
-function kcPlace(units, g){
+function kcPlace(units, g, stack){
   const pairs = units.filter(u => u.bk), singles = units.filter(u => !u.bk), pages = [];
   const pairSlots = Math.floor(g.cols / 2);
   while (pairs.length || singles.length) {
     const page = [];
+    if (stack) {   // stacked: front on top, its back right below it, in every column
+      for (let rb = 0; rb + 1 < g.rows; rb += 2) for (let c = 0; c < g.cols; c++) {
+        const top = rb * g.cols + c, bot = (rb + 1) * g.cols + c;
+        if (pairs.length) { const u = pairs.shift(); page.push({ cell: top, unit: u, side: 'front' }, { cell: bot, unit: u, side: 'back' }); }
+        else { if (singles.length) page.push({ cell: top, unit: singles.shift(), side: '' }); if (singles.length) page.push({ cell: bot, unit: singles.shift(), side: '' }); }
+      }
+      if (g.rows % 2) for (let c = 0; c < g.cols; c++) if (singles.length) page.push({ cell: (g.rows - 1) * g.cols + c, unit: singles.shift(), side: '' });
+      if (!page.length) break;
+      pages.push(page); continue;
+    }
     for (let r = 0; r < g.rows; r++) {
       for (let p = 0; p < pairSlots; p++) {
         const c0 = r * g.cols + p * 2;
@@ -4557,11 +4572,15 @@ function kcPlace(units, g){
       }
       if (g.cols % 2 && singles.length) page.push({ cell: r * g.cols + g.cols - 1, unit: singles.shift(), side: '' });
     }
+    if (!page.length) break;
     pages.push(page);
   }
   return pages;
 }
+const kcStack = () => !!S.admin.kcStack;
+const kcLayoutSwitch = () => `<span class="kcseg" role="group" aria-label="Front and back">${[['', 'Side by side'], ['1', 'Stacked']].map(([v, l]) => `<button type="button" class="${(v === '1') === kcStack() ? 'on' : ''}" data-act="kcLayout" data-v="${v}">${l}</button>`).join('')}</span>`;
 const printLabels = () => S.admin.labels !== false;
+try { if (S && S.admin && S.admin.kcStack === undefined) S.admin.kcStack = localStorage.getItem('sk_kc_stack') === '1'; } catch {}
 // confirmed orders whose pins haven't gone onto a shared pin sheet yet
 const pinsWaiting = o => o.status === 'approved' && o.confirmed && !o.images_deleted && !(o.layout && o.layout.pins_on_sheet) && orderItems(o).some(it => it.type === 'pins' && it.front);   // names and codes on printouts (admin switch)
 /* Every confirmed pin waiting to print, from all orders, packed onto shared A4 sheets so no spot is wasted */
@@ -4644,7 +4663,7 @@ async function kcSheets(asPng, again){
     }
   }
   if (!units.length) return toast("Couldn't open the pictures for those keychains.");
-  const w = units[0].w, h = units[0].h, paired = units.some(u => u.bk), g = kcGrid(w, h, false), placed = kcPlace(units, g);
+  const w = units[0].w, h = units[0].h, paired = units.some(u => u.bk), g = kcGrid(w, h, false), placed = kcPlace(units, g, kcStack());
   const pages = placed.length; let doc = null;
   for (let pgi = 0; pgi < pages; pgi++) {
     if (!doc) doc = new window.jspdf.jsPDF({ unit: 'mm', format: [210, 297], orientation: 'portrait' }); else doc.addPage([210, 297], 'portrait');
@@ -4656,7 +4675,7 @@ async function kcSheets(asPng, again){
         doc.setFontSize(5); doc.setTextColor(150); doc.text(`${c.u.code}${c.side ? ' ' + c.side : ''}`, x + w / 2, y + h + Math.min(2.4, g.gap - 0.6), { align: 'center' });
       }
     });
-    if (printLabels()) { doc.setFontSize(6); doc.setTextColor(150); doc.text(`Keychain sheet ${pgi + 1} of ${pages}${paired ? ' · front and back side by side: put them back to back in the case' : ''}`, 205, 3.2, { align: 'right' }); }
+    if (printLabels()) { doc.setFontSize(6); doc.setTextColor(150); doc.text(`Keychain sheet ${pgi + 1} of ${pages}${paired ? (kcStack() ? ' · each front is above its back: put them back to back in the case' : ' · front and back side by side: put them back to back in the case') : ''}`, 205, 3.2, { align: 'right' }); }
   }
   const name = `keychains-${ymd(new Date())}`;
   if (asPng) await pdfToPngs(doc, name); else doc.save(`${name}.pdf`);
@@ -4777,6 +4796,18 @@ async function makePdf(o, batch, asPng){
     if (it.type === 'keychains' && it.back_mode !== 'blank') {
       if (it.back_mode === 'different' && it.back) { const b2 = await getImg(it.back.path).catch(() => null); bk = b2 ? renderFramed(b2, it.back, mm, 300, false) : null; }
       else bk = fr;
+    }
+    if (it.type === 'keychains') {
+      const g = kcGrid(mm.w, mm.h, false), placed = kcPlace(Array.from({ length: +it.qty || 0 }, () => ({ fr, bk })), g, kcStack());
+      placed.forEach((cells, pgi) => {
+        page(A4W, A4H); cutLine(); doc.setLineCap('round'); doc.setLineWidth(0.45); doc.setLineDashPattern([0.2, 1.0], 0);
+        cells.forEach(c => { const i = c.cell, x = g.x0 + (i % g.cols) * (mm.w + g.gap), y = g.y0 + Math.floor(i / g.cols) * (mm.h + g.gap), pic = c.side === 'back' ? c.unit.bk : c.unit.fr;
+          if (pic) doc.addImage(pic.data, pic.fmt, x, y, mm.w, mm.h, `k${ii}_${c.side || 'f'}`, 'FAST');
+          if (printLabels()) doc.rect(x, y, mm.w, mm.h, 'S'); });
+        doc.setLineDashPattern([], 0); doc.setLineCap('butt');
+        foot(`${label}${bk ? (kcStack() ? ', each front above its back' : ', front and back side by side') : ''}, page ${pgi + 1} of ${placed.length}`, A4W, A4H);
+      });
+      continue;
     }
     for (let q = 0; q < it.qty; q++) { pieces.push(fr); if (bk) pieces.push(bk); }
     const grid = mm.round ? pinGrid(mm.w) : kcGrid(mm.w, mm.h, !!bk);   // the same grids as the shared pin and keychain sheets
@@ -5024,7 +5055,7 @@ function drawShopForm(){
         ${CONFIG.products.pins.sizes.map(z => `<label class="dnum"><span>${esc(z.label)} pin: paper circle</span>${n('sizes.pins.' + z.id + '.cutMm', c.sizes.pins[z.id].cutMm, 10, 150)}</label>`).join('')}
         ${CONFIG.products.keychains.sizes.map(z => `<label class="dnum"><span>Keychain insert width</span>${n('sizes.keychains.' + z.id + '.wMm', c.sizes.keychains[z.id].wMm, 10, 150)}</label>
           <label class="dnum"><span>Keychain insert height</span>${n('sizes.keychains.' + z.id + '.hMm', c.sizes.keychains[z.id].hMm, 10, 150)}</label>`).join('')}</div>
-      <p class="help" style="margin-top:6px">Paper circle is the printed circle you cut out (44 mm prints right). Measure your keychain inserts so they fit exactly.</p></div>
+      <p class="help" style="margin-top:6px">Paper circle is the printed circle you cut out (44 mm prints right). Keychain insert = the picture slot inside the keychain, the supplier's "template size": 25 × 42 mm for the 3.2 × 5 cm keychains. These numbers win over everything else, so keep them right.</p></div>
 
     ${btn('Save shop details', { type: 'submit', cls: 'dark', icon: 'check' })}`;
   const form = $('#shopForm');
@@ -5263,7 +5294,7 @@ const peso = n => '₱' + (Math.round(+n * 100) / 100).toLocaleString(undefined,
 // an icon for each entry, so pins and stickers are easy to tell apart at a glance
 const lbIcon = r => { const t = String(r.item || '').toLowerCase();
   if (r.kind === 'expense') return /ink|print|paper|bond/.test(t) ? 'printer' : /pin part|pin/.test(t) ? 'badge' : 'cash';
-  return /sticker/.test(t) ? 'sticker' : /pin/.test(t) ? 'badge' : /keychain|key/.test(t) ? 'key' : /poster/.test(t) ? 'image' : /print/.test(t) ? 'doc' : r.order_code ? 'box' : 'cash'; };
+  return /sticker/.test(t) ? 'sticker' : /pin/.test(t) ? 'badge' : /keychain|key/.test(t) ? 'keychain' : /poster/.test(t) ? 'image' : /print/.test(t) ? 'doc' : r.order_code ? 'box' : 'cash'; };
 async function loadLogbook(force){
   if (!force && S.admin.lb && Date.now() - (S.admin.lbAt || 0) < 20000) return S.admin.lb;
   S.admin.lb = await api.logbook(); S.admin.lbAt = Date.now(); return S.admin.lb;
@@ -5333,7 +5364,7 @@ function lbSheet(kind, r, pre){
   const extra = !!(r.who || r.note);
   showSheet(`<div class="lbsheet ${kind}"><h3>${edit ? (sale ? 'Edit sale' : 'Edit expense') : (sale ? 'Add a sale' : 'Add an expense')}</h3>
     <span class="lbl">${sale ? 'What was sold' : 'What for'}</span>
-    <div class="lbquick">${quick.map(q => `<button type="button" class="${String(r.item || '').toLowerCase() === q.name.toLowerCase() ? 'on' : ''}" data-name="${esc(q.name)}" data-price="${q.price || ''}">${sale ? ic({ stickers: 'sticker', pins: 'badge', keychains: 'key', posters: 'image', prints: 'doc' }[q.k] || 'box', 16) : ''}<span>${esc(q.name)}</span>${q.price ? `<small>${money(q.price)}</small>` : ''}</button>`).join('')}</div>
+    <div class="lbquick">${quick.map(q => `<button type="button" class="${String(r.item || '').toLowerCase() === q.name.toLowerCase() ? 'on' : ''}" data-name="${esc(q.name)}" data-price="${q.price || ''}">${sale ? ic({ stickers: 'sticker', pins: 'badge', keychains: 'keychain', posters: 'image', prints: 'doc' }[q.k] || 'box', 16) : ''}<span>${esc(q.name)}</span>${q.price ? `<small>${money(q.price)}</small>` : ''}</button>`).join('')}</div>
     <input class="inp" id="lbItem" maxlength="120" value="${esc(r.item || '')}" placeholder="${sale ? 'Or type something else' : 'Or type what it was'}" aria-label="${sale ? 'What was sold' : 'What for'}">
     <div class="lbrow2 ${sale ? '' : 'one'}">${sale ? `<label><span class="lbl">How many</span><span class="stepper"><button type="button" data-step="-1" aria-label="One less">${ic('minus', 16)}</button><input class="inp num" id="lbQty" type="number" min="1" max="10000" inputmode="numeric" value="${r.qty || 1}"><button type="button" data-step="1" aria-label="One more">${ic('plus', 16)}</button></span></label>` : ''}
       <label><span class="lbl">${sale ? 'Total paid' : 'Amount'}</span><span class="pricein big"><input class="inp num" id="lbAmt" type="number" min="0" step="any" inputmode="decimal" value="${r.amount != null ? +r.amount : ''}" placeholder="0"></span></label></div>
@@ -5834,6 +5865,7 @@ const ACTIONS = {
   aPinSheetPng: () => pinSheets(true).catch(e => toast(friendlyError(e))),
   aKcSheet: () => kcSheets(false).catch(e => toast(friendlyError(e))),
   aKcSheetPng: () => kcSheets(true).catch(e => toast(friendlyError(e))),
+  kcLayout: t => { S.admin.kcStack = t.dataset.v === '1'; try { localStorage.setItem('sk_kc_stack', S.admin.kcStack ? '1' : ''); } catch {} drawAdminBody(); },
   aKcAgain: () => kcSheets(false, true).catch(e => toast(friendlyError(e))),
   aKcAgainPng: () => kcSheets(true, true).catch(e => toast(friendlyError(e))),
   aPinAgain: () => pinSheets(false, true).catch(e => toast(friendlyError(e))),
