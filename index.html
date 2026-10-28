@@ -1537,6 +1537,7 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .lbmore[open] summary{display:none}
 .lbmore label{display:block;margin-top:6px}
 .lbsave{display:flex;gap:10px;align-items:center;margin-top:8px}.lbsave .btn.dark{flex:1;justify-content:center}
+.againbar{flex-wrap:wrap}.againbar > span:nth-child(2){flex:1 1 260px;min-width:0}.againbtns{display:flex;gap:8px;flex-wrap:wrap}
 .donebar{display:block;height:6px;border-radius:99px;background:#E1E6F2;overflow:hidden;margin-top:8px;max-width:260px}
 .donebar i{display:block;height:100%;background:#1E8E4A;border-radius:99px}
 .donesum{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 16px;margin-bottom:14px;border-radius:18px;background:#F4F7FF;border:1.5px solid var(--line)}
@@ -4385,6 +4386,10 @@ async function drawAdminBody(){
       return `<div class="batchbar pinbar">${ic('key', 18)}<span><b>${n} keychain${n === 1 ? '' : 's'}</b> from ${ko.length} order${ko.length === 1 ? '' : 's'}, on <b>${sheets} sheet${sheets === 1 ? '' : 's'}</b>${paired ? ' (front and back side by side)' : ''}. Each insert is ${mm.w / 10} × ${mm.h / 10} cm.</span>${smallBtn('Keychains PDF', 'printer', 'aKcSheet', 'dark')}${smallBtn('PNG', 'download', 'aKcSheetPng', 'plain')}</div>`; })() : ''}
     ${['approved', 'printing', 'ready'].includes(f) ? `<div class="batchbar">${ic('edit', 18)}<span>Order codes, names and cut lines on printouts: <b>${printLabels() ? 'on' : 'off'}</b></span>${smallBtn(printLabels() ? 'Turn off' : 'Turn on', '', 'aLabels', 'plain')}</div>` : ''}
     ${f === 'done' && doneM.length ? `<div class="donesum"><div><span class="small muted">Picked up this month</span><b class="num">${peso(doneM.reduce((t, o) => t + (+o.total || 0), 0))}</b><span class="small muted">${doneM.length} order${doneM.length === 1 ? '' : 's'}${doneTodo.length ? `, <b>${doneTodo.length} not in the log book yet</b>` : ', all in the log book'}</span><span class="donebar" aria-hidden="true"><i style="width:${Math.round((doneM.length - doneTodo.length) / doneM.length * 100)}%"></i></span></div>${doneTodo.length ? smallBtn(`Add ${doneTodo.length === 1 ? 'it' : 'all ' + doneTodo.length} to log book`, 'plus', 'lbAllDone', 'dark') : `<span class="tag ok">${ic('check', 14)}All logged</span>`}</div>` : ''}
+    ${f === 'printing' ? (() => { const ko = all.filter(kcAgain), po = all.filter(pinsAgain); if (!ko.length && !po.length) return '';
+      const nk = ko.reduce((t, o) => t + kcCount(o), 0), np = po.reduce((t, o) => t + orderItems(o).filter(it => it.type === 'pins').reduce((u, it) => u + (+it.qty || 0), 0), 0);
+      return `<div class="batchbar againbar">${ic('refresh', 18)}<span><b>Need to print them again?</b> Makes the shared sheets again for orders already printing. Nothing about the orders changes.</span>
+        <span class="againbtns">${nk ? `${smallBtn(`${nk} keychain${nk === 1 ? '' : 's'}`, 'key', 'aKcAgain', 'plain')}${smallBtn('PNG', 'download', 'aKcAgainPng', 'plain')}` : ''}${np ? `${smallBtn(`${np} pin${np === 1 ? '' : 's'}`, 'badge', 'aPinAgain', 'plain')}${smallBtn('PNG', 'download', 'aPinAgainPng', 'plain')}` : ''}</span></div>`; })() : ''}
     ${f === 'printing' && list.length ? `<p class="hint" style="margin-bottom:16px">${ic('box', 18)}<span><b>Next:</b> when an order is printed, cut, and bagged (code and full name on the bag), tap <b>Mark ready</b>. It moves to "Ready" for pickup day.</span></p>` : ''}
     ${f === 'approved' ? `<p class="hint" style="margin-bottom:16px">${ic('printer', 18)}<span>Print only orders marked <b>Confirmed</b>. Unconfirmed ones are released by themselves after their confirm-by day, so nothing gets wasted.</span></p>` : ''}
     ${f === 'ready' ? `<div class="pickupbar ${S.admin.pickupMode ? 'on' : ''}">
@@ -4560,10 +4565,13 @@ const printLabels = () => S.admin.labels !== false;
 // confirmed orders whose pins haven't gone onto a shared pin sheet yet
 const pinsWaiting = o => o.status === 'approved' && o.confirmed && !o.images_deleted && !(o.layout && o.layout.pins_on_sheet) && orderItems(o).some(it => it.type === 'pins' && it.front);   // names and codes on printouts (admin switch)
 /* Every confirmed pin waiting to print, from all orders, packed onto shared A4 sheets so no spot is wasted */
-async function pinSheets(asPng){
+// orders already printing that have pins / keychains: used to make a shared sheet again (wrong size, misprint, lost piece)
+const pinsAgain = o => o.status === 'printing' && !o.images_deleted && orderItems(o).some(it => it.type === 'pins' && it.front);
+const kcAgain = o => o.status === 'printing' && !o.images_deleted && orderItems(o).some(it => it.type === 'keychains' && it.front);
+async function pinSheets(asPng, again){
   if (!window.jspdf) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
-  const list = S.admin.orders.filter(pinsWaiting);
-  if (!list.length) return toast('No confirmed pin orders waiting to print.');
+  const list = S.admin.orders.filter(again ? pinsAgain : pinsWaiting);
+  if (!list.length) return toast(again ? 'No orders in Printing have pins.' : 'No confirmed pin orders waiting to print.');
   toast(`Packing the pins from ${list.length} order${list.length === 1 ? '' : 's'}. This can take a bit.`);
   const pieces = [], failed = [];
   for (const o of list) {
@@ -4599,6 +4607,7 @@ async function pinSheets(asPng){
   }
   const name = `pins-${ymd(new Date())}`;
   if (asPng) await pdfToPngs(doc, name); else doc.save(`${name}.pdf`);
+  if (again) { toast(`Made again: ${pieces.length} pin${pieces.length === 1 ? '' : 's'} on ${pageNo} page${pageNo === 1 ? '' : 's'}. Nothing about the orders changed. Print at 100% ("Actual size").`); return; }
   const onlyPins = list.filter(o => orderItems(o).every(it => it.type === 'pins' || (it.type === 'keychains' && o.layout && o.layout.kc_on_sheet)));
   for (const o of onlyPins) { try { await api.updateOrder(o.id, { status: 'printing' }); o.status = 'printing'; } catch (e) { console.warn(e); } }
   for (const o of list.filter(x => !onlyPins.includes(x))) {   // mixed orders: remember their pins are done, so their own PDF skips them
@@ -4613,10 +4622,10 @@ const kcCount = o => orderItems(o).filter(it => it.type === 'keychains' && it.fr
 // an order is fully printed by the shared sheets when everything in it is pins or keychains already on a sheet
 const sheetsCoverOrder = o => { const l = o.layout || {}; return orderItems(o).every(it => (it.type === 'pins' && l.pins_on_sheet) || (it.type === 'keychains' && l.kc_on_sheet)); };
 /* Every confirmed keychain waiting to print, from all orders, on shared A4 sheets. Two-sided ones: front and back side by side. */
-async function kcSheets(asPng){
+async function kcSheets(asPng, again){
   if (!window.jspdf) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
-  const list = S.admin.orders.filter(kcWaiting);
-  if (!list.length) return toast('No confirmed keychain orders waiting to print.');
+  const list = S.admin.orders.filter(again ? kcAgain : kcWaiting);
+  if (!list.length) return toast(again ? 'No orders in Printing have keychains.' : 'No confirmed keychain orders waiting to print.');
   toast(`Packing the keychains from ${list.length} order${list.length === 1 ? '' : 's'}. This can take a bit.`);
   const units = [], failed = [];
   for (const o of list) {
@@ -4651,6 +4660,7 @@ async function kcSheets(asPng){
   }
   const name = `keychains-${ymd(new Date())}`;
   if (asPng) await pdfToPngs(doc, name); else doc.save(`${name}.pdf`);
+  if (again) { toast(`Made again: ${units.length} keychain${units.length === 1 ? '' : 's'} on ${pages} page${pages === 1 ? '' : 's'}, each insert ${w / 10} × ${h / 10} cm. Nothing about the orders changed. Print at 100% ("Actual size").`); return; }
   for (const o of list) {
     try { const layout = { ...(o.layout || {}), kc_on_sheet: true }; const patch = { layout }; o.layout = layout;
       if (sheetsCoverOrder(o)) patch.status = 'printing';
@@ -4681,8 +4691,10 @@ async function makePdf(o, batch, asPng){
   if (orderItems(o).every(asIs)) { if (!batch) toast('This order is files to print as they are. Open them with the file buttons on the order.'); return 'files'; }
   if (!batch) toast('Making the PDF. This takes a few seconds. Customer PDFs are separate: use the file buttons.');
   const pinsDone = !!(o.layout && o.layout.pins_on_sheet), kcDone = !!(o.layout && o.layout.kc_on_sheet);   // already printed on a shared pin / keychain sheet
-  const onSheet = it => (pinsDone && it.type === 'pins') || (kcDone && it.type === 'keychains');
-  if (orderItems(o).every(it => asIs(it) || onSheet(it)) && (pinsDone || kcDone)) { if (!batch) toast('Its pins and keychains are already on shared sheets. Nothing else to print here.'); return 'files'; }
+  // only the whole-day PDF skips pins/keychains already printed on a shared sheet (so nothing prints twice);
+  // downloading one order on its own always gives everything in it
+  const onSheet = it => !!batch && ((pinsDone && it.type === 'pins') || (kcDone && it.type === 'keychains'));
+  if (batch && orderItems(o).every(it => asIs(it) || onSheet(it)) && (pinsDone || kcDone)) return 'files';
   const items = orderItems(o).filter(it => !asIs(it) && !onSheet(it)), urls = await api.imageUrls([...new Set(orderPaths(o))]), cache = {};
   const getImg = async path => cache[path] || (cache[path] = await loadImg(urls[path]));
   const who = `${o.code}   ${o.nickname}, ${o.grade_section}   pickup ${o.pickup_date ? fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' }) : ''} ${o.pickup_time || ''} at ${o.pickup}`;
@@ -5822,6 +5834,10 @@ const ACTIONS = {
   aPinSheetPng: () => pinSheets(true).catch(e => toast(friendlyError(e))),
   aKcSheet: () => kcSheets(false).catch(e => toast(friendlyError(e))),
   aKcSheetPng: () => kcSheets(true).catch(e => toast(friendlyError(e))),
+  aKcAgain: () => kcSheets(false, true).catch(e => toast(friendlyError(e))),
+  aKcAgainPng: () => kcSheets(true, true).catch(e => toast(friendlyError(e))),
+  aPinAgain: () => pinSheets(false, true).catch(e => toast(friendlyError(e))),
+  aPinAgainPng: () => pinSheets(true, true).catch(e => toast(friendlyError(e))),
   aLabels: () => { S.admin.labels = !printLabels(); toast(printLabels() ? 'Codes, names and cut lines will be on printouts.' : 'Clean printouts: no codes, names or cut lines. Stickers keep their white border. Keep orders sorted yourself.'); drawAdminBody(); },
   aEdit: t => {
     const o = S.admin.orders.find(x => x.id === t.dataset.id); if (!o) return;
