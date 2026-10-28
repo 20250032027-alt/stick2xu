@@ -1636,8 +1636,9 @@ const CONFIG = {
     },
     keychains: {
       name: 'Keychains', blurb: 'Your picture inside a clear acrylic keychain', unit: 'keychain', enabled: false,
-      // The paper insert that slides into the case, measured from the real keychains: 3.2 cm wide x 5 cm tall.
-      sizes: [{ id: 'std', label: '5 × 3.2 cm', price: 45, wMm: 32, hMm: 50 }],
+      // The paper insert that slides into the case. The keychain is 3.2 x 5 cm on the outside;
+      // its picture slot ("template size" from the supplier) is 2.5 x 4.2 cm, so that's what gets printed.
+      sizes: [{ id: 'std', label: '3.2 × 5 cm keychain', price: 45, wMm: 25, hMm: 42 }],
       addons: []
     }
   },
@@ -3380,7 +3381,7 @@ function drawFramedStage(){
     const clear = showBack && f.backMode === 'blank';
     html = `<div class="kc"><span class="ring"></span><span class="loop"></span><div class="case">
         <div class="frame ${clear ? 'clear' : ''}" id="frame" style="aspect-ratio:${mm.w}/${mm.h};${clear ? '' : `background:${bg}`}" data-locked="${showBack && f.backMode !== 'different'}">${clear ? '' : frameInner(d, showBack && f.backMode === 'different' ? 'Choose the back picture' : 'Choose a picture')}</div></div></div>
-      <p class="under">${showBack ? (f.backMode === 'same' ? 'The back shows the same picture.' : f.backMode === 'blank' ? 'The back stays clear.' : 'This is the back of the keychain.') : `This is the front, shown at its real shape: ${mm.w / 10} × ${mm.h / 10} cm, the size of the insert. Tap "Back" to choose the other side.`}</p>`;
+      <p class="under">${showBack ? (f.backMode === 'same' ? 'The back shows the same picture.' : f.backMode === 'blank' ? 'The back stays clear.' : 'This is the back of the keychain.') : `This is the front, shown at its real shape: the picture inside the keychain is ${mm.w / 10} × ${mm.h / 10} cm. Tap "Back" to choose the other side.`}</p>`;
   }
   $('#fstage').innerHTML = html + `<div id="reswarn"></div>`;
   $('#fstage').querySelectorAll('.filePick').forEach(i => i.addEventListener('change', onFiles));
