@@ -213,6 +213,7 @@ create table if not exists public.sellers (
   approved_at timestamptz,
   paused_at timestamptz
 );
+alter table public.sellers add column if not exists rewards_given int not null default 0;   -- free items already handed over
 alter table public.sellers add column if not exists gcash text check (char_length(gcash) <= 40);   -- where to send their pay (optional)
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date);
@@ -1113,7 +1114,7 @@ create or replace function public.cfg_diff(o jsonb, n jsonb) returns text langua
     ('referral_on','Friend codes'),('referral_friend_off','Friend code discount'),('referral_reward','Friend code reward'),
     ('sellers_on','Stick2It Sellers'),('sellers_apply','Seller applications'),('seller_auto','Instant seller approval'),('seller_rate','Seller rate below goal %'),('seller_goal','Seller weekly goal'),
     ('seller_bonus_rate','Seller rate at goal %'),('seller_pro_goal','Seller top goal'),('seller_pro_rate','Seller top rate %'),('seller_buyer_off','Seller code discount %'),('seller_welcome','Seller first-sale bonus'),
-    ('sellers_max','Most sellers'),('seller_goal_by','Seller levels count'),('seller_goal_orders','Seller goal (orders)'),('seller_pro_orders','Seller top goal (orders)'),('seller_min_order','Smallest order that counts'),('seller_min_payout','Smallest seller payout'),('sizes','Pin / keychain print sizes'),('pin_gap_mm','Space between pins'),('kc_gap_mm','Space between keychains'),
+    ('sellers_max','Most sellers'),('seller_mode','Seller pay style'),('seller_flat_rate','Seller flat rate %'),('seller_welcome_on','Seller first-sale bonus'),('seller_reward_on','Seller free item'),('seller_reward_every','Free item every (orders)'),('seller_reward_item','Free item'),('seller_goal_by','Seller levels count'),('seller_goal_orders','Seller goal (orders)'),('seller_pro_orders','Seller top goal (orders)'),('seller_min_order','Smallest order that counts'),('seller_min_payout','Smallest seller payout'),('sizes','Pin / keychain print sizes'),('pin_gap_mm','Space between pins'),('kc_gap_mm','Space between keychains'),
     ('sticker_margin_mm','Sticker sheet edge'),('sticker_gap_mm','Space between stickers'),('poster_margin_mm','Poster margin'),('poster_overlap_mm','Poster overlap'),
     ('facebook_url','Facebook link'),('instagram_url','Instagram link'),('tiktok_url','TikTok link'),('product_order','Product order'),('grades','Grades'),('cleanup_days','Days before pictures are deleted'))
   select coalesce(string_agg(coalesce(nm.label, initcap(replace(k.key, '_', ' ')))
@@ -1405,10 +1406,12 @@ create or replace function public.seller_weeks() returns table (
 language plpgsql stable security definer set search_path = public as $$
 declare c jsonb := (select config from public.shop_settings where id = 1);
   r numeric := coalesce((c->>'seller_rate')::numeric, 5); g numeric := coalesce((c->>'seller_goal')::numeric, 500);
-  b numeric := coalesce((c->>'seller_bonus_rate')::numeric, 15); w numeric := coalesce((c->>'seller_welcome')::numeric, 10);
+  b numeric := coalesce((c->>'seller_bonus_rate')::numeric, 15);
+  w numeric := case when coalesce((c->>'seller_welcome_on')::boolean, true) then coalesce((c->>'seller_welcome')::numeric, 20) else 0 end;
   pg numeric := coalesce((c->>'seller_pro_goal')::numeric, 1000); pr numeric := coalesce((c->>'seller_pro_rate')::numeric, 20);
   -- levels can count orders (default) or money. Counting orders: only orders of at least seller_min_order count toward a level
-  byo boolean := coalesce(c->>'seller_goal_by', 'money') = 'orders'; go numeric := coalesce((c->>'seller_goal_orders')::numeric, 8);
+  byo boolean := coalesce(c->>'seller_goal_by', 'money') = 'orders';
+  flat boolean := coalesce(c->>'seller_mode', 'flat') = 'flat'; fr numeric := coalesce((c->>'seller_flat_rate')::numeric, 20); go numeric := coalesce((c->>'seller_goal_orders')::numeric, 8);
   po numeric := coalesce((c->>'seller_pro_orders')::numeric, 15); mo numeric := coalesce((c->>'seller_min_order')::numeric, 30);
   me text := lower(coalesce(auth.jwt()->>'email', '')); adm boolean := public.is_admin();
 begin
@@ -1421,9 +1424,9 @@ begin
     where adm or sl.email = me
     group by 1, 2, 3, 4)
   select wk.id, wk.code, wk.name, wk.week, wk.n, wk.cnt, wk.sales,
-         case when byo then (case when po > 0 and wk.cnt >= po then pr when go > 0 and wk.cnt >= go then b else r end)
+         case when flat then fr when byo then (case when po > 0 and wk.cnt >= po then pr when go > 0 and wk.cnt >= go then b else r end)
               else (case when pg > 0 and wk.sales >= pg then pr when wk.sales >= g then b else r end) end,
-         round(wk.sales * (case when byo then (case when po > 0 and wk.cnt >= po then pr when go > 0 and wk.cnt >= go then b else r end)
+         round(wk.sales * (case when flat then fr when byo then (case when po > 0 and wk.cnt >= po then pr when go > 0 and wk.cnt >= go then b else r end)
               else (case when pg > 0 and wk.sales >= pg then pr when wk.sales >= g then b else r end) end) / 100.0
                + case when wk.week = min(wk.week) over (partition by wk.id) then w else 0 end, 2),
          case when wk.week = min(wk.week) over (partition by wk.id) then w else 0 end,
@@ -1469,7 +1472,8 @@ begin
   if me = '' then return null; end if;
   select * into v from public.sellers where email = me;
   if not found then return json_build_object('status', 'none'); end if;
-  return json_build_object('status', v.status, 'code', v.code, 'name', v.name, 'gcash', v.gcash,
+  return json_build_object('status', v.status, 'code', v.code, 'name', v.name, 'gcash', v.gcash, 'rewards_given', v.rewards_given,
+    'done_total', (select count(*) from public.orders where seller_code = v.code and status = 'done'),
     'weeks', coalesce((select json_agg(row_to_json(x)) from (select week, orders, counted, sales, rate, commission, welcome, paid from public.seller_weeks() order by week desc limit 12) x), '[]'::json),
     'pending', (select count(*) from public.orders where seller_code = v.code and status in ('pending','approved','printing','ready')),
     'board', coalesce((select json_agg(row_to_json(t)) from (
@@ -1568,3 +1572,21 @@ update public.shop_settings
 update public.shop_settings
    set config = coalesce(config, '{}'::jsonb) || '{"seller_goal_by": "money", "seller_tiers_v4": true}'::jsonb
  where id = 1 and coalesce(config->>'seller_tiers_v4', '') <> 'true';
+
+
+-- admin: hand over one free item (the "every N orders" reward)
+create or replace function public.seller_reward_given(p_id uuid) returns int
+language plpgsql security definer set search_path = public as $$
+declare n int;
+begin
+  if not public.is_admin() then raise exception 'NOT_ADMIN'; end if;
+  update public.sellers set rewards_given = rewards_given + 1 where id = p_id returning rewards_given into n;
+  return n;
+end $$;
+revoke all on function public.seller_reward_given(uuid) from public, anon;
+grant execute on function public.seller_reward_given(uuid) to authenticated;
+
+-- Oct 2026: sellers get a flat 20% of every order, a ₱20 first-sale bonus, and a free item every 10 orders. Set once; all editable in Settings.
+update public.shop_settings
+   set config = coalesce(config, '{}'::jsonb) || '{"seller_mode": "flat", "seller_flat_rate": 20, "seller_welcome": 20, "seller_welcome_on": true, "seller_reward_on": true, "seller_reward_every": 10, "seller_reward_item": "sticker sheet or pin", "seller_tiers_v5": true}'::jsonb
+ where id = 1 and coalesce(config->>'seller_tiers_v5', '') <> 'true';
