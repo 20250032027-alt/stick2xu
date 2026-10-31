@@ -1548,6 +1548,44 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .donesum > div{display:flex;flex-direction:column}
 .donesum b.num{font-size:26px;line-height:1.1}
 .oprice{font-size:21px;color:#1E8E4A;white-space:nowrap;margin-left:auto}
+/* Stick2It Sellers */
+.earnlink{display:inline-flex;gap:5px;align-items:center;margin-left:8px;font-weight:700;color:var(--ink);white-space:nowrap}
+.sellinvite{display:flex;gap:14px;align-items:center;padding:16px 18px;border-radius:20px;background:linear-gradient(120deg,#283971,#3a52a3);color:#fff;text-decoration:none;box-shadow:5px 5px 0 #1C2A57}
+.sellinvite .si-ic{flex:none;width:44px;height:44px;border-radius:50%;background:#F2BC2E;color:#283971;display:grid;place-items:center}
+.sellinvite .si-t{flex:1;display:flex;flex-direction:column;gap:2px}.sellinvite small{opacity:.85;font-size:14px}.sellinvite .si-go{flex:none}
+.sellhero{background:#283971;color:#fff;border-radius:26px;padding:26px 22px;margin-top:10px;box-shadow:6px 6px 0 #1C2A57;position:relative;overflow:hidden}
+.sellhero::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:rgba(242,188,46,.18)}
+.sh-kick{display:inline-flex;gap:6px;align-items:center;background:#F2BC2E;color:#283971;font-weight:800;font-size:13px;letter-spacing:.05em;text-transform:uppercase;padding:5px 12px;border-radius:999px}
+.sellhero h1{font-family:var(--display);font-size:clamp(28px,6vw,40px);line-height:1.05;margin:14px 0 10px;letter-spacing:-.5px}
+.sellhero p{margin:0;opacity:.92;font-size:16.5px;max-width:520px}
+.sh-perks{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));grid-auto-flow:column;gap:8px;margin-top:18px}
+.sh-perks span{background:rgba(255,255,255,.1);border-radius:16px;padding:12px;display:flex;flex-direction:column}
+.sh-perks b{font-family:var(--display);font-size:clamp(20px,6vw,28px);color:#F2BC2E;line-height:1.1}.sh-perks small{opacity:.85;font-size:12.5px;line-height:1.25}
+.sellpage.is-seller .sellcalc,.sellpage.is-seller .sellhow{display:none}
+.sellpage .panel{margin-top:16px}
+.sellcalc input[type=range]{width:100%;accent-color:#283971;margin:10px 0}
+.sc-out{display:flex;flex-direction:column;gap:2px;padding:14px 16px;border-radius:16px;background:#FFF6DA;border:1.5px solid #F2BC2E}
+.sc-out b{font-family:var(--display);font-size:28px;color:#283971}.sc-out span{font-size:14.5px;color:var(--muted)}
+.sellhow ol{list-style:none;padding:0;margin:10px 0 0;display:flex;flex-direction:column;gap:12px}
+.sellhow li{display:flex;gap:12px;align-items:flex-start}.sellhow li i{flex:none;font-style:normal;width:30px;height:30px;border-radius:50%;background:#F2BC2E;color:#283971;display:grid;place-items:center;font-weight:800}
+.sellfaq{margin-top:14px}.sellfaq summary{cursor:pointer;font-weight:800}.sellfaq p{font-size:15px;margin:10px 0 0}
+.sellcta .gbtn{margin-top:10px}.sellstate{text-align:center}.sellstate svg{color:#283971}
+.sellcode{text-align:center}.sc-k{font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.sc-code{display:block;font-family:var(--display);font-size:46px;letter-spacing:2px;color:#283971;line-height:1.1;margin:4px 0}
+.sc-link{display:block;font-size:14px;color:var(--muted);word-break:break-all}
+.sc-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0 6px}
+.sw-top{display:flex;justify-content:space-between;align-items:baseline}.sw-top span{font-weight:800}.sw-top b{font-size:30px;color:#1E8E4A}
+.sw-bar{height:12px;border-radius:99px;background:#E6EAF4;overflow:hidden;margin:12px 0 8px}.sw-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#F2BC2E,#E9A400)}
+.sw-msg{margin:0;font-size:15px;line-height:1.45}.sw-msg svg{vertical-align:-3px;color:#C9951A}
+.sw-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
+.sw-stats span{display:flex;flex-direction:column;align-items:center;text-align:center;background:#F4F7FF;border-radius:14px;padding:10px 4px}.sw-stats b{font-size:18px}.sw-stats small{font-size:12px;color:var(--muted)}
+.sellboard ol{list-style:none;padding:0;margin:8px 0 0}.sellboard li{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:8px 6px;border-bottom:1px solid var(--line)}
+.sellboard li i{font-style:normal;font-weight:800;color:#C9951A}.sellboard li.me{background:#FFF6DA;border-radius:12px}
+.sh-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.sh-row small{display:block;color:var(--muted);font-size:13px}
+.selrow{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--line)}
+.selrow > div{flex:1 1 240px;min-width:0}.selrow small{display:block;color:var(--muted);font-size:13px;margin-top:2px}.selrow .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.selrow.paused,.selrow.declined{opacity:.6}.selamt{font-size:20px}.tag.warn{background:#FFF1C9;color:#8A6100}
+@media(max-width:420px){.sw-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .tplnote{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;margin-bottom:14px;border-radius:14px;background:#FFF6DA;border:1.5px solid #F2BC2E;font-size:15px;line-height:1.4}
 .tplnote svg{flex:none;color:#C9951A;margin-top:2px}
 .tplhead{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}
@@ -1689,6 +1727,8 @@ const CONFIG = {
   productOrder: ['stickers', 'pins', 'keychains', 'posters', 'prints'],   // order on the "What do you want to make?" page (admin can change it)
   referralOn: true,         // friend codes on/off
   referralFriendOff: 5,     // a friend's first order gets this much off
+  // Stick2It Sellers (off until switched on in Settings; while on, it replaces friend codes)
+  sellersOn: false, sellersApply: true, sellerRate: 10, sellerGoal: 500, sellerBonusRate: 15, sellerBuyerOff: 5, sellerWelcome: 10, sellersMax: 10, sellerMinPayout: 20,
   referralReward: 5,        // the code's owner earns this much credit when the friend picks up
   // countdowns on the home page (admin can change them). yearly: true repeats every year on that month and day
   countdowns: [{ name: 'Christmas', date: '2026-12-25', yearly: true }, { name: 'New Year', date: '2027-01-01', yearly: true },
@@ -1865,7 +1905,9 @@ function friendCardHTML(code){
       ${navigator.share ? `<button type="button" class="pilllink" data-act="friendShare" data-code="${esc(code)}">${ic('arrow', 16)}Share</button>` : ''}</div></div>`;
 }
 async function fillFriendCard(code, nick){
-  const el = $('#friendCard'); if (!el || !CONFIG.referralOn) return;
+  const el = $('#friendCard'); if (!el) return;
+  if (CONFIG.sellersOn) { if (CONFIG.sellersApply) el.innerHTML = sellerInviteHTML(); return; }   // sellers replace friend codes
+  if (!CONFIG.referralOn) return;
   const fc = await api.myFriendCode(code, nick); if (fc && document.body.contains(el)) el.innerHTML = friendCardHTML(fc);
 }
 function saveCardHTML(){
@@ -1934,6 +1976,10 @@ function friendlyError(e){
   if (m.includes('SLOT_FULL')) return 'That spot just filled up for this time. Pick another spot, time or day.';
   if (m.includes('DAY_FULL')) return 'That pickup day just filled up. Pick another day.';
   if (m.includes('XU_ONLY')) return 'Please sign in with your XU school account (@my.xu.edu.ph) to order.';
+  if (m.includes('OWN_SELLER')) return "That's your own seller code. It's for your classmates' orders, not yours.";
+  if (m.includes('SELLERS_CLOSED')) return 'Seller applications are closed right now.';
+  if (m.includes('SELLERS_FULL')) return 'All seller spots are taken. Pause someone first, or raise the limit in Settings.';
+  if (m.includes('SIGN_IN')) return 'Sign in with your XU account first.';
   if (m.includes('OWN_CODE')) return "That's your own friend code. Share it with friends instead!";
   if (m.includes('NOT_FIRST')) return 'Friend codes are for first orders. Thanks for coming back!';
   if (m.includes('RUSH_CLOSED')) return `Rush pickups for tomorrow closed at ${hourLabel(CONFIG.rushCutoff)}. Pick another day.`;
@@ -2088,6 +2134,10 @@ function applyShopConfig(c){
   CONFIG.referralOn = typeof c.referral_on === 'boolean' ? c.referral_on : D.referralOn;
   CONFIG.referralFriendOff = Math.max(0, numOr(c.referral_friend_off, D.referralFriendOff));
   CONFIG.referralReward = Math.max(0, numOr(c.referral_reward, D.referralReward));
+  CONFIG.sellersOn = c.sellers_on === true; CONFIG.sellersApply = c.sellers_apply !== false;
+  CONFIG.sellerRate = Math.max(0, Math.min(50, numOr(c.seller_rate, D.sellerRate))); CONFIG.sellerGoal = Math.max(0, numOr(c.seller_goal, D.sellerGoal));
+  CONFIG.sellerBonusRate = Math.max(0, Math.min(50, numOr(c.seller_bonus_rate, D.sellerBonusRate))); CONFIG.sellerBuyerOff = Math.max(0, Math.min(30, numOr(c.seller_buyer_off, D.sellerBuyerOff)));
+  CONFIG.sellerWelcome = Math.max(0, numOr(c.seller_welcome, D.sellerWelcome)); CONFIG.sellersMax = Math.max(0, numOr(c.sellers_max, D.sellersMax)); CONFIG.sellerMinPayout = Math.max(0, numOr(c.seller_min_payout, D.sellerMinPayout));
   CONFIG.countdowns = Array.isArray(c.countdowns) ? c.countdowns : D.countdowns;
   CONFIG.countdownsOn = typeof c.countdowns_on === 'boolean' ? c.countdowns_on : true;
   CONFIG.facebookUrl = /^https:\/\/(www\.|m\.)?facebook\.com\//.test(c.facebook_url || '') ? c.facebook_url : (c.facebook_url === '' ? '' : D.facebookUrl);
@@ -2361,7 +2411,7 @@ function SupaBackend(){
       }
       const layout = { items: serializeItems(p.items, pathFor) };
       const code = await rpc('place_order', { p_nickname: p.nickname, p_grade_section: p.section, p_pickup: p.pickup, p_payment: p.payment,
-        p_gcash_ref: p.gcashRef || null, p_layout: layout, p_folder: folder, p_src: p.src || null, p_pickup_date: p.pickupDate, p_pickup_time: p.pickupTime, p_promo_code: p.promo || null, p_add_to: p.addTo || null });
+        p_gcash_ref: p.gcashRef || null, p_layout: layout, p_folder: folder, p_src: p.src || null, p_pickup_date: p.pickupDate, p_pickup_time: p.pickupTime, p_promo_code: p.promo || null, p_seller: p.seller || null, p_add_to: p.addTo || null });
       return { code };
     },
     async getOrder(code, nick){ const d = await rpc('get_order', { p_code: code, p_nickname: nick }); if (!d) throw new Error('NOT_FOUND'); return d; },
@@ -2380,6 +2430,13 @@ function SupaBackend(){
     async logAddMany(rows){ const { error } = await sb.from('logbook').insert(rows); if (error) throw error; },
     async logUpdate(id, row){ const { error } = await sb.from('logbook').update({ ...row, updated_at: new Date().toISOString() }).eq('id', id); if (error) throw error; },
     async logDelete(id){ const { error } = await sb.from('logbook').delete().eq('id', id); if (error) throw error; },
+    async mySeller(){ return await rpc('my_seller', {}); },
+    async sellerApply(name, section, pitch){ return await rpc('seller_apply', { p_name: name, p_section: section, p_pitch: pitch || null }); },
+    async sellers(){ const { data, error } = await sb.from('sellers').select('*').order('created_at', { ascending: false }); if (error) throw error; return data || []; },
+    async sellerWeeks(){ return (await rpc('seller_weeks', {})) || []; },
+    async sellerSetStatus(id, status){ return await rpc('seller_set_status', { p_id: id, p_status: status }); },
+    async sellerAutopause(){ try { return await rpc('seller_autopause', {}); } catch { return 0; } },
+    async sellerPaid(rows){ const { error } = await sb.from('seller_payouts').insert(rows); if (error) throw error; },
     async feedbackList(){ const { data, error } = await sb.from('feedback').select('*').order('created_at', { ascending: false }).limit(500); if (error) throw error; return data || []; },
     async updateMine(code, nick, section, payment, ref){ return await rpc('update_my_order', { p_code: code, p_nickname: nick, p_grade_section: section, p_payment: payment, p_gcash_ref: ref || null }); },
     async availability(from, to){ const { data, error } = await sb.rpc('pickup_availability', { p_from: from, p_to: to }); if (error) throw error; return data || []; },
@@ -2451,7 +2508,11 @@ else { const v = readJSON('sk_src'); if (v && v.s && Date.now() - (+v.t || 0) < 
 // take the tag out of the address bar, so a link copied and sent to a friend doesn't carry it
 // ?t=fortis opens a ready-made design (a template) straight in the designer
 const TPL = (params.get('t') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40);
-if (params.has('src') || params.has('t')) { try { const q = new URLSearchParams(location.search); q.delete('src'); q.delete('t'); history.replaceState(history.state, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); } catch {} }
+// ?s=RUBY91 is a seller's link: remembered for 7 days, so the order counts even if they order later
+const SELLER_NEW = (params.get('s') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12);
+if (SELLER_NEW) safeLS.set('sk_seller', JSON.stringify({ c: SELLER_NEW, t: Date.now() }));
+function sellerRef(){ const v = readJSON('sk_seller'); return v && v.c && Date.now() - (+v.t || 0) < 7 * 864e5 ? String(v.c) : ''; }
+if (params.has('src') || params.has('t') || params.has('s')) { try { const q = new URLSearchParams(location.search); q.delete('src'); q.delete('t'); q.delete('s'); history.replaceState(history.state, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); } catch {} }
 async function openTemplate(){
   if (!TPL) return;
   try {
@@ -2580,7 +2641,7 @@ async function onSignedIn(fromHere){
     if (S.me.name) { const m0 = readJSON('sk_me') || {}; safeLS.set('sk_me', JSON.stringify({ ...m0, nickname: S.me.name })); const nk = $('#nick'); if (nk) { nk.value = S.me.name; nk.dispatchEvent(new Event('input')); } }
     const first = (S.me.name || '').trim().split(/\s+/)[0];
     toast(first ? `Welcome, ${first}! We filled in your name from your XU account (you can still change it).` : `Signed in as ${S.me.email}.`); buzz([8, 30, 8]);
-    if (location.hash.startsWith('#/checkout')) viewCheckoutKeep(); else if (location.hash.startsWith('#/status')) drawMine();
+    if (location.hash.startsWith('#/checkout')) viewCheckoutKeep(); else if (location.hash.startsWith('#/status')) drawMine(); else if (location.hash.startsWith('#/sell')) viewSell();
   }
   refreshTopAcct();
 }
@@ -2669,7 +2730,7 @@ function route(){
   if (S.halt) return;
   document.title = BASE_TITLE;
   const parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/'), page = parts[0];
-  const views = { home: viewHome, shop: viewShop, design: viewDesign, make: () => viewMake(parts[1]), cart: viewCart, checkout: viewCheckout, done: viewDone, status: viewStatus, admin: viewAdmin };
+  const views = { home: viewHome, shop: viewShop, design: viewDesign, make: () => viewMake(parts[1]), cart: viewCart, checkout: viewCheckout, done: viewDone, status: viewStatus, admin: viewAdmin, sell: viewSell };
   (views[page] || viewNotFound)();
   toTop(); requestAnimationFrame(toTop); setTimeout(toTop, 60);
 }
@@ -2755,7 +2816,7 @@ function viewHome(){
       </div>
       ${heroArt()}
     </section>
-    <footer><span>${esc(CONFIG.shopName)} is run by students. It isn't an official school service.</span>${socialHTML()}</footer>
+    <footer><span>${esc(CONFIG.shopName)} is run by students. It isn't an official school service.${CONFIG.sellersOn ? ` <a href="#/sell" class="earnlink">${ic('sparkle', 14)}Earn with ${esc(CONFIG.shopName)}</a>` : ''}</span>${socialHTML()}</footer>
   </main>`;
 }
 
@@ -3721,6 +3782,9 @@ function checkoutDates(){
    Checkout
    ===================================================================== */
 function viewCheckout(){
+  // a seller's link: put their code in for the customer (once), unless they already have a code in
+  if (CONFIG.sellersOn && !S.promo && !S.sellerTried && sellerRef()) { S.sellerTried = true;
+    api.checkPromo(sellerRef()).then(r => { if (r && r.seller && !S.promo && location.hash.startsWith('#/checkout')) { S.promo = r; viewCheckoutKeep(); toast(`${r.name}'s seller code is in: ${r.value}% off.`); } }).catch(() => {}); }
   if (!S.cart.length) { location.replace('#/shop'); return; }
   const gone = S.cart.filter(it => !isLive(it.type));
   if (gone.length) { toast(`${CONFIG.products[gone[0].type].name} aren't available right now. Remove them to continue.`); location.replace('#/cart'); return; }
@@ -3800,7 +3864,7 @@ function viewCheckout(){
           <label class="lab" for="gref" style="display:block;margin:10px 0 6px">Reference number (optional)</label>
           <input class="inp" id="gref" maxlength="40" inputmode="numeric"></div>` : ''}
       </fieldset>
-          <details class="codebox" ${S.promo ? 'open' : ''}><summary>Have a promo or friend code?</summary>
+          <details class="codebox" ${S.promo ? 'open' : ''}><summary>${CONFIG.sellersOn ? 'Have a promo or seller code?' : 'Have a promo or friend code?'}</summary>
       <div class="field" style="margin:18px 0 0"><label class="lab sr" for="promo">Promo or friend code</label>
         <div class="qrrow promorow"><input class="inp" id="promo" maxlength="20" autocapitalize="characters" autocomplete="off" value="${esc(S.promo ? S.promo.code : '')}" style="text-transform:uppercase">
           ${smallBtn(S.promo ? 'Remove' : 'Apply', S.promo ? 'x' : 'check', S.promo ? 'promoRemove' : 'promoApply', 'plain')}</div>
@@ -4004,7 +4068,7 @@ async function submitOrder(e){
       const d = prsDoc(f.id); if (d && d.kind === 'image' && d.canvas) pages[f.id] = await renderPrintPage(f, d, (it.addons || []).includes('color'));
     }
     const uploads = S.images.concat((S.docs || []).map(d => pages[d.id] || d)).filter(i => used.has(i.id));
-    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: S.addTo ? '' : SRC, promo: S.promo && sum.total >= S.promo.min_total ? S.promo.code : null, images: uploads, items: S.cart, addTo: S.addTo && S.addTo.code });
+    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: S.addTo ? '' : SRC, promo: S.promo && !S.promo.seller && sum.total >= S.promo.min_total ? S.promo.code : null, seller: CONFIG.sellersOn ? (S.promo && S.promo.seller ? S.promo.code : sellerRef()) || null : null, images: uploads, items: S.cart, addTo: S.addTo && S.addTo.code });
     const addedTo = S.addTo && S.addTo.code; S.addTo = null;
     S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal, add_to: addedTo || null, for_someone: !!S.coAdmin };
     try { const real = await api.getOrder(code, nickname); if (real && real.total !== finalTotal) { S.lastOrder.total = real.total; if (real.total < finalTotal) setTimeout(() => toast(`Your friend credit took ${money(finalTotal - real.total)} off. New total: ${money(real.total)}.`), 900); } } catch {}
@@ -4256,7 +4320,7 @@ async function viewAdmin(){
       <button class="pilllink" type="button" data-act="logout">${ic('logout', 18)}Log out</button></header>
     <main id="main" class="wrap">
       <nav class="atabs" aria-label="Admin sections">
-        ${[['orders','list','Orders'],['latest','bell','Latest'],['money','doc','Log book'],['posters','qr','Poster QR codes'],['settings','sliders','Settings']].map(([k, i, l]) =>
+        ${[['orders','list','Orders'],['latest','bell','Latest'],['money','doc','Log book'],...(CONFIG.sellersOn ? [['sellers','badge','Sellers']] : []),['posters','qr','Poster QR codes'],['settings','sliders','Settings']].map(([k, i, l]) =>
           `<button class="tab ${S.admin.tab === k ? 'on' : ''}" type="button" data-act="admTab" data-tab="${k}" ${S.admin.tab === k ? 'aria-current="page"' : ''} style="display:inline-flex;gap:6px;align-items:center">${ic(i, 18)}${l}${k === 'latest' ? '<span class="newdot" id="latestDot" hidden></span>' : ''}</button>`).join('')}
         <button class="tab" type="button" data-act="admRefresh" style="display:inline-flex;gap:6px;align-items:center">${ic('refresh', 18)}Refresh</button>
       </nav>
@@ -4353,6 +4417,7 @@ async function drawAdminBody(){
   checkLatestDot();
   if (S.admin.tab === 'latest') return drawLatest();
   if (S.admin.tab === 'money') return drawLogbook();
+  if (S.admin.tab === 'sellers') return drawSellers();
   if (S.admin.tab === 'posters') return drawPosters();
   if (S.admin.tab === 'settings') return drawSettings();
   const all = S.admin.orders, f = S.admin.filter;
@@ -4857,7 +4922,9 @@ function drawSettings(){
   drawNoticeForm(); loadTelegram();
   S.admin.cfg = {
     pickup_weekdays: CONFIG.pickupWeekdays.slice(), pickup_times: clone(CONFIG.pickupTimes), pickup_places: CONFIG.pickupOptions.slice(),
-    countdowns: clone(CONFIG.countdowns || []), countdowns_on: CONFIG.countdownsOn !== false, details: { ...(CONFIG.details || {}) }, facebook_url: CONFIG.facebookUrl, instagram_url: CONFIG.instagramUrl, tiktok_url: CONFIG.tiktokUrl, require_xu_signin: CONFIG.requireXu, product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
+    countdowns: clone(CONFIG.countdowns || []), countdowns_on: CONFIG.countdownsOn !== false, details: { ...(CONFIG.details || {}) }, facebook_url: CONFIG.facebookUrl, instagram_url: CONFIG.instagramUrl, tiktok_url: CONFIG.tiktokUrl, require_xu_signin: CONFIG.requireXu, product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward,
+    sellers_on: CONFIG.sellersOn, sellers_apply: CONFIG.sellersApply, seller_rate: CONFIG.sellerRate, seller_goal: CONFIG.sellerGoal, seller_bonus_rate: CONFIG.sellerBonusRate,
+    seller_buyer_off: CONFIG.sellerBuyerOff, seller_welcome: CONFIG.sellerWelcome, sellers_max: CONFIG.sellersMax, seller_min_payout: CONFIG.sellerMinPayout, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
     print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, pin_gap_mm: CONFIG.pinGapMm, kc_gap_mm: CONFIG.kcGapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, feedback_on: CONFIG.feedbackOn, rush_on: CONFIG.rushOn, rush_make: CONFIG.rushMake, rush_cutoff_hour: CONFIG.rushCutoff, max_rush_per_day: CONFIG.maxRushPerDay, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
@@ -4994,6 +5061,19 @@ function drawShopForm(){
         <label class="yearly"><input type="checkbox" data-cd="${i}" data-f="yearly" ${x.yearly ? 'checked' : ''}> Repeats every year</label>
         ${smallBtn('', 'trash', 'cdDel', 'plain', `data-i="${i}" aria-label="Remove ${esc(x.name || 'event')}"`)}</div>`).join('')}
       ${smallBtn('Add a countdown', 'plus', 'cdAdd', 'plain')}</div>
+
+    <div class="cfgsec sellcfg"><div class="sub">Stick2It Sellers</div>
+      <label class="switch" style="margin-bottom:8px"><input type="checkbox" data-cfgbool="sellers_on" ${c.sellers_on ? 'checked' : ''}><span><b>Turn on Stick2It Sellers</b>. While it's on, it replaces friend codes (credit people already have still works).</span></label>
+      <label class="switch" style="margin-bottom:10px"><input type="checkbox" data-cfgbool="sellers_apply" ${c.sellers_apply !== false ? 'checked' : ''}><span>Open for new applications</span></label>
+      <div class="pgrid2">
+        <label class="dnum"><span>Seller earns (% of each picked-up order)</span>${n('seller_rate', c.seller_rate, 0, 50)}</label>
+        <label class="dnum"><span>Weekly goal (₱ of picked-up orders)</span>${n('seller_goal', c.seller_goal, 0, 100000)}</label>
+        <label class="dnum"><span>Rate for the whole week once the goal is hit (%)</span>${n('seller_bonus_rate', c.seller_bonus_rate, 0, 50)}</label>
+        <label class="dnum"><span>Customer gets (% off with a seller's code)</span>${n('seller_buyer_off', c.seller_buyer_off, 0, 30)}</label>
+        <label class="dnum"><span>Welcome bonus on a seller's first sale (₱)</span>${n('seller_welcome', c.seller_welcome, 0, 500)}</label>
+        <label class="dnum"><span>Most sellers at once (0 = no limit)</span>${n('sellers_max', c.sellers_max, 0, 200)}</label>
+        <label class="dnum"><span>Smallest payout (₱, less carries over)</span>${n('seller_min_payout', c.seller_min_payout, 0, 1000)}</label></div>
+      <p class="help" style="margin-top:6px">Students apply with their XU account; you approve them in the Sellers tab. A sale counts when the order is picked up and paid. Weeks run Monday to Sunday. Sellers never handle money or products.</p></div>
 
     <div class="cfgsec"><div class="sub">Friend codes</div>
       <label class="switch" style="margin-bottom:10px"><input type="checkbox" data-cfgbool="referral_on" ${c.referral_on ? 'checked' : ''}><span>Customers get a friend code to share</span></label>
@@ -5302,6 +5382,126 @@ async function loadLogbook(force){
 function lbDayLabel(d){
   const today = ymd(new Date()), yest = ymd(new Date(Date.now() - 864e5));
   return d === today ? 'Today' : d === yest ? 'Yesterday' : fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+/* =====================================================================
+   Stick2It Sellers: students share their code or link and earn a commission on picked-up orders
+   ===================================================================== */
+const manilaMonday = (d = new Date()) => { const t = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Manila' })); t.setDate(t.getDate() - (t.getDay() + 6) % 7); return ymd(t); };
+const sellerLink = code => `${CONFIG.siteUrl || location.origin + '/'}?s=${code}`;
+const AVG_ORDER = 60;
+const cash2 = n => Number.isInteger(+n) ? money(+n) : '₱' + (+n).toFixed(2);   // payouts: ₱102.10, not ₱102.1   // a typical order, for the "what could I earn" slider
+function sellerEarn(sales){ const r = sales >= CONFIG.sellerGoal && CONFIG.sellerGoal > 0 ? CONFIG.sellerBonusRate : CONFIG.sellerRate; return { rate: r, amount: Math.round(sales * r) / 100 }; }
+// the invitation after ordering (and on My order)
+function sellerInviteHTML(){
+  return `<a class="sellinvite" href="#/sell"><span class="si-ic">${ic('sparkle', 22)}</span><span class="si-t"><b>Get paid to share ${esc(CONFIG.shopName)}</b>
+    <small>Earn ${CONFIG.sellerRate}% of every order your classmates pick up${CONFIG.sellerGoal ? `, ${CONFIG.sellerBonusRate}% in big weeks` : ''}. Paid every week.</small></span><span class="si-go">${ic('arrow', 18)}</span></a>`;
+}
+async function viewSell(){
+  document.title = `Earn with ${CONFIG.shopName}`;
+  const open = CONFIG.sellersOn;
+  $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow sellpage">
+    <section class="sellhero">
+      <span class="sh-kick">${ic('sparkle', 16)}${esc(CONFIG.shopName)} Sellers</span>
+      <h1>Get paid to share the stickers your classmates already love.</h1>
+      <p>Share your code. Your classmates get <b>${CONFIG.sellerBuyerOff}% off</b>. You get paid <b>every week</b> for every order they pick up.</p>
+      <div class="sh-perks"><span><b>${CONFIG.sellerRate}%</b><small>of every order</small></span>${CONFIG.sellerGoal ? `<span><b>${CONFIG.sellerBonusRate}%</b><small>in ${money(CONFIG.sellerGoal)}+ weeks</small></span>` : ''}${CONFIG.sellerWelcome ? `<span><b>${money(CONFIG.sellerWelcome)}</b><small>first-sale bonus</small></span>` : ''}</div>
+    </section>
+    <div id="sellBody">${open ? '<div class="sk" style="height:160px;border-radius:22px;margin-top:18px"></div>' : `<div class="empty" style="margin-top:18px">${ic('clock', 34)}<b>The seller programme isn't open right now.</b><span>Check back soon!</span></div>`}</div>
+    ${open ? `<section class="panel sellcalc"><h3>What could you earn?</h3>
+      <label class="lab" for="sc">Orders your classmates pick up in a week: <b id="scN">8</b></label>
+      <input type="range" id="sc" min="1" max="30" value="8">
+      <div class="sc-out"><b id="scAmt"></b><span id="scNote"></span></div>
+      <p class="help">Based on a typical ${money(AVG_ORDER)} order. Pickups only: orders that are cancelled or never picked up don't count.</p></section>
+    <section class="panel sellhow"><h3>How it works</h3><ol>
+      <li><i>1</i><span><b>Apply with your XU account.</b> Takes a minute. We'll approve you soon after.</span></li>
+      <li><i>2</i><span><b>Share your code or link.</b> Group chats, your story, your own QR card. Classmates get ${CONFIG.sellerBuyerOff}% off with it.</span></li>
+      <li><i>3</i><span><b>Get paid every Monday</b> for the orders picked up the week before, in cash or GCash.</span></li></ol>
+      <details class="sellfaq"><summary>Questions</summary>
+        <p><b>Do I have to handle money or stickers?</b> No. Classmates order on the site and pay at pickup like normal. You just share.</p>
+        <p><b>What counts?</b> Orders with your code or link that get picked up and paid. Your own orders don't count.</p>
+        <p><b>Is there a quota?</b> No pressure: hit ${money(CONFIG.sellerGoal)} in a week and that whole week pays ${CONFIG.sellerBonusRate}% instead of ${CONFIG.sellerRate}%. If you go 3 weeks with no sales, your spot is paused so someone else can try; just message us to come back.</p>
+        <p><b>When do I get paid?</b> Every Monday. Under ${money(CONFIG.sellerMinPayout)} carries over to the next week.</p></details></section>` : ''}
+  </main>`;
+  const sc = $('#sc'); if (sc) { const upd = () => { const n = +sc.value, e = sellerEarn(n * AVG_ORDER); $('#scN').textContent = n;
+      $('#scAmt').textContent = `about ${money(Math.round(e.amount))} a week`; $('#scNote').textContent = e.rate > CONFIG.sellerRate ? `That's a ${money(CONFIG.sellerGoal)}+ week: everything pays ${e.rate}%!` : CONFIG.sellerGoal ? `${money(Math.max(0, CONFIG.sellerGoal - n * AVG_ORDER))} more in orders and the whole week pays ${CONFIG.sellerBonusRate}%.` : ''; };
+    sc.addEventListener('input', upd); upd(); }
+  if (open) drawSellBody();
+}
+async function drawSellBody(){
+  const box = $('#sellBody'); if (!box) return;
+  if (!S.me) { box.innerHTML = `<section class="panel sellcta">${CONFIG.sellersApply ? `<h3>Ready to start?</h3><p>Sign in with your XU account to apply, or to see your earnings if you're already a seller.</p>` : `<h3>Applications are closed for now</h3><p>Already a seller? Sign in to see your earnings.</p>`}
+      <button type="button" class="gbtn" data-act="xuIn">${ic('school', 18)}Sign in with your XU account</button></section>`; return; }
+  let me; try { me = await api.mySeller(); } catch (e) { box.innerHTML = `<div class="formerr">${esc(friendlyError(e))}</div>`; return; }
+  if (!me || me.status === 'none') {
+    box.innerHTML = CONFIG.sellersApply ? `<section class="panel sellcta"><h3>Apply in a minute</h3>
+      <div class="field"><span class="lab">Your name</span><input class="inp" id="sName" maxlength="60" value="${esc(S.me.name || '')}"></div>
+      <div class="field"><span class="lab">Grade and section</span><input class="inp" id="sSec" maxlength="40" placeholder="Like: 9 - Rizal"></div>
+      <div class="field"><span class="lab">How would you share it? (optional)</span><input class="inp" id="sPitch" maxlength="200" placeholder="Like: my class group chat, my barkada"></div>
+      ${btn('Apply to be a seller', { act: 'sellApply', icon: 'sparkle', cls: 'dark' })}<p class="help" style="margin-top:8px">Signed in as ${esc(S.me.email)}.</p></section>`
+      : `<section class="panel sellcta"><h3>Applications are closed for now</h3><p>Check back soon!</p></section>`; return; }
+  if (me.status === 'pending') { box.innerHTML = `<section class="panel sellstate">${ic('clock', 30)}<h3>You're on the list!</h3><p>We'll look at your application soon. Check back here: once you're approved, your code and link show up right on this page.</p></section>`; return; }
+  if (me.status === 'declined') { box.innerHTML = `<section class="panel sellstate">${ic('x', 30)}<h3>Not this time</h3><p>Thanks for applying. Message us if you'd like to know more.</p></section>`; return; }
+  if (me.status === 'paused') { box.innerHTML = `<section class="panel sellstate">${ic('clock', 30)}<h3>Your seller spot is paused</h3><p>Message us when you're ready to come back. Your code${me.code ? ` (<b>${esc(me.code)}</b>)` : ''} and earnings are kept.</p></section>`; return; }
+  // active: the dashboard (the sign-up pitch below it is hidden for sellers)
+  const pg = document.querySelector('.sellpage'); if (pg) pg.classList.add('is-seller');
+  const wk = manilaMonday(), weeks = me.weeks || [], cur = weeks.find(w => w.week === wk) || { sales: 0, orders: 0, commission: 0, rate: CONFIG.sellerRate };
+  const unpaid = weeks.filter(w => !w.paid && w.week < wk).reduce((t, w) => t + +w.commission, 0), paidAll = weeks.filter(w => w.paid).reduce((t, w) => t + +w.commission, 0);
+  const goal = CONFIG.sellerGoal, pct = goal ? Math.min(100, Math.round(cur.sales / goal * 100)) : 100, link = sellerLink(me.code), first = (me.name || '').split(' ')[0];
+  box.innerHTML = `
+    <section class="panel sellcode"><span class="sc-k">Your seller code</span><b class="sc-code">${esc(me.code)}</b>
+      <span class="sc-link">${esc(link.replace(/^https?:\/\//, ''))}</span>
+      <div class="sc-btns">${btn('Copy link', { act: 'sellCopy', icon: 'copy', cls: 'dark', attrs: `data-link="${esc(link)}"` })}${navigator.share ? btn('Share', { act: 'sellShare', icon: 'arrow', attrs: `data-link="${esc(link)}" data-code="${esc(me.code)}"` }) : ''}${btn('My QR card', { act: 'sellCard', icon: 'qr', attrs: `data-code="${esc(me.code)}" data-name="${esc(first)}"` })}</div>
+      <p class="help">Classmates get ${CONFIG.sellerBuyerOff}% off with your code or link. The link remembers you for 7 days.</p></section>
+    <section class="panel sellweek"><div class="sw-top"><span>This week</span><b class="num">${money(Math.round(cur.commission))}</b></div>
+      ${goal ? `<div class="sw-bar"><i style="width:${pct}%"></i></div><p class="sw-msg">${cur.sales >= goal ? `${ic('sparkle', 16)} Goal hit! Everything this week pays <b>${CONFIG.sellerBonusRate}%</b>.` : `<b>${money(cur.sales)}</b> of ${money(goal)} · ${money(goal - cur.sales)} more and the whole week pays <b>${CONFIG.sellerBonusRate}%</b>.`}</p>` : ''}
+      <div class="sw-stats"><span><b>${cur.orders}</b><small>picked up</small></span><span><b>${me.pending || 0}</b><small>on the way</small></span><span><b>${money(Math.round(unpaid))}</b><small>to be paid</small></span><span><b>${money(Math.round(paidAll))}</b><small>paid so far</small></span></div>
+      ${!weeks.length && CONFIG.sellerWelcome ? `<p class="help">${ic('sparkle', 14)} Your first picked-up sale also earns a ${money(CONFIG.sellerWelcome)} welcome bonus.</p>` : ''}</section>
+    ${(me.board || []).length ? `<section class="panel sellboard"><h3>${ic('sparkle', 18)}Top sellers this week</h3><ol>${me.board.map((r, i) => `<li class="${r.me ? 'me' : ''}"><i>${i + 1}</i><span>${esc(r.name)}${r.me ? ' (you)' : ''}</span><b>${r.orders} order${r.orders === 1 ? '' : 's'}</b></li>`).join('')}</ol></section>` : ''}
+    ${weeks.length ? `<section class="panel sellhist"><h3>Your weeks</h3>${weeks.map(w => `<div class="sh-row"><span>${fmtDate(w.week, { month: 'short', day: 'numeric' })} week<small>${w.orders} order${w.orders === 1 ? '' : 's'} · ${money(+w.sales)} · ${w.rate}%${+w.welcome ? ` + ${money(+w.welcome)} bonus` : ''}</small></span><b>${money(Math.round(+w.commission))}</b><span class="tag ${w.paid ? 'ok' : ''}">${w.paid ? 'Paid' : w.week === wk ? 'This week' : 'To be paid'}</span></div>`).join('')}</section>` : ''}`;
+}
+// a seller's own QR card, to print or post: their code, the discount, and a QR code of their link
+async function sellerCard(code, first){
+  if (!window.QRCode) throw new Error("The QR tool didn't load. Refresh the page.");
+  try { await document.fonts.load('800 80px "Cabinet Grotesk"'); } catch {}
+  const W = 1080, H = 1350, c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
+  const N = '#283971', G = '#F2BC2E', D = sz => `800 ${sz}px "Cabinet Grotesk", "Arial Black", sans-serif`, B = sz => `700 ${sz}px Satoshi, system-ui, sans-serif`;
+  const rr = (X, Y, w, h, r) => { x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + w, Y, X + w, Y + h, r); x.arcTo(X + w, Y + h, X, Y + h, r); x.arcTo(X, Y + h, X, Y, r); x.arcTo(X, Y, X + w, Y, r); x.closePath(); };
+  x.fillStyle = N; x.fillRect(0, 0, W, H); x.fillStyle = 'rgba(255,255,255,.08)'; for (let Y = 26; Y < H; Y += 52) for (let X = 26; X < W; X += 52) { x.beginPath(); x.arc(X, Y, 4, 0, 7); x.fill(); }
+  x.textAlign = 'center'; x.fillStyle = G; x.font = B(40); x.fillText(`${(first || 'MY').toUpperCase()}'S CODE`, W / 2, 140);
+  x.fillStyle = '#fff'; let fs = 170; x.font = D(fs); while (x.measureText(code).width > 900 && fs > 80) { fs -= 6; x.font = D(fs); } x.fillText(code, W / 2, 140 + fs);
+  const q = 560, qx = (W - q) / 2, qy = 400; x.fillStyle = '#fff'; rr(qx - 40, qy - 40, q + 80, q + 80, 44); x.fill(); x.drawImage(qrCanvas(sellerLink(code), q), qx, qy, q, q);
+  const line = `${CONFIG.sellerBuyerOff}% off your order`, lw = (x.font = D(66), x.measureText(line).width + 100);
+  x.fillStyle = G; rr((W - lw) / 2, 1080, lw, 116, 58); x.fill(); x.fillStyle = N; x.fillText(line, W / 2, 1160);
+  x.fillStyle = '#DCE3F5'; x.font = B(38); x.fillText(`Scan, or use code ${code} at ${(CONFIG.siteUrl || location.origin).replace(/^https?:\/\//, '').replace(/\/$/, '')}`, W / 2, 1270);
+  return c;
+}
+/* ---------- admin: Sellers tab ---------- */
+async function drawSellers(){
+  const body = $('#admBody'); body.innerHTML = '<div class="sk" style="height:160px;border-radius:22px"></div>';
+  let list, weeks; try { await api.sellerAutopause(); [list, weeks] = await Promise.all([api.sellers(), api.sellerWeeks()]); }
+  catch (e) { body.innerHTML = `<div class="formerr">${esc(friendlyError(e))} Run the latest schema.sql in Supabase, then refresh.</div>`; return; }
+  S.admin.sellerList = list; S.admin.sellerWeeks = weeks;
+  const wk = manilaMonday(), byId = id => list.find(x => x.id === id) || {};
+  const thisWk = weeks.filter(w => w.week === wk), active = list.filter(x => x.status === 'active'), pend = list.filter(x => x.status === 'pending');
+  const owed = {}; weeks.filter(w => !w.paid && w.week < wk).forEach(w => { (owed[w.seller_id] = owed[w.seller_id] || []).push(w); });
+  const owedRows = Object.entries(owed).map(([id, ws]) => ({ id, ws, amt: Math.round(ws.reduce((t, w) => t + +w.commission, 0) * 100) / 100 })).sort((a, b) => b.amt - a.amt);
+  const quiet = id => { const sl = byId(id); if (sl.status !== 'active' || !sl.approved_at) return false; const last = weeks.filter(w => w.seller_id === id).map(w => w.week).sort().pop(); return !last || last < ymd(new Date(Date.now() - 14 * 864e5)); };
+  body.innerHTML = `
+    <div class="stats"><div class="panel hero-stat"><span class="small">This week through sellers</span><b class="num">${money(Math.round(thisWk.reduce((t, w) => t + +w.sales, 0)))}</b><span class="small">${thisWk.reduce((t, w) => t + w.orders, 0)} picked-up orders · about ${money(Math.round(thisWk.reduce((t, w) => t + +w.commission, 0)))} commission so far</span></div>
+      <div class="panel"><span class="small muted">To pay now</span><b class="num">${money(Math.round(owedRows.filter(r => r.amt >= CONFIG.sellerMinPayout).reduce((t, r) => t + r.amt, 0)))}</b><span class="small muted">for weeks already finished</span></div>
+      <div class="panel"><span class="small muted">Sellers</span><b class="num">${active.length}${CONFIG.sellersMax ? `<small>/${CONFIG.sellersMax}</small>` : ''}</b><span class="small muted">${pend.length ? `${pend.length} waiting for you` : 'active now'}</span></div></div>
+    ${pend.length ? `<section class="panel"><h3>${ic('bell', 18)} Applications</h3>${pend.map(a => `<div class="selrow"><div><b>${esc(a.name)}</b>, ${esc(a.grade_section)}<small>${esc(a.email)} · applied ${fmtDate(ymd(new Date(a.created_at)), { month: 'short', day: 'numeric' })}</small>${a.pitch ? `<small>“${esc(a.pitch)}”</small>` : ''}</div>
+      <span class="acts">${smallBtn('Approve', 'check', 'sellSet', 'dark', `data-id="${a.id}" data-st="active"`)}${smallBtn('Decline', 'x', 'sellSet', 'plain', `data-id="${a.id}" data-st="declined"`)}</span></div>`).join('')}</section>` : ''}
+    <section class="panel" style="margin-top:16px"><h3>${ic('cash', 18)} Payouts</h3><p class="help">Weeks run Monday to Sunday. Pay on Monday for last week, then tap <b>Paid</b>; it's added to the Log book as an expense.</p>
+      ${owedRows.length ? owedRows.map(r => { const sl = byId(r.id), ok = r.amt >= CONFIG.sellerMinPayout; return `<div class="selrow"><div><b>${esc(sl.name || r.ws[0].name)}</b> <span class="tag">${esc(sl.code || r.ws[0].code)}</span>
+        <small>${r.ws.map(w => `${fmtDate(w.week, { month: 'short', day: 'numeric' })} week: ${money(+w.sales)} at ${w.rate}%${+w.welcome ? ` + ${money(+w.welcome)} bonus` : ''}`).join(' · ')}</small></div>
+        <span class="acts"><b class="num selamt">${cash2(r.amt)}</b>${ok ? smallBtn('Paid', 'check', 'sellPaid', 'dark', `data-id="${r.id}"`) : `<span class="tag">carries over (under ${money(CONFIG.sellerMinPayout)})</span>`}</span></div>`; }).join('') : '<p class="muted">Nothing to pay right now.</p>'}</section>
+    <section class="panel" style="margin-top:16px"><h3>${ic('badge', 18)} Sellers</h3>
+      ${list.filter(x => x.status !== 'pending').length ? list.filter(x => x.status !== 'pending').map(sl => { const w = thisWk.find(t => t.seller_id === sl.id), all = weeks.filter(t => t.seller_id === sl.id).reduce((t, x) => t + +x.sales, 0);
+        return `<div class="selrow ${sl.status}"><div><b>${esc(sl.name)}</b>, ${esc(sl.grade_section)} ${sl.code ? `<span class="tag">${esc(sl.code)}</span>` : ''} ${sl.status !== 'active' ? `<span class="tag">${esc(sl.status)}</span>` : ''}${quiet(sl.id) ? '<span class="tag warn">quiet 2+ weeks</span>' : ''}
+          <small>This week ${money(w ? +w.sales : 0)}${w ? ` (${w.rate}%)` : ''} · all time ${money(all)} · ${esc(sl.email)}</small></div>
+          <span class="acts">${sl.status === 'active' ? smallBtn('Pause', 'clock', 'sellSet', 'plain', `data-id="${sl.id}" data-st="paused"`) : sl.status !== 'declined' ? smallBtn('Turn back on', 'check', 'sellSet', 'plain', `data-id="${sl.id}" data-st="active"`) : smallBtn('Approve', 'check', 'sellSet', 'plain', `data-id="${sl.id}" data-st="active"`)}</span></div>`; }).join('') : `<p class="muted">No sellers yet. Share <b>${esc((CONFIG.siteUrl || location.origin + '/').replace(/^https?:\/\//, ''))}#/sell</b>, or wait for the invite customers see after ordering.</p>`}</section>`;
 }
 async function drawLogbook(){
   const body = $('#admBody');
@@ -5627,10 +5827,10 @@ const ACTIONS = {
       const r = await api.checkPromo(v);
       if (!r) return setErr('promo', 'e-promo', "That code doesn't work. Check the spelling, or it may have ended.");
       if (r.used_up) return setErr('promo', 'e-promo', 'That code has been used up.');
-      S.promo = r; buzz([8, 30, 8]); toast(r.friend ? `Friend code added: ${money(r.value)} off your first order.` : `Code ${r.code} added.`); viewCheckoutKeep();
+      S.promo = r; buzz([8, 30, 8]); toast(r.seller ? `${r.name}'s seller code: ${r.value}% off. Thanks for supporting a classmate!` : r.friend ? `Friend code added: ${money(r.value)} off your first order.` : `Code ${r.code} added.`); viewCheckoutKeep();
     } catch (e) { setErr('promo', 'e-promo', friendlyError(e)); }
   },
-  promoRemove: () => { S.promo = null; viewCheckoutKeep(); },
+  promoRemove: () => { if (S.promo && S.promo.seller) safeLS.del('sk_seller'); S.promo = null; viewCheckoutKeep(); },
   fdBg: t => { const d = activeDesign(); if (d) { d.bg = t.dataset.c; drawFramed(); } },
   prAdjust: t => { S.prSel = S.prSel === t.dataset.id ? null : t.dataset.id; drawPrints(); },
   prDone: () => { S.prSel = null; drawPrints(); },
@@ -5949,6 +6149,32 @@ const ACTIONS = {
     const a = document.createElement('a'); a.href = f.url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
   },
 
+  sellApply: async () => {
+    const name = $('#sName').value.trim(), sec = $('#sSec').value.trim();
+    if (name.length < 2) { toast('Type your name.'); $('#sName').focus(); return; }
+    if (!sec) { toast('Type your grade and section.'); $('#sSec').focus(); return; }
+    try { await api.sellerApply(name, sec, $('#sPitch').value.trim()); buzz([8, 30, 8]); toast("Applied! We'll look at it soon."); drawSellBody(); } catch (e) { toast(friendlyError(e)); }
+  },
+  sellCopy: async t => { try { await navigator.clipboard.writeText(t.dataset.link); toast('Link copied. Paste it in your group chats!'); } catch { toast(t.dataset.link); } },
+  sellShare: async t => { try { await navigator.share({ title: CONFIG.shopName, text: `Custom stickers, pins and keychains! Use my code ${t.dataset.code} for ${CONFIG.sellerBuyerOff}% off:`, url: t.dataset.link }); } catch {} },
+  sellCard: async t => { try { const c = await sellerCard(t.dataset.code, t.dataset.name); c.toBlob(b => saveBlob(b, `my-code-${t.dataset.code}.png`), 'image/png'); toast('Saved! Post it on your story or print it.'); } catch (e) { toast(e.message || friendlyError(e)); } },
+  sellSet: async t => {
+    const sl = (S.admin.sellerList || []).find(x => x.id === t.dataset.id); if (!sl) return;
+    if (t.dataset.st === 'declined' && !confirm(`Decline ${sl.name}'s application?`)) return;
+    try { const code = await api.sellerSetStatus(sl.id, t.dataset.st); toast(t.dataset.st === 'active' ? `${sl.name} is a seller! Their code is ${code}. Tell them to open ${(CONFIG.siteUrl || location.origin + '/').replace(/^https?:\/\//, '')}#/sell` : t.dataset.st === 'paused' ? `${sl.name} is paused.` : 'Declined.'); drawSellers(); }
+    catch (e) { toast(friendlyError(e)); }
+  },
+  sellPaid: async t => {
+    const sl = (S.admin.sellerList || []).find(x => x.id === t.dataset.id), wk = manilaMonday();
+    const ws = (S.admin.sellerWeeks || []).filter(w => w.seller_id === t.dataset.id && !w.paid && w.week < wk); if (!ws.length) return;
+    const amt = Math.round(ws.reduce((s2, w) => s2 + +w.commission, 0) * 100) / 100;
+    if (!confirm(`Mark ${cash2(amt)} as paid to ${sl ? sl.name : 'this seller'}? It's also added to the Log book as an expense.`)) return;
+    try {
+      await api.sellerPaid(ws.map(w => ({ seller_id: w.seller_id, week: w.week, amount: +w.commission })));
+      try { await api.logAdd({ kind: 'expense', item: `Seller payout: ${sl ? sl.name : ws[0].name}`.slice(0, 120), qty: 1, amount: amt, day: ymd(new Date()), who: 'Shop money', note: `Weeks of ${ws.map(w => fmtDate(w.week, { month: 'short', day: 'numeric' })).join(', ')}`.slice(0, 300), method: null }); S.admin.lbAt = 0; } catch (e) { console.warn('log book', e); }
+      toast(`Paid ${cash2(amt)}. It's in the Log book.`); drawSellers();
+    } catch (e) { toast(friendlyError(e)); }
+  },
   lbAdd: t => lbSheet(t.dataset.kind),
   lbEdit: t => { const r = (S.admin.lb || []).find(x => x.id === t.dataset.id); if (r) lbSheet(r.kind, r); },
   lbFilter: t => { S.admin.lbFilter = t.dataset.f; drawLogbook(); },

@@ -181,10 +181,29 @@ create policy "admins edit settings" on public.shop_settings
 -- ---------------------------------------------------------------------
 -- Place an order (with fake-order protection)
 -- ---------------------------------------------------------------------
+
+-- =====================================================================
+-- Stick2It Sellers: students share their code or link; they earn a commission on picked-up orders.
+-- (The table is defined here, before place_order uses it. Everything else for sellers is at the end of the file.)
+-- =====================================================================
+create table if not exists public.sellers (
+  id uuid primary key default gen_random_uuid(),
+  email text not null unique,
+  name text not null check (char_length(name) between 2 and 60),
+  grade_section text not null check (char_length(grade_section) between 1 and 40),
+  pitch text check (char_length(pitch) <= 200),
+  code text unique,
+  status text not null default 'pending' check (status in ('pending', 'active', 'paused', 'declined')),
+  created_at timestamptz not null default now(),
+  approved_at timestamptz,
+  paused_at timestamptz
+);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text);
+drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text,text);
+alter table public.orders add column if not exists seller_code text;   -- the seller who referred this order (Stick2It Sellers)
 -- Friend codes: one per customer (name + section). A first-time customer using one gets money off;
 -- the owner earns credit when that order is picked up, used up automatically on their next order.
 create table if not exists public.friends (
@@ -238,7 +257,7 @@ grant execute on function public.pickup_availability(date, date) to anon, authen
 create or replace function public.place_order(
   p_nickname text, p_grade_section text, p_pickup text, p_payment text,
   p_gcash_ref text, p_layout jsonb, p_folder text, p_src text, p_pickup_date date, p_pickup_time text,
-  p_promo_code text default null, p_add_to text default null
+  p_promo_code text default null, p_add_to text default null, p_seller text default null
 ) returns text
 language plpgsql security definer set search_path = public as $$
 declare
@@ -247,7 +266,7 @@ declare
   v_sec  text := public.norm_text(p_grade_section);
   v_item jsonb; v_prod jsonb; v_size jsonb; v_addon jsonb; v_addon_id text;
   v_units int; v_unit int; v_total int := 0; v_count int := 0; v_maxq int;
-  v_friend public.friends; v_fcode text; v_credit int := 0; v_fon boolean;
+  v_friend public.friends; v_fcode text; v_credit int := 0; v_fon boolean; v_seller public.sellers; v_scode text; v_son boolean;
   v_email text := lower(coalesce(auth.jwt()->>'email', '')); v_xu boolean;
   v_tiles int; v_pages int; v_has_prints boolean := false; v_only_prints boolean := true;
   v_today date := (now() at time zone 'Asia/Manila')::date; v_next date; v_rush int := 0; v_tm text[]; v_mins int;
@@ -382,7 +401,8 @@ begin
   v_discount := least(v_discount, v_subtotal);
 
   -- Friend code (FR-...): only for someone's first order, and not their own code
-  v_fon := coalesce((s.config->>'referral_on')::boolean, true);
+  v_son := coalesce((s.config->>'sellers_on')::boolean, false);
+  v_fon := coalesce((s.config->>'referral_on')::boolean, true) and not v_son;   -- sellers replace friend codes while they're on
   if v_pcode like 'FR-%' then
     if not v_fon then raise exception 'BAD_CODE'; end if;
     select * into v_friend from public.friends where code = v_pcode;
@@ -394,8 +414,8 @@ begin
     v_labels := v_labels || to_jsonb('Friend code'::text);
     v_fcode := v_pcode; v_pcode := null;
   end if;
-  -- Friend credit this customer has earned comes off automatically
-  if v_fon then
+  -- Friend credit this customer has earned comes off automatically (also while sellers are on, so nobody loses it)
+  if coalesce((s.config->>'referral_on')::boolean, true) or v_son then
     select credit into v_credit from public.friends where person = v_nick || '|' || v_sec for update;
     v_credit := least(coalesce(v_credit, 0), v_subtotal - v_discount);
     if v_credit > 0 then
@@ -417,6 +437,18 @@ begin
     v_discount := least(v_subtotal, v_discount + case when v_promo.kind = 'percent'
       then floor((v_subtotal - v_discount) * v_promo.value / 100.0)::int else v_promo.value end);
     v_labels := v_labels || to_jsonb('Code ' || v_pcode);
+  end if;
+  -- Stick2It Sellers: the seller gets credit for the order; the customer gets money off unless a promo code is used
+  if v_son and nullif(trim(coalesce(p_seller, '')), '') is not null and not v_admin and v_parent.id is null then
+    select * into v_seller from public.sellers where code = upper(trim(p_seller)) and status = 'active';
+    if found then
+      if v_seller.email = v_email or (public.norm_text(v_seller.name) = v_nick and public.norm_text(v_seller.grade_section) = v_sec) then raise exception 'OWN_SELLER'; end if;
+      v_scode := v_seller.code;
+      if v_pcode is null then
+        v_discount := least(v_subtotal, v_discount + floor((v_subtotal - v_discount) * coalesce((s.config->>'seller_buyer_off')::numeric, 5) / 100.0)::int);
+        v_labels := v_labels || to_jsonb('Seller ' || initcap(split_part(v_seller.name, ' ', 1)));
+      end if;
+    end if;
   end if;
   v_total := v_subtotal - v_discount;
 
@@ -492,7 +524,7 @@ begin
   -- sheet_count holds the number of things in the order (sheets + pins + posters + keychains)
   insert into public.orders (code, nickname, grade_section, pickup, pickup_date, pickup_time, payment, gcash_ref,
                              layout, folder, sheet_count, total, src, subtotal, discount, promo_code, deal_labels, rush_fee, confirmed, friend_code, friend_credit_used, customer_email,
-                             add_to, admin_note)
+                             add_to, admin_note, seller_code)
   values (v_code, trim(p_nickname), trim(p_grade_section), trim(p_pickup), p_pickup_date, trim(p_pickup_time), p_payment,
           nullif(trim(left(coalesce(p_gcash_ref, ''), 40)), ''),
           p_layout, p_folder, v_count, v_total,
@@ -503,7 +535,7 @@ begin
           -- (an admin ordering for someone counts as confirmed: they're arranging it with the person directly)
           v_admin or coalesce(v_parent.confirmed, false) or p_pickup_date - coalesce((s.config->>'confirm_days_before')::int, 1) <= v_today,
           v_fcode, v_credit, case when v_xu then v_email end,
-          v_parent.code, case when v_admin then 'Ordered for them by ' || coalesce(nullif(v_email, ''), 'an admin') end);
+          v_parent.code, case when v_admin then 'Ordered for them by ' || coalesce(nullif(v_email, ''), 'an admin') end, v_scode);
   return v_code;
 end $$;
 
@@ -599,19 +631,29 @@ declare v public.promo_codes; v_used int;
 begin
   if upper(trim(coalesce(p_code, ''))) like 'FR-%' then
     if not coalesce((select (config->>'referral_on')::boolean from public.shop_settings where id = 1), true)
+       or coalesce((select (config->>'sellers_on')::boolean from public.shop_settings where id = 1), false)
        or not exists (select 1 from public.friends where code = upper(trim(p_code))) then return null; end if;
     return json_build_object('code', upper(trim(p_code)), 'kind', 'peso', 'friend', true, 'min_total', 0, 'used_up', false,
       'value', coalesce((select (config->>'referral_friend_off')::int from public.shop_settings where id = 1), 5));
   end if;
   select * into v from public.promo_codes
     where code = upper(trim(coalesce(p_code, ''))) and active and (ends_on is null or ends_on >= current_date);
-  if not found then return null; end if;
+  if not found then
+    -- not a promo code: maybe a seller's code (only while sellers are on)
+    if coalesce((select (config->>'sellers_on')::boolean from public.shop_settings where id = 1), false) then
+      return (select json_build_object('code', code, 'kind', 'percent', 'seller', true, 'min_total', 0, 'used_up', false,
+                'name', initcap(split_part(name, ' ', 1)),
+                'value', coalesce((select (config->>'seller_buyer_off')::numeric from public.shop_settings where id = 1), 5))
+              from public.sellers where code = upper(trim(coalesce(p_code, ''))) and status = 'active');
+    end if;
+    return null;
+  end if;
   select count(*) into v_used from public.orders where promo_code = v.code and status not in ('cancelled', 'rejected');
   return json_build_object('code', v.code, 'kind', v.kind, 'value', v.value, 'min_total', v.min_total,
     'used_up', v.max_uses is not null and v_used >= v.max_uses);
 end $$;
 
-grant execute on function public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text,text) to anon, authenticated;
+grant execute on function public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text,text,text) to anon, authenticated;
 grant execute on function public.update_my_order(text,text,text,text,text) to anon, authenticated;
 grant execute on function public.check_promo(text) to anon, authenticated;
 grant execute on function public.reschedule_order(text,text,date,text) to anon, authenticated;
@@ -1244,3 +1286,145 @@ delete from public.orders where layout ->> 'walkin' = 'true';
 update public.shop_settings
    set config = coalesce(config, '{}'::jsonb) || '{"max_per_slot": 5, "slot_rule": "per_spot"}'::jsonb
  where id = 1 and coalesce(config->>'slot_rule', '') <> 'per_spot';
+
+-- Oct 2026: keychain inserts print at the picture slot's size, 25 x 42 mm (the supplier's "template size"
+-- for the 3.2 x 5 cm keychains). The size saved in Settings wins over the code, so it's set here once;
+-- a later change in Settings still sticks.
+update public.shop_settings
+   set config = coalesce(config, '{}'::jsonb)
+       || jsonb_build_object('sizes', coalesce(config->'sizes', '{}'::jsonb)
+            || jsonb_build_object('keychains', coalesce(config->'sizes'->'keychains', '{}'::jsonb) || '{"std": {"wMm": 25, "hMm": 42}}'::jsonb))
+       || '{"kc_size_rule": "25x42"}'::jsonb
+ where id = 1 and coalesce(config->>'kc_size_rule', '') <> '25x42';
+
+
+-- =====================================================================
+-- Stick2It Sellers (the rest). Off until switched on in Settings (config.sellers_on).
+-- Weeks run Monday to Sunday, Philippine time. A sale counts when the order is picked up (status 'done').
+-- Commission = rate% of what the customer paid (rush fee not included); a week at or over the goal is paid at
+-- the bonus rate on everything that week; a seller's first week with a sale also gets the welcome bonus.
+-- =====================================================================
+alter table public.sellers enable row level security;
+drop policy if exists "admins manage sellers" on public.sellers;
+create policy "admins manage sellers" on public.sellers for all to authenticated using (public.is_admin()) with check (public.is_admin());
+grant select, update, delete on public.sellers to authenticated;
+
+create table if not exists public.seller_payouts (
+  id bigserial primary key,
+  seller_id uuid not null references public.sellers(id) on delete cascade,
+  week date not null,
+  amount numeric(10,2) not null,
+  paid_at timestamptz not null default now(),
+  paid_by text default (auth.jwt() ->> 'email'),
+  unique (seller_id, week)
+);
+alter table public.seller_payouts enable row level security;
+drop policy if exists "admins manage payouts" on public.seller_payouts;
+create policy "admins manage payouts" on public.seller_payouts for all to authenticated using (public.is_admin()) with check (public.is_admin());
+grant select, insert, delete on public.seller_payouts to authenticated;
+grant usage on sequence public.seller_payouts_id_seq to authenticated;
+
+-- every seller's weeks: sales, rate, commission, paid or not (admins: everyone; a seller: only themselves)
+create or replace function public.seller_weeks() returns table (
+  seller_id uuid, code text, name text, week date, orders int, sales numeric, rate numeric, commission numeric, welcome numeric, paid boolean)
+language plpgsql stable security definer set search_path = public as $$
+declare c jsonb := (select config from public.shop_settings where id = 1);
+  r numeric := coalesce((c->>'seller_rate')::numeric, 10); g numeric := coalesce((c->>'seller_goal')::numeric, 500);
+  b numeric := coalesce((c->>'seller_bonus_rate')::numeric, 15); w numeric := coalesce((c->>'seller_welcome')::numeric, 10);
+  me text := lower(coalesce(auth.jwt()->>'email', '')); adm boolean := public.is_admin();
+begin
+  if not adm and me = '' then return; end if;
+  return query
+  with wk as (
+    select sl.id, sl.code, sl.name, date_trunc('week', (o.done_at at time zone 'Asia/Manila'))::date as week,
+           count(*)::int as n, sum(o.total - coalesce(o.rush_fee, 0))::numeric as sales
+    from public.sellers sl join public.orders o on o.seller_code = sl.code and o.status = 'done' and o.done_at is not null
+    where adm or sl.email = me
+    group by 1, 2, 3, 4)
+  select wk.id, wk.code, wk.name, wk.week, wk.n, wk.sales,
+         case when wk.sales >= g then b else r end,
+         round(wk.sales * (case when wk.sales >= g then b else r end) / 100.0
+               + case when wk.week = min(wk.week) over (partition by wk.id) then w else 0 end, 2),
+         case when wk.week = min(wk.week) over (partition by wk.id) then w else 0 end,
+         exists (select 1 from public.seller_payouts p where p.seller_id = wk.id and p.week = wk.week)
+  from wk order by wk.week desc, wk.sales desc;
+end $$;
+revoke all on function public.seller_weeks() from public, anon;
+grant execute on function public.seller_weeks() to authenticated;
+
+-- a signed-in student applies (or sees where their application is)
+create or replace function public.seller_apply(p_name text, p_section text, p_pitch text) returns text
+language plpgsql security definer set search_path = public as $$
+declare me text := lower(coalesce(auth.jwt()->>'email', '')); st text;
+begin
+  if me = '' then raise exception 'SIGN_IN'; end if;
+  if not coalesce((select (config->>'sellers_on')::boolean and coalesce((config->>'sellers_apply')::boolean, true) from public.shop_settings where id = 1), false) then raise exception 'SELLERS_CLOSED'; end if;
+  select status into st from public.sellers where email = me;
+  if found then return st; end if;
+  if char_length(trim(coalesce(p_name, ''))) < 2 or char_length(trim(coalesce(p_section, ''))) < 1 then raise exception 'BAD_INPUT'; end if;
+  insert into public.sellers (email, name, grade_section, pitch) values (me, left(trim(p_name), 60), left(trim(p_section), 40), nullif(left(trim(coalesce(p_pitch, '')), 200), ''));
+  return 'pending';
+end $$;
+grant execute on function public.seller_apply(text, text, text) to authenticated;
+
+-- a seller's own page: who they are, this week, history, and a small leaderboard (first names only)
+create or replace function public.my_seller() returns json
+language plpgsql stable security definer set search_path = public as $$
+declare me text := lower(coalesce(auth.jwt()->>'email', '')); v public.sellers; wk date := date_trunc('week', now() at time zone 'Asia/Manila')::date;
+begin
+  if me = '' then return null; end if;
+  select * into v from public.sellers where email = me;
+  if not found then return json_build_object('status', 'none'); end if;
+  return json_build_object('status', v.status, 'code', v.code, 'name', v.name,
+    'weeks', coalesce((select json_agg(row_to_json(x)) from (select week, orders, sales, rate, commission, welcome, paid from public.seller_weeks() order by week desc limit 12) x), '[]'::json),
+    'pending', (select count(*) from public.orders where seller_code = v.code and status in ('pending','approved','printing','ready')),
+    'board', coalesce((select json_agg(row_to_json(t)) from (
+        select initcap(split_part(sl.name, ' ', 1)) as name, count(*)::int as orders, (sl.id = v.id) as me
+        from public.sellers sl join public.orders o on o.seller_code = sl.code and o.status = 'done'
+          and date_trunc('week', (o.done_at at time zone 'Asia/Manila'))::date = wk
+        where sl.status = 'active' group by sl.id, sl.name order by count(*) desc limit 5) t), '[]'::json));
+end $$;
+grant execute on function public.my_seller() to authenticated;
+
+-- admin: approve (gives a code), pause, decline
+create or replace function public.seller_set_status(p_id uuid, p_status text) returns text
+language plpgsql security definer set search_path = public as $$
+declare v public.sellers; c text; base text; n int := 0; mx int;
+begin
+  if not public.is_admin() then raise exception 'NOT_ADMIN'; end if;
+  if p_status not in ('active', 'paused', 'declined') then raise exception 'BAD_INPUT'; end if;
+  select * into v from public.sellers where id = p_id for update; if not found then raise exception 'BAD_INPUT'; end if;
+  if p_status = 'active' and v.status <> 'active' then
+    mx := coalesce((select (config->>'sellers_max')::int from public.shop_settings where id = 1), 10);
+    if mx > 0 and (select count(*) from public.sellers where status = 'active') >= mx then raise exception 'SELLERS_FULL'; end if;
+    c := v.code;
+    if c is null then
+      base := left(regexp_replace(upper(split_part(v.name, ' ', 1)), '[^A-Z]', '', 'g'), 6); if char_length(base) < 2 then base := 'SELL'; end if;
+      loop
+        c := base || lpad((floor(random() * 90) + 10)::int::text, 2, '0'); n := n + 1;
+        exit when not exists (select 1 from public.sellers where code = c) and not exists (select 1 from public.promo_codes where code = c);
+        if n > 50 then c := base || floor(random() * 9000 + 1000)::int; exit; end if;
+      end loop;
+    end if;
+    update public.sellers set status = 'active', code = c, approved_at = now(), paused_at = null where id = p_id;
+    return c;
+  end if;
+  update public.sellers set status = p_status, paused_at = case when p_status = 'paused' then now() else paused_at end where id = p_id;
+  return v.code;
+end $$;
+revoke all on function public.seller_set_status(uuid, text) from public, anon;
+grant execute on function public.seller_set_status(uuid, text) to authenticated;
+
+-- admin: sellers with no picked-up sale for 3 weeks (and approved over 3 weeks ago) get paused, freeing their spot
+create or replace function public.seller_autopause() returns int
+language plpgsql security definer set search_path = public as $$
+declare n int;
+begin
+  if not public.is_admin() then return 0; end if;
+  update public.sellers sl set status = 'paused', paused_at = now()
+   where sl.status = 'active' and sl.approved_at < now() - interval '21 days'
+     and not exists (select 1 from public.orders o where o.seller_code = sl.code and o.status = 'done' and o.done_at > now() - interval '21 days');
+  get diagnostics n = row_count; return n;
+end $$;
+revoke all on function public.seller_autopause() from public, anon;
+grant execute on function public.seller_autopause() to authenticated;
