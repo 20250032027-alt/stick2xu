@@ -1608,7 +1608,7 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .sh-perks{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));grid-auto-flow:column;gap:8px;margin-top:18px}
 .sh-perks span{background:rgba(255,255,255,.1);border-radius:16px;padding:12px;display:flex;flex-direction:column}
 .sh-perks b{font-family:var(--display);font-size:clamp(20px,6vw,28px);color:#F2BC2E;line-height:1.1}.sh-perks small{opacity:.85;font-size:12.5px;line-height:1.25}
-.sellpage.is-seller .sellcalc,.sellpage.is-seller .sellhow{display:none}
+.sellpage.is-seller .sellwhy,.sellpage.is-seller .sellhow{display:none}
 .sellpage .panel{margin-top:16px}
 .sellcalc input[type=range]{width:100%;accent-color:#283971;margin:10px 0}
 .sc-out{display:flex;flex-direction:column;gap:2px;padding:14px 16px;border-radius:16px;background:#FFF6DA;border:1.5px solid #F2BC2E}
@@ -1619,6 +1619,10 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .tiers span{display:flex;flex-direction:column;align-items:center;text-align:center;padding:10px 4px;border-radius:14px;border:1.5px solid var(--line);background:#fff;transition:all .2s}
 .tiers b{font-family:var(--display);font-size:22px;color:#283971}.tiers small{font-size:12px;color:var(--muted);line-height:1.3}
 .tiers span.on{background:#283971;border-color:#283971}.tiers span.on b{color:#F2BC2E}.tiers span.on small{color:#DCE3F5}
+.whygrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:10px}
+.why{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:16px;background:#F7F9FF;border:1px solid var(--line)}
+.why-ic{flex:none;width:38px;height:38px;border-radius:12px;background:#283971;color:#F2BC2E;display:grid;place-items:center}
+.why b{display:block;font-size:15.5px;color:#283971}.why small{display:block;font-size:13.5px;color:var(--muted);line-height:1.4;margin-top:2px}
 .sellhow ol{list-style:none;padding:0;margin:10px 0 0;display:flex;flex-direction:column;gap:12px}
 .sellhow li{display:flex;gap:12px;align-items:flex-start}.sellhow li i{flex:none;font-style:normal;width:30px;height:30px;border-radius:50%;background:#F2BC2E;color:#283971;display:grid;place-items:center;font-weight:800}
 .sellfaq{margin-top:14px}.sellfaq summary{cursor:pointer;font-weight:800}.sellfaq p{font-size:15px;margin:10px 0 0}
@@ -5608,15 +5612,18 @@ async function viewSell(){
       <span class="sh-kick">${ic('sparkle', 16)}${esc(CONFIG.shopName)} Sellers</span>
       <h1>Get paid to share the stickers your classmates already love.</h1>
       <p>Share your code. Your classmates get <b>${CONFIG.sellerBuyerOff}% off</b>. You earn <b>${isFlat() ? '' : 'up to '}${topRate()}%</b> of every order they pick up, paid <b>every week</b>${welcomeAmt() ? `, plus <b>${money(welcomeAmt())}</b> on your first sale` : ''}.</p>
-      <div class="sh-perks"><span><b>${isFlat() ? '' : 'Up to '}${topRate()}%</b><small>of every order</small></span><span><b>${money(topMonthly())}+</b><small>a month for ${isFlat() ? 'active sellers' : 'top sellers'}</small></span>${rewardOn() ? `<span><b>Free</b><small>${esc(CONFIG.sellerRewardItem)} every ${CONFIG.sellerRewardEvery} orders</small></span>` : welcomeAmt() ? `<span><b>${money(welcomeAmt())}</b><small>first-sale bonus</small></span>` : ''}</div>
+      <div class="sh-perks"><span><b>${isFlat() ? '' : 'Up to '}${topRate()}%</b><small>of every order</small></span><span><b>Weekly</b><small>pay, cash or GCash</small></span>${rewardOn() ? `<span><b>Free</b><small>${esc(CONFIG.sellerRewardItem)} every ${CONFIG.sellerRewardEvery} orders</small></span>` : welcomeAmt() ? `<span><b>${money(welcomeAmt())}</b><small>first-sale bonus</small></span>` : ''}</div>
     </section>
     <div id="sellBody">${open ? '<div class="sk" style="height:160px;border-radius:22px;margin-top:18px"></div>' : `<div class="empty" style="margin-top:18px">${ic('clock', 34)}<b>The seller programme isn't open right now.</b><span>Check back soon!</span></div>`}</div>
-    ${open ? `<section class="panel sellcalc"><h3>What could you earn?</h3>
-      <label class="lab" for="sc">Orders your classmates pick up in a week: <b id="scN">12</b></label>
-      <input type="range" id="sc" min="1" max="30" value="12">
-      <div class="sc-out"><b id="scAmt"></b><span id="scMonth"></span><span id="scNote"></span></div>
-      <div class="tiers" id="scTiers" ${isFlat() ? 'hidden' : ''}>${sellerTiers().map(t => `<span data-at="${t.at}"><b>${t.rate}%</b><small>${t.name}${t.at ? `<br>${tierAt(t.at)} a week` : '<br>every week'}</small></span>`).join('')}</div>
-      <p class="help">Based on a typical ${money(AVG_ORDER)} order. Pickups only: orders that are cancelled or never picked up don't count.${byOrders() && CONFIG.sellerMinOrder ? ` Orders of ${money(CONFIG.sellerMinOrder)} or more count toward a level; every order still earns.` : ''}</p></section>
+    ${open ? `<section class="panel sellwhy"><h3>Why sellers love it</h3><div class="whygrid">
+      ${[['cash', `${isFlat() ? '' : 'Up to '}${topRate()}% of every order`, 'Every order your classmates pick up earns you money.'],
+         ['calendar', 'Paid every week', 'Every Monday, in cash or straight to your GCash.'],
+         ...(rewardOn() ? [['sparkle', `Free ${esc(CONFIG.sellerRewardItem)}`, `One free every ${CONFIG.sellerRewardEvery} orders, on top of your pay.`]] : []),
+         ...(welcomeAmt() ? [['check', `${money(welcomeAmt())} first-sale bonus`, 'A little extra the moment your first order is picked up.']] : []),
+         ['thumb', 'No quota, no pressure', 'Share when you want. There are no targets to hit.'],
+         ['box', 'No money or stickers to handle', 'Classmates order and pay on the site. You just share.'],
+         ['qr', 'Your own code and QR card', 'Ready to post on your story or in group chats.']].map(([icon, h, t]) => `<div class="why"><span class="why-ic">${ic(icon, 20)}</span><span><b>${h}</b><small>${t}</small></span></div>`).join('')}
+    </div></section>
     <section class="panel sellhow"><h3>How it works</h3><ol>
       <li><i>1</i><span><b>Apply with your XU account.</b> Takes a minute. We'll approve you soon after.</span></li>
       <li><i>2</i><span><b>Share your code or link.</b> Group chats, your story, your own QR card. Classmates get ${CONFIG.sellerBuyerOff}% off with it.</span></li>
@@ -5627,13 +5634,6 @@ async function viewSell(){
         <p><b>Is there a quota?</b> ${isFlat() ? `No. Every order earns ${topRate()}%, whether it's your first or your fiftieth.${rewardOn() ? ` Every ${CONFIG.sellerRewardEvery} picked-up orders also gets you a free ${esc(CONFIG.sellerRewardItem)}.` : ''}` : `There's a weekly goal, but you're always paid: every week earns at least ${CONFIG.sellerRate}%. ${sellerTiers().slice(1).map(t => `Reach ${tierAt(t.at)} and the whole week pays ${t.rate}%`).join('; ')}.`} If you go 3 weeks with no sales, your spot is paused so someone else can try; just message us to come back.</p>
         <p><b>When do I get paid?</b> Every Monday. Under ${money(CONFIG.sellerMinPayout)} carries over to the next week.</p></details></section>` : ''}
   </main>`;
-  const sc = $('#sc'); if (sc) { const upd = () => { const n = +sc.value, sales = n * AVG_ORDER, e = sellerEarn(sales, n), nx = nextTier(sales, n), u = byOrders() ? n : sales; $('#scN').textContent = n;
-      $('#scAmt').textContent = `${money(Math.round(e.amount))} a week`; $('#scMonth').textContent = `That's about ${money(Math.round(e.amount * 4.3 / 10) * 10)} a month.`;
-      const freebies = rewardOn() ? Math.floor(n * 4.3 / CONFIG.sellerRewardEvery) : 0;
-      if (isFlat()) { $('#scNote').textContent = freebies ? `Plus about ${freebies} free item${freebies === 1 ? '' : 's'} a month (${CONFIG.sellerRewardItem}).` : `${topRate()}% of every order, every week.`; return; }
-      $('#scNote').textContent = nx ? (byOrders() ? `${nx.at - n} more order${nx.at - n === 1 ? '' : 's'} that week and everything pays ${nx.rate}%.` : `${money(nx.at - sales)} more that week (${aboutOrders(nx.at - sales)}) and everything pays ${nx.rate}%.`) : `Top level: every order that week pays ${e.rate}%!`;
-      const cur = sellerTiers().filter(t => t.at <= u).pop().at; document.querySelectorAll('#scTiers span').forEach(x => x.classList.toggle('on', +x.dataset.at === cur)); };
-    sc.addEventListener('input', upd); upd(); }
   if (open) drawSellBody();
 }
 async function drawSellBody(){
