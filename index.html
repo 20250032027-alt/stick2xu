@@ -1582,7 +1582,17 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .schoolcard .acts{display:flex;gap:8px;flex-wrap:wrap}.tag.grp{background:#EAF3FF;color:#24508F}.tag.sell{background:#FFF1C9;color:#7A5600}
 .earnlink{display:inline-flex;gap:5px;align-items:center;margin-left:8px;font-weight:700;color:var(--ink);white-space:nowrap}
 .sellinvitewrap{position:relative}.si-x{position:absolute;top:-8px;right:-8px;z-index:1;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--muted);display:grid;place-items:center;cursor:pointer}
-.cstep[data-step="3"] .codebox{margin:0 0 18px}.sc-sub{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;width:100%}
+.codecard{display:grid;grid-template-columns:40px minmax(0,1fr);gap:4px 12px;align-items:start;margin:4px 0 18px;padding:14px;border-radius:18px;background:#FFF8E1;border:2px dashed #F2BC2E}
+.codecard .cc-ic{grid-row:span 2;width:40px;height:40px;border-radius:50%;background:#F2BC2E;color:#283971;display:grid;place-items:center}
+.codecard .cc-t{display:flex;flex-direction:column;gap:2px}.codecard .cc-t b{font-size:16.5px;color:#283971}.codecard .cc-t small{font-size:14px;color:var(--muted);line-height:1.4}
+.codecard .cc-row{grid-column:1/-1;display:flex;gap:8px;margin-top:8px}.codecard .cc-row .inp{flex:1;min-width:0;letter-spacing:1px;font-weight:700}
+.codecard .inp::placeholder{text-transform:none;letter-spacing:0;font-weight:500}
+.codecard .ferr{grid-column:1/-1;margin:4px 0 0}.codecard .ferr:empty{display:none}
+.codecard .cc-skip{grid-column:1/-1;margin:6px 0 0;font-size:13px;color:var(--muted)}
+.codecard.has{background:#E8F7EE;border:2px solid #1E8E4A;grid-template-columns:40px minmax(0,1fr) auto;align-items:center}
+.codecard.has .cc-ic{grid-row:auto;background:#1E8E4A;color:#fff}.codecard.has .cc-t b{color:#155F33}
+.codecard.has .cc-code{display:none}.codecard.has .btn{grid-column:3}
+@media(max-width:420px){.codecard.has{grid-template-columns:40px minmax(0,1fr)}.codecard.has .btn{grid-column:1/-1;justify-self:start}}.sc-sub{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;width:100%}
 .codehint{display:block;font-weight:600;font-size:13px;color:var(--muted);margin-top:2px}
 .sellpay > span{display:flex;gap:8px;align-items:center;margin-bottom:8px}.sellpay .qrrow{display:flex;gap:8px}.sellpay .inp{flex:1;min-width:0}
 .sellshort{display:flex;gap:12px;align-items:center;padding:14px 16px;margin-bottom:14px;border-radius:18px;background:#FFF6DA;border:1.5px solid #F2BC2E;color:#283971;text-decoration:none}
@@ -1770,7 +1780,7 @@ const CONFIG = {
   referralOn: true,         // friend codes on/off
   referralFriendOff: 5,     // a friend's first order gets this much off
   // Stick2It Sellers (off until switched on in Settings; while on, it replaces friend codes)
-  sellersOn: false, sellersApply: true, sellerAuto: true, sellerProGoal: 1000, sellerProRate: 20, sellerRate: 5, sellerGoal: 500, sellerBonusRate: 15, sellerBuyerOff: 5, sellerWelcome: 10, sellersMax: 10, sellerMinPayout: 20,
+  sellersOn: false, sellersApply: true, sellerAuto: true, sellerGoalBy: 'money', sellerGoalOrders: 8, sellerProOrders: 15, sellerMinOrder: 30, sellerProGoal: 1000, sellerProRate: 20, sellerRate: 5, sellerGoal: 500, sellerBonusRate: 15, sellerBuyerOff: 5, sellerWelcome: 10, sellersMax: 10, sellerMinPayout: 20,
   referralReward: 5,        // the code's owner earns this much credit when the friend picks up
   // countdowns on the home page (admin can change them). yearly: true repeats every year on that month and day
   countdowns: [{ name: 'Christmas', date: '2026-12-25', yearly: true }, { name: 'New Year', date: '2027-01-01', yearly: true },
@@ -2182,6 +2192,8 @@ function applyShopConfig(c){
   CONFIG.sellersOn = c.sellers_on === true; CONFIG.sellersApply = c.sellers_apply !== false; CONFIG.sellerAuto = c.seller_auto !== false;
   CONFIG.sellerRate = Math.max(0, Math.min(50, numOr(c.seller_rate, D.sellerRate))); CONFIG.sellerGoal = Math.max(0, numOr(c.seller_goal, D.sellerGoal));
   CONFIG.sellerBonusRate = Math.max(0, Math.min(50, numOr(c.seller_bonus_rate, D.sellerBonusRate))); CONFIG.sellerBuyerOff = Math.max(0, Math.min(30, numOr(c.seller_buyer_off, D.sellerBuyerOff)));
+  CONFIG.sellerGoalBy = c.seller_goal_by === 'orders' ? 'orders' : 'money';
+  CONFIG.sellerGoalOrders = Math.max(0, numOr(c.seller_goal_orders, D.sellerGoalOrders)); CONFIG.sellerProOrders = Math.max(0, numOr(c.seller_pro_orders, D.sellerProOrders)); CONFIG.sellerMinOrder = Math.max(0, numOr(c.seller_min_order, D.sellerMinOrder));
   CONFIG.sellerProGoal = Math.max(0, numOr(c.seller_pro_goal, D.sellerProGoal)); CONFIG.sellerProRate = Math.max(0, Math.min(50, numOr(c.seller_pro_rate, D.sellerProRate)));
   CONFIG.sellerWelcome = Math.max(0, numOr(c.seller_welcome, D.sellerWelcome)); CONFIG.sellersMax = Math.max(0, numOr(c.sellers_max, D.sellersMax)); CONFIG.sellerMinPayout = Math.max(0, numOr(c.seller_min_payout, D.sellerMinPayout));
   CONFIG.countdowns = Array.isArray(c.countdowns) ? c.countdowns : D.countdowns;
@@ -3921,11 +3933,7 @@ function viewCheckout(){
       <section class="cstep" data-step="3">
         <div class="chead"><i>3</i><b>Pay</b></div>
         <div class="cbody">
-          ${S.group ? `<p class="grpchip">${ic('check', 15)}<span>Group pickup</span><button type="button" class="linkbtn" data-act="groupOff">Turn off</button></p>` : ''}<details class="codebox" ${S.promo ? 'open' : ''}><summary>${CONFIG.sellersOn ? `Got a code? <span class="codehint">A classmate's code gives ${CONFIG.sellerBuyerOff}% off</span>` : 'Have a promo or friend code?'}</summary>
-      <div class="field" style="margin:10px 0 0"><label class="lab sr" for="promo">Promo or friend code</label>
-        <div class="qrrow promorow"><input class="inp" id="promo" maxlength="20" autocapitalize="characters" autocomplete="off" value="${esc(S.promo ? S.promo.code : '')}" style="text-transform:uppercase">
-          ${smallBtn(S.promo ? 'Remove' : 'Apply', S.promo ? 'x' : 'check', S.promo ? 'promoRemove' : 'promoApply', 'plain')}</div>
-        <p class="ferr" id="e-promo" role="alert"></p></div></details>
+          ${S.group ? `<p class="grpchip">${ic('check', 15)}<span>Group pickup</span><button type="button" class="linkbtn" data-act="groupOff">Turn off</button></p>` : ''}${codeCardHTML()}
 
       <fieldset><legend>How will you pay?</legend>
         <label class="choice"><input type="radio" name="pay" value="cash" checked>${ic('cash', 20)}<span>Cash when I pick up</span></label>
@@ -3986,7 +3994,7 @@ function viewCheckout(){
   };
   form.addEventListener('change', sync); sync();
   loadAvail(dates).then(() => { if (document.body.contains(form)) sync(); });
-  $('#promo').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ACTIONS.promoApply(); } });
+  if ($('#promo')) $('#promo').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ACTIONS.promoApply(); } });   // no box once a code is in
   // errors clear the moment they're fixed (while typing), so nothing moves when they tap Next
   ['nick','sec','grade','otherPlace'].forEach(id => $('#' + id) && ['input', 'change'].forEach(ev => $('#' + id).addEventListener(ev, () => { validate(false); coRender(); })));
   form.addEventListener('submit', e => { if (CONFIG.requireXu && !S.group && !S.me && !S.coAdmin) { e.preventDefault(); S.coStep = 1; coRender(); toast('Sign in with your XU account first.'); return; } if (S.coStep < 3) { e.preventDefault(); ACTIONS.coNext({ dataset: { s: String(S.coStep) } }); return; } submitOrder(e); });
@@ -4083,6 +4091,20 @@ function viewCheckoutKeep(){
   f2.dispatchEvent(new Event('change'));
 }
 function checkoutTotal(ds){ const sum = computeDeals(S.cart); return sum.total - promoOff(S.promo, sum.total) + rushFee(ds); }
+/* The code card at the top of the Pay step: says what codes are for, and shows the saving once one is in */
+function codeCardHTML(){
+  const p = S.promo, sum = computeDeals(S.cart), off = p ? promoOff(p, sum.total) : 0, sell = CONFIG.sellersOn;
+  if (p) return `<div class="codecard has" aria-live="polite"><span class="cc-ic">${ic('check', 20)}</span>
+    <span class="cc-t"><b>${p.seller ? `${esc(p.name)}'s code is on` : `Code ${esc(p.code)} is on`}</b>
+      <small>${off ? `You save <b>${money(off)}</b>${p.seller ? ` · thanks for supporting ${esc(p.name)}!` : '.'}` : sum.total < p.min_total ? `Spend ${money(p.min_total)} or more to use it.` : 'It comes off at pickup.'}</small></span>
+    <span class="cc-code">${esc(p.code)}</span>${smallBtn('Remove', 'x', 'promoRemove', 'plain')}</div>`;
+  return `<div class="codecard"><span class="cc-ic">${ic('sparkle', 20)}</span>
+    <span class="cc-t"><b>${sell ? 'Got a code from a classmate?' : 'Have a promo code?'}</b>
+      <small>${sell ? `Stick2It Sellers share codes that take <b>${CONFIG.sellerBuyerOff}% off</b> your order. Promo codes work here too.` : 'Type it here and the discount comes off your total.'}</small></span>
+    <div class="cc-row"><label class="lab sr" for="promo">Code</label><input class="inp" id="promo" maxlength="20" autocapitalize="characters" autocomplete="off" placeholder="Type your code" style="text-transform:uppercase">
+      ${smallBtn('Apply', 'check', 'promoApply', 'dark')}</div>
+    <p class="ferr" id="e-promo" role="alert"></p>${sell ? '<p class="cc-skip">No code? No problem, just skip this.</p>' : ''}</div>`;
+}
 function checkoutSummary(ds){
   const form = $('#orderForm'); ds = ds || (form ? radio(form, 'pdate') : null);
   const sum = computeDeals(S.cart), rush = rushFee(ds);
@@ -4998,7 +5020,7 @@ function drawSettings(){
     pickup_weekdays: CONFIG.pickupWeekdays.slice(), pickup_times: clone(CONFIG.pickupTimes), pickup_places: CONFIG.pickupOptions.slice(),
     countdowns: clone(CONFIG.countdowns || []), countdowns_on: CONFIG.countdownsOn !== false, details: { ...(CONFIG.details || {}) }, facebook_url: CONFIG.facebookUrl, instagram_url: CONFIG.instagramUrl, tiktok_url: CONFIG.tiktokUrl, require_xu_signin: CONFIG.requireXu, product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward,
     sellers_on: CONFIG.sellersOn, sellers_apply: CONFIG.sellersApply, seller_auto: CONFIG.sellerAuto, seller_rate: CONFIG.sellerRate, seller_goal: CONFIG.sellerGoal, seller_bonus_rate: CONFIG.sellerBonusRate,
-    seller_pro_goal: CONFIG.sellerProGoal, seller_pro_rate: CONFIG.sellerProRate, seller_buyer_off: CONFIG.sellerBuyerOff, seller_welcome: CONFIG.sellerWelcome, sellers_max: CONFIG.sellersMax, seller_min_payout: CONFIG.sellerMinPayout, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
+    seller_goal_by: CONFIG.sellerGoalBy, seller_goal_orders: CONFIG.sellerGoalOrders, seller_pro_orders: CONFIG.sellerProOrders, seller_min_order: CONFIG.sellerMinOrder, seller_pro_goal: CONFIG.sellerProGoal, seller_pro_rate: CONFIG.sellerProRate, seller_buyer_off: CONFIG.sellerBuyerOff, seller_welcome: CONFIG.sellerWelcome, sellers_max: CONFIG.sellersMax, seller_min_payout: CONFIG.sellerMinPayout, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
     print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, pin_gap_mm: CONFIG.pinGapMm, kc_gap_mm: CONFIG.kcGapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, feedback_on: CONFIG.feedbackOn, rush_on: CONFIG.rushOn, rush_make: CONFIG.rushMake, rush_cutoff_hour: CONFIG.rushCutoff, max_rush_per_day: CONFIG.maxRushPerDay, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
@@ -5143,10 +5165,14 @@ function drawShopForm(){
       <label class="switch" style="margin-bottom:8px"><input type="checkbox" data-cfgbool="sellers_apply" ${c.sellers_apply !== false ? 'checked' : ''}><span>Open for new applications</span></label>
       <label class="switch" style="margin-bottom:10px"><input type="checkbox" data-cfgbool="seller_auto" ${c.seller_auto !== false ? 'checked' : ''}><span>Approve new sellers instantly (they get their code right away, while there's room). Off: you approve each one.</span></label>
       <div class="pgrid2">
+        <label class="dnum" style="grid-column:1/-1"><span>Levels count</span><select class="inp" data-cfgsel="seller_goal_by"><option value="money" ${c.seller_goal_by !== 'orders' ? 'selected' : ''}>Money (₱) of orders picked up in a week (recommended)</option><option value="orders" ${c.seller_goal_by === 'orders' ? 'selected' : ''}>Number of orders picked up in a week</option></select></label>
+        <label class="dnum"><span>Goal, counting orders (orders a week)</span>${n('seller_goal_orders', c.seller_goal_orders, 0, 500)}</label>
+        <label class="dnum"><span>Top goal, counting orders (0 = none)</span>${n('seller_pro_orders', c.seller_pro_orders, 0, 500)}</label>
+        <label class="dnum"><span>Smallest order that counts toward a level (₱)</span>${n('seller_min_order', c.seller_min_order, 0, 1000)}</label>
         <label class="dnum"><span>Starter rate, every week (%)</span>${n('seller_rate', c.seller_rate, 0, 50)}</label>
-        <label class="dnum"><span>Goal (₱ of picked-up orders in a week)</span>${n('seller_goal', c.seller_goal, 0, 100000)}</label>
+        <label class="dnum"><span>Goal, counting money (₱ a week)</span>${n('seller_goal', c.seller_goal, 0, 100000)}</label>
         <label class="dnum"><span>Rate for the whole week at the goal (%)</span>${n('seller_bonus_rate', c.seller_bonus_rate, 0, 50)}</label>
-        <label class="dnum"><span>Top goal (₱ in a week, 0 = none)</span>${n('seller_pro_goal', c.seller_pro_goal, 0, 100000)}</label>
+        <label class="dnum"><span>Top goal, counting money (₱, 0 = none)</span>${n('seller_pro_goal', c.seller_pro_goal, 0, 100000)}</label>
         <label class="dnum"><span>Rate for the whole week at the top goal (%)</span>${n('seller_pro_rate', c.seller_pro_rate, 0, 50)}</label>
         <label class="dnum"><span>Customer gets (% off with a seller's code)</span>${n('seller_buyer_off', c.seller_buyer_off, 0, 30)}</label>
         <label class="dnum"><span>Welcome bonus on a seller's first sale (₱)</span>${n('seller_welcome', c.seller_welcome, 0, 500)}</label>
@@ -5226,6 +5252,7 @@ function drawShopForm(){
     else if (d.ptt !== undefined) c.pickup_times[+d.ptt].time = to12(t.value);
     else if (d.pp !== undefined) c.pickup_places[+d.pp] = t.value;
     else if (d.cfgbool) c[d.cfgbool] = t.checked;
+    else if (d.cfgsel) c[d.cfgsel] = t.value;
     else if (d.cfggcash) c.gcash[d.cfggcash] = t.type === 'checkbox' ? t.checked : t.value;
     else if (d.cfg) { const keys = d.cfg.split('.'); let o = c; keys.slice(0, -1).forEach(k => o = o[k]); o[keys[keys.length - 1]] = Math.round(+t.value || 0); }
     else if (t.id === 'skipDate' && e.type === 'change' && t.value) { if (!c.no_pickup_dates.includes(t.value)) c.no_pickup_dates.push(t.value); c.no_pickup_dates.sort(); drawShopForm(); }
@@ -5538,11 +5565,16 @@ const manilaMonday = (d = new Date()) => { const t = new Date(d.toLocaleString('
 const sellerLink = code => `${CONFIG.siteUrl || location.origin + '/'}?s=${code}`;
 const AVG_ORDER = 60;
 const cash2 = n => Number.isInteger(+n) ? money(+n) : '₱' + (+n).toFixed(2);   // payouts: ₱102.10, not ₱102.1   // a typical order, for the "what could I earn" slider
-const sellerTiers = () => [{ at: 0, rate: CONFIG.sellerRate, name: 'Starter' }, ...(CONFIG.sellerGoal > 0 ? [{ at: CONFIG.sellerGoal, rate: CONFIG.sellerBonusRate, name: 'Goal' }] : []),
-  ...(CONFIG.sellerProGoal > CONFIG.sellerGoal ? [{ at: CONFIG.sellerProGoal, rate: CONFIG.sellerProRate, name: 'Top' }] : [])];
+const byOrders = () => CONFIG.sellerGoalBy === 'orders';
+const aboutOrders = pesos => { const n = Math.max(1, Math.ceil(pesos / AVG_ORDER)); return `about ${n} order${n === 1 ? '' : 's'}`; };   // money goals, made easy to picture
+const sellerTiers = () => { const g = byOrders() ? CONFIG.sellerGoalOrders : CONFIG.sellerGoal, p = byOrders() ? CONFIG.sellerProOrders : CONFIG.sellerProGoal;
+  return [{ at: 0, rate: CONFIG.sellerRate, name: 'Starter' }, ...(g > 0 ? [{ at: g, rate: CONFIG.sellerBonusRate, name: 'Goal' }] : []), ...(p > g ? [{ at: p, rate: CONFIG.sellerProRate, name: 'Top' }] : [])]; };
+const tierAt = at => byOrders() ? `${at}+ orders` : `${money(at)}+ in orders`;   // how a level's threshold reads
 const topRate = () => Math.max(...sellerTiers().map(t => t.rate));
-function sellerEarn(sales){ const t = sellerTiers().filter(x => sales >= x.at).pop(); return { rate: t.rate, tier: t.name, amount: Math.round(sales * t.rate) / 100 }; }
-function nextTier(sales){ return sellerTiers().find(x => x.at > sales) || null; }
+// unit = orders that count (counting orders) or pesos (counting money)
+function sellerEarn(sales, counted){ const u = byOrders() ? counted : sales, t = sellerTiers().filter(x => u >= x.at).pop(); return { rate: t.rate, tier: t.name, amount: Math.round(sales * t.rate) / 100 }; }
+function nextTier(sales, counted){ const u = byOrders() ? counted : sales; return sellerTiers().find(x => x.at > u) || null; }
+const topMonthly = () => { const t = sellerTiers().slice(-1)[0]; const sales = byOrders() ? t.at * AVG_ORDER : t.at; return Math.round(sales * t.rate / 100 * 4.3 / 10) * 10; };
 // the invitation after ordering (and on My order)
 const inviteOk = () => CONFIG.sellersOn && CONFIG.sellersApply && !S.group && !['active', 'pending', 'paused'].includes(S.isSeller)
   && !(Date.now() - (+safeLS.get('sk_sellhide') || 0) < 30 * 864e5);
@@ -5558,15 +5590,15 @@ async function viewSell(){
       <span class="sh-kick">${ic('sparkle', 16)}${esc(CONFIG.shopName)} Sellers</span>
       <h1>Get paid to share the stickers your classmates already love.</h1>
       <p>Share your code. Your classmates get <b>${CONFIG.sellerBuyerOff}% off</b>. You earn <b>up to ${topRate()}%</b> of every order they pick up, paid <b>every week</b>.</p>
-      <div class="sh-perks"><span><b>Up to ${topRate()}%</b><small>of every order</small></span><span><b>${money(Math.round(Math.max(CONFIG.sellerGoal, CONFIG.sellerProGoal) * topRate() / 100 * 4.3 / 10) * 10)}+</b><small>a month for top sellers</small></span>${CONFIG.sellerWelcome ? `<span><b>${money(CONFIG.sellerWelcome)}</b><small>first-sale bonus</small></span>` : ''}</div>
+      <div class="sh-perks"><span><b>Up to ${topRate()}%</b><small>of every order</small></span><span><b>${money(topMonthly())}+</b><small>a month for top sellers</small></span>${CONFIG.sellerWelcome ? `<span><b>${money(CONFIG.sellerWelcome)}</b><small>first-sale bonus</small></span>` : ''}</div>
     </section>
     <div id="sellBody">${open ? '<div class="sk" style="height:160px;border-radius:22px;margin-top:18px"></div>' : `<div class="empty" style="margin-top:18px">${ic('clock', 34)}<b>The seller programme isn't open right now.</b><span>Check back soon!</span></div>`}</div>
     ${open ? `<section class="panel sellcalc"><h3>What could you earn?</h3>
       <label class="lab" for="sc">Orders your classmates pick up in a week: <b id="scN">12</b></label>
       <input type="range" id="sc" min="1" max="30" value="12">
       <div class="sc-out"><b id="scAmt"></b><span id="scMonth"></span><span id="scNote"></span></div>
-      <div class="tiers" id="scTiers">${sellerTiers().map(t => `<span data-at="${t.at}"><b>${t.rate}%</b><small>${t.name}${t.at ? `<br>${money(t.at)}+ week` : '<br>every week'}</small></span>`).join('')}</div>
-      <p class="help">Based on a typical ${money(AVG_ORDER)} order. Pickups only: orders that are cancelled or never picked up don't count.</p></section>
+      <div class="tiers" id="scTiers">${sellerTiers().map(t => `<span data-at="${t.at}"><b>${t.rate}%</b><small>${t.name}${t.at ? `<br>${tierAt(t.at)} a week` : '<br>every week'}</small></span>`).join('')}</div>
+      <p class="help">Based on a typical ${money(AVG_ORDER)} order. Pickups only: orders that are cancelled or never picked up don't count.${byOrders() && CONFIG.sellerMinOrder ? ` Orders of ${money(CONFIG.sellerMinOrder)} or more count toward a level; every order still earns.` : ''}</p></section>
     <section class="panel sellhow"><h3>How it works</h3><ol>
       <li><i>1</i><span><b>Apply with your XU account.</b> Takes a minute. We'll approve you soon after.</span></li>
       <li><i>2</i><span><b>Share your code or link.</b> Group chats, your story, your own QR card. Classmates get ${CONFIG.sellerBuyerOff}% off with it.</span></li>
@@ -5574,13 +5606,13 @@ async function viewSell(){
       <details class="sellfaq"><summary>Questions</summary>
         <p><b>Do I have to handle money or stickers?</b> No. Classmates order on the site and pay at pickup like normal. You just share.</p>
         <p><b>What counts?</b> Orders with your code or link that get picked up and paid. Your own orders don't count.</p>
-        <p><b>Is there a quota?</b> There's a weekly goal, but you're always paid: every week earns at least ${CONFIG.sellerRate}%. Reach ${money(CONFIG.sellerGoal)} and the whole week pays ${CONFIG.sellerBonusRate}%${CONFIG.sellerProGoal > CONFIG.sellerGoal ? `; reach ${money(CONFIG.sellerProGoal)} and it all pays ${CONFIG.sellerProRate}%` : ''}. If you go 3 weeks with no sales, your spot is paused so someone else can try; just message us to come back.</p>
+        <p><b>Is there a quota?</b> There's a weekly goal, but you're always paid: every week earns at least ${CONFIG.sellerRate}%. ${sellerTiers().slice(1).map(t => `Reach ${tierAt(t.at)} and the whole week pays ${t.rate}%`).join('; ')}. If you go 3 weeks with no sales, your spot is paused so someone else can try; just message us to come back.</p>
         <p><b>When do I get paid?</b> Every Monday. Under ${money(CONFIG.sellerMinPayout)} carries over to the next week.</p></details></section>` : ''}
   </main>`;
-  const sc = $('#sc'); if (sc) { const upd = () => { const n = +sc.value, sales = n * AVG_ORDER, e = sellerEarn(sales), nx = nextTier(sales); $('#scN').textContent = n;
+  const sc = $('#sc'); if (sc) { const upd = () => { const n = +sc.value, sales = n * AVG_ORDER, e = sellerEarn(sales, n), nx = nextTier(sales, n), u = byOrders() ? n : sales; $('#scN').textContent = n;
       $('#scAmt').textContent = `${money(Math.round(e.amount))} a week`; $('#scMonth').textContent = `That's about ${money(Math.round(e.amount * 4.3 / 10) * 10)} a month.`;
-      $('#scNote').textContent = nx ? `${money(nx.at - sales)} more in orders that week and everything pays ${nx.rate}%.` : `Top level: every order that week pays ${e.rate}%!`;
-      const cur = sellerTiers().filter(t => t.at <= sales).pop().at; document.querySelectorAll('#scTiers span').forEach(x => x.classList.toggle('on', +x.dataset.at === cur)); };
+      $('#scNote').textContent = nx ? (byOrders() ? `${nx.at - n} more order${nx.at - n === 1 ? '' : 's'} that week and everything pays ${nx.rate}%.` : `${money(nx.at - sales)} more that week (${aboutOrders(nx.at - sales)}) and everything pays ${nx.rate}%.`) : `Top level: every order that week pays ${e.rate}%!`;
+      const cur = sellerTiers().filter(t => t.at <= u).pop().at; document.querySelectorAll('#scTiers span').forEach(x => x.classList.toggle('on', +x.dataset.at === cur)); };
     sc.addEventListener('input', upd); upd(); }
   if (open) drawSellBody();
 }
@@ -5614,8 +5646,9 @@ async function drawSellBody(){
       <div class="qrrow"><input class="inp" id="myGcash" maxlength="40" inputmode="tel" placeholder="GCash number (or leave blank for cash)" value="${esc(me.gcash || '')}">${smallBtn('Save', 'check', 'sellGcash', 'plain')}</div>
       <p class="help" style="margin:6px 0 0">${me.gcash ? 'Paid every Monday to this GCash number.' : 'No GCash number yet, so you get paid in cash. Add one anytime.'}</p></section>
     <section class="panel sellweek"><div class="sw-top"><span>This week</span><b class="num">${money(Math.round(cur.commission))}</b></div>
-      ${(() => { const nx = nextTier(+cur.sales), now = sellerEarn(+cur.sales); if (!nx) return `<div class="sw-bar"><i style="width:100%"></i></div><p class="sw-msg">${ic('sparkle', 16)} Top level! Everything this week pays <b>${now.rate}%</b>.</p>`;
-        return `<div class="sw-bar"><i style="width:${Math.min(100, Math.round(cur.sales / nx.at * 100))}%"></i></div><p class="sw-msg"><b>${money(+cur.sales)}</b> of ${money(nx.at)} · ${money(nx.at - cur.sales)} more and the whole week pays <b>${nx.rate}%</b>${now.rate > CONFIG.sellerRate ? ` (you're at ${now.rate}% now)` : ''}.</p>`; })()}
+      ${(() => { const cn = +(cur.counted ?? cur.orders ?? 0), nx = nextTier(+cur.sales, cn), now = sellerEarn(+cur.sales, cn); if (!nx) return `<div class="sw-bar"><i style="width:100%"></i></div><p class="sw-msg">${ic('sparkle', 16)} Top level! Everything this week pays <b>${now.rate}%</b>.</p>`;
+        const u = byOrders() ? cn : +cur.sales, left = nx.at - u;
+        return `<div class="sw-bar"><i style="width:${Math.min(100, Math.round(u / nx.at * 100))}%"></i></div><p class="sw-msg">${byOrders() ? `<b>${cn}</b> of ${nx.at} orders · ${left} more and the whole week pays <b>${nx.rate}%</b>` : `<b>${money(+cur.sales)}</b> of ${money(nx.at)} · ${money(left)} more (${aboutOrders(left)}) and the whole week pays <b>${nx.rate}%</b>`}${now.rate > CONFIG.sellerRate ? ` (you're at ${now.rate}% now)` : ''}.</p>`; })()}
       <div class="sw-stats"><span><b>${cur.orders}</b><small>picked up</small></span><span><b>${me.pending || 0}</b><small>on the way</small></span><span><b>${money(Math.round(unpaid))}</b><small>to be paid</small></span><span><b>${money(Math.round(paidAll))}</b><small>paid so far</small></span></div>
       ${!weeks.length && CONFIG.sellerWelcome ? `<p class="help">${ic('sparkle', 14)} Your first picked-up sale also earns a ${money(CONFIG.sellerWelcome)} welcome bonus.</p>` : ''}</section>
     ${(me.board || []).length ? `<section class="panel sellboard"><h3>${ic('sparkle', 18)}Top sellers this week</h3><ol>${me.board.map((r, i) => `<li class="${r.me ? 'me' : ''}"><i>${i + 1}</i><span>${esc(r.name)}${r.me ? ' (you)' : ''}</span><b>${r.orders} order${r.orders === 1 ? '' : 's'}</b></li>`).join('')}</ol></section>` : ''}

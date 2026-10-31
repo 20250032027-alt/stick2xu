@@ -1113,7 +1113,7 @@ create or replace function public.cfg_diff(o jsonb, n jsonb) returns text langua
     ('referral_on','Friend codes'),('referral_friend_off','Friend code discount'),('referral_reward','Friend code reward'),
     ('sellers_on','Stick2It Sellers'),('sellers_apply','Seller applications'),('seller_auto','Instant seller approval'),('seller_rate','Seller rate below goal %'),('seller_goal','Seller weekly goal'),
     ('seller_bonus_rate','Seller rate at goal %'),('seller_pro_goal','Seller top goal'),('seller_pro_rate','Seller top rate %'),('seller_buyer_off','Seller code discount %'),('seller_welcome','Seller first-sale bonus'),
-    ('sellers_max','Most sellers'),('seller_min_payout','Smallest seller payout'),('sizes','Pin / keychain print sizes'),('pin_gap_mm','Space between pins'),('kc_gap_mm','Space between keychains'),
+    ('sellers_max','Most sellers'),('seller_goal_by','Seller levels count'),('seller_goal_orders','Seller goal (orders)'),('seller_pro_orders','Seller top goal (orders)'),('seller_min_order','Smallest order that counts'),('seller_min_payout','Smallest seller payout'),('sizes','Pin / keychain print sizes'),('pin_gap_mm','Space between pins'),('kc_gap_mm','Space between keychains'),
     ('sticker_margin_mm','Sticker sheet edge'),('sticker_gap_mm','Space between stickers'),('poster_margin_mm','Poster margin'),('poster_overlap_mm','Poster overlap'),
     ('facebook_url','Facebook link'),('instagram_url','Instagram link'),('tiktok_url','TikTok link'),('product_order','Product order'),('grades','Grades'),('cleanup_days','Days before pictures are deleted'))
   select coalesce(string_agg(coalesce(nm.label, initcap(replace(k.key, '_', ' ')))
@@ -1399,26 +1399,32 @@ grant select, insert, delete on public.seller_payouts to authenticated;
 grant usage on sequence public.seller_payouts_id_seq to authenticated;
 
 -- every seller's weeks: sales, rate, commission, paid or not (admins: everyone; a seller: only themselves)
+drop function if exists public.seller_weeks();
 create or replace function public.seller_weeks() returns table (
-  seller_id uuid, code text, name text, week date, orders int, sales numeric, rate numeric, commission numeric, welcome numeric, paid boolean)
+  seller_id uuid, code text, name text, week date, orders int, counted int, sales numeric, rate numeric, commission numeric, welcome numeric, paid boolean)
 language plpgsql stable security definer set search_path = public as $$
 declare c jsonb := (select config from public.shop_settings where id = 1);
   r numeric := coalesce((c->>'seller_rate')::numeric, 5); g numeric := coalesce((c->>'seller_goal')::numeric, 500);
   b numeric := coalesce((c->>'seller_bonus_rate')::numeric, 15); w numeric := coalesce((c->>'seller_welcome')::numeric, 10);
   pg numeric := coalesce((c->>'seller_pro_goal')::numeric, 1000); pr numeric := coalesce((c->>'seller_pro_rate')::numeric, 20);
+  -- levels can count orders (default) or money. Counting orders: only orders of at least seller_min_order count toward a level
+  byo boolean := coalesce(c->>'seller_goal_by', 'money') = 'orders'; go numeric := coalesce((c->>'seller_goal_orders')::numeric, 8);
+  po numeric := coalesce((c->>'seller_pro_orders')::numeric, 15); mo numeric := coalesce((c->>'seller_min_order')::numeric, 30);
   me text := lower(coalesce(auth.jwt()->>'email', '')); adm boolean := public.is_admin();
 begin
   if not adm and me = '' then return; end if;
   return query
   with wk as (
     select sl.id, sl.code, sl.name, date_trunc('week', (o.done_at at time zone 'Asia/Manila'))::date as week,
-           count(*)::int as n, sum(o.total - coalesce(o.rush_fee, 0))::numeric as sales
+           count(*)::int as n, (count(*) filter (where o.total - coalesce(o.rush_fee, 0) >= mo))::int as cnt, sum(o.total - coalesce(o.rush_fee, 0))::numeric as sales
     from public.sellers sl join public.orders o on o.seller_code = sl.code and o.status = 'done' and o.done_at is not null
     where adm or sl.email = me
     group by 1, 2, 3, 4)
-  select wk.id, wk.code, wk.name, wk.week, wk.n, wk.sales,
-         case when pg > 0 and wk.sales >= pg then pr when wk.sales >= g then b else r end,
-         round(wk.sales * (case when pg > 0 and wk.sales >= pg then pr when wk.sales >= g then b else r end) / 100.0
+  select wk.id, wk.code, wk.name, wk.week, wk.n, wk.cnt, wk.sales,
+         case when byo then (case when po > 0 and wk.cnt >= po then pr when go > 0 and wk.cnt >= go then b else r end)
+              else (case when pg > 0 and wk.sales >= pg then pr when wk.sales >= g then b else r end) end,
+         round(wk.sales * (case when byo then (case when po > 0 and wk.cnt >= po then pr when go > 0 and wk.cnt >= go then b else r end)
+              else (case when pg > 0 and wk.sales >= pg then pr when wk.sales >= g then b else r end) end) / 100.0
                + case when wk.week = min(wk.week) over (partition by wk.id) then w else 0 end, 2),
          case when wk.week = min(wk.week) over (partition by wk.id) then w else 0 end,
          exists (select 1 from public.seller_payouts p where p.seller_id = wk.id and p.week = wk.week)
@@ -1464,7 +1470,7 @@ begin
   select * into v from public.sellers where email = me;
   if not found then return json_build_object('status', 'none'); end if;
   return json_build_object('status', v.status, 'code', v.code, 'name', v.name, 'gcash', v.gcash,
-    'weeks', coalesce((select json_agg(row_to_json(x)) from (select week, orders, sales, rate, commission, welcome, paid from public.seller_weeks() order by week desc limit 12) x), '[]'::json),
+    'weeks', coalesce((select json_agg(row_to_json(x)) from (select week, orders, counted, sales, rate, commission, welcome, paid from public.seller_weeks() order by week desc limit 12) x), '[]'::json),
     'pending', (select count(*) from public.orders where seller_code = v.code and status in ('pending','approved','printing','ready')),
     'board', coalesce((select json_agg(row_to_json(t)) from (
         select initcap(split_part(sl.name, ' ', 1)) as name, count(*)::int as orders, (sl.id = v.id) as me
@@ -1550,3 +1556,15 @@ grant execute on function public.group_check(text) to anon, authenticated;
 update public.shop_settings
    set config = coalesce(config, '{}'::jsonb) || '{"seller_rate": 5, "seller_goal": 500, "seller_bonus_rate": 15, "seller_pro_goal": 1000, "seller_pro_rate": 20, "seller_tiers_v2": true}'::jsonb
  where id = 1 and coalesce(config->>'seller_tiers_v2', '') <> 'true';
+
+
+-- Oct 2026: seller levels count orders (8 for the goal, 15 for the top), only orders of ₱30+ count toward a level. Set once.
+update public.shop_settings
+   set config = coalesce(config, '{}'::jsonb) || '{"seller_goal_by": "orders", "seller_goal_orders": 8, "seller_pro_orders": 15, "seller_min_order": 30, "seller_tiers_v3": true}'::jsonb
+ where id = 1 and coalesce(config->>'seller_tiers_v3', '') <> 'true';
+
+
+-- Oct 2026 (later the same day): seller levels count money after all (₱500 goal, ₱1,000 top). Set once.
+update public.shop_settings
+   set config = coalesce(config, '{}'::jsonb) || '{"seller_goal_by": "money", "seller_tiers_v4": true}'::jsonb
+ where id = 1 and coalesce(config->>'seller_tiers_v4', '') <> 'true';
