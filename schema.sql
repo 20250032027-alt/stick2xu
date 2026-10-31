@@ -213,6 +213,7 @@ create table if not exists public.sellers (
   approved_at timestamptz,
   paused_at timestamptz
 );
+alter table public.sellers add column if not exists gcash text check (char_length(gcash) <= 40);   -- where to send their pay (optional)
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text);
@@ -573,7 +574,7 @@ language sql stable security definer set search_path = public as $$
     'pickup_date', pickup_date, 'pickup_time', pickup_time, 'arrived', arrived_at is not null,
     'payment', payment, 'total', total, 'sheet_count', sheet_count, 'reject_reason', reject_reason,
     'confirmed', confirmed, 'paid', paid, 'amount_paid', amount_paid, 'missed', missed, 'reschedules', reschedules, 'created_at', created_at,
-    'grade_section', grade_section, 'gcash_ref', gcash_ref, 'add_to', add_to,
+    'grade_section', grade_section, 'gcash_ref', gcash_ref, 'add_to', add_to, 'group', school_id is not null,
     'add_ons', (select coalesce(json_agg(a.code order by a.created_at), '[]'::json) from public.orders a where a.add_to = orders.code and a.status not in ('cancelled','rejected')))
   from public.orders
   where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname)
@@ -1011,7 +1012,7 @@ create or replace function public.my_orders() returns json
 language sql stable security definer set search_path = public as $$
   select coalesce(json_agg(x order by x.created_at desc), '[]'::json) from (
     select code, nickname, status, pickup, pickup_date, pickup_time, total, paid, amount_paid, confirmed,
-           arrived_at is not null as arrived, created_at
+           arrived_at is not null as arrived, created_at, school_id is not null as "group"
     from public.orders
     where customer_email is not null and customer_email = lower(coalesce(auth.jwt()->>'email', ''))
       and lower(coalesce(auth.jwt()->>'email', '')) like '%@my.xu.edu.ph'
@@ -1380,8 +1381,10 @@ end $$;
 revoke all on function public.seller_weeks() from public, anon;
 grant execute on function public.seller_weeks() to authenticated;
 
--- a signed-in student applies (or sees where their application is)
-create or replace function public.seller_apply(p_name text, p_section text, p_pitch text) returns text
+-- a signed-in student applies (or sees where their application is). With instant approval on (the default) and a
+-- free spot, they're a seller right away; otherwise they wait for the admin.
+drop function if exists public.seller_apply(text, text, text);
+create or replace function public.seller_apply(p_name text, p_section text, p_pitch text, p_gcash text default null) returns text
 language plpgsql security definer set search_path = public as $$
 declare me text := lower(coalesce(auth.jwt()->>'email', '')); st text;
 begin
@@ -1390,10 +1393,21 @@ begin
   select status into st from public.sellers where email = me;
   if found then return st; end if;
   if char_length(trim(coalesce(p_name, ''))) < 2 or char_length(trim(coalesce(p_section, ''))) < 1 then raise exception 'BAD_INPUT'; end if;
-  insert into public.sellers (email, name, grade_section, pitch) values (me, left(trim(p_name), 60), left(trim(p_section), 40), nullif(left(trim(coalesce(p_pitch, '')), 200), ''));
+  insert into public.sellers (email, name, grade_section, pitch, gcash) values (me, left(trim(p_name), 60), left(trim(p_section), 40), nullif(left(trim(coalesce(p_pitch, '')), 200), ''), nullif(left(trim(coalesce(p_gcash, '')), 40), ''));
+  if coalesce((select (config->>'seller_auto')::boolean from public.shop_settings where id = 1), true) then
+    begin perform public.seller_activate((select id from public.sellers where email = me)); return 'active';
+    exception when others then return 'pending'; end;   -- no free spot: they wait for the admin
+  end if;
   return 'pending';
 end $$;
-grant execute on function public.seller_apply(text, text, text) to authenticated;
+grant execute on function public.seller_apply(text, text, text, text) to authenticated;
+
+-- a seller updates where to send their pay
+create or replace function public.seller_set_gcash(p_gcash text) returns void
+language sql security definer set search_path = public as $$
+  update public.sellers set gcash = nullif(left(trim(coalesce(p_gcash, '')), 40), '') where email = lower(coalesce(auth.jwt()->>'email', ''));
+$$;
+grant execute on function public.seller_set_gcash(text) to authenticated;
 
 -- a seller's own page: who they are, this week, history, and a small leaderboard (first names only)
 create or replace function public.my_seller() returns json
@@ -1403,7 +1417,7 @@ begin
   if me = '' then return null; end if;
   select * into v from public.sellers where email = me;
   if not found then return json_build_object('status', 'none'); end if;
-  return json_build_object('status', v.status, 'code', v.code, 'name', v.name,
+  return json_build_object('status', v.status, 'code', v.code, 'name', v.name, 'gcash', v.gcash,
     'weeks', coalesce((select json_agg(row_to_json(x)) from (select week, orders, sales, rate, commission, welcome, paid from public.seller_weeks() order by week desc limit 12) x), '[]'::json),
     'pending', (select count(*) from public.orders where seller_code = v.code and status in ('pending','approved','printing','ready')),
     'board', coalesce((select json_agg(row_to_json(t)) from (
@@ -1414,15 +1428,14 @@ begin
 end $$;
 grant execute on function public.my_seller() to authenticated;
 
--- admin: approve (gives a code), pause, decline
-create or replace function public.seller_set_status(p_id uuid, p_status text) returns text
+-- turn a seller on and give them a code (used by the admin's Approve and by instant approval). Not callable directly.
+create or replace function public.seller_activate(p_id uuid) returns text
 language plpgsql security definer set search_path = public as $$
 declare v public.sellers; c text; base text; n int := 0; mx int;
 begin
-  if not public.is_admin() then raise exception 'NOT_ADMIN'; end if;
-  if p_status not in ('active', 'paused', 'declined') then raise exception 'BAD_INPUT'; end if;
   select * into v from public.sellers where id = p_id for update; if not found then raise exception 'BAD_INPUT'; end if;
-  if p_status = 'active' and v.status <> 'active' then
+  if v.status = 'active' then return v.code; end if;
+  begin
     mx := coalesce((select (config->>'sellers_max')::int from public.shop_settings where id = 1), 10);
     if mx > 0 and (select count(*) from public.sellers where status = 'active') >= mx then raise exception 'SELLERS_FULL'; end if;
     c := v.code;
@@ -1436,7 +1449,19 @@ begin
     end if;
     update public.sellers set status = 'active', code = c, approved_at = now(), paused_at = null where id = p_id;
     return c;
-  end if;
+  end;
+end $$;
+revoke all on function public.seller_activate(uuid) from public, anon, authenticated;
+
+-- admin: approve (gives a code), pause, decline
+create or replace function public.seller_set_status(p_id uuid, p_status text) returns text
+language plpgsql security definer set search_path = public as $$
+declare v public.sellers;
+begin
+  if not public.is_admin() then raise exception 'NOT_ADMIN'; end if;
+  if p_status not in ('active', 'paused', 'declined') then raise exception 'BAD_INPUT'; end if;
+  select * into v from public.sellers where id = p_id; if not found then raise exception 'BAD_INPUT'; end if;
+  if p_status = 'active' then return public.seller_activate(p_id); end if;
   update public.sellers set status = p_status, paused_at = case when p_status = 'paused' then now() else paused_at end where id = p_id;
   return v.code;
 end $$;

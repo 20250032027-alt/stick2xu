@@ -1557,8 +1557,14 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .daypick span{display:inline-block;padding:7px 12px;border-radius:999px;border:1.5px solid var(--line);font-weight:700;font-size:14px}.daypick input:checked + span{background:#283971;border-color:#283971;color:#fff}
 .daypick input:focus-visible + span{outline:2px solid #F2BC2E;outline-offset:2px}
 .grpcode{display:flex;flex-direction:column;gap:2px;margin:12px 0 8px;padding:10px 12px;border-radius:12px;background:#F4F7FF;word-break:break-all}.grpcode b{letter-spacing:1px;font-size:17px}
-.schoolcard .acts{display:flex;gap:8px;flex-wrap:wrap}.tag.grp{background:#EAF3FF;color:#24508F}
+.schoolcard .acts{display:flex;gap:8px;flex-wrap:wrap}.tag.grp{background:#EAF3FF;color:#24508F}.tag.sell{background:#FFF1C9;color:#7A5600}
 .earnlink{display:inline-flex;gap:5px;align-items:center;margin-left:8px;font-weight:700;color:var(--ink);white-space:nowrap}
+.sellinvitewrap{position:relative}.si-x{position:absolute;top:-8px;right:-8px;z-index:1;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--muted);display:grid;place-items:center;cursor:pointer}
+.cstep[data-step="3"] .codebox{margin:0 0 18px}.sc-sub{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;width:100%}
+.codehint{display:block;font-weight:600;font-size:13px;color:var(--muted);margin-top:2px}
+.sellpay > span{display:flex;gap:8px;align-items:center;margin-bottom:8px}.sellpay .qrrow{display:flex;gap:8px}.sellpay .inp{flex:1;min-width:0}
+.sellshort{display:flex;gap:12px;align-items:center;padding:14px 16px;margin-bottom:14px;border-radius:18px;background:#FFF6DA;border:1.5px solid #F2BC2E;color:#283971;text-decoration:none}
+.sellshort > span{flex:1;display:flex;flex-direction:column}.sellshort small{color:var(--muted);font-size:13px}
 .sellinvite{display:flex;gap:14px;align-items:center;padding:16px 18px;border-radius:20px;background:linear-gradient(120deg,#283971,#3a52a3);color:#fff;text-decoration:none;box-shadow:5px 5px 0 #1C2A57}
 .sellinvite .si-ic{flex:none;width:44px;height:44px;border-radius:50%;background:#F2BC2E;color:#283971;display:grid;place-items:center}
 .sellinvite .si-t{flex:1;display:flex;flex-direction:column;gap:2px}.sellinvite small{opacity:.85;font-size:14px}.sellinvite .si-go{flex:none}
@@ -1737,7 +1743,7 @@ const CONFIG = {
   referralOn: true,         // friend codes on/off
   referralFriendOff: 5,     // a friend's first order gets this much off
   // Stick2It Sellers (off until switched on in Settings; while on, it replaces friend codes)
-  sellersOn: false, sellersApply: true, sellerRate: 10, sellerGoal: 500, sellerBonusRate: 15, sellerBuyerOff: 5, sellerWelcome: 10, sellersMax: 10, sellerMinPayout: 20,
+  sellersOn: false, sellersApply: true, sellerAuto: true, sellerRate: 10, sellerGoal: 500, sellerBonusRate: 15, sellerBuyerOff: 5, sellerWelcome: 10, sellersMax: 10, sellerMinPayout: 20,
   referralReward: 5,        // the code's owner earns this much credit when the friend picks up
   // countdowns on the home page (admin can change them). yearly: true repeats every year on that month and day
   countdowns: [{ name: 'Christmas', date: '2026-12-25', yearly: true }, { name: 'New Year', date: '2027-01-01', yearly: true },
@@ -1913,9 +1919,10 @@ function friendCardHTML(code){
     <div class="fc-btns"><button type="button" class="pilllink" data-act="friendCopy" data-code="${esc(code)}">${ic('check', 16)}Copy</button>
       ${navigator.share ? `<button type="button" class="pilllink" data-act="friendShare" data-code="${esc(code)}">${ic('arrow', 16)}Share</button>` : ''}</div></div>`;
 }
-async function fillFriendCard(code, nick){
+async function fillFriendCard(code, nick, status){
   const el = $('#friendCard'); if (!el) return;
-  if (CONFIG.sellersOn) { if (CONFIG.sellersApply) el.innerHTML = sellerInviteHTML(); return; }   // sellers replace friend codes
+  // sellers replace friend codes. On My order the invite waits until the order is picked up (stickers in hand)
+  if (CONFIG.sellersOn) { if (inviteOk() && (!status || status === 'done')) el.innerHTML = sellerInviteHTML(!!status); return; }
   if (!CONFIG.referralOn) return;
   const fc = await api.myFriendCode(code, nick); if (fc && document.body.contains(el)) el.innerHTML = friendCardHTML(fc);
 }
@@ -2145,7 +2152,7 @@ function applyShopConfig(c){
   CONFIG.referralOn = typeof c.referral_on === 'boolean' ? c.referral_on : D.referralOn;
   CONFIG.referralFriendOff = Math.max(0, numOr(c.referral_friend_off, D.referralFriendOff));
   CONFIG.referralReward = Math.max(0, numOr(c.referral_reward, D.referralReward));
-  CONFIG.sellersOn = c.sellers_on === true; CONFIG.sellersApply = c.sellers_apply !== false;
+  CONFIG.sellersOn = c.sellers_on === true; CONFIG.sellersApply = c.sellers_apply !== false; CONFIG.sellerAuto = c.seller_auto !== false;
   CONFIG.sellerRate = Math.max(0, Math.min(50, numOr(c.seller_rate, D.sellerRate))); CONFIG.sellerGoal = Math.max(0, numOr(c.seller_goal, D.sellerGoal));
   CONFIG.sellerBonusRate = Math.max(0, Math.min(50, numOr(c.seller_bonus_rate, D.sellerBonusRate))); CONFIG.sellerBuyerOff = Math.max(0, Math.min(30, numOr(c.seller_buyer_off, D.sellerBuyerOff)));
   CONFIG.sellerWelcome = Math.max(0, numOr(c.seller_welcome, D.sellerWelcome)); CONFIG.sellersMax = Math.max(0, numOr(c.sellers_max, D.sellersMax)); CONFIG.sellerMinPayout = Math.max(0, numOr(c.seller_min_payout, D.sellerMinPayout));
@@ -2446,7 +2453,8 @@ function SupaBackend(){
     async saveSchool(row){ const { error } = await sb.from('schools').upsert(row); if (error) throw error; },
     async deleteSchool(id){ const { error } = await sb.from('schools').delete().eq('id', id); if (error) throw error; },
     async mySeller(){ return await rpc('my_seller', {}); },
-    async sellerApply(name, section, pitch){ return await rpc('seller_apply', { p_name: name, p_section: section, p_pitch: pitch || null }); },
+    async sellerApply(name, section, pitch, gcash){ return await rpc('seller_apply', { p_name: name, p_section: section, p_pitch: pitch || null, p_gcash: gcash || null }); },
+    async sellerSetGcash(g){ return await rpc('seller_set_gcash', { p_gcash: g || null }); },
     async sellers(){ const { data, error } = await sb.from('sellers').select('*').order('created_at', { ascending: false }); if (error) throw error; return data || []; },
     async sellerWeeks(){ return (await rpc('seller_weeks', {})) || []; },
     async sellerSetStatus(id, status){ return await rpc('seller_set_status', { p_id: id, p_status: status }); },
@@ -2608,6 +2616,7 @@ async function refreshMe(){
     const m = await api.me();
     S.me = m && isXu(m.email) ? m : null;
   } catch { S.me = null; }
+  if (S.me && CONFIG.sellersOn && S.isSeller === undefined) api.mySeller().then(r => { S.isSeller = r ? r.status : 'none'; }).catch(() => {});
   return S.me;
 }
 async function xuSignIn(){
@@ -2840,7 +2849,7 @@ function viewHome(){
       </div>
       ${heroArt()}
     </section>
-    <footer><span>${esc(CONFIG.shopName)} is run by students. It isn't an official school service.${CONFIG.sellersOn ? ` <a href="#/sell" class="earnlink">${ic('sparkle', 14)}Earn with ${esc(CONFIG.shopName)}</a>` : ''}</span>${socialHTML()}</footer>
+    <footer><span>${esc(CONFIG.shopName)} is run by students. It isn't an official school service.${CONFIG.sellersOn && !S.group ? ` <a href="#/sell" class="earnlink">${ic('sparkle', 14)}Earn with ${esc(CONFIG.shopName)}</a>` : ''}</span>${socialHTML()}</footer>
   </main>`;
 }
 
@@ -3884,6 +3893,12 @@ function viewCheckout(){
       <section class="cstep" data-step="3">
         <div class="chead"><i>3</i><b>Pay</b></div>
         <div class="cbody">
+          ${S.group ? `<p class="grpchip">${ic('check', 15)}<span>Group pickup</span><button type="button" class="linkbtn" data-act="groupOff">Turn off</button></p>` : ''}<details class="codebox" ${S.promo ? 'open' : ''}><summary>${CONFIG.sellersOn ? `Got a code? <span class="codehint">A classmate's code gives ${CONFIG.sellerBuyerOff}% off</span>` : 'Have a promo or friend code?'}</summary>
+      <div class="field" style="margin:10px 0 0"><label class="lab sr" for="promo">Promo or friend code</label>
+        <div class="qrrow promorow"><input class="inp" id="promo" maxlength="20" autocapitalize="characters" autocomplete="off" value="${esc(S.promo ? S.promo.code : '')}" style="text-transform:uppercase">
+          ${smallBtn(S.promo ? 'Remove' : 'Apply', S.promo ? 'x' : 'check', S.promo ? 'promoRemove' : 'promoApply', 'plain')}</div>
+        <p class="ferr" id="e-promo" role="alert"></p></div></details>
+
       <fieldset><legend>How will you pay?</legend>
         <label class="choice"><input type="radio" name="pay" value="cash" checked>${ic('cash', 20)}<span>Cash when I pick up</span></label>
         ${CONFIG.gcash.enabled ? `<label class="choice"><input type="radio" name="pay" value="gcash">${ic('phone', 20)}<span>GCash</span></label>
@@ -3891,11 +3906,7 @@ function viewCheckout(){
           <label class="lab" for="gref" style="display:block;margin:10px 0 6px">Reference number (optional)</label>
           <input class="inp" id="gref" maxlength="40" inputmode="numeric"></div>` : ''}
       </fieldset>
-          ${S.group ? `<p class="grpchip">${ic('check', 15)}<span>Group pickup</span><button type="button" class="linkbtn" data-act="groupOff">Turn off</button></p>` : ''}<details class="codebox" ${S.promo ? 'open' : ''}><summary>${CONFIG.sellersOn ? 'Have a promo or seller code?' : 'Have a promo or friend code?'}</summary>
-      <div class="field" style="margin:18px 0 0"><label class="lab sr" for="promo">Promo or friend code</label>
-        <div class="qrrow promorow"><input class="inp" id="promo" maxlength="20" autocapitalize="characters" autocomplete="off" value="${esc(S.promo ? S.promo.code : '')}" style="text-transform:uppercase">
-          ${smallBtn(S.promo ? 'Remove' : 'Apply', S.promo ? 'x' : 'check', S.promo ? 'promoRemove' : 'promoApply', 'plain')}</div>
-        <p class="ferr" id="e-promo" role="alert"></p></div></details>
+
           <div id="sumBox">${checkoutSummary()}</div>
           <div class="namecheck">${ic('school', 18)}<span>Name for pickup: <b id="ncName"></b></span><button type="button" class="cchange" style="display:inline" data-act="coGo" data-s="1">Fix</button></div>
           <label class="choice"><input type="checkbox" id="promise"><span id="promiseTxt"></span></label>
@@ -4100,7 +4111,7 @@ async function submitOrder(e){
     const uploads = S.images.concat((S.docs || []).map(d => pages[d.id] || d)).filter(i => used.has(i.id));
     const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: S.addTo ? '' : SRC, promo: S.promo && !S.promo.seller && sum.total >= S.promo.min_total ? S.promo.code : null, seller: CONFIG.sellersOn ? (S.promo && S.promo.seller ? S.promo.code : sellerRef()) || null : null, school: S.group ? S.group.code : null, images: uploads, items: S.cart, addTo: S.addTo && S.addTo.code });
     const addedTo = S.addTo && S.addTo.code; S.addTo = null;
-    S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal, add_to: addedTo || null, for_someone: !!S.coAdmin };
+    S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal, add_to: addedTo || null, for_someone: !!S.coAdmin, group: !!S.group };
     try { const real = await api.getOrder(code, nickname); if (real && real.total !== finalTotal) { S.lastOrder.total = real.total; if (real.total < finalTotal) setTimeout(() => toast(`Your friend credit took ${money(finalTotal - real.total)} off. New total: ${money(real.total)}.`), 900); } } catch {}
     S.promo = null;
     S.celebrate = true; S.codeSaved = false; S.passPrint = true; setTimeout(loadMyOrder, 800); buzz([12, 40, 18]);
@@ -4140,8 +4151,8 @@ function icsFor(o){
   const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Stick2It//Pickup//EN', 'BEGIN:VEVENT',
     `UID:${o.code}@stick2xu`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`,
     `DTSTART:${t(h, mi)}`, `DTEND:${t(Math.floor(end / 60), end % 60)}`,
-    `SUMMARY:Pick up Stick2It order ${o.code}`, `LOCATION:${o.pickup} (inside campus)`,
-    `DESCRIPTION:Look for ${signal()}. Tap I'm here in My order when you arrive.`,
+    `SUMMARY:Pick up Stick2It order ${o.code}`, `LOCATION:${o.pickup}${o.group ? '' : ' (inside campus)'}`,
+    `DESCRIPTION:${o.group ? `Hand-off of your Stick2It order at ${o.pickup}.` : `Look for ${signal()}. Tap I'm here in My order when you arrive.`}`,
     'BEGIN:VALARM', 'TRIGGER:-PT30M', 'ACTION:DISPLAY', 'DESCRIPTION:Stick2It pickup soon', 'END:VALARM',
     'END:VEVENT',
     ...(confirmBy(o) ? ['BEGIN:VEVENT', `UID:${o.code}-confirm@stick2xu`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`,
@@ -4162,7 +4173,7 @@ function viewDone(){
   const o = S.lastOrder || readJSON('sk_last');
   if (!o) { location.hash = '#/'; return; }
   if (S.celebrate) { S.celebrate = false; setTimeout(confetti, 150); }
-  setTimeout(() => fillFriendCard(o.code, o.nickname), 0);
+  if (!o.group) setTimeout(() => fillFriendCard(o.code, o.nickname), 0);   // group orders: no friend/seller card (sellers need an XU account)
   const gcash = o.payment === 'gcash';
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow">${progress(3)}
     <h2 style="margin:4px 0 12px">${o.for_someone ? `Order placed for ${esc(o.nickname)}.` : "You're all set."}</h2>
@@ -4180,8 +4191,9 @@ function viewDone(){
         ${confirmBy(o) && confirmBy(o) > ymd(new Date())
           ? `<li><b>Confirm by ${esc(dayWord(confirmBy(o)))}.</b> In My order, tap "I'll be there".</li>`
           : `<li><b>You're confirmed.</b> We'll start on it right away.</li>`}
-        <li><b>At the gate, tap "I'm here".</b> Look for ${esc(signal())}.</li>
-        <li><b>Bring ${money(o.total)}${gcash ? ' (or your GCash reference)' : ''}</b> and your school ID.</li>
+        ${o.group ? `<li><b>Hand-off at ${esc(o.pickup)}</b> on ${esc(fmtDate(o.pickup_date, { weekday: 'long', month: 'short', day: 'numeric' }))}.</li>
+        <li><b>Bring ${money(o.total)}${gcash ? ' (or your GCash reference)' : ''}.</b></li>` : `<li><b>At the gate, tap "I'm here".</b> Look for ${esc(signal())}.</li>
+        <li><b>Bring ${money(o.total)}${gcash ? ' (or your GCash reference)' : ''}</b> and your school ID.</li>`}
       </ol>
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px">${btn('Check my order', { act: 'leaveDone', cls: 'dark', attrs: 'data-href="#/status"' })}
         ${o.pickup_date ? `<button type="button" class="pilllink" data-act="calAdd">${ic('calendar', 18)}Add to calendar</button>` : ''}</div>
@@ -4232,7 +4244,8 @@ async function drawMine(){
   if (!S.me) { el.innerHTML = inAppBrowser() ? '' : `<p class="mine-in">${ic('school', 16)}<span>Have an XU account?</span><button type="button" class="linkbtn" data-act="xuIn">Sign in to see all your orders</button></p>`; return; }
   let list = []; try { list = await api.myOrders() || []; } catch {}
   const lbl = { pending: 'Checking', approved: 'Approved', printing: 'Printing', ready: 'Ready', done: 'Picked up', cancelled: 'Cancelled', rejected: 'Not approved', noshow: 'Missed' };
-  el.innerHTML = `<section class="panel mine"><div class="mine-h"><b>Your orders</b><span class="muted small">${esc(S.me.email)}</span><button type="button" class="linkbtn" data-act="xuOut">Sign out</button></div>
+  if (CONFIG.sellersOn && S.isSeller === undefined) { try { const r = await api.mySeller(); S.isSeller = r ? r.status : 'none'; } catch {} }
+  el.innerHTML = `${CONFIG.sellersOn && S.isSeller === 'active' ? `<a class="sellshort" href="#/sell">${ic('sparkle', 18)}<span><b>Your seller page</b><small>Your code, this week's earnings, and your QR card</small></span>${ic('arrow', 18)}</a>` : ''}<section class="panel mine"><div class="mine-h"><b>Your orders</b><span class="muted small">${esc(S.me.email)}</span><button type="button" class="linkbtn" data-act="xuOut">Sign out</button></div>
     ${list.length ? `<div class="mine-list">${list.map(o => `<button type="button" class="mine-row" data-act="openMine" data-code="${esc(o.code)}" data-nick="${esc(o.nickname)}">
       <b class="num">${esc(o.code)}</b><span class="tag ${o.status === 'ready' ? 'ok' : ['cancelled', 'rejected', 'noshow'].includes(o.status) ? 'bad' : ''}">${lbl[o.status] || esc(o.status)}</span>${(() => { const a = myAction(o); return a === 'confirm' ? `<span class="tag hot">Confirm by ${esc(dayWord(confirmBy(o)))}</span>` : a === 'here' ? `<span class="tag hot">Pickup today</span>` : ''; })()}
       <span class="muted small">${o.pickup_date ? esc(fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' })) : ''}</span><span class="num">${money(o.total)}</span>${ic('arrow', 16)}</button>`).join('')}</div>`
@@ -4270,17 +4283,17 @@ function drawStatus(){
       ${o.status === 'rejected' && o.reject_reason ? `<p style="margin-top:14px"><b>Reason:</b> ${esc(o.reject_reason)}</p>${btn('Make a new design', { href: '#/design' })}` : ''}
       ${o.status === 'ready' ? `<div class="pt hi" style="margin-top:16px">
           <span class="k">${ic('search', 16)}At pickup</span>
-          <b>Look for ${esc(signal())} at ${esc(o.pickup)}</b>
+          <b>${o.group ? `Hand-off at ${esc(o.pickup)}` : `Look for ${esc(signal())} at ${esc(o.pickup)}`}</b>
           <span>${o.paid ? "You've already paid, so just grab your stickers. That's it." : `Bring <b class="num" style="font-size:inherit;font-family:inherit">${money(o.total - (o.amount_paid || 0))}</b>${o.amount_paid ? ` (you've paid ${money(o.amount_paid)} already)` : ''}, exact change if you can. Grab your order, and that's it.`}</span></div>
-        <div style="margin-top:14px">${o.arrived
+        ${o.group ? '' : `<div style="margin-top:14px">${o.arrived
           ? `<span class="tag ok" style="font-size:15px;padding:8px 12px">${ic('check', 16)}They know you're here. Look for ${esc(signal())}.</span>`
-          : btn("I'm here", { act: 'imHere', icon: 'pin', cls: 'wide' })}</div>` : ''}
+          : btn("I'm here", { act: 'imHere', icon: 'pin', cls: 'wide' })}</div>`}` : ''}
       <details class="odetails"><summary>Order details</summary><dl class="kv">${o.pickup_date ? `<dt>Pickup</dt><dd>${esc(fmtDate(o.pickup_date))}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</dd>` : ''}<dt>Where</dt><dd>${esc(o.pickup)}</dd>
         <dt>Total</dt><dd class="num">${money(o.total)}${o.paid ? ', paid' : o.amount_paid ? `, paid ${money(o.amount_paid)}, ${money(o.total - o.amount_paid)} left` : ''}</dd>
         <dt>Items</dt><dd>${o.sheet_count}</dd><dt>Ordered</dt><dd>${fmtTime(o.created_at)}</dd></dl></details>
       ${S.moving ? rescheduleHTML(o) : ''}
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:20px">
-        ${canMove && !S.moving ? smallBtn('Change pickup day', 'calendar', 'moveOpen', 'plain') : ''}
+        ${canMove && !S.moving && !o.group ? smallBtn('Change pickup day', 'calendar', 'moveOpen', 'plain') : ''}
         ${['pending','approved','printing'].includes(o.status) && !lapsed && !o.add_to ? smallBtn('Add more to this order', 'plus', 'addToStart', 'dark') : ''}
         ${['pending','approved'].includes(o.status) && !lapsed ? smallBtn('Fix my details', 'edit', 'fixOpen', 'plain') : ''}
         ${['pending','approved'].includes(o.status) && !lapsed ? smallBtn('Cancel my order', 'x', 'cancelOrder', 'plain') : ''}
@@ -4299,7 +4312,7 @@ function drawStatus(){
       ${active && !lapsed ? `<p class="help" style="margin-top:10px">${(o.reschedules || 0) >= CONFIG.maxReschedules ? "You've already changed your pickup day the most times allowed. Talk to the seller if you need to move it again." : `You can change your pickup day ${CONFIG.maxReschedules - (o.reschedules || 0)} more time${CONFIG.maxReschedules - (o.reschedules || 0) === 1 ? '' : 's'}.`}</p>` : ''}
     </div>`;
   if (o.status === 'done') $('#statusOut').insertAdjacentHTML('beforeend', feedbackHTML('pickup', o.code, S.statusNick));   // after pickup: how did it turn out?
-  if (!['cancelled', 'rejected'].includes(o.status) && !lapsed) { $('#statusOut').insertAdjacentHTML('beforeend', '<div id="friendCard"></div>'); fillFriendCard(o.code, S.statusNick); }
+  if (!['cancelled', 'rejected'].includes(o.status) && !lapsed && !o.group) { $('#statusOut').insertAdjacentHTML('beforeend', '<div id="friendCard"></div>'); fillFriendCard(o.code, S.statusNick, o.status); }
   const mf = $('#moveForm');
   if (mf) {
     // on the chosen day, times that are full or where we'll be at another gate can't be picked
@@ -4526,7 +4539,7 @@ async function drawAdminBody(){
           <div><div class="ocode">${esc(o.code)}</div><div class="muted small">Pickup ${o.pickup_date ? esc(fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' })) + (o.pickup_time ? `, ${esc(o.pickup_time)}` : '') : 'date not set'}, ordered ${fmtTime(o.created_at)}</div></div>
           ${o.status === 'done' ? `<b class="oprice num">${peso(o.total)}</b>` : `<span class="tag st ${stCls[o.status] || ''}">${ic(STATUS[o.status][0], 16)}${esc(o.status)}</span>`}</div>
         <div class="ometa">
-          <div><span><b>${esc(o.nickname)}</b>, ${esc(o.grade_section)}</span>${o.school_id ? ` <span class="tag grp">${ic('school', 14)}${esc(((S.admin.schoolMap || {})[o.school_id] || {}).name || 'Other school')}</span>` : ''}</div>
+          <div><span><b>${esc(o.nickname)}</b>, ${esc(o.grade_section)}</span>${o.school_id ? ` <span class="tag grp">${ic('school', 14)}${esc(((S.admin.schoolMap || {})[o.school_id] || {}).name || 'Other school')}</span>` : ''}${o.seller_code ? ` <span class="tag sell">${ic('sparkle', 14)}via ${esc(o.seller_code)}</span>` : ''}</div>
           <div>${ic('pin', 18)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span></div>
           <div>${ic('cash', 18)}<span class="num">${money(o.total)}${!o.paid && o.amount_paid ? ` (paid ${money(o.amount_paid)}, owes ${money(o.total - o.amount_paid)})` : ''}, ${o.payment === 'gcash' ? `GCash${o.gcash_ref ? ` (ref ${esc(o.gcash_ref)})` : ', no ref yet'}` : 'cash'}</span></div>
           <ul class="ilist">${orderItems(o).map(it => `<li>${ic(it.type === 'stickers' ? 'sticker' : it.type === 'pins' ? 'badge' : it.type === 'posters' ? 'image' : it.type === 'prints' ? 'doc' : 'keychain', 18)}<span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `, ${esc(itemDetails(it))}` : ''}</span></li>`).join('')}</ul>
@@ -4955,7 +4968,7 @@ function drawSettings(){
   S.admin.cfg = {
     pickup_weekdays: CONFIG.pickupWeekdays.slice(), pickup_times: clone(CONFIG.pickupTimes), pickup_places: CONFIG.pickupOptions.slice(),
     countdowns: clone(CONFIG.countdowns || []), countdowns_on: CONFIG.countdownsOn !== false, details: { ...(CONFIG.details || {}) }, facebook_url: CONFIG.facebookUrl, instagram_url: CONFIG.instagramUrl, tiktok_url: CONFIG.tiktokUrl, require_xu_signin: CONFIG.requireXu, product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward,
-    sellers_on: CONFIG.sellersOn, sellers_apply: CONFIG.sellersApply, seller_rate: CONFIG.sellerRate, seller_goal: CONFIG.sellerGoal, seller_bonus_rate: CONFIG.sellerBonusRate,
+    sellers_on: CONFIG.sellersOn, sellers_apply: CONFIG.sellersApply, seller_auto: CONFIG.sellerAuto, seller_rate: CONFIG.sellerRate, seller_goal: CONFIG.sellerGoal, seller_bonus_rate: CONFIG.sellerBonusRate,
     seller_buyer_off: CONFIG.sellerBuyerOff, seller_welcome: CONFIG.sellerWelcome, sellers_max: CONFIG.sellersMax, seller_min_payout: CONFIG.sellerMinPayout, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
     print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, pin_gap_mm: CONFIG.pinGapMm, kc_gap_mm: CONFIG.kcGapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
@@ -5096,7 +5109,8 @@ function drawShopForm(){
 
     <div class="cfgsec sellcfg"><div class="sub">Stick2It Sellers</div>
       <label class="switch" style="margin-bottom:8px"><input type="checkbox" data-cfgbool="sellers_on" ${c.sellers_on ? 'checked' : ''}><span><b>Turn on Stick2It Sellers</b>. While it's on, it replaces friend codes (credit people already have still works).</span></label>
-      <label class="switch" style="margin-bottom:10px"><input type="checkbox" data-cfgbool="sellers_apply" ${c.sellers_apply !== false ? 'checked' : ''}><span>Open for new applications</span></label>
+      <label class="switch" style="margin-bottom:8px"><input type="checkbox" data-cfgbool="sellers_apply" ${c.sellers_apply !== false ? 'checked' : ''}><span>Open for new applications</span></label>
+      <label class="switch" style="margin-bottom:10px"><input type="checkbox" data-cfgbool="seller_auto" ${c.seller_auto !== false ? 'checked' : ''}><span>Approve new sellers instantly (they get their code right away, while there's room). Off: you approve each one.</span></label>
       <div class="pgrid2">
         <label class="dnum"><span>Seller earns (% of each picked-up order)</span>${n('seller_rate', c.seller_rate, 0, 50)}</label>
         <label class="dnum"><span>Weekly goal (₱ of picked-up orders)</span>${n('seller_goal', c.seller_goal, 0, 100000)}</label>
@@ -5447,9 +5461,11 @@ const AVG_ORDER = 60;
 const cash2 = n => Number.isInteger(+n) ? money(+n) : '₱' + (+n).toFixed(2);   // payouts: ₱102.10, not ₱102.1   // a typical order, for the "what could I earn" slider
 function sellerEarn(sales){ const r = sales >= CONFIG.sellerGoal && CONFIG.sellerGoal > 0 ? CONFIG.sellerBonusRate : CONFIG.sellerRate; return { rate: r, amount: Math.round(sales * r) / 100 }; }
 // the invitation after ordering (and on My order)
-function sellerInviteHTML(){
-  return `<a class="sellinvite" href="#/sell"><span class="si-ic">${ic('sparkle', 22)}</span><span class="si-t"><b>Get paid to share ${esc(CONFIG.shopName)}</b>
-    <small>Earn ${CONFIG.sellerRate}% of every order your classmates pick up${CONFIG.sellerGoal ? `, ${CONFIG.sellerBonusRate}% in big weeks` : ''}. Paid every week.</small></span><span class="si-go">${ic('arrow', 18)}</span></a>`;
+const inviteOk = () => CONFIG.sellersOn && CONFIG.sellersApply && !S.group && !['active', 'pending', 'paused'].includes(S.isSeller)
+  && !(Date.now() - (+safeLS.get('sk_sellhide') || 0) < 30 * 864e5);
+function sellerInviteHTML(closable){
+  return `<div class="sellinvitewrap">${closable ? `<button type="button" class="si-x" data-act="sellHide" aria-label="Hide this">${ic('x', 14)}</button>` : ''}<a class="sellinvite" href="#/sell"><span class="si-ic">${ic('sparkle', 22)}</span><span class="si-t"><b>Get paid to share ${esc(CONFIG.shopName)}</b>
+    <small>Earn ${CONFIG.sellerRate}% of every order your classmates pick up${CONFIG.sellerGoal ? `, ${CONFIG.sellerBonusRate}% in big weeks` : ''}. Paid every week.</small></span><span class="si-go">${ic('arrow', 18)}</span></a></div>`;
 }
 async function viewSell(){
   document.title = `Earn with ${CONFIG.shopName}`;
@@ -5490,7 +5506,8 @@ async function drawSellBody(){
   if (!me || me.status === 'none') {
     box.innerHTML = CONFIG.sellersApply ? `<section class="panel sellcta"><h3>Apply in a minute</h3>
       <div class="field"><span class="lab">Your name</span><input class="inp" id="sName" maxlength="60" value="${esc(S.me.name || '')}"></div>
-      <div class="field"><span class="lab">Grade and section</span><input class="inp" id="sSec" maxlength="40" placeholder="Like: 9 - Rizal"></div>
+      <div class="field"><span class="lab">Grade and section</span><input class="inp" id="sSec" maxlength="40" placeholder="Like: 9 - Rizal" value="${esc((readJSON('sk_me') || {}).section || '')}"></div>
+      <div class="field"><span class="lab">GCash number for your pay (optional)</span><input class="inp" id="sGcash" maxlength="40" inputmode="tel" placeholder="Like: 0917 123 4567"><p class="help" style="margin:4px 0 0">Or leave it blank and get paid in cash. You can add it later.</p></div>
       <div class="field"><span class="lab">How would you share it? (optional)</span><input class="inp" id="sPitch" maxlength="200" placeholder="Like: my class group chat, my barkada"></div>
       ${btn('Apply to be a seller', { act: 'sellApply', icon: 'sparkle', cls: 'dark' })}<p class="help" style="margin-top:8px">Signed in as ${esc(S.me.email)}.</p></section>`
       : `<section class="panel sellcta"><h3>Applications are closed for now</h3><p>Check back soon!</p></section>`; return; }
@@ -5505,8 +5522,11 @@ async function drawSellBody(){
   box.innerHTML = `
     <section class="panel sellcode"><span class="sc-k">Your seller code</span><b class="sc-code">${esc(me.code)}</b>
       <span class="sc-link">${esc(link.replace(/^https?:\/\//, ''))}</span>
-      <div class="sc-btns">${btn('Copy link', { act: 'sellCopy', icon: 'copy', cls: 'dark', attrs: `data-link="${esc(link)}"` })}${navigator.share ? btn('Share', { act: 'sellShare', icon: 'arrow', attrs: `data-link="${esc(link)}" data-code="${esc(me.code)}"` }) : ''}${btn('My QR card', { act: 'sellCard', icon: 'qr', attrs: `data-code="${esc(me.code)}" data-name="${esc(first)}"` })}</div>
-      <p class="help">Classmates get ${CONFIG.sellerBuyerOff}% off with your code or link. The link remembers you for 7 days.</p></section>
+      <div class="sc-btns">${btn('Copy message', { act: 'sellMsg', icon: 'copy', cls: 'dark', attrs: `data-link="${esc(link)}" data-code="${esc(me.code)}"` })}<span class="sc-sub">${smallBtn('Copy link', 'copy', 'sellCopy', 'plain', `data-link="${esc(link)}"`)}${navigator.share ? smallBtn('Share', 'arrow', 'sellShare', 'plain', `data-link="${esc(link)}" data-code="${esc(me.code)}"`) : ''}${smallBtn('My QR card', 'qr', 'sellCard', 'plain', `data-code="${esc(me.code)}" data-name="${esc(first)}"`)}</span></div>
+      <p class="help">Classmates get ${CONFIG.sellerBuyerOff}% off with your code or link. The link remembers you for 7 days. "Copy message" gives you a ready-made text for group chats.</p></section>
+    <section class="panel sellpay"><span>${ic('cash', 18)}<b>Your pay goes to</b></span>
+      <div class="qrrow"><input class="inp" id="myGcash" maxlength="40" inputmode="tel" placeholder="GCash number (or leave blank for cash)" value="${esc(me.gcash || '')}">${smallBtn('Save', 'check', 'sellGcash', 'plain')}</div>
+      <p class="help" style="margin:6px 0 0">${me.gcash ? 'Paid every Monday to this GCash number.' : 'No GCash number yet, so you get paid in cash. Add one anytime.'}</p></section>
     <section class="panel sellweek"><div class="sw-top"><span>This week</span><b class="num">${money(Math.round(cur.commission))}</b></div>
       ${goal ? `<div class="sw-bar"><i style="width:${pct}%"></i></div><p class="sw-msg">${cur.sales >= goal ? `${ic('sparkle', 16)} Goal hit! Everything this week pays <b>${CONFIG.sellerBonusRate}%</b>.` : `<b>${money(cur.sales)}</b> of ${money(goal)} · ${money(goal - cur.sales)} more and the whole week pays <b>${CONFIG.sellerBonusRate}%</b>.`}</p>` : ''}
       <div class="sw-stats"><span><b>${cur.orders}</b><small>picked up</small></span><span><b>${me.pending || 0}</b><small>on the way</small></span><span><b>${money(Math.round(unpaid))}</b><small>to be paid</small></span><span><b>${money(Math.round(paidAll))}</b><small>paid so far</small></span></div>
@@ -5549,7 +5569,7 @@ async function drawSellers(){
       <span class="acts">${smallBtn('Approve', 'check', 'sellSet', 'dark', `data-id="${a.id}" data-st="active"`)}${smallBtn('Decline', 'x', 'sellSet', 'plain', `data-id="${a.id}" data-st="declined"`)}</span></div>`).join('')}</section>` : ''}
     <section class="panel" style="margin-top:16px"><h3>${ic('cash', 18)} Payouts</h3><p class="help">Weeks run Monday to Sunday. Pay on Monday for last week, then tap <b>Paid</b>; it's added to the Log book as an expense.</p>
       ${owedRows.length ? owedRows.map(r => { const sl = byId(r.id), ok = r.amt >= CONFIG.sellerMinPayout; return `<div class="selrow"><div><b>${esc(sl.name || r.ws[0].name)}</b> <span class="tag">${esc(sl.code || r.ws[0].code)}</span>
-        <small>${r.ws.map(w => `${fmtDate(w.week, { month: 'short', day: 'numeric' })} week: ${money(+w.sales)} at ${w.rate}%${+w.welcome ? ` + ${money(+w.welcome)} bonus` : ''}`).join(' · ')}</small></div>
+        <small>${sl.gcash ? `GCash ${esc(sl.gcash)} · ` : 'Cash · '}${r.ws.map(w => `${fmtDate(w.week, { month: 'short', day: 'numeric' })} week: ${money(+w.sales)} at ${w.rate}%${+w.welcome ? ` + ${money(+w.welcome)} bonus` : ''}`).join(' · ')}</small></div>
         <span class="acts"><b class="num selamt">${cash2(r.amt)}</b>${ok ? smallBtn('Paid', 'check', 'sellPaid', 'dark', `data-id="${r.id}"`) : `<span class="tag">carries over (under ${money(CONFIG.sellerMinPayout)})</span>`}</span></div>`; }).join('') : '<p class="muted">Nothing to pay right now.</p>'}</section>
     <section class="panel" style="margin-top:16px"><h3>${ic('badge', 18)} Sellers</h3>
       ${list.filter(x => x.status !== 'pending').length ? list.filter(x => x.status !== 'pending').map(sl => { const w = thisWk.find(t => t.seller_id === sl.id), all = weeks.filter(t => t.seller_id === sl.id).reduce((t, x) => t + +x.sales, 0);
@@ -6071,7 +6091,7 @@ const ACTIONS = {
     const r = +t.dataset.r; S.fb = S.fb || {}; S.fb[stage] = { r, tags: [], comment: '', code: card.dataset.code, nick: card.dataset.nick };
     card.querySelectorAll('.fbface').forEach(b => b.classList.toggle('on', b === t)); card.classList.add('rated'); buzz(8);
     safeLS.set(fbKey(card.dataset.code, stage), 'rated');
-    $('#fbmore-' + stage).innerHTML = fbMoreHTML(stage);
+    $('#fbmore-' + stage).innerHTML = fbMoreHTML(stage) + (r >= 4 && inviteOk() ? `<div style="margin-top:14px">${sellerInviteHTML(true).replace('Get paid to share', 'Glad you love it! Get paid to share')}</div>` : '');
     try { await api.feedback(card.dataset.code, card.dataset.nick, stage, r); } catch (e) { console.warn('feedback', e); }   // the tap alone counts
   },
   fbTag: t => { const st = S.fb[t.dataset.stage]; const tg = t.dataset.t; st.tags = st.tags.includes(tg) ? st.tags.filter(x => x !== tg) : st.tags.concat([tg]);
@@ -6226,12 +6246,18 @@ const ACTIONS = {
     const a = document.createElement('a'); a.href = f.url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
   },
 
+  sellHide: t => { safeLS.set('sk_sellhide', String(Date.now())); const w = t.closest('.sellinvitewrap'); if (w) w.remove(); },
   sellApply: async () => {
     const name = $('#sName').value.trim(), sec = $('#sSec').value.trim();
     if (name.length < 2) { toast('Type your name.'); $('#sName').focus(); return; }
     if (!sec) { toast('Type your grade and section.'); $('#sSec').focus(); return; }
-    try { await api.sellerApply(name, sec, $('#sPitch').value.trim()); buzz([8, 30, 8]); toast("Applied! We'll look at it soon."); drawSellBody(); } catch (e) { toast(friendlyError(e)); }
+    try { const st = await api.sellerApply(name, sec, $('#sPitch').value.trim(), $('#sGcash').value.trim()); S.isSeller = st; buzz([8, 30, 8]);
+      if (st === 'active') { confetti(); toast("You're in! Your code is ready below. Share it anywhere."); } else toast("Applied! We'll look at it soon.");
+      drawSellBody(); } catch (e) { toast(friendlyError(e)); }
   },
+  sellMsg: async t => { const msg = `Custom stickers, pins and keychains, made by students 🎨 Use my code ${t.dataset.code} for ${CONFIG.sellerBuyerOff}% off: ${t.dataset.link}`;
+    try { await navigator.clipboard.writeText(msg); toast('Message copied. Paste it in your group chats!'); } catch { toast(msg); } },
+  sellGcash: async () => { try { await api.sellerSetGcash($('#myGcash').value.trim()); toast('Saved.'); drawSellBody(); } catch (e) { toast(friendlyError(e)); } },
   sellCopy: async t => { try { await navigator.clipboard.writeText(t.dataset.link); toast('Link copied. Paste it in your group chats!'); } catch { toast(t.dataset.link); } },
   sellShare: async t => { try { await navigator.share({ title: CONFIG.shopName, text: `Custom stickers, pins and keychains! Use my code ${t.dataset.code} for ${CONFIG.sellerBuyerOff}% off:`, url: t.dataset.link }); } catch {} },
   sellCard: async t => { try { const c = await sellerCard(t.dataset.code, t.dataset.name); c.toBlob(b => saveBlob(b, `my-code-${t.dataset.code}.png`), 'image/png'); toast('Saved! Post it on your story or print it.'); } catch (e) { toast(e.message || friendlyError(e)); } },
