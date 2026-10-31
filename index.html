@@ -1549,6 +1549,28 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .donesum b.num{font-size:26px;line-height:1.1}
 .oprice{font-size:21px;color:#1E8E4A;white-space:nowrap;margin-left:auto}
 /* Stick2It Sellers */
+/* Settings: folding sections, sidebar on computers, jump menu on phones */
+#admBody.setgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:0;align-items:start}
+.setnav{position:sticky;top:0;z-index:5;background:var(--bg,#F1F3F8);padding:8px 0 10px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center}
+.setnav .setlist{display:none}.setnav #setAll{grid-column:1/-1;justify-self:end;font-size:13px}
+.cfold{margin-top:12px!important}
+.cfold > :first-child{cursor:pointer;position:relative;padding-right:30px;user-select:none}
+.cfold > :first-child::after{content:"";position:absolute;right:4px;top:50%;width:9px;height:9px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:translateY(-70%) rotate(45deg);transition:transform .2s;opacity:.6}
+.cfold.open > :first-child::after{transform:translateY(-30%) rotate(-135deg)}
+.cfold:not(.open) > :not(:first-child){display:none!important}
+.cfold.nomatch{display:none!important}
+.cfgsec.cfold{border:1.5px solid var(--line);border-radius:16px;padding:12px 14px;background:#fff}
+.cfgsec.cfold > .sub{margin:0}
+@media(min-width:1000px){
+  #admBody.setgrid{grid-template-columns:230px minmax(0,1fr);column-gap:24px}
+  #admBody.setgrid > *{grid-column:2}
+  #admBody.setgrid > .setnav{grid-column:1;grid-row:1/span 60;top:12px;display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:0;max-height:calc(100vh - 24px);overflow:auto}
+  .setnav #setJump{display:none}
+  .setnav .setlist{display:flex;flex-direction:column;gap:2px}
+  .setnav .setlist button{font:inherit;font-size:14px;text-align:left;padding:7px 10px;border:0;border-radius:10px;background:none;color:var(--ink);cursor:pointer}
+  .setnav .setlist button:hover{background:#E6EAF4}.setnav .setlist button.on{font-weight:800;background:#E6EAF4}
+  .setnav #setAll{justify-self:start;align-self:flex-start}
+}
 .grpchip{display:flex;gap:8px;align-items:center;margin:0 0 12px;font-size:14px;font-weight:700;color:var(--muted)}.grpchip svg{color:#1E8E4A}.grpchip .linkbtn{font-size:13px;margin-left:auto}
 .schoolcard{border:1.5px solid var(--line);border-radius:18px;padding:14px;margin:12px 0}.schoolcard.off{opacity:.65}
 .sc-head{display:flex;gap:12px;align-items:center}.sc-head .inp{flex:1}
@@ -1581,6 +1603,11 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .sellcalc input[type=range]{width:100%;accent-color:#283971;margin:10px 0}
 .sc-out{display:flex;flex-direction:column;gap:2px;padding:14px 16px;border-radius:16px;background:#FFF6DA;border:1.5px solid #F2BC2E}
 .sc-out b{font-family:var(--display);font-size:28px;color:#283971}.sc-out span{font-size:14.5px;color:var(--muted)}
+.sc-out #scMonth{font-weight:700;color:#283971}
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));grid-auto-flow:column;gap:8px;margin-top:12px}
+.tiers span{display:flex;flex-direction:column;align-items:center;text-align:center;padding:10px 4px;border-radius:14px;border:1.5px solid var(--line);background:#fff;transition:all .2s}
+.tiers b{font-family:var(--display);font-size:22px;color:#283971}.tiers small{font-size:12px;color:var(--muted);line-height:1.3}
+.tiers span.on{background:#283971;border-color:#283971}.tiers span.on b{color:#F2BC2E}.tiers span.on small{color:#DCE3F5}
 .sellhow ol{list-style:none;padding:0;margin:10px 0 0;display:flex;flex-direction:column;gap:12px}
 .sellhow li{display:flex;gap:12px;align-items:flex-start}.sellhow li i{flex:none;font-style:normal;width:30px;height:30px;border-radius:50%;background:#F2BC2E;color:#283971;display:grid;place-items:center;font-weight:800}
 .sellfaq{margin-top:14px}.sellfaq summary{cursor:pointer;font-weight:800}.sellfaq p{font-size:15px;margin:10px 0 0}
@@ -1743,7 +1770,7 @@ const CONFIG = {
   referralOn: true,         // friend codes on/off
   referralFriendOff: 5,     // a friend's first order gets this much off
   // Stick2It Sellers (off until switched on in Settings; while on, it replaces friend codes)
-  sellersOn: false, sellersApply: true, sellerAuto: true, sellerRate: 10, sellerGoal: 500, sellerBonusRate: 15, sellerBuyerOff: 5, sellerWelcome: 10, sellersMax: 10, sellerMinPayout: 20,
+  sellersOn: false, sellersApply: true, sellerAuto: true, sellerProGoal: 1000, sellerProRate: 20, sellerRate: 5, sellerGoal: 500, sellerBonusRate: 15, sellerBuyerOff: 5, sellerWelcome: 10, sellersMax: 10, sellerMinPayout: 20,
   referralReward: 5,        // the code's owner earns this much credit when the friend picks up
   // countdowns on the home page (admin can change them). yearly: true repeats every year on that month and day
   countdowns: [{ name: 'Christmas', date: '2026-12-25', yearly: true }, { name: 'New Year', date: '2027-01-01', yearly: true },
@@ -2155,6 +2182,7 @@ function applyShopConfig(c){
   CONFIG.sellersOn = c.sellers_on === true; CONFIG.sellersApply = c.sellers_apply !== false; CONFIG.sellerAuto = c.seller_auto !== false;
   CONFIG.sellerRate = Math.max(0, Math.min(50, numOr(c.seller_rate, D.sellerRate))); CONFIG.sellerGoal = Math.max(0, numOr(c.seller_goal, D.sellerGoal));
   CONFIG.sellerBonusRate = Math.max(0, Math.min(50, numOr(c.seller_bonus_rate, D.sellerBonusRate))); CONFIG.sellerBuyerOff = Math.max(0, Math.min(30, numOr(c.seller_buyer_off, D.sellerBuyerOff)));
+  CONFIG.sellerProGoal = Math.max(0, numOr(c.seller_pro_goal, D.sellerProGoal)); CONFIG.sellerProRate = Math.max(0, Math.min(50, numOr(c.seller_pro_rate, D.sellerProRate)));
   CONFIG.sellerWelcome = Math.max(0, numOr(c.seller_welcome, D.sellerWelcome)); CONFIG.sellersMax = Math.max(0, numOr(c.sellers_max, D.sellersMax)); CONFIG.sellerMinPayout = Math.max(0, numOr(c.seller_min_payout, D.sellerMinPayout));
   CONFIG.countdowns = Array.isArray(c.countdowns) ? c.countdowns : D.countdowns;
   CONFIG.countdownsOn = typeof c.countdowns_on === 'boolean' ? c.countdowns_on : true;
@@ -4457,13 +4485,14 @@ async function drawLatest(quiet){
   const dot = $('#latestDot'); if (dot) dot.hidden = true;
 }
 async function drawAdminBody(){
+  { const ab = $('#admBody'); if (ab) ab.classList.remove('setgrid'); }   // the Settings sidebar layout only belongs to Settings
   checkLatestDot();
   if (S.admin.tab === 'latest') return drawLatest();
   if (S.admin.schoolMap === undefined) { S.admin.schoolMap = {}; api.schools().then(l => { S.admin.schoolMap = Object.fromEntries(l.map(x => [x.id, x])); if (l.length && S.admin.tab === 'orders') drawAdminBody(); }).catch(() => {}); }
   if (S.admin.tab === 'money') return drawLogbook();
   if (S.admin.tab === 'sellers') return drawSellers();
   if (S.admin.tab === 'posters') return drawPosters();
-  if (S.admin.tab === 'settings') return drawSettings();
+  if (S.admin.tab === 'settings') { const r = drawSettings(); setupSettingsNav(); return r; }
   const all = S.admin.orders, f = S.admin.filter;
   const list = all.filter(o => inFilter(o, f));
   if (f === 'ready') list.sort((a, b) => (b.arrived_at ? 1 : 0) - (a.arrived_at ? 1 : 0) || String(a.pickup_date).localeCompare(String(b.pickup_date)) || String(a.pickup_time).localeCompare(String(b.pickup_time)) || a.pickup.localeCompare(b.pickup));
@@ -4969,7 +4998,7 @@ function drawSettings(){
     pickup_weekdays: CONFIG.pickupWeekdays.slice(), pickup_times: clone(CONFIG.pickupTimes), pickup_places: CONFIG.pickupOptions.slice(),
     countdowns: clone(CONFIG.countdowns || []), countdowns_on: CONFIG.countdownsOn !== false, details: { ...(CONFIG.details || {}) }, facebook_url: CONFIG.facebookUrl, instagram_url: CONFIG.instagramUrl, tiktok_url: CONFIG.tiktokUrl, require_xu_signin: CONFIG.requireXu, product_order: CONFIG.productOrder.slice(), site_url: CONFIG.siteUrl, referral_on: CONFIG.referralOn, referral_friend_off: CONFIG.referralFriendOff, referral_reward: CONFIG.referralReward,
     sellers_on: CONFIG.sellersOn, sellers_apply: CONFIG.sellersApply, seller_auto: CONFIG.sellerAuto, seller_rate: CONFIG.sellerRate, seller_goal: CONFIG.sellerGoal, seller_bonus_rate: CONFIG.sellerBonusRate,
-    seller_buyer_off: CONFIG.sellerBuyerOff, seller_welcome: CONFIG.sellerWelcome, sellers_max: CONFIG.sellersMax, seller_min_payout: CONFIG.sellerMinPayout, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
+    seller_pro_goal: CONFIG.sellerProGoal, seller_pro_rate: CONFIG.sellerProRate, seller_buyer_off: CONFIG.sellerBuyerOff, seller_welcome: CONFIG.sellerWelcome, sellers_max: CONFIG.sellersMax, seller_min_payout: CONFIG.sellerMinPayout, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
     print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, pin_gap_mm: CONFIG.pinGapMm, kc_gap_mm: CONFIG.kcGapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, feedback_on: CONFIG.feedbackOn, rush_on: CONFIG.rushOn, rush_make: CONFIG.rushMake, rush_cutoff_hour: CONFIG.rushCutoff, max_rush_per_day: CONFIG.maxRushPerDay, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
@@ -4992,6 +5021,7 @@ function drawSettings(){
 
 function drawProducts(){
   const D = S.admin.prodDraft;
+  if (!$('#prodForm')) return;   // left Settings before this part finished loading
   $('#prodForm').innerHTML = `<h3 style="margin-bottom:6px">Products and prices</h3>
     <p class="help" style="margin-bottom:16px">Use ▲ ▼ to change the order customers see. Turn things on when you're ready to sell them. Changes show up for customers after you save. Orders already placed keep their price.</p>
     ${(S.admin.prodOrder || productKeys()).map((key, oi, all) => { const p = D[key]; return `<fieldset class="prod ${p.enabled ? '' : 'off'}">
@@ -5040,6 +5070,7 @@ const to24 = t => { const m = String(t).match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i); i
 const to12 = v => { const [h, m] = String(v || '12:00').split(':').map(Number); return `${(h % 12) || 12}:${pad2(m || 0)} ${h >= 12 ? 'PM' : 'AM'}`; };
 function drawShopForm(){
   const c = S.admin.cfg, n = (path, val, min = 0, max = 999, extra = '') => `<input class="inp num" type="number" min="${min}" max="${max}" data-cfg="${path}" value="${val}" ${extra}>`;
+  if (!$('#shopForm')) return;   // left Settings before this part finished loading
   $('#shopForm').innerHTML = `<h3 style="margin-bottom:6px">Shop details</h3>
     <p class="help" style="margin-bottom:16px">Pickup schedule, payment, limits, and sizes. Customers see changes after you save.</p>
 
@@ -5112,9 +5143,11 @@ function drawShopForm(){
       <label class="switch" style="margin-bottom:8px"><input type="checkbox" data-cfgbool="sellers_apply" ${c.sellers_apply !== false ? 'checked' : ''}><span>Open for new applications</span></label>
       <label class="switch" style="margin-bottom:10px"><input type="checkbox" data-cfgbool="seller_auto" ${c.seller_auto !== false ? 'checked' : ''}><span>Approve new sellers instantly (they get their code right away, while there's room). Off: you approve each one.</span></label>
       <div class="pgrid2">
-        <label class="dnum"><span>Seller earns (% of each picked-up order)</span>${n('seller_rate', c.seller_rate, 0, 50)}</label>
-        <label class="dnum"><span>Weekly goal (₱ of picked-up orders)</span>${n('seller_goal', c.seller_goal, 0, 100000)}</label>
-        <label class="dnum"><span>Rate for the whole week once the goal is hit (%)</span>${n('seller_bonus_rate', c.seller_bonus_rate, 0, 50)}</label>
+        <label class="dnum"><span>Starter rate, every week (%)</span>${n('seller_rate', c.seller_rate, 0, 50)}</label>
+        <label class="dnum"><span>Goal (₱ of picked-up orders in a week)</span>${n('seller_goal', c.seller_goal, 0, 100000)}</label>
+        <label class="dnum"><span>Rate for the whole week at the goal (%)</span>${n('seller_bonus_rate', c.seller_bonus_rate, 0, 50)}</label>
+        <label class="dnum"><span>Top goal (₱ in a week, 0 = none)</span>${n('seller_pro_goal', c.seller_pro_goal, 0, 100000)}</label>
+        <label class="dnum"><span>Rate for the whole week at the top goal (%)</span>${n('seller_pro_rate', c.seller_pro_rate, 0, 50)}</label>
         <label class="dnum"><span>Customer gets (% off with a seller's code)</span>${n('seller_buyer_off', c.seller_buyer_off, 0, 30)}</label>
         <label class="dnum"><span>Welcome bonus on a seller's first sale (₱)</span>${n('seller_welcome', c.seller_welcome, 0, 500)}</label>
         <label class="dnum"><span>Most sellers at once (0 = no limit)</span>${n('sellers_max', c.sellers_max, 0, 200)}</label>
@@ -5234,6 +5267,7 @@ async function loadTelegram(){
 }
 function drawTelegram(){
   const t = S.admin.tg, ready = t.bot_token && t.chat_id;
+  if (!$('#tgForm')) return;   // left Settings before this part finished loading
   $('#tgForm').innerHTML = `<div class="tghead"><h3>Telegram alerts</h3><span class="tag ${t.enabled && ready ? 'ok' : ''}">${t.enabled && ready ? `${ic('check', 14)}On` : 'Off'}</span></div>
     <p class="help" style="margin-bottom:14px">Get a Telegram message the moment there's a new order or a customer taps "I'm here". Works even with this page closed and your phone locked.</p>
     <details class="tgsteps" ${ready ? '' : 'open'}><summary>How to set it up (5 minutes)</summary>
@@ -5275,6 +5309,7 @@ function drawNoticeForm(){
   const nt = { ...CONFIG.notice }, active = S.admin.orders.filter(o => ACTIVE.includes(o.status) && o.pickup_date);
   const days = [...new Set(active.map(o => o.pickup_date))].sort();
   const short = v => fmtDate(v, { weekday: 'short', month: 'short', day: 'numeric' });
+  if (!$('#noticeForm')) return;   // left Settings before this part finished loading
   $('#noticeForm').innerHTML = `<h3 style="margin-bottom:6px">Notice to customers</h3>
     <p class="help" style="margin-bottom:14px">A message at the top of every customer page. Use it for class suspensions, a moved pickup, or a holiday break.</p>
     <label class="switch" style="margin-bottom:12px"><input type="checkbox" id="ntOn" ${nt.on ? 'checked' : ''}><span>Show the notice</span></label>
@@ -5306,6 +5341,7 @@ function drawDeals(){
   const D = S.admin.dealDraft, keys = Object.keys(CONFIG.products);
   const prodSel = (d, i) => `<select class="inp" data-di="${i}" data-f="product" aria-label="Product">${keys.map(k => `<option value="${k}" ${d.product === k ? 'selected' : ''}>${esc(CONFIG.products[k].name)}</option>`).join('')}</select>`;
   const num = (d, i, f, label, pre = '') => `<label class="dnum"><span>${label}</span><span class="${pre ? 'pricein' : ''}"><input class="inp num" type="number" min="1" step="1" data-di="${i}" data-f="${f}" value="${d[f] ?? ''}"></span></label>`;
+  if (!$('#dealForm')) return;   // left Settings before this part finished loading
   $('#dealForm').innerHTML = `<h3 style="margin-bottom:6px">Deals</h3>
     <p class="help" style="margin-bottom:16px">Deals apply by themselves when a customer's order qualifies. If two deals fit the same product, the customer gets the bigger one. Combos add on top.</p>
     ${D.length ? D.map((d, i) => `<fieldset class="prod ${d.enabled ? '' : 'off'}">
@@ -5376,10 +5412,53 @@ async function drawSchools(){
       <div class="acts">${smallBtn('Save', 'check', 'schoolSave', 'dark', `data-sid="${sc.id}"`)}${smallBtn('Copy link', 'copy', 'schoolCopy', 'plain', `data-sid="${sc.id}"`)}${smallBtn('New code', 'refresh', 'schoolNewCode', 'plain', `data-sid="${sc.id}"`)}${smallBtn('', 'trash', 'schoolDel', 'plain', `data-sid="${sc.id}" aria-label="Delete ${esc(sc.name || 'school')}"`)}</div></div>`).join('')}
     ${smallBtn('Add a school', 'plus', 'schoolAdd', 'plain')}`;
 }
+/* Settings: every section folds to its title; a sidebar (computer) or a "Jump to" menu (phone) and a search box get you anywhere fast */
+function setupSettingsNav(){
+  const body = $('#admBody'); if (!body) return;
+  body.classList.add('setgrid');
+  const open = new Set(JSON.parse(sessionStorage.getItem('sk_setopen') || '[]'));
+  const nav = document.createElement('nav'); nav.className = 'setnav'; nav.setAttribute('aria-label', 'Settings sections');
+  nav.innerHTML = `<input class="inp" id="setFind" type="search" placeholder="Find a setting" aria-label="Find a setting">
+    <select class="inp" id="setJump" aria-label="Jump to a section"></select><div class="setlist" id="setList"></div>
+    <button type="button" class="linkbtn" id="setAll">Open all</button>`;
+  body.prepend(nav);
+  const titleOf = el => { const t = el.classList.contains('cfgsec') ? el.querySelector(':scope > .sub') : el.querySelector('h3'); return t ? t.textContent.trim().replace(/\s+/g, ' ') : ''; };
+  // individual sections fold; a box that holds sections (like Shop details) stays open as their group heading
+  const sections = () => [...body.querySelectorAll('.cfgsec'), ...[...body.children].filter(x => !x.classList.contains('setnav') && x.id !== 'setForm' && x.matches('.panel, form') && !x.querySelector('.cfgsec'))];
+  let building = false;
+  const build = () => {
+    if (building || !document.body.contains(nav)) return; building = true;
+    const list = sections().filter(x => titleOf(x));
+    list.forEach((x, i) => { x.classList.add('cfold'); x.dataset.sec = titleOf(x); if (open.has(x.dataset.sec)) x.classList.add('open'); });
+    $('#setList').innerHTML = list.map(x => `<button type="button" data-go="${esc(x.dataset.sec)}" class="${x.classList.contains('open') ? 'on' : ''}">${esc(x.dataset.sec)}</button>`).join('');
+    $('#setJump').innerHTML = `<option value="">Jump to…</option>` + list.map(x => `<option>${esc(x.dataset.sec)}</option>`).join('');
+    building = false;
+  };
+  const save = () => sessionStorage.setItem('sk_setopen', JSON.stringify([...open]));
+  const toggle = (el, force) => { const on = force === undefined ? !el.classList.contains('open') : force; el.classList.toggle('open', on); on ? open.add(el.dataset.sec) : open.delete(el.dataset.sec); save();
+    const b = nav.querySelector(`[data-go="${CSS.escape(el.dataset.sec)}"]`); if (b) b.classList.toggle('on', on); };
+  const go = name => { const el = sections().find(x => x.dataset.sec === name); if (!el) return; toggle(el, true); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  body.addEventListener('click', e => {
+    const head = e.target.closest('.cfold > .sub, .cfold > h3, .cfold > .tghead, .cfold > :first-child');
+    if (head && !e.target.closest('input, button, select, a, label') && head.parentElement.classList.contains('cfold') && head === head.parentElement.firstElementChild) toggle(head.parentElement);
+  });
+  nav.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) go(b.dataset.go); });
+  $('#setJump').addEventListener('change', e => { if (e.target.value) go(e.target.value); e.target.value = ''; });
+  $('#setAll').addEventListener('click', () => { const all = sections().filter(x => x.classList.contains('cfold')), anyClosed = all.some(x => !x.classList.contains('open'));
+    all.forEach(x => toggle(x, anyClosed)); $('#setAll').textContent = anyClosed ? 'Close all' : 'Open all'; });
+  $('#setFind').addEventListener('input', e => { const q = e.target.value.trim().toLowerCase();
+    sections().forEach(x => { if (!x.classList.contains('cfold')) return; const hit = !q || x.textContent.toLowerCase().includes(q);
+      x.classList.toggle('nomatch', !hit); if (q && hit) x.classList.add('open'); else if (!q) x.classList.toggle('open', open.has(x.dataset.sec)); }); });
+  build();
+  // parts of Settings fill in after loading: keep the menu up to date
+  const mo = new MutationObserver(() => { if (!document.body.contains(nav)) return mo.disconnect(); clearTimeout(mo.t); mo.t = setTimeout(build, 120); });
+  mo.observe(body, { childList: true, subtree: true });
+}
 async function drawPromos(){
   const box = $('#promoPanel'); if (!box) return;
   let rows = [];
   try { rows = await api.listPromos(); } catch (e) { box.innerHTML = `<h3>Promo codes</h3><div class="formerr">${esc(friendlyError(e))}</div>`; return; }
+  if (!document.body.contains(box)) return;   // left Settings while this was loading
   const uses = c => S.admin.orders.filter(o => o.promo_code === c && !['cancelled', 'rejected'].includes(o.status)).length;
   box.innerHTML = `<h3 style="margin-bottom:6px">Promo codes</h3>
     <p class="help" style="margin-bottom:14px">Codes customers type at checkout, like for a launch week or a class rep. Only people you give the code to can use it.</p>
@@ -5459,13 +5538,17 @@ const manilaMonday = (d = new Date()) => { const t = new Date(d.toLocaleString('
 const sellerLink = code => `${CONFIG.siteUrl || location.origin + '/'}?s=${code}`;
 const AVG_ORDER = 60;
 const cash2 = n => Number.isInteger(+n) ? money(+n) : '₱' + (+n).toFixed(2);   // payouts: ₱102.10, not ₱102.1   // a typical order, for the "what could I earn" slider
-function sellerEarn(sales){ const r = sales >= CONFIG.sellerGoal && CONFIG.sellerGoal > 0 ? CONFIG.sellerBonusRate : CONFIG.sellerRate; return { rate: r, amount: Math.round(sales * r) / 100 }; }
+const sellerTiers = () => [{ at: 0, rate: CONFIG.sellerRate, name: 'Starter' }, ...(CONFIG.sellerGoal > 0 ? [{ at: CONFIG.sellerGoal, rate: CONFIG.sellerBonusRate, name: 'Goal' }] : []),
+  ...(CONFIG.sellerProGoal > CONFIG.sellerGoal ? [{ at: CONFIG.sellerProGoal, rate: CONFIG.sellerProRate, name: 'Top' }] : [])];
+const topRate = () => Math.max(...sellerTiers().map(t => t.rate));
+function sellerEarn(sales){ const t = sellerTiers().filter(x => sales >= x.at).pop(); return { rate: t.rate, tier: t.name, amount: Math.round(sales * t.rate) / 100 }; }
+function nextTier(sales){ return sellerTiers().find(x => x.at > sales) || null; }
 // the invitation after ordering (and on My order)
 const inviteOk = () => CONFIG.sellersOn && CONFIG.sellersApply && !S.group && !['active', 'pending', 'paused'].includes(S.isSeller)
   && !(Date.now() - (+safeLS.get('sk_sellhide') || 0) < 30 * 864e5);
 function sellerInviteHTML(closable){
   return `<div class="sellinvitewrap">${closable ? `<button type="button" class="si-x" data-act="sellHide" aria-label="Hide this">${ic('x', 14)}</button>` : ''}<a class="sellinvite" href="#/sell"><span class="si-ic">${ic('sparkle', 22)}</span><span class="si-t"><b>Get paid to share ${esc(CONFIG.shopName)}</b>
-    <small>Earn ${CONFIG.sellerRate}% of every order your classmates pick up${CONFIG.sellerGoal ? `, ${CONFIG.sellerBonusRate}% in big weeks` : ''}. Paid every week.</small></span><span class="si-go">${ic('arrow', 18)}</span></a></div>`;
+    <small>Earn up to ${topRate()}% of every order your classmates pick up. Paid every week.</small></span><span class="si-go">${ic('arrow', 18)}</span></a></div>`;
 }
 async function viewSell(){
   document.title = `Earn with ${CONFIG.shopName}`;
@@ -5474,14 +5557,15 @@ async function viewSell(){
     <section class="sellhero">
       <span class="sh-kick">${ic('sparkle', 16)}${esc(CONFIG.shopName)} Sellers</span>
       <h1>Get paid to share the stickers your classmates already love.</h1>
-      <p>Share your code. Your classmates get <b>${CONFIG.sellerBuyerOff}% off</b>. You get paid <b>every week</b> for every order they pick up.</p>
-      <div class="sh-perks"><span><b>${CONFIG.sellerRate}%</b><small>of every order</small></span>${CONFIG.sellerGoal ? `<span><b>${CONFIG.sellerBonusRate}%</b><small>in ${money(CONFIG.sellerGoal)}+ weeks</small></span>` : ''}${CONFIG.sellerWelcome ? `<span><b>${money(CONFIG.sellerWelcome)}</b><small>first-sale bonus</small></span>` : ''}</div>
+      <p>Share your code. Your classmates get <b>${CONFIG.sellerBuyerOff}% off</b>. You earn <b>up to ${topRate()}%</b> of every order they pick up, paid <b>every week</b>.</p>
+      <div class="sh-perks"><span><b>Up to ${topRate()}%</b><small>of every order</small></span><span><b>${money(Math.round(Math.max(CONFIG.sellerGoal, CONFIG.sellerProGoal) * topRate() / 100 * 4.3 / 10) * 10)}+</b><small>a month for top sellers</small></span>${CONFIG.sellerWelcome ? `<span><b>${money(CONFIG.sellerWelcome)}</b><small>first-sale bonus</small></span>` : ''}</div>
     </section>
     <div id="sellBody">${open ? '<div class="sk" style="height:160px;border-radius:22px;margin-top:18px"></div>' : `<div class="empty" style="margin-top:18px">${ic('clock', 34)}<b>The seller programme isn't open right now.</b><span>Check back soon!</span></div>`}</div>
     ${open ? `<section class="panel sellcalc"><h3>What could you earn?</h3>
-      <label class="lab" for="sc">Orders your classmates pick up in a week: <b id="scN">8</b></label>
-      <input type="range" id="sc" min="1" max="30" value="8">
-      <div class="sc-out"><b id="scAmt"></b><span id="scNote"></span></div>
+      <label class="lab" for="sc">Orders your classmates pick up in a week: <b id="scN">12</b></label>
+      <input type="range" id="sc" min="1" max="30" value="12">
+      <div class="sc-out"><b id="scAmt"></b><span id="scMonth"></span><span id="scNote"></span></div>
+      <div class="tiers" id="scTiers">${sellerTiers().map(t => `<span data-at="${t.at}"><b>${t.rate}%</b><small>${t.name}${t.at ? `<br>${money(t.at)}+ week` : '<br>every week'}</small></span>`).join('')}</div>
       <p class="help">Based on a typical ${money(AVG_ORDER)} order. Pickups only: orders that are cancelled or never picked up don't count.</p></section>
     <section class="panel sellhow"><h3>How it works</h3><ol>
       <li><i>1</i><span><b>Apply with your XU account.</b> Takes a minute. We'll approve you soon after.</span></li>
@@ -5490,11 +5574,13 @@ async function viewSell(){
       <details class="sellfaq"><summary>Questions</summary>
         <p><b>Do I have to handle money or stickers?</b> No. Classmates order on the site and pay at pickup like normal. You just share.</p>
         <p><b>What counts?</b> Orders with your code or link that get picked up and paid. Your own orders don't count.</p>
-        <p><b>Is there a quota?</b> No pressure: hit ${money(CONFIG.sellerGoal)} in a week and that whole week pays ${CONFIG.sellerBonusRate}% instead of ${CONFIG.sellerRate}%. If you go 3 weeks with no sales, your spot is paused so someone else can try; just message us to come back.</p>
+        <p><b>Is there a quota?</b> There's a weekly goal, but you're always paid: every week earns at least ${CONFIG.sellerRate}%. Reach ${money(CONFIG.sellerGoal)} and the whole week pays ${CONFIG.sellerBonusRate}%${CONFIG.sellerProGoal > CONFIG.sellerGoal ? `; reach ${money(CONFIG.sellerProGoal)} and it all pays ${CONFIG.sellerProRate}%` : ''}. If you go 3 weeks with no sales, your spot is paused so someone else can try; just message us to come back.</p>
         <p><b>When do I get paid?</b> Every Monday. Under ${money(CONFIG.sellerMinPayout)} carries over to the next week.</p></details></section>` : ''}
   </main>`;
-  const sc = $('#sc'); if (sc) { const upd = () => { const n = +sc.value, e = sellerEarn(n * AVG_ORDER); $('#scN').textContent = n;
-      $('#scAmt').textContent = `about ${money(Math.round(e.amount))} a week`; $('#scNote').textContent = e.rate > CONFIG.sellerRate ? `That's a ${money(CONFIG.sellerGoal)}+ week: everything pays ${e.rate}%!` : CONFIG.sellerGoal ? `${money(Math.max(0, CONFIG.sellerGoal - n * AVG_ORDER))} more in orders and the whole week pays ${CONFIG.sellerBonusRate}%.` : ''; };
+  const sc = $('#sc'); if (sc) { const upd = () => { const n = +sc.value, sales = n * AVG_ORDER, e = sellerEarn(sales), nx = nextTier(sales); $('#scN').textContent = n;
+      $('#scAmt').textContent = `${money(Math.round(e.amount))} a week`; $('#scMonth').textContent = `That's about ${money(Math.round(e.amount * 4.3 / 10) * 10)} a month.`;
+      $('#scNote').textContent = nx ? `${money(nx.at - sales)} more in orders that week and everything pays ${nx.rate}%.` : `Top level: every order that week pays ${e.rate}%!`;
+      const cur = sellerTiers().filter(t => t.at <= sales).pop().at; document.querySelectorAll('#scTiers span').forEach(x => x.classList.toggle('on', +x.dataset.at === cur)); };
     sc.addEventListener('input', upd); upd(); }
   if (open) drawSellBody();
 }
@@ -5518,7 +5604,7 @@ async function drawSellBody(){
   const pg = document.querySelector('.sellpage'); if (pg) pg.classList.add('is-seller');
   const wk = manilaMonday(), weeks = me.weeks || [], cur = weeks.find(w => w.week === wk) || { sales: 0, orders: 0, commission: 0, rate: CONFIG.sellerRate };
   const unpaid = weeks.filter(w => !w.paid && w.week < wk).reduce((t, w) => t + +w.commission, 0), paidAll = weeks.filter(w => w.paid).reduce((t, w) => t + +w.commission, 0);
-  const goal = CONFIG.sellerGoal, pct = goal ? Math.min(100, Math.round(cur.sales / goal * 100)) : 100, link = sellerLink(me.code), first = (me.name || '').split(' ')[0];
+  const link = sellerLink(me.code), first = (me.name || '').split(' ')[0];
   box.innerHTML = `
     <section class="panel sellcode"><span class="sc-k">Your seller code</span><b class="sc-code">${esc(me.code)}</b>
       <span class="sc-link">${esc(link.replace(/^https?:\/\//, ''))}</span>
@@ -5528,7 +5614,8 @@ async function drawSellBody(){
       <div class="qrrow"><input class="inp" id="myGcash" maxlength="40" inputmode="tel" placeholder="GCash number (or leave blank for cash)" value="${esc(me.gcash || '')}">${smallBtn('Save', 'check', 'sellGcash', 'plain')}</div>
       <p class="help" style="margin:6px 0 0">${me.gcash ? 'Paid every Monday to this GCash number.' : 'No GCash number yet, so you get paid in cash. Add one anytime.'}</p></section>
     <section class="panel sellweek"><div class="sw-top"><span>This week</span><b class="num">${money(Math.round(cur.commission))}</b></div>
-      ${goal ? `<div class="sw-bar"><i style="width:${pct}%"></i></div><p class="sw-msg">${cur.sales >= goal ? `${ic('sparkle', 16)} Goal hit! Everything this week pays <b>${CONFIG.sellerBonusRate}%</b>.` : `<b>${money(cur.sales)}</b> of ${money(goal)} · ${money(goal - cur.sales)} more and the whole week pays <b>${CONFIG.sellerBonusRate}%</b>.`}</p>` : ''}
+      ${(() => { const nx = nextTier(+cur.sales), now = sellerEarn(+cur.sales); if (!nx) return `<div class="sw-bar"><i style="width:100%"></i></div><p class="sw-msg">${ic('sparkle', 16)} Top level! Everything this week pays <b>${now.rate}%</b>.</p>`;
+        return `<div class="sw-bar"><i style="width:${Math.min(100, Math.round(cur.sales / nx.at * 100))}%"></i></div><p class="sw-msg"><b>${money(+cur.sales)}</b> of ${money(nx.at)} · ${money(nx.at - cur.sales)} more and the whole week pays <b>${nx.rate}%</b>${now.rate > CONFIG.sellerRate ? ` (you're at ${now.rate}% now)` : ''}.</p>`; })()}
       <div class="sw-stats"><span><b>${cur.orders}</b><small>picked up</small></span><span><b>${me.pending || 0}</b><small>on the way</small></span><span><b>${money(Math.round(unpaid))}</b><small>to be paid</small></span><span><b>${money(Math.round(paidAll))}</b><small>paid so far</small></span></div>
       ${!weeks.length && CONFIG.sellerWelcome ? `<p class="help">${ic('sparkle', 14)} Your first picked-up sale also earns a ${money(CONFIG.sellerWelcome)} welcome bonus.</p>` : ''}</section>
     ${(me.board || []).length ? `<section class="panel sellboard"><h3>${ic('sparkle', 18)}Top sellers this week</h3><ol>${me.board.map((r, i) => `<li class="${r.me ? 'me' : ''}"><i>${i + 1}</i><span>${esc(r.name)}${r.me ? ' (you)' : ''}</span><b>${r.orders} order${r.orders === 1 ? '' : 's'}</b></li>`).join('')}</ol></section>` : ''}

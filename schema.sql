@@ -1097,6 +1097,48 @@ end $$;
 drop trigger if exists log_orders on public.orders;
 create trigger log_orders after insert or update on public.orders for each row execute function public.log_orders();
 
+
+-- plain-words summary of a settings change, for the Latest tab
+create or replace function public.cfg_val(v jsonb) returns text language sql immutable as $$
+  select case jsonb_typeof(v) when 'boolean' then case when v::text = 'true' then 'on' else 'off' end
+    when 'number' then v::text when 'string' then case when char_length(v #>> '{}') <= 30 then '"' || (v #>> '{}') || '"' else 'new text' end
+    when 'null' then 'empty' else null end
+$$;
+create or replace function public.cfg_diff(o jsonb, n jsonb) returns text language sql immutable as $$
+  with names(k, label) as (values
+    ('max_per_slot','Most orders per spot'),('max_per_day','Most orders per day'),('sellers_at_pickup','People at pickup'),('lead_days','Days before free pickup'),
+    ('pickup_weekdays','Pickup days'),('pickup_times','Pickup times'),('pickup_places','Pickup places'),('no_pickup_dates','No-pickup dates'),('allow_custom_pickup','"Somewhere else in school"'),
+    ('rush_on','Rush pickup'),('rush_make','Rush fee'),('rush_cutoff_hour','Rush closes at (hour)'),('prep_hours','Prep hours for same-day prints'),('confirm_days_before','Confirm days before'),
+    ('require_xu_signin','XU sign-in required'),('gcash','GCash details'),('notice','Customer notice'),('details','Little details'),('countdowns','Countdowns'),('countdowns_on','Countdowns'),
+    ('referral_on','Friend codes'),('referral_friend_off','Friend code discount'),('referral_reward','Friend code reward'),
+    ('sellers_on','Stick2It Sellers'),('sellers_apply','Seller applications'),('seller_auto','Instant seller approval'),('seller_rate','Seller rate below goal %'),('seller_goal','Seller weekly goal'),
+    ('seller_bonus_rate','Seller rate at goal %'),('seller_pro_goal','Seller top goal'),('seller_pro_rate','Seller top rate %'),('seller_buyer_off','Seller code discount %'),('seller_welcome','Seller first-sale bonus'),
+    ('sellers_max','Most sellers'),('seller_min_payout','Smallest seller payout'),('sizes','Pin / keychain print sizes'),('pin_gap_mm','Space between pins'),('kc_gap_mm','Space between keychains'),
+    ('sticker_margin_mm','Sticker sheet edge'),('sticker_gap_mm','Space between stickers'),('poster_margin_mm','Poster margin'),('poster_overlap_mm','Poster overlap'),
+    ('facebook_url','Facebook link'),('instagram_url','Instagram link'),('tiktok_url','TikTok link'),('product_order','Product order'),('grades','Grades'),('cleanup_days','Days before pictures are deleted'))
+  select coalesce(string_agg(coalesce(nm.label, initcap(replace(k.key, '_', ' ')))
+           || coalesce(case when (o->k.key) is null and jsonb_typeof(n->k.key) = 'boolean' then ' turned ' || public.cfg_val(n->k.key)
+                when public.cfg_val(o->k.key) = 'new text' or public.cfg_val(n->k.key) = 'new text' then ': new text'
+                when public.cfg_val(o->k.key) is not null or public.cfg_val(n->k.key) is not null
+                then ' ' || coalesce(public.cfg_val(o->k.key), 'empty') || ' → ' || coalesce(public.cfg_val(n->k.key), 'empty') end, ''), ' · ' order by k.key), 'settings')
+  from (select distinct key from (select jsonb_object_keys(coalesce(o, '{}')) as key union select jsonb_object_keys(coalesce(n, '{}'))) x) k
+  left join names nm on nm.k = k.key
+  where (o->k.key) is distinct from (n->k.key) and k.key !~ '(_rule|_done|_v[0-9]+)$'
+$$;
+create or replace function public.products_diff(o jsonb, n jsonb) returns text language sql immutable as $$
+  select coalesce(string_agg(initcap(k.key) || case
+           when coalesce((o->k.key->>'enabled')::boolean, false) is distinct from coalesce((n->k.key->>'enabled')::boolean, false)
+             then case when coalesce((n->k.key->>'enabled')::boolean, false) then ' turned on' else ' turned off' end
+           when (o->k.key->'sizes') is distinct from (n->k.key->'sizes')
+             then coalesce(': ' || (select string_agg(coalesce('₱' || (os.value->>'price'), '?') || ' → ₱' || (ns.value->>'price'), ', ')
+                  from jsonb_array_elements(coalesce(n->k.key->'sizes', '[]')) ns
+                  left join jsonb_array_elements(coalesce(o->k.key->'sizes', '[]')) os on os.value->>'id' = ns.value->>'id'
+                  where (os.value->>'price') is distinct from (ns.value->>'price')), ' sizes changed')
+           else ' changed' end, ' · ' order by k.key), 'products')
+  from (select distinct key from (select jsonb_object_keys(coalesce(o, '{}')) as key union select jsonb_object_keys(coalesce(n, '{}'))) x) k
+  where (o->k.key) is distinct from (n->k.key)
+$$;
+
 create or replace function public.log_changes() returns trigger
 language plpgsql security definer set search_path = public as $$
 declare who text := public.log_actor(); what text;
@@ -1108,7 +1150,10 @@ begin
       case when new.config is distinct from old.config then 'shop details' end,
       case when new.signal_verb is distinct from old.signal_verb or new.signal_item is distinct from old.signal_item then 'the pickup signal' end,
       case when new.max_sheets is distinct from old.max_sheets or new.max_noshows is distinct from old.max_noshows then 'limits' end);
-    if coalesce(what, '') <> '' then insert into public.activity (actor, kind, text) values (who, 'settings', 'Changed ' || what); end if;
+    -- say what actually changed: setting names in plain words, with old -> new for simple values
+    if new.config is distinct from old.config then what := replace(what, 'shop details', 'shop details (' || public.cfg_diff(old.config, new.config) || ')'); end if;
+    if new.products is distinct from old.products then what := replace(what, 'products and prices', 'products (' || public.products_diff(old.products, new.products) || ')'); end if;
+    if coalesce(what, '') <> '' then insert into public.activity (actor, kind, text) values (who, 'settings', left('Changed ' || what, 600)); end if;
   elsif tg_table_name = 'promo_codes' then
     insert into public.activity (actor, kind, text) values (who, 'promo',
       case tg_op when 'INSERT' then 'Added promo code ' || new.code when 'DELETE' then 'Removed promo code ' || old.code
@@ -1358,8 +1403,9 @@ create or replace function public.seller_weeks() returns table (
   seller_id uuid, code text, name text, week date, orders int, sales numeric, rate numeric, commission numeric, welcome numeric, paid boolean)
 language plpgsql stable security definer set search_path = public as $$
 declare c jsonb := (select config from public.shop_settings where id = 1);
-  r numeric := coalesce((c->>'seller_rate')::numeric, 10); g numeric := coalesce((c->>'seller_goal')::numeric, 500);
+  r numeric := coalesce((c->>'seller_rate')::numeric, 5); g numeric := coalesce((c->>'seller_goal')::numeric, 500);
   b numeric := coalesce((c->>'seller_bonus_rate')::numeric, 15); w numeric := coalesce((c->>'seller_welcome')::numeric, 10);
+  pg numeric := coalesce((c->>'seller_pro_goal')::numeric, 1000); pr numeric := coalesce((c->>'seller_pro_rate')::numeric, 20);
   me text := lower(coalesce(auth.jwt()->>'email', '')); adm boolean := public.is_admin();
 begin
   if not adm and me = '' then return; end if;
@@ -1371,8 +1417,8 @@ begin
     where adm or sl.email = me
     group by 1, 2, 3, 4)
   select wk.id, wk.code, wk.name, wk.week, wk.n, wk.sales,
-         case when wk.sales >= g then b else r end,
-         round(wk.sales * (case when wk.sales >= g then b else r end) / 100.0
+         case when pg > 0 and wk.sales >= pg then pr when wk.sales >= g then b else r end,
+         round(wk.sales * (case when pg > 0 and wk.sales >= pg then pr when wk.sales >= g then b else r end) / 100.0
                + case when wk.week = min(wk.week) over (partition by wk.id) then w else 0 end, 2),
          case when wk.week = min(wk.week) over (partition by wk.id) then w else 0 end,
          exists (select 1 from public.seller_payouts p where p.seller_id = wk.id and p.week = wk.week)
@@ -1498,3 +1544,9 @@ language sql stable security definer set search_path = public as $$
     and jsonb_array_length(spots) > 0;
 $$;
 grant execute on function public.group_check(text) to anon, authenticated;
+
+
+-- Oct 2026: sellers earn on three levels (5% every week, 15% in ₱500+ weeks, 20% in ₱1,000+ weeks). Set once.
+update public.shop_settings
+   set config = coalesce(config, '{}'::jsonb) || '{"seller_rate": 5, "seller_goal": 500, "seller_bonus_rate": 15, "seller_pro_goal": 1000, "seller_pro_rate": 20, "seller_tiers_v2": true}'::jsonb
+ where id = 1 and coalesce(config->>'seller_tiers_v2', '') <> 'true';
