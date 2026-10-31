@@ -183,6 +183,21 @@ create policy "admins edit settings" on public.shop_settings
 -- ---------------------------------------------------------------------
 
 -- =====================================================================
+-- Other schools ("group pickup"): a private code lets people from another school order, with their own
+-- meetup spots and hand-off days. The code is the only way in; nothing about it shows on the public site.
+-- =====================================================================
+create table if not exists public.schools (
+  id uuid primary key default gen_random_uuid(),
+  name text not null default '' check (char_length(name) <= 60),
+  code text not null unique check (code ~ '^[A-Z0-9]{4,12}$'),
+  spots jsonb not null default '[]'::jsonb,
+  days int[] not null default '{0,1,2,3,4,5,6}',
+  enabled boolean not null default true,
+  created_at timestamptz not null default now()
+);
+alter table public.orders add column if not exists school_id uuid;
+
+-- =====================================================================
 -- Stick2It Sellers: students share their code or link; they earn a commission on picked-up orders.
 -- (The table is defined here, before place_order uses it. Everything else for sellers is at the end of the file.)
 -- =====================================================================
@@ -203,6 +218,7 @@ drop function if exists public.place_order(text,text,text,text,text,jsonb,text,t
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text,text);
+drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text,text,text);
 alter table public.orders add column if not exists seller_code text;   -- the seller who referred this order (Stick2It Sellers)
 -- Friend codes: one per customer (name + section). A first-time customer using one gets money off;
 -- the owner earns credit when that order is picked up, used up automatically on their next order.
@@ -230,14 +246,14 @@ begin
   v_sellers := coalesce((s.config->>'sellers_at_pickup')::int, 1);
   v_slot := coalesce((s.config->>'max_per_slot')::int, 5);
   v_day := coalesce((s.config->>'max_per_day')::int, 15);
-  if v_day > 0 and (select count(*) from public.orders where pickup_date = p_date and status in ('pending','approved','printing','ready')
+  if v_day > 0 and (select count(*) from public.orders where school_id is null and pickup_date = p_date and status in ('pending','approved','printing','ready')
                     and code is distinct from p_skip_code) >= v_day then raise exception 'DAY_FULL'; end if;
   -- the limit is per spot at each time: Gate 4 at lunch can have v_slot orders, Gate 1 at lunch another v_slot
-  if v_slot > 0 and (select count(*) from public.orders where pickup_date = p_date and pickup_time = trim(p_time) and pickup = trim(p_pickup)
+  if v_slot > 0 and (select count(*) from public.orders where school_id is null and pickup_date = p_date and pickup_time = trim(p_time) and pickup = trim(p_pickup)
                      and status in ('pending','approved','printing','ready') and code is distinct from p_skip_code) >= v_slot then raise exception 'SLOT_FULL'; end if;
-  if v_sellers > 0 and not exists (select 1 from public.orders where pickup_date = p_date and pickup_time = trim(p_time) and pickup = trim(p_pickup)
+  if v_sellers > 0 and not exists (select 1 from public.orders where school_id is null and pickup_date = p_date and pickup_time = trim(p_time) and pickup = trim(p_pickup)
                                    and status in ('pending','approved','printing','ready') and code is distinct from p_skip_code) then
-    select count(distinct pickup) into v_gates from public.orders where pickup_date = p_date and pickup_time = trim(p_time)
+    select count(distinct pickup) into v_gates from public.orders where school_id is null and pickup_date = p_date and pickup_time = trim(p_time)
       and status in ('pending','approved','printing','ready') and code is distinct from p_skip_code;
     if v_gates >= v_sellers then raise exception 'GATE_TAKEN'; end if;
   end if;
@@ -249,7 +265,7 @@ create or replace function public.pickup_availability(p_from date, p_to date)
 returns table (pickup_date date, pickup_time text, pickup text, n int)
 language sql stable security definer set search_path = public as $$
   select o.pickup_date, o.pickup_time, o.pickup, count(*)::int from public.orders o
-  where o.pickup_date between p_from and least(p_to, p_from + 60) and o.status in ('pending','approved','printing','ready')
+  where o.pickup_date between p_from and least(p_to, p_from + 60) and o.status in ('pending','approved','printing','ready') and o.school_id is null
   group by 1, 2, 3
 $$;
 grant execute on function public.pickup_availability(date, date) to anon, authenticated;
@@ -257,7 +273,7 @@ grant execute on function public.pickup_availability(date, date) to anon, authen
 create or replace function public.place_order(
   p_nickname text, p_grade_section text, p_pickup text, p_payment text,
   p_gcash_ref text, p_layout jsonb, p_folder text, p_src text, p_pickup_date date, p_pickup_time text,
-  p_promo_code text default null, p_add_to text default null, p_seller text default null
+  p_promo_code text default null, p_add_to text default null, p_seller text default null, p_school text default null
 ) returns text
 language plpgsql security definer set search_path = public as $$
 declare
@@ -267,6 +283,7 @@ declare
   v_item jsonb; v_prod jsonb; v_size jsonb; v_addon jsonb; v_addon_id text;
   v_units int; v_unit int; v_total int := 0; v_count int := 0; v_maxq int;
   v_friend public.friends; v_fcode text; v_credit int := 0; v_fon boolean; v_seller public.sellers; v_scode text; v_son boolean;
+  v_school public.schools; v_school_id uuid;
   v_email text := lower(coalesce(auth.jwt()->>'email', '')); v_xu boolean;
   v_tiles int; v_pages int; v_has_prints boolean := false; v_only_prints boolean := true;
   v_today date := (now() at time zone 'Asia/Manila')::date; v_next date; v_rush int := 0; v_tm text[]; v_mins int;
@@ -302,6 +319,16 @@ begin
      or jsonb_typeof(p_layout->'items') is distinct from 'array'
      or jsonb_array_length(p_layout->'items') < 1 or jsonb_array_length(p_layout->'items') > 10 then
     raise exception 'BAD_INPUT';
+  end if;
+
+  -- Other schools: a valid group code; one of that school's spots; one of its hand-off days, at least 2 days from today
+  if v_parent.id is not null then v_school_id := v_parent.school_id;
+  elsif nullif(trim(coalesce(p_school, '')), '') is not null then
+    select * into v_school from public.schools where code = upper(regexp_replace(p_school, '[^A-Za-z0-9]', '', 'g')) and enabled;
+    if not found then raise exception 'GROUP_OFF'; end if;
+    if not (v_school.spots @> to_jsonb(trim(p_pickup))) then raise exception 'BAD_PLACE'; end if;
+    if p_pickup_date < v_today + 2 or not (extract(dow from p_pickup_date)::int = any (v_school.days)) then raise exception 'BAD_DATE'; end if;
+    v_school_id := v_school.id;
   end if;
 
   -- Work out the price on the server, from the prices set in admin
@@ -465,7 +492,7 @@ begin
   -- Rush pickup for made things (stickers, pins, keychains, posters): any pickup day sooner than the free
   -- lead time (normally tomorrow) costs extra, closes at a set hour the day before, and has a daily limit.
   v_lead := coalesce((s.config->>'lead_days')::int, 2);
-  if not v_only_prints and p_pickup_date > v_today and p_pickup_date < v_today + v_lead then
+  if v_school_id is null and not v_only_prints and p_pickup_date > v_today and p_pickup_date < v_today + v_lead then
     if not coalesce((s.config->>'rush_on')::boolean, true) then raise exception 'TOO_SOON'; end if;
     if not v_admin and extract(hour from now() at time zone 'Asia/Manila') >= coalesce((s.config->>'rush_cutoff_hour')::int, 18) then
       raise exception 'RUSH_CLOSED';
@@ -516,15 +543,15 @@ begin
 
   -- XU uptown students only (when the admin switch is on): the person must be signed in with a school Google account
   v_xu := v_email like '%@my.xu.edu.ph';
-  if coalesce((s.config->>'require_xu_signin')::boolean, false) and not v_xu and not v_admin then raise exception 'XU_ONLY'; end if;
+  if coalesce((s.config->>'require_xu_signin')::boolean, false) and not v_xu and not v_admin and v_school_id is null then raise exception 'XU_ONLY'; end if;
 
   -- an add-on rides along with its order, so it doesn't take another pickup spot
-  if v_parent.id is null then perform public.check_pickup(p_pickup_date, p_pickup_time, p_pickup, null); end if;
+  if v_parent.id is null and v_school_id is null then perform public.check_pickup(p_pickup_date, p_pickup_time, p_pickup, null); end if;
 
   -- sheet_count holds the number of things in the order (sheets + pins + posters + keychains)
   insert into public.orders (code, nickname, grade_section, pickup, pickup_date, pickup_time, payment, gcash_ref,
                              layout, folder, sheet_count, total, src, subtotal, discount, promo_code, deal_labels, rush_fee, confirmed, friend_code, friend_credit_used, customer_email,
-                             add_to, admin_note, seller_code)
+                             add_to, admin_note, seller_code, school_id)
   values (v_code, trim(p_nickname), trim(p_grade_section), trim(p_pickup), p_pickup_date, trim(p_pickup_time), p_payment,
           nullif(trim(left(coalesce(p_gcash_ref, ''), 40)), ''),
           p_layout, p_folder, v_count, v_total,
@@ -535,7 +562,7 @@ begin
           -- (an admin ordering for someone counts as confirmed: they're arranging it with the person directly)
           v_admin or coalesce(v_parent.confirmed, false) or p_pickup_date - coalesce((s.config->>'confirm_days_before')::int, 1) <= v_today,
           v_fcode, v_credit, case when v_xu then v_email end,
-          v_parent.code, case when v_admin then 'Ordered for them by ' || coalesce(nullif(v_email, ''), 'an admin') end, v_scode);
+          v_parent.code, case when v_admin then 'Ordered for them by ' || coalesce(nullif(v_email, ''), 'an admin') end, v_scode, v_school_id);
   return v_code;
 end $$;
 
@@ -577,6 +604,7 @@ begin
      or length(trim(coalesce(p_time, ''))) < 3 or length(p_time) > 40 then
     raise exception 'BAD_DATE';
   end if;
+  if exists (select 1 from public.orders where code = upper(trim(p_code)) and school_id is not null) then raise exception 'GROUP_RESCHEDULE'; end if;
   select pickup into v_pick from public.orders where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname);
   -- orders not printed yet can't move into the rush window (that would skip the rush fee); prints-only orders can
   if p_date < (now() at time zone 'Asia/Manila')::date + coalesce((s.config->>'lead_days')::int, 2)
@@ -653,7 +681,7 @@ begin
     'used_up', v.max_uses is not null and v_used >= v.max_uses);
 end $$;
 
-grant execute on function public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text,text,text) to anon, authenticated;
+grant execute on function public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text,text,text,text) to anon, authenticated;
 grant execute on function public.update_my_order(text,text,text,text,text) to anon, authenticated;
 grant execute on function public.check_promo(text) to anon, authenticated;
 grant execute on function public.reschedule_order(text,text,date,text) to anon, authenticated;
@@ -1428,3 +1456,20 @@ begin
 end $$;
 revoke all on function public.seller_autopause() from public, anon;
 grant execute on function public.seller_autopause() to authenticated;
+
+
+-- =====================================================================
+-- Other schools (group pickup): admin-only table; customers only ever see a school's spots and days, and only with its code
+-- =====================================================================
+alter table public.schools enable row level security;
+drop policy if exists "admins manage schools" on public.schools;
+create policy "admins manage schools" on public.schools for all to authenticated using (public.is_admin()) with check (public.is_admin());
+grant select, insert, update, delete on public.schools to authenticated;
+
+create or replace function public.group_check(p_code text) returns json
+language sql stable security definer set search_path = public as $$
+  select json_build_object('code', code, 'spots', spots, 'days', days)
+  from public.schools where code = upper(regexp_replace(coalesce(p_code, ''), '[^A-Za-z0-9]', '', 'g')) and enabled
+    and jsonb_array_length(spots) > 0;
+$$;
+grant execute on function public.group_check(text) to anon, authenticated;

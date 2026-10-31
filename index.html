@@ -1549,6 +1549,15 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .donesum b.num{font-size:26px;line-height:1.1}
 .oprice{font-size:21px;color:#1E8E4A;white-space:nowrap;margin-left:auto}
 /* Stick2It Sellers */
+.grpchip{display:flex;gap:8px;align-items:center;margin:0 0 12px;font-size:14px;font-weight:700;color:var(--muted)}.grpchip svg{color:#1E8E4A}.grpchip .linkbtn{font-size:13px;margin-left:auto}
+.schoolcard{border:1.5px solid var(--line);border-radius:18px;padding:14px;margin:12px 0}.schoolcard.off{opacity:.65}
+.sc-head{display:flex;gap:12px;align-items:center}.sc-head .inp{flex:1}
+.schoolcard textarea.inp{width:100%;box-sizing:border-box;resize:vertical;font:inherit}
+.daypick{display:flex;flex-wrap:wrap;gap:6px}.daypick label{cursor:pointer}.daypick input{position:absolute;opacity:0;pointer-events:none}
+.daypick span{display:inline-block;padding:7px 12px;border-radius:999px;border:1.5px solid var(--line);font-weight:700;font-size:14px}.daypick input:checked + span{background:#283971;border-color:#283971;color:#fff}
+.daypick input:focus-visible + span{outline:2px solid #F2BC2E;outline-offset:2px}
+.grpcode{display:flex;flex-direction:column;gap:2px;margin:12px 0 8px;padding:10px 12px;border-radius:12px;background:#F4F7FF;word-break:break-all}.grpcode b{letter-spacing:1px;font-size:17px}
+.schoolcard .acts{display:flex;gap:8px;flex-wrap:wrap}.tag.grp{background:#EAF3FF;color:#24508F}
 .earnlink{display:inline-flex;gap:5px;align-items:center;margin-left:8px;font-weight:700;color:var(--ink);white-space:nowrap}
 .sellinvite{display:flex;gap:14px;align-items:center;padding:16px 18px;border-radius:20px;background:linear-gradient(120deg,#283971,#3a52a3);color:#fff;text-decoration:none;box-shadow:5px 5px 0 #1C2A57}
 .sellinvite .si-ic{flex:none;width:44px;height:44px;border-radius:50%;background:#F2BC2E;color:#283971;display:grid;place-items:center}
@@ -1976,6 +1985,8 @@ function friendlyError(e){
   if (m.includes('SLOT_FULL')) return 'That spot just filled up for this time. Pick another spot, time or day.';
   if (m.includes('DAY_FULL')) return 'That pickup day just filled up. Pick another day.';
   if (m.includes('XU_ONLY')) return 'Please sign in with your XU school account (@my.xu.edu.ph) to order.';
+  if (m.includes('GROUP_OFF')) return 'That group code is switched off right now.';
+  if (m.includes('GROUP_RESCHEDULE')) return 'To change the day, message us and we\'ll sort it out.';
   if (m.includes('OWN_SELLER')) return "That's your own seller code. It's for your classmates' orders, not yours.";
   if (m.includes('SELLERS_CLOSED')) return 'Seller applications are closed right now.';
   if (m.includes('SELLERS_FULL')) return 'All seller spots are taken. Pause someone first, or raise the limit in Settings.';
@@ -2411,7 +2422,7 @@ function SupaBackend(){
       }
       const layout = { items: serializeItems(p.items, pathFor) };
       const code = await rpc('place_order', { p_nickname: p.nickname, p_grade_section: p.section, p_pickup: p.pickup, p_payment: p.payment,
-        p_gcash_ref: p.gcashRef || null, p_layout: layout, p_folder: folder, p_src: p.src || null, p_pickup_date: p.pickupDate, p_pickup_time: p.pickupTime, p_promo_code: p.promo || null, p_seller: p.seller || null, p_add_to: p.addTo || null });
+        p_gcash_ref: p.gcashRef || null, p_layout: layout, p_folder: folder, p_src: p.src || null, p_pickup_date: p.pickupDate, p_pickup_time: p.pickupTime, p_promo_code: p.promo || null, p_seller: p.seller || null, p_school: p.school || null, p_add_to: p.addTo || null });
       return { code };
     },
     async getOrder(code, nick){ const d = await rpc('get_order', { p_code: code, p_nickname: nick }); if (!d) throw new Error('NOT_FOUND'); return d; },
@@ -2430,6 +2441,10 @@ function SupaBackend(){
     async logAddMany(rows){ const { error } = await sb.from('logbook').insert(rows); if (error) throw error; },
     async logUpdate(id, row){ const { error } = await sb.from('logbook').update({ ...row, updated_at: new Date().toISOString() }).eq('id', id); if (error) throw error; },
     async logDelete(id){ const { error } = await sb.from('logbook').delete().eq('id', id); if (error) throw error; },
+    async groupCheck(code){ return await rpc('group_check', { p_code: code }); },
+    async schools(){ const { data, error } = await sb.from('schools').select('*').order('created_at'); if (error) throw error; return data || []; },
+    async saveSchool(row){ const { error } = await sb.from('schools').upsert(row); if (error) throw error; },
+    async deleteSchool(id){ const { error } = await sb.from('schools').delete().eq('id', id); if (error) throw error; },
     async mySeller(){ return await rpc('my_seller', {}); },
     async sellerApply(name, section, pitch){ return await rpc('seller_apply', { p_name: name, p_section: section, p_pitch: pitch || null }); },
     async sellers(){ const { data, error } = await sb.from('sellers').select('*').order('created_at', { ascending: false }); if (error) throw error; return data || []; },
@@ -2512,7 +2527,15 @@ const TPL = (params.get('t') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').sli
 const SELLER_NEW = (params.get('s') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12);
 if (SELLER_NEW) safeLS.set('sk_seller', JSON.stringify({ c: SELLER_NEW, t: Date.now() }));
 function sellerRef(){ const v = readJSON('sk_seller'); return v && v.c && Date.now() - (+v.t || 0) < 7 * 864e5 ? String(v.c) : ''; }
-if (params.has('src') || params.has('t') || params.has('s')) { try { const q = new URLSearchParams(location.search); q.delete('src'); q.delete('t'); q.delete('s'); history.replaceState(history.state, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); } catch {} }
+// ?g=CODE turns on "group pickup" (another school's spots and days). Remembered on this phone for 30 days.
+const GROUP_NEW = (params.get('g') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12);
+if (GROUP_NEW) safeLS.set('sk_group', JSON.stringify({ c: GROUP_NEW, t: Date.now() }));
+async function loadGroup(){
+  const v = readJSON('sk_group'); if (!v || !v.c || Date.now() - (+v.t || 0) > 30 * 864e5) { safeLS.del('sk_group'); S.group = null; return; }
+  try { const g = await api.groupCheck(v.c); S.group = g ? { code: g.code, spots: g.spots || [], days: g.days || [] } : null; if (!g) safeLS.del('sk_group'); } catch { S.group = null; }
+}
+function groupDates(){ const out = []; for (let i = 2; i <= 30 && out.length < 12; i++) { const d = addDays(ymd(new Date()), i); if ((S.group.days || []).includes(parseYmd(d).getDay())) out.push(d); } return out; }
+if (params.has('src') || params.has('t') || params.has('s') || params.has('g')) { try { const q = new URLSearchParams(location.search); q.delete('src'); q.delete('t'); q.delete('s'); q.delete('g'); history.replaceState(history.state, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); } catch {} }
 async function openTemplate(){
   if (!TPL) return;
   try {
@@ -2597,6 +2620,7 @@ async function xuSignIn(){
   } catch (e) { if (w) w.close(); toast(friendlyError(e)); }
 }
 function xuBoxHTML(){
+  if (S.group) return '';   // group pickups don't use XU sign-in
   if (S.me) return `<div class="xuchip">${ic('check', 18)}<span>Signed in as <b>${esc(S.me.email)}</b></span><button type="button" class="linkbtn" data-act="xuOut">Not you?</button></div>`;
   const note = `<p class="xunote">${ic('school', 16)}<span>For <b>XU uptown</b> students (Pueblo de Oro): grade school, junior high, and senior high.</span></p>`;
   if (inAppBrowser()) return `<div class="xubox">${note}<p class="xuapp"><b>Open this page in Safari or Chrome to ${CONFIG.requireXu ? 'order' : 'sign in'}.</b> Google doesn't allow sign-in inside apps like TikTok or Facebook. Tap the <b>⋯</b> menu and choose "Open in browser", or copy the link.</p>
@@ -3755,13 +3779,15 @@ function nextSchoolDay(){ const d = new Date(); d.setHours(0, 0, 0, 0); do { d.s
 /* Rush pickup for made things: a pickup day sooner than the free lead time (normally tomorrow) */
 const freeFrom = () => addDays(ymd(new Date()), CONFIG.leadDays);
 const rushOpenNow = () => CONFIG.rushOn && new Date().getHours() < CONFIG.rushCutoff;
-const isRushMake = ds => !!ds && !printsOnly() && ds > ymd(new Date()) && ds < freeFrom();
+const isRushMake = ds => !S.group && !!ds && !printsOnly() && ds > ymd(new Date()) && ds < freeFrom();
 function rushFee(ds){
+  if (S.group) return 0;   // group pickups: no rush, the earliest day is 2 days out
   if (isRushMake(ds)) return CONFIG.rushMake;
   if (!ds || !S.cart.some(it => it.type === 'prints')) return 0;
   return ds === ymd(new Date()) ? CONFIG.rushSameDay : ds === nextSchoolDay() ? CONFIG.rushNextDay : 0;
 }
 function checkoutDates(){
+  if (S.group) return groupDates();
   if (!printsOnly()) {
     const rush = [];
     if (rushOpenNow() && !S.addTo) for (let ds = addDays(ymd(new Date()), 1); ds < freeFrom(); ds = addDays(ds, 1))
@@ -3782,6 +3808,7 @@ function checkoutDates(){
    Checkout
    ===================================================================== */
 function viewCheckout(){
+  if (S.group && !S.coStep) S.coStep = 1;
   // a seller's link: put their code in for the customer (once), unless they already have a code in
   if (CONFIG.sellersOn && !S.promo && !S.sellerTried && sellerRef()) { S.sellerTried = true;
     api.checkPromo(sellerRef()).then(r => { if (r && r.seller && !S.promo && location.hash.startsWith('#/checkout')) { S.promo = r; viewCheckoutKeep(); toast(`${r.name}'s seller code is in: ${r.value}% off.`); } }).catch(() => {}); }
@@ -3816,12 +3843,12 @@ function viewCheckout(){
         <p class="help sr" id="e-nickhelp">As on your school ID. This is how we find your order at pickup, so bring your ID.</p>
         <p class="ferr" id="e-nick" role="alert"></p></div>
       <div class="field"><span class="lab" id="l-gs">Grade and section <span class="req">*</span></span>
-        <div class="gs" role="group" aria-labelledby="l-gs">
+        ${S.group ? `<select id="grade" hidden aria-hidden="true"><option value="-" selected>-</option></select><input class="inp" id="sec" maxlength="40" autocomplete="off" placeholder="Like: Grade 8 - Rose" aria-labelledby="l-gs" value="${esc(mySec)}" aria-describedby="e-sec">` : `<div class="gs" role="group" aria-labelledby="l-gs">
           <select class="inp" id="grade" aria-label="Grade"><option value="">Grade</option>
             ${CONFIG.grades.map(g => `<option value="${g}" ${String(g) === myGrade ? 'selected' : ''}>${g}</option>`).join('')}</select>
           <span class="dash" aria-hidden="true">-</span>
           <input class="inp" id="sec" maxlength="24" autocomplete="off" placeholder="Section" aria-label="Section" value="${esc(mySec)}" aria-describedby="e-sec">
-        </div>
+        </div>`}
         <p class="ferr" id="e-sec" role="alert"></p></div>
       <div class="hp" aria-hidden="true"><label>Leave this empty<input id="website" tabindex="-1" autocomplete="off"></label></div>
           ${btn('Next', { act: 'coNext', cls: 'wide', icon: 'arrow', attrs: 'data-s="1"' })}
@@ -3832,24 +3859,24 @@ function viewCheckout(){
         <div class="cbody">
       <fieldset><legend>When will you pick it up? <span class="req">*</span></legend>
         ${dates.map(d => `<label class="choice${isRushMake(d) ? ' rushday' : ''}"><input type="radio" name="pdate" value="${d}" ${d === (dates.find(x => !isRushMake(x)) || dates[0]) ? 'checked' : ''}>${ic('calendar', 20)}<span><b>${d === ymd(new Date()) ? 'Today, ' : d === addDays(ymd(new Date()), 1) ? 'Tomorrow, ' : ''}${fmtDate(d)}</b>${rushFee(d) ? `<small class="rushtag">${isRushMake(d) ? 'Rush pickup' : 'Rush'}, +${money(rushFee(d))}</small>` : ''}</span></label>`).join('')}
-        <p class="help">${po ? `Prints can be picked up any school day. Same-day orders need at least ${CONFIG.prepHours} hour${CONFIG.prepHours === 1 ? '' : 's'} before the pickup time.`
+        <p class="help">${S.group ? 'Pick a day for the hand-off. Orders need at least 2 days to be ready.' : po ? `Prints can be picked up any school day. Same-day orders need at least ${CONFIG.prepHours} hour${CONFIG.prepHours === 1 ? '' : 's'} before the pickup time.`
           : rushOpenNow() && CONFIG.rushMake >= 0 ? `Pick up any ${pickupDaysText()}. Need it sooner? A rush pickup is +${money(CONFIG.rushMake)} and closes at ${hourLabel(CONFIG.rushCutoff)} today. From ${esc(fmtDate(pickupDates()[0] || freeFrom(), { weekday: 'long', month: 'short', day: 'numeric' }))}, no extra fee.`
           : `Pick up any ${pickupDaysText()}. The first date gives us time to check and print your order.${CONFIG.rushOn ? ` (Rush pickups for tomorrow close at ${hourLabel(CONFIG.rushCutoff)}.)` : ''}`}</p>
       </fieldset>
 
-      <fieldset><legend>What time? <span class="req">*</span></legend>
+      ${S.group ? '<input type="radio" name="ptime" value="Any time" checked hidden>' : `<fieldset><legend>What time? <span class="req">*</span></legend>
         ${CONFIG.pickupTimes.map((t, i) => `<label class="choice"><input type="radio" name="ptime" value="${esc(timeLabel(t))}" ${i === 0 ? 'checked' : ''}>${ic('clock', 20)}<span><b>${esc(t.label)}</b><small>${esc(t.time)}</small></span></label>`).join('')}
-      </fieldset>
+      </fieldset>`}
 
       <fieldset><legend>Where? <span class="req">*</span></legend>
-        ${CONFIG.pickupOptions.map((o, i) => `<label class="choice"><input type="radio" name="pickup" value="${esc(o)}" ${i === 0 ? 'checked' : ''}>${ic('pin', 20)}<span>${esc(o)}</span></label>`).join('')}
-        ${CONFIG.allowCustomPickup ? `<label class="choice"><input type="radio" name="pickup" value="__other">${ic('school', 20)}<span>Somewhere else in school</span></label>
+        ${(S.group ? S.group.spots : CONFIG.pickupOptions).map((o, i) => `<label class="choice"><input type="radio" name="pickup" value="${esc(o)}" ${i === 0 ? 'checked' : ''}>${ic('pin', 20)}<span>${esc(o)}</span></label>`).join('')}
+        ${CONFIG.allowCustomPickup && !S.group ? `<label class="choice"><input type="radio" name="pickup" value="__other">${ic('school', 20)}<span>Somewhere else in school</span></label>
         <div id="otherBox" hidden>
           <label class="lab" for="otherPlace" style="display:block;margin:6px 0">Where in school?</label>
           <input class="inp" id="otherPlace" maxlength="80" aria-describedby="e-place">
           <p class="ferr" id="e-place" role="alert"></p>
         </div>` : ''}
-        <p class="nudge">${ic('search', 18)}At the gate, look for ${esc(signal())}.</p>
+        ${S.group ? '' : `<p class="nudge">${ic('search', 18)}At the gate, look for ${esc(signal())}.</p>`}
       </fieldset>
           ${btn('Next', { act: 'coNext', cls: 'wide', icon: 'arrow', attrs: 'data-s="2"' })}
         </div></section>
@@ -3864,7 +3891,7 @@ function viewCheckout(){
           <label class="lab" for="gref" style="display:block;margin:10px 0 6px">Reference number (optional)</label>
           <input class="inp" id="gref" maxlength="40" inputmode="numeric"></div>` : ''}
       </fieldset>
-          <details class="codebox" ${S.promo ? 'open' : ''}><summary>${CONFIG.sellersOn ? 'Have a promo or seller code?' : 'Have a promo or friend code?'}</summary>
+          ${S.group ? `<p class="grpchip">${ic('check', 15)}<span>Group pickup</span><button type="button" class="linkbtn" data-act="groupOff">Turn off</button></p>` : ''}<details class="codebox" ${S.promo ? 'open' : ''}><summary>${CONFIG.sellersOn ? 'Have a promo or seller code?' : 'Have a promo or friend code?'}</summary>
       <div class="field" style="margin:18px 0 0"><label class="lab sr" for="promo">Promo or friend code</label>
         <div class="qrrow promorow"><input class="inp" id="promo" maxlength="20" autocapitalize="characters" autocomplete="off" value="${esc(S.promo ? S.promo.code : '')}" style="text-transform:uppercase">
           ${smallBtn(S.promo ? 'Remove' : 'Apply', S.promo ? 'x' : 'check', S.promo ? 'promoRemove' : 'promoApply', 'plain')}</div>
@@ -3893,11 +3920,13 @@ function viewCheckout(){
     if ($('#e-sec').textContent) validate(false);
     const mark = (r, ok, note) => { r.disabled = !ok; const c = r.closest('.choice'); c.classList.toggle('off', !ok); if (note && !ok) c.dataset.note = note; else delete c.dataset.note; if (!ok && r.checked) r.checked = false; };
     const pickFirst = name => { if (!radio(form, name)) { const first = form.querySelector(`input[name="${name}"]:not(:disabled)`); if (first) first.checked = true; } };
+    let ds = radio(form, 'pdate');
+    if (!S.group) {   // XU pickup limits; group pickups have their own days and no limits
     // full days
     form.querySelectorAll('input[name="pdate"]').forEach(r => mark(r, !slotState(r.value).dayFull, 'Full'));
     pickFirst('pdate');
     // same-day pickups need prep time; full time slots
-    const ds = radio(form, 'pdate');
+    ds = radio(form, 'pdate');
     form.querySelectorAll('input[name="ptime"]').forEach(r => { const t = CONFIG.pickupTimes.find(x => timeLabel(x) === r.value);
       const st = slotState(ds, r.value); mark(r, (!t || timeOk(ds, t)) && !st.slotFull, st.slotFull ? 'Full' : 'Too soon'); });
     pickFirst('ptime');
@@ -3907,6 +3936,7 @@ function viewCheckout(){
       const sg = gate ? slotState(ds, ts, gate) : null, full = !!sg && sg.slotFull;
       const taken = r.value === '__other' ? CONFIG.sellersAtPickup > 0 && st2.gates.length >= CONFIG.sellersAtPickup : sg.gateTaken;
       mark(r, !taken && !full, full ? 'Full at this time' : `At this time we'll be at ${st2.gates.join(' or ')}`); });
+    }
     pickFirst('pickup');
     const dsx = S.addTo ? S.addTo.pickup_date : ds;   // an add-on uses its order's pickup
     $('#sumBox').innerHTML = checkoutSummary(dsx);
@@ -3920,7 +3950,7 @@ function viewCheckout(){
   $('#promo').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ACTIONS.promoApply(); } });
   // errors clear the moment they're fixed (while typing), so nothing moves when they tap Next
   ['nick','sec','grade','otherPlace'].forEach(id => $('#' + id) && ['input', 'change'].forEach(ev => $('#' + id).addEventListener(ev, () => { validate(false); coRender(); })));
-  form.addEventListener('submit', e => { if (CONFIG.requireXu && !S.me && !S.coAdmin) { e.preventDefault(); S.coStep = 1; coRender(); toast('Sign in with your XU account first.'); return; } if (S.coStep < 3) { e.preventDefault(); ACTIONS.coNext({ dataset: { s: String(S.coStep) } }); return; } submitOrder(e); });
+  form.addEventListener('submit', e => { if (CONFIG.requireXu && !S.group && !S.me && !S.coAdmin) { e.preventDefault(); S.coStep = 1; coRender(); toast('Sign in with your XU account first.'); return; } if (S.coStep < 3) { e.preventDefault(); ACTIONS.coNext({ dataset: { s: String(S.coStep) } }); return; } submitOrder(e); });
   checkoutAdminMode();
   if (S.addTo) {
     if (!$('#nick').value.trim()) $('#nick').value = S.addTo.nickname || '';
@@ -4040,7 +4070,7 @@ function validateFields(form, which){
   let ok = true;
   if (which.nick) ok = setErr('nick', 'e-nick', nick.length < 2 ? 'Type your full name.' : !/\S+\s+\S+/.test(nick) ? 'Type your first and last name, as on your school ID.' : '') && ok;
   if (which.sec) {
-    const msg = !grade && sec.length < 2 ? 'Pick your grade and type your section.' : !grade ? 'Pick your grade.' : sec.length < 2 ? 'Type your section.' : '';
+    const msg = S.group ? (sec.length < 2 ? 'Type your grade and section.' : '') : !grade && sec.length < 2 ? 'Pick your grade and type your section.' : !grade ? 'Pick your grade.' : sec.length < 2 ? 'Type your section.' : '';
     ok = setErr('sec', 'e-sec', msg) && ok;
     $('#grade').setAttribute('aria-invalid', grade ? 'false' : String(!!msg));
     if (grade && sec.length >= 2) $('#sec').setAttribute('aria-invalid', 'false');
@@ -4054,7 +4084,7 @@ async function submitOrder(e){
   const form = e.target; $('#formErr').textContent = '';
   if ($('#website').value) return;
   if (!validate(true)) { const bad = form.querySelector('[aria-invalid="true"]') || $('#promise'); bad.focus(); return; }
-  const nickname = $('#nick').value.trim(), section = `${$('#grade').value} - ${$('#sec').value.trim()}`;
+  const nickname = $('#nick').value.trim(), section = S.group ? $('#sec').value.trim() : `${$('#grade').value} - ${$('#sec').value.trim()}`;
   let pickup = radio(form, 'pickup'); if (pickup === '__other') pickup = 'Other: ' + $('#otherPlace').value.trim();
   let pickupDate = radio(form, 'pdate'), pickupTime = radio(form, 'ptime');
   if (S.addTo) { pickup = S.addTo.pickup; pickupDate = S.addTo.pickup_date; pickupTime = S.addTo.pickup_time; }   // same pickup as the order it adds to
@@ -4068,7 +4098,7 @@ async function submitOrder(e){
       const d = prsDoc(f.id); if (d && d.kind === 'image' && d.canvas) pages[f.id] = await renderPrintPage(f, d, (it.addons || []).includes('color'));
     }
     const uploads = S.images.concat((S.docs || []).map(d => pages[d.id] || d)).filter(i => used.has(i.id));
-    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: S.addTo ? '' : SRC, promo: S.promo && !S.promo.seller && sum.total >= S.promo.min_total ? S.promo.code : null, seller: CONFIG.sellersOn ? (S.promo && S.promo.seller ? S.promo.code : sellerRef()) || null : null, images: uploads, items: S.cart, addTo: S.addTo && S.addTo.code });
+    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: S.addTo ? '' : SRC, promo: S.promo && !S.promo.seller && sum.total >= S.promo.min_total ? S.promo.code : null, seller: CONFIG.sellersOn ? (S.promo && S.promo.seller ? S.promo.code : sellerRef()) || null : null, school: S.group ? S.group.code : null, images: uploads, items: S.cart, addTo: S.addTo && S.addTo.code });
     const addedTo = S.addTo && S.addTo.code; S.addTo = null;
     S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal, add_to: addedTo || null, for_someone: !!S.coAdmin };
     try { const real = await api.getOrder(code, nickname); if (real && real.total !== finalTotal) { S.lastOrder.total = real.total; if (real.total < finalTotal) setTimeout(() => toast(`Your friend credit took ${money(finalTotal - real.total)} off. New total: ${money(real.total)}.`), 900); } } catch {}
@@ -4416,6 +4446,7 @@ async function drawLatest(quiet){
 async function drawAdminBody(){
   checkLatestDot();
   if (S.admin.tab === 'latest') return drawLatest();
+  if (S.admin.schoolMap === undefined) { S.admin.schoolMap = {}; api.schools().then(l => { S.admin.schoolMap = Object.fromEntries(l.map(x => [x.id, x])); if (l.length && S.admin.tab === 'orders') drawAdminBody(); }).catch(() => {}); }
   if (S.admin.tab === 'money') return drawLogbook();
   if (S.admin.tab === 'sellers') return drawSellers();
   if (S.admin.tab === 'posters') return drawPosters();
@@ -4495,7 +4526,7 @@ async function drawAdminBody(){
           <div><div class="ocode">${esc(o.code)}</div><div class="muted small">Pickup ${o.pickup_date ? esc(fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' })) + (o.pickup_time ? `, ${esc(o.pickup_time)}` : '') : 'date not set'}, ordered ${fmtTime(o.created_at)}</div></div>
           ${o.status === 'done' ? `<b class="oprice num">${peso(o.total)}</b>` : `<span class="tag st ${stCls[o.status] || ''}">${ic(STATUS[o.status][0], 16)}${esc(o.status)}</span>`}</div>
         <div class="ometa">
-          <div><span><b>${esc(o.nickname)}</b>, ${esc(o.grade_section)}</span></div>
+          <div><span><b>${esc(o.nickname)}</b>, ${esc(o.grade_section)}</span>${o.school_id ? ` <span class="tag grp">${ic('school', 14)}${esc(((S.admin.schoolMap || {})[o.school_id] || {}).name || 'Other school')}</span>` : ''}</div>
           <div>${ic('pin', 18)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span></div>
           <div>${ic('cash', 18)}<span class="num">${money(o.total)}${!o.paid && o.amount_paid ? ` (paid ${money(o.amount_paid)}, owes ${money(o.total - o.amount_paid)})` : ''}, ${o.payment === 'gcash' ? `GCash${o.gcash_ref ? ` (ref ${esc(o.gcash_ref)})` : ', no ref yet'}` : 'cash'}</span></div>
           <ul class="ilist">${orderItems(o).map(it => `<li>${ic(it.type === 'stickers' ? 'sticker' : it.type === 'pins' ? 'badge' : it.type === 'posters' ? 'image' : it.type === 'prints' ? 'doc' : 'keychain', 18)}<span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `, ${esc(itemDetails(it))}` : ''}</span></li>`).join('')}</ul>
@@ -4916,8 +4947,9 @@ function drawSettings(){
   $('#admBody').insertAdjacentHTML('beforeend', `<form class="panel" id="prodForm" style="max-width:820px;margin-top:20px"></form>`);
   S.admin.prodDraft = clone(S.settings.products); S.admin.prodOrder = productKeys(); drawProducts();
   $('#admBody').insertAdjacentHTML('beforeend', `<form class="panel" id="dealForm" style="max-width:820px;margin-top:20px"></form>
-    <div class="panel" id="promoPanel" style="max-width:820px;margin-top:20px"></div>`);
-  S.admin.dealDraft = clone(S.settings.deals || []); drawDeals(); drawPromos();
+    <div class="panel" id="promoPanel" style="max-width:820px;margin-top:20px"></div>
+    <div class="panel" id="schoolPanel" style="max-width:820px;margin-top:20px"></div>`);
+  S.admin.dealDraft = clone(S.settings.deals || []); drawDeals(); drawPromos(); drawSchools();
   $('#admBody').insertAdjacentHTML('beforeend', `<form class="panel" id="tgForm" style="max-width:820px;margin-top:20px"></form><form class="panel" id="noticeForm" style="max-width:820px;margin-top:20px"></form><form class="panel" id="shopForm" style="max-width:820px;margin-top:20px"></form>`);
   drawNoticeForm(); loadTelegram();
   S.admin.cfg = {
@@ -5307,6 +5339,28 @@ function newDeal(type){
   if (type === 'combo') return { id: 'd_' + uid(), type, products: ['stickers', 'keychains'], off: 10, enabled: true };
   if (type === 'tiers') return { id: 'd_' + uid(), type, product: 'pins', tiers: [{ min: 10, off: 3 }, { min: 20, off: 5 }, { min: 30, off: 8 }, { min: 40, off: 10 }], enabled: true };
   return { id: 'd_' + uid(), type: 'freebie', product: 'pins', buy: 5, free: 1, enabled: true };
+}
+/* Other schools: a private code lets another school order, with its own meetup spots and hand-off days */
+const DAYS3 = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const groupLink = code => `${CONFIG.siteUrl || location.origin + '/'}?g=${code}`;
+const newGroupCode = () => Array.from({ length: 6 }, () => 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 31)]).join('');
+async function drawSchools(){
+  const box = $('#schoolPanel'); if (!box) return;
+  let list; try { list = await api.schools(); } catch (e) { box.innerHTML = `<h3>Other schools</h3><div class="formerr">${esc(friendlyError(e))} Run the latest schema.sql in Supabase.</div>`; return; }
+  S.admin.schoolList = list; S.admin.schoolMap = Object.fromEntries(list.map(x => [x.id, x]));
+  box.innerHTML = `<h3 style="margin-bottom:4px">${ic('school', 18)} Other schools</h3>
+    <p class="help">Lets people from another school order with a private code: their own meetup spots and hand-off days, no XU sign-in, earliest pickup 2 days after ordering. Customers only see "Group pickup", never the school's name. Their orders don't count toward your XU pickup limits.</p>
+    ${list.map(sc => `<div class="schoolcard ${sc.enabled ? '' : 'off'}" data-sid="${sc.id}">
+      <div class="sc-head"><input class="inp" data-sf="name" maxlength="60" value="${esc(sc.name)}" placeholder="School name (only you see this)" aria-label="School name">
+        <label class="switch"><input type="checkbox" data-sf="enabled" ${sc.enabled ? 'checked' : ''}><span>On</span></label></div>
+      <label class="lab" style="display:block;margin:10px 0 6px">Meetup spots, one per line</label>
+      <textarea class="inp" data-sf="spots" rows="3" placeholder="Like: Main gate">${esc((sc.spots || []).join('\n'))}</textarea>
+      <span class="lab" style="display:block;margin:10px 0 6px">Hand-off days</span>
+      <div class="daypick">${DAYS3.map((d, i) => `<label><input type="checkbox" data-sday="${i}" ${(sc.days || []).includes(i) ? 'checked' : ''}><span>${d}</span></label>`).join('')}</div>
+      <div class="grpcode"><span>Code <b>${esc(sc.code)}</b></span><span class="muted small">${esc(groupLink(sc.code).replace(/^https?:\/\//, ''))}</span></div>
+      ${!(sc.spots || []).length ? '<p class="ferr" style="margin:6px 0 0">Add at least one meetup spot. Until then, the code does nothing.</p>' : ''}
+      <div class="acts">${smallBtn('Save', 'check', 'schoolSave', 'dark', `data-sid="${sc.id}"`)}${smallBtn('Copy link', 'copy', 'schoolCopy', 'plain', `data-sid="${sc.id}"`)}${smallBtn('New code', 'refresh', 'schoolNewCode', 'plain', `data-sid="${sc.id}"`)}${smallBtn('', 'trash', 'schoolDel', 'plain', `data-sid="${sc.id}" aria-label="Delete ${esc(sc.name || 'school')}"`)}</div></div>`).join('')}
+    ${smallBtn('Add a school', 'plus', 'schoolAdd', 'plain')}`;
 }
 async function drawPromos(){
   const box = $('#promoPanel'); if (!box) return;
@@ -5825,11 +5879,34 @@ const ACTIONS = {
     if (!v) { setErr('promo', 'e-promo', 'Type a promo code first.'); return; }
     try {
       const r = await api.checkPromo(v);
-      if (!r) return setErr('promo', 'e-promo', "That code doesn't work. Check the spelling, or it may have ended.");
+      if (!r) {   // maybe a group code
+        const g = await api.groupCheck(v).catch(() => null);
+        if (g) { safeLS.set('sk_group', JSON.stringify({ c: g.code, t: Date.now() })); S.group = { code: g.code, spots: g.spots || [], days: g.days || [] }; $('#promo').value = '';
+          buzz([8, 30, 8]); toast('Group pickup is on. Your pickup choices are updated.'); S.coStep = Math.min(S.coStep || 1, 2); viewCheckoutKeep(); return; }
+        return setErr('promo', 'e-promo', "That code doesn't work. Check the spelling, or it may have ended.");
+      }
       if (r.used_up) return setErr('promo', 'e-promo', 'That code has been used up.');
       S.promo = r; buzz([8, 30, 8]); toast(r.seller ? `${r.name}'s seller code: ${r.value}% off. Thanks for supporting a classmate!` : r.friend ? `Friend code added: ${money(r.value)} off your first order.` : `Code ${r.code} added.`); viewCheckoutKeep();
     } catch (e) { setErr('promo', 'e-promo', friendlyError(e)); }
   },
+  schoolAdd: async () => { try { await api.saveSchool({ name: '', code: newGroupCode(), spots: [], days: [0, 1, 2, 3, 4, 5, 6], enabled: true }); drawSchools(); } catch (e) { toast(friendlyError(e)); } },
+  schoolSave: async t => {
+    const card = document.querySelector(`.schoolcard[data-sid="${t.dataset.sid}"]`), sc = (S.admin.schoolList || []).find(x => x.id === t.dataset.sid); if (!card || !sc) return;
+    const spots = [...new Set(card.querySelector('[data-sf="spots"]').value.split('\n').map(x => x.trim()).filter(x => x.length >= 3))].slice(0, 12);
+    const days = [...card.querySelectorAll('[data-sday]')].filter(x => x.checked).map(x => +x.dataset.sday);
+    if (!days.length) { toast('Pick at least one hand-off day.'); return; }
+    try { await api.saveSchool({ id: sc.id, name: card.querySelector('[data-sf="name"]').value.trim(), code: sc.code, spots, days, enabled: card.querySelector('[data-sf="enabled"]').checked }); toast('Saved.'); drawSchools(); } catch (e) { toast(friendlyError(e)); }
+  },
+  schoolCopy: async t => { const sc = (S.admin.schoolList || []).find(x => x.id === t.dataset.sid); if (!sc) return; try { await navigator.clipboard.writeText(groupLink(sc.code)); toast('Link copied. Send it to your contact there.'); } catch { toast(groupLink(sc.code)); } },
+  schoolNewCode: async t => {
+    const sc = (S.admin.schoolList || []).find(x => x.id === t.dataset.sid); if (!sc || !confirm('Make a new code? The old code and link stop working right away (orders already placed are fine).')) return;
+    try { await api.saveSchool({ ...sc, code: newGroupCode() }); toast('New code made. Send the new link to your contact.'); drawSchools(); } catch (e) { toast(friendlyError(e)); }
+  },
+  schoolDel: async t => {
+    const sc = (S.admin.schoolList || []).find(x => x.id === t.dataset.sid); if (!sc || !confirm(`Delete ${sc.name || 'this school'}? Its code stops working. Orders already placed stay.`)) return;
+    try { await api.deleteSchool(sc.id); drawSchools(); } catch (e) { toast(friendlyError(e)); }
+  },
+  groupOff: () => { safeLS.del('sk_group'); S.group = null; toast('Group pickup is off.'); viewCheckoutKeep(); },
   promoRemove: () => { if (S.promo && S.promo.seller) safeLS.del('sk_seller'); S.promo = null; viewCheckoutKeep(); },
   fdBg: t => { const d = activeDesign(); if (d) { d.bg = t.dataset.c; drawFramed(); } },
   prAdjust: t => { S.prSel = S.prSel === t.dataset.id ? null : t.dataset.id; drawPrints(); },
@@ -5913,7 +5990,7 @@ const ACTIONS = {
   coNext: t => {
     const n = +t.dataset.s;
     validate(true); setErr(null, 'e-promise', '');
-    if (n === 1 && CONFIG.requireXu && !S.me && !S.coAdmin) { const e = $('#e-xu'); if (e) e.textContent = 'Sign in with your XU account first.'; const b = document.querySelector('[data-act="xuIn"]'); if (b) b.focus(); return; }
+    if (n === 1 && CONFIG.requireXu && !S.group && !S.me && !S.coAdmin) { const e = $('#e-xu'); if (e) e.textContent = 'Sign in with your XU account first.'; const b = document.querySelector('[data-act="xuIn"]'); if (b) b.focus(); return; }
     const bad = n === 1 ? ['e-nick', 'e-sec'] : ['e-place'];
     if (bad.some(id => $('#' + id) && $('#' + id).textContent)) { const f = $('#orderForm [aria-invalid="true"]'); if (f) f.focus(); return; }
     S.coStep = n + 1 + (n === 1 && S.addTo ? 1 : 0); coRender(); buzz(6);   // an add-on skips Pickup
@@ -6302,6 +6379,7 @@ document.addEventListener('click', e => {
   try { const s = await api.settings(); S.settings.maxSheets = s.max_sheets; S.settings.productsRaw = s.products || {}; S.settings.configRaw = s.config || {}; applyShopConfig(s.config); CONFIG.maxNoShows = s.max_noshows || CONFIG.maxNoShows; S.settings.products = mergeProducts(s.products); S.settings.deals = Array.isArray(s.deals) ? s.deals : [];
     if (s.signal_verb) S.settings.signalVerb = s.signal_verb; if (s.signal_item) S.settings.signalItem = s.signal_item; }
   catch (e) { console.warn('Could not load settings, using CONFIG values', e); }
+  await loadGroup();
   await openTemplate();
   route();
 })();
