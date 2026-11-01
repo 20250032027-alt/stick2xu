@@ -1587,7 +1587,11 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .sephelp{display:flex;gap:8px;align-items:flex-start;margin:-6px 0 0;font-size:13.5px;color:var(--muted)}.sephelp svg{flex:none;color:#C9951A;margin-top:2px}
 .sepview{touch-action:none;user-select:none}
 .modeseg.fixseg{max-width:none;flex:none}.fixview{display:grid;place-items:center;padding:12px;border-radius:16px;background:repeating-conic-gradient(#DCE1EC 0 25%,#F6F7FA 0 50%) 0 0/16px 16px;border:1.5px solid var(--line)}
-.fixview img{max-width:100%;max-height:48vh;cursor:crosshair;touch-action:manipulation}
+.fixview .fixcanvas{display:block;max-width:100%;max-height:46vh;width:auto;height:auto;cursor:crosshair;touch-action:none}
+.modeseg.three{grid-template-columns:repeat(3,1fr)}.modeseg.three button{flex-direction:row;gap:6px;justify-content:center;padding:10px 6px}
+.brushes{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.brushes button{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer}
+.brushes button i{display:block;border-radius:50%;background:#283971}.brushes button.on{border-color:#283971;box-shadow:inset 0 0 0 1.5px #283971;background:#EEF2FC}
 .sepgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;max-height:46vh;overflow:auto;padding:2px}
 .sepcard{position:relative;aspect-ratio:1;border-radius:14px;border:2px solid #283971;padding:6px;cursor:pointer;background:repeating-conic-gradient(#E8EBF2 0 25%,#F6F7FA 0 50%) 0 0/14px 14px;transition:transform .12s,opacity .12s}
 .sepcard img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 1px 2px rgba(40,57,113,.25))}
@@ -3624,19 +3628,36 @@ function stkErase(c, tx, ty){
   for (let i = 0; i < w * h; i++) if (reg[i]) p[i * 4 + 3] = 0; x.putImageData(d, 0, 0); return 'ok';
 }
 function fixHTML(){
-  const f = S.fixer, im = imgById(f.id);
+  const f = S.fixer, tip = { fill: 'Tap a checkered (see-through) spot to fill it in.', draw: 'Brush over the parts you want back.', erase: "Brush over anything you don't want." }[f.mode];
   return `<div class="impcard"><div class="imphead"><b>Fix this sticker</b><button type="button" class="linkbtn" data-act="fixDone">${ic('check', 18)} Done</button></div>
-    <div class="modeseg fixseg">${[['fill', 'Fill in', 'Tap a see-through spot'], ['erase', 'Erase', 'Tap a leftover patch']].map(([v, l, h]) => `<button type="button" data-act="fixMode" data-v="${v}" class="${f.mode === v ? 'on' : ''}"><b>${l}</b><small>${h}</small></button>`).join('')}</div>
-    <div class="fixview"><img id="fixImg" src="${im.canvas.toDataURL('image/png')}" alt="Your sticker"></div>
-    <div class="seprow">${smallBtn('Undo', 'refresh', 'fixUndo', 'plain', f.undo.length ? '' : 'disabled')}<span>${f.mode === 'fill' ? 'Checkered = see-through. Tap it to fill it in.' : 'Tap a patch of leftover background to remove it.'}</span></div>
+    <div class="modeseg fixseg three">${[['fill', 'Tap to fill', 'fill'], ['draw', 'Draw', 'edit'], ['erase', 'Erase', 'trash']].map(([v, l, icn]) => `<button type="button" data-act="fixMode" data-v="${v}" class="${f.mode === v ? 'on' : ''}">${ic(icn, 16)}<b>${l}</b></button>`).join('')}</div>
+    ${f.mode !== 'fill' ? `<div class="brushes"><span>Brush</span>${[['s', 6], ['m', 14], ['l', 26]].map(([v, d]) => `<button type="button" data-act="fixBrush" data-v="${v}" class="${f.brush === v ? 'on' : ''}" aria-label="${{ s: 'Small', m: 'Medium', l: 'Large' }[v]} brush"><i style="width:${d}px;height:${d}px"></i></button>`).join('')}</div>` : ''}
+    <div class="fixview" id="fixView"></div>
+    <div class="seprow">${smallBtn('Undo', 'refresh', 'fixUndo', 'plain', f.undo.length ? '' : 'disabled')}<span>${tip}</span></div>
     ${btn('Done', { act: 'fixDone', icon: 'check', cls: 'dark wide' })}</div>`;
 }
 function drawFix(){ const box = $('#sheet .sheetbox'); if (!box) return; box.innerHTML = fixHTML();
-  $('#fixImg').addEventListener('click', e => { const f = S.fixer, im = imgById(f.id), r = e.target.getBoundingClientRect(), c = im.canvas;
-    const tx = Math.max(0, Math.min(c.width - 1, Math.round((e.clientX - r.left) / r.width * c.width))), ty = Math.max(0, Math.min(c.height - 1, Math.round((e.clientY - r.top) / r.height * c.height)));
-    const before = c.getContext('2d').getImageData(0, 0, c.width, c.height), res = f.mode === 'fill' ? stkFill(c, tx, ty, im.orig) : stkErase(c, tx, ty);
-    if (res === 'ok') { f.undo.push(before); if (f.undo.length > 12) f.undo.shift(); f.changed = true; buzz(8); drawFix(); }
-    else toast({ solid: 'That spot is already filled in. Tap a checkered spot.', open: "That spot opens to the outside, so we can't tell where to stop. Try tapping nearer the middle of it.", clear: "That's already see-through.", big: 'That would erase most of the sticker. Tap a smaller leftover patch.' }[res]); }); }
+  const f = S.fixer, im = imgById(f.id), c = im.canvas, view = $('#fixView'); c.className = 'fixcanvas'; view.appendChild(c);   // the sticker itself, so drawing shows live
+  const o = im.orig && im.orig.width === c.width && im.orig.height === c.height ? im.orig.getContext('2d').getImageData(0, 0, c.width, c.height).data : null;
+  const at = e => { const r = c.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * c.width, y: (e.clientY - r.top) / r.height * c.height, k: c.width / r.width }; };
+  const dab = (x0, y0, rad, erase) => { const x = c.getContext('2d'), L = Math.max(0, Math.floor(x0 - rad)), T = Math.max(0, Math.floor(y0 - rad)), R = Math.min(c.width, Math.ceil(x0 + rad)), B = Math.min(c.height, Math.ceil(y0 + rad));
+    if (R <= L || B <= T) return; const d = x.getImageData(L, T, R - L, B - T), p = d.data;
+    for (let yy = T; yy < B; yy++) for (let xx = L; xx < R; xx++) { if ((xx - x0) ** 2 + (yy - y0) ** 2 > rad * rad) continue; const i = ((yy - T) * (R - L) + (xx - L)) * 4, g = (yy * c.width + xx) * 4;
+      if (erase) p[i + 3] = 0; else { for (let k = 0; k < 3; k++) p[i + k] = o ? o[g + k] : 255; p[i + 3] = 255; } }
+    x.putImageData(d, L, T); };
+  let stroke = null; if (f.ac) f.ac.abort(); f.ac = new AbortController(); const once = { signal: f.ac.signal };   // the canvas is reused: replace, never stack, its handlers
+  c.addEventListener('pointerdown', e => { e.preventDefault(); try { c.setPointerCapture(e.pointerId); } catch {}
+    const pt = at(e), before = c.getContext('2d').getImageData(0, 0, c.width, c.height);
+    if (f.mode === 'fill') { const res = stkFill(c, Math.max(0, Math.min(c.width - 1, Math.round(pt.x))), Math.max(0, Math.min(c.height - 1, Math.round(pt.y))), im.orig);
+      if (res === 'ok') { f.undo.push(before); if (f.undo.length > 12) f.undo.shift(); f.changed = true; buzz(8); drawFix(); }
+      else toast({ solid: 'That spot is already filled in. Tap a checkered spot, or use Draw.', open: 'That spot opens to the outside. Use Draw to brush it in instead.' }[res]); return; }
+    const rad = { s: 3, m: 7, l: 13 }[f.brush] * pt.k; stroke = { last: pt, rad, before }; dab(pt.x, pt.y, rad, f.mode === 'erase'); }, once);
+  c.addEventListener('pointermove', e => { if (!stroke) return; const pt = at(e), dx = pt.x - stroke.last.x, dy = pt.y - stroke.last.y, steps = Math.max(1, Math.ceil(Math.hypot(dx, dy) / (stroke.rad / 2)));
+    for (let k = 1; k <= steps; k++) dab(stroke.last.x + dx * k / steps, stroke.last.y + dy * k / steps, stroke.rad, f.mode === 'erase'); stroke.last = pt; }, once);
+  const end = () => { if (!stroke) return; f.undo.push(stroke.before); if (f.undo.length > 12) f.undo.shift(); f.changed = true; stroke = null;
+    const u = box.querySelector('[data-act=fixUndo]'); if (u) u.removeAttribute('disabled'); };
+  c.addEventListener('pointerup', end, once); c.addEventListener('pointercancel', end, once);
+}
 function drawImport(){ const box = $('#sheet .sheetbox'); if (!box) return; box.innerHTML = importCardHTML();
   const f = $('#impFile'); if (f) f.addEventListener('change', async e => { const file = e.target.files[0]; e.target.value = ''; if (!file) return;
     if (!file.type.startsWith('image/')) return toast('That file is not a picture.');
@@ -6387,10 +6408,11 @@ const ACTIONS = {
     }
     S.selItem = null; drawDesigner();
   },
-  stkFixOpen: () => { const it = selected(); if (!it) return; S.fixer = { id: it.imageId, mode: 'fill', undo: [] }; showSheet(''); drawFix(); },
+  stkFixOpen: () => { const it = selected(); if (!it) return; S.fixer = { id: it.imageId, mode: 'fill', brush: 'm', undo: [] }; showSheet(''); drawFix(); },
   fixMode: t => { S.fixer.mode = t.dataset.v; drawFix(); },
+  fixBrush: t => { S.fixer.brush = t.dataset.v; drawFix(); },
   fixUndo: () => { const f = S.fixer, im = imgById(f.id); if (!f.undo.length) return; im.canvas.getContext('2d').putImageData(f.undo.pop(), 0, 0); drawFix(); },
-  fixDone: async () => { const f = S.fixer; closeSheet(); if (!f || !f.changed) return;
+  fixDone: async () => { const f = S.fixer; closeSheet(); if (f && f.ac) f.ac.abort(); if (!f || !f.changed) return;
     const im = imgById(f.id), blob = await new Promise(r => im.canvas.toBlob(r, 'image/png'));
     Object.assign(im, { blob, ext: 'png', alpha: true, url: URL.createObjectURL(blob) });
     for (const k of [...stickerCache.keys()]) if (k.startsWith(im.id + '|')) stickerCache.delete(k);
