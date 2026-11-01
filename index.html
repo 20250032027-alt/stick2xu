@@ -1579,12 +1579,23 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .importbtn .ui{flex:none;width:40px;height:40px;border-radius:12px;background:#283971;color:#F2BC2E;display:grid;place-items:center}
 .addtxt{display:flex;flex-direction:column;gap:2px;line-height:1.35}.addtxt small{color:var(--muted);font-size:13px}
 .dropping{outline:3px dashed #F2BC2E!important;outline-offset:3px;background-color:#FFF8E1!important}
-.printline{display:inline-flex;gap:8px;align-items:center;margin-top:16px;padding:8px 14px;border-radius:999px;background:#EEF2FC;color:#283971;text-decoration:none;font-size:14.5px}.printline:hover{background:#E2E8F8}
+.printline{display:flex;gap:10px;align-items:center;width:fit-content;max-width:100%;margin-top:12px;padding:9px 14px;border-radius:14px;background:#fff;border:1.5px solid var(--line);color:#283971;text-decoration:none;font-size:14.5px;box-shadow:0 1px 0 rgba(40,57,113,.06)}
+.printline:hover{border-color:#283971}.printline svg:first-child{color:#C9951A}
 .printnudge{display:flex;gap:14px;align-items:center;max-width:720px;margin:22px auto 0;padding:14px 16px;border-radius:18px;border:1.5px solid var(--line);background:#fff;color:var(--ink);text-decoration:none}
 .printnudge > span:nth-child(2){flex:1;display:flex;flex-direction:column}.printnudge small{color:var(--muted);font-size:14px;line-height:1.4}
 .pn-ic{flex:none;width:44px;height:44px;border-radius:14px;background:#EEF2FC;color:#283971;display:grid;place-items:center}
 .sephelp{display:flex;gap:8px;align-items:flex-start;margin:-6px 0 0;font-size:13.5px;color:var(--muted)}.sephelp svg{flex:none;color:#C9951A;margin-top:2px}
-.sepview{touch-action:none;user-select:none}.sepdraw{position:absolute;border:2.5px dashed #283971;background:rgba(40,57,113,.12);border-radius:8px;pointer-events:none}
+.sepview{touch-action:none;user-select:none}
+.sepgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;max-height:46vh;overflow:auto;padding:2px}
+.sepcard{position:relative;aspect-ratio:1;border-radius:14px;border:2px solid #283971;padding:6px;cursor:pointer;background:repeating-conic-gradient(#E8EBF2 0 25%,#F6F7FA 0 50%) 0 0/14px 14px;transition:transform .12s,opacity .12s}
+.sepcard img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 1px 2px rgba(40,57,113,.25))}
+.sepcard i{position:absolute;top:-6px;right:-6px;display:grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#1E8E4A;color:#fff;font-style:normal;font-size:11px;font-weight:800;border:2px solid #fff}
+.sepcard.off{border-color:var(--line);opacity:.45}.sepcard.off i{background:#9AA1B5}.sepcard:active{transform:scale(.96)}
+.seprow{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted)}
+.sepfix{border:1.5px solid var(--line);border-radius:14px;padding:10px 12px}.sepfix summary{cursor:pointer;font-weight:700;color:#283971;display:flex;gap:8px;align-items:center}
+.sepfixbody{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.sepbusy{align-items:center;text-align:center;padding:40px 10px}.sepbusy small{color:var(--muted)}
+.spin{width:34px;height:34px;border-radius:50%;border:4px solid #E6EAF4;border-top-color:#F2BC2E;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.sepdraw{position:absolute;border:2.5px dashed #283971;background:rgba(40,57,113,.12);border-radius:8px;pointer-events:none}
 .seppc.man{border-color:#283971;border-style:solid}
 .impcard{display:flex;flex-direction:column;gap:16px}.imphead{display:flex;justify-content:space-between;align-items:center}.imphead b{font-family:var(--display);font-size:22px;color:#283971}
 .imppick{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px 14px;align-items:center}.imppick .linkbtn{grid-column:2;justify-self:start;font-size:14px}
@@ -3459,7 +3470,7 @@ function findStickers(im, join){
     spread = opaque.reduce((t, p) => t + Math.hypot(px[p * 4] - bg[0], px[p * 4 + 1] - bg[1], px[p * 4 + 2] - bg[2]), 0) / opaque.length;
   }
   if (spread > 38) return { error: 'busy' };
-  const T = 30, bgLike = new Uint8Array(W * H);
+  const T = 18, bgLike = new Uint8Array(W * H);
   for (let i = 0; i < W * H; i++) bgLike[i] = px[i * 4 + 3] < 40 || Math.hypot(px[i * 4] - bg[0], px[i * 4 + 1] - bg[1], px[i * 4 + 2] - bg[2]) < T ? 1 : 0;
   const fg = outsideFill(bgLike, W, H);   // 1 = part of a design (white insides of characters stay part of them)
   const r = [0, 1, 2, 3.5, 5][Math.max(0, Math.min(4, join - 1))] * Math.max(W, H) / 300;   // join level 1 = keep every separate shape apart
@@ -3490,6 +3501,12 @@ function outsideFill(bgLike, W, H){
   while (sp) { const p = st[--sp], qx = p % W; if (qx > 0) push(p - 1); if (qx < W - 1) push(p + 1); if (p >= W) push(p - W); if (p < W * (H - 1)) push(p + W); }
   const fg = new Uint8Array(W * H); for (let i = 0; i < W * H; i++) fg[i] = out[i] ? 0 : 1; return fg;
 }
+function sealedKeep(bgLike, W, H, r){   // close outline gaps narrower than ~2r, flood the outside, then give the edges back
+  const solid = new Uint8Array(W * H); for (let i = 0; i < W * H; i++) solid[i] = bgLike[i] ? 0 : 1;
+  const bar = r > 0 ? grow(solid, W, H, r) : solid, pass = new Uint8Array(W * H); for (let i = 0; i < W * H; i++) pass[i] = bar[i] ? 0 : 1;
+  const inner = outsideFill(pass, W, H), out = new Uint8Array(W * H); for (let i = 0; i < W * H; i++) out[i] = inner[i] ? 0 : 1;
+  const outG = r > 0 ? grow(out, W, H, r) : out, keep = new Uint8Array(W * H); for (let i = 0; i < W * H; i++) keep[i] = outG[i] && bgLike[i] ? 0 : 1; return keep;
+}
 function grow(m, W, H, r){   // widen shapes by r pixels (joins pieces that sit close together)
   const tmp = new Uint8Array(W * H), g = new Uint8Array(W * H);
   for (let y = 0; y < H; y++) { let run = -1e9; for (let x = 0; x < W; x++) { if (m[y * W + x]) run = x; tmp[y * W + x] = x - run <= r ? 1 : 0; }
@@ -3499,13 +3516,13 @@ function grow(m, W, H, r){   // widen shapes by r pixels (joins pieces that sit 
   return g;
 }
 // cut one sticker out at full size: background reachable from the outside goes see-through, the insides stay
-async function cutPiece(im, det, pc){
+async function cutPiece(im, det, pc, solid){
   const src = im.canvas, f = 1 / det.k, pad = 3;
   const sx = Math.max(0, Math.floor((pc.x0 - pad) * f)), sy = Math.max(0, Math.floor((pc.y0 - pad) * f)), ex = Math.min(src.width, Math.ceil((pc.x1 + 1 + pad) * f)), ey = Math.min(src.height, Math.ceil((pc.y1 + 1 + pad) * f));
   const w = ex - sx, h = ey - sy, c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.drawImage(src, sx, sy, w, h, 0, 0, w, h);
   const d = x.getImageData(0, 0, w, h), p = d.data, [br, bgc, bb] = det.bg, bgLike = new Uint8Array(w * h);
   for (let i = 0; i < w * h; i++) bgLike[i] = p[i * 4 + 3] < 40 || Math.hypot(p[i * 4] - br, p[i * 4 + 1] - bgc, p[i * 4 + 2] - bb) < det.T ? 1 : 0;
-  const keep = outsideFill(bgLike, w, h);
+  const keep = sealedKeep(bgLike, w, h, Math.max(2, Math.round(Math.max(w, h) / (solid ? 60 : 160))));   // "fill in" seals bigger gaps
   for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) { const i = yy * w + xx;
     let on = keep[i];
     if (on && !pc.manual) { const lx = Math.min(det.W - 1, ((sx + xx) * det.k) | 0), ly = Math.min(det.H - 1, ((sy + yy) * det.k) | 0), l = det.lab[ly * det.W + lx]; if (l && !(pc.ids || [pc.id]).includes(l)) on = 0; }   // not a neighbour's bits
@@ -3519,16 +3536,36 @@ function sepHTML(){
   if (det.error) return `<div class="impcard"><div class="imphead"><b>Hmm, this one's tricky</b><button type="button" class="linkbtn" data-act="importClose" aria-label="Close">${ic('x', 18)}</button></div>
     <p>The background has too much going on for us to find each sticker by itself. Plain white or one-colour backgrounds work best.</p>
     ${btn('Just print it as is', { act: 'sepAsIs', icon: 'check', cls: 'dark wide' })}${smallBtn('Choose another picture', 'image', 'sepBack', 'plain')}</div>`;
-  const on = det.pieces.filter(p => p.on).length;
-  return `<div class="impcard"><div class="imphead"><b>We found ${det.pieces.length} sticker${det.pieces.length === 1 ? '' : 's'} ✨</b><button type="button" class="linkbtn" data-act="importClose" aria-label="Close">${ic('x', 18)}</button></div>
-    <p class="sephelp">${ic('sparkle', 15)}<span><b>Tap</b> a sticker to leave it out. <b>Drag a box</b> around anything to make it one sticker (missed one, or two that belong together).</span></p>
+  const on = det.pieces.filter(p => p.on).length, n = det.pieces.length;
+  if (d.busy) return `<div class="impcard sepbusy"><span class="spin"></span><b>Cutting out your stickers…</b><small>This takes a few seconds.</small></div>`;
+  if (d.mode === 'draw') return `<div class="impcard"><div class="imphead"><b>Draw a box</b><button type="button" class="linkbtn" data-act="sepDone">${ic('check', 18)} Done</button></div>
+    <p class="sephelp">${ic('sparkle', 15)}<span>Drag a box around anything to make it one sticker. Tap a box to leave it out.</span></p>
     <div class="sepview" style="aspect-ratio:${im.w}/${im.h};background-image:url('${im.url}')">${det.pieces.map((p, i) => `<button type="button" class="seppc ${p.on ? '' : 'off'} ${p.manual ? 'man' : ''}" data-i="${i}"
-      style="left:${p.x0 / det.W * 100}%;top:${p.y0 / det.H * 100}%;width:${(p.x1 - p.x0 + 1) / det.W * 100}%;height:${(p.y1 - p.y0 + 1) / det.H * 100}%" aria-label="Sticker ${i + 1}, ${p.on ? 'kept' : 'left out'}"><i>${p.on ? i + 1 : ic('x', 12)}</i></button>`).join('')}</div>
-    <label class="sepjoin"><span>Pieces split apart?</span><input type="range" min="1" max="5" step="1" value="${d.join}" data-sep="join" aria-label="Join nearby pieces"><span>Joined together?</span></label>
-    <div class="impchoice">${[['keep', 'Keep the layout', 'Same spots as the original sheet'], ['pack', 'Pack and make bigger', 'Fits them tight and sizes them up']].map(([v, t, h]) =>
+      style="left:${p.x0 / det.W * 100}%;top:${p.y0 / det.H * 100}%;width:${(p.x1 - p.x0 + 1) / det.W * 100}%;height:${(p.y1 - p.y0 + 1) / det.H * 100}%" aria-label="Sticker ${i + 1}"><i>${p.on ? i + 1 : ic('x', 12)}</i></button>`).join('')}</div>
+    ${btn('Done', { act: 'sepDone', icon: 'check', cls: 'dark wide' })}</div>`;
+  return `<div class="impcard"><div class="imphead"><b>We found ${n} sticker${n === 1 ? '' : 's'} ✨</b><button type="button" class="linkbtn" data-act="importClose" aria-label="Close">${ic('x', 18)}</button></div>
+    <p class="sephelp">${ic('sparkle', 15)}<span>This is exactly how each one prints. <b>Tap</b> any you don't want.</span></p>
+    <div class="sepgrid">${det.pieces.map((p, i) => `<button type="button" class="sepcard ${p.on ? '' : 'off'}" data-act="sepTog" data-i="${i}" aria-pressed="${p.on}" aria-label="Sticker ${i + 1}">
+      ${p.cut ? `<img src="${p.cut.thumb}" alt="">` : ''}<i>${p.on ? ic('check', 13) : 'Left out'}</i></button>`).join('')}</div>
+    <div class="seprow"><span><b>${on}</b> of ${n} kept</span>${on < n ? smallBtn('Keep all', 'check', 'sepAll', 'plain') : ''}</div>
+    <details class="sepfix" ${d.fixOpen ? 'open' : ''}><summary>${ic('edit', 16)}Something not right?</summary>
+      <div class="sepfixbody">
+        <label class="sepjoin"><span>Split apart</span><input type="range" min="1" max="5" step="1" value="${d.join}" data-sep="join" aria-label="Join nearby pieces"><span>Joined</span></label>
+        <label class="switch"><input type="checkbox" data-act="sepSolid" ${d.solid ? 'checked' : ''}><span>Fill in see-through insides</span></label>
+        ${smallBtn('Draw a box on the sheet', 'edit', 'sepDraw', 'plain')}
+        <small class="muted">Use a box for a sticker we missed, two that belong together, or to split a group.</small></div></details>
+    <div class="impchoice">${[['keep', 'Keep the layout', 'Same spots as the sheet'], ['pack', 'Pack and make bigger', 'Fits them tight, sized up']].map(([v, t, h]) =>
       `<button type="button" class="${d.arr === v ? 'on' : ''}" data-act="sepArr" data-v="${v}"><b>${t}</b><small>${h}</small></button>`).join('')}</div>
     ${btn(on ? `Make my ${on} sticker${on === 1 ? '' : 's'}` : 'Pick at least one', { act: 'sepMake', icon: 'sparkle', cls: 'dark wide' })}
     <button type="button" class="linkbtn" data-act="sepAsIs" style="align-self:center">Just print it as is instead</button></div>`;
+}
+// cut out every piece now, so the review shows exactly what prints
+async function sepPreview(){
+  const d = S.importDraft; d.busy = true; drawSep(); d.cuts = d.cuts || {};
+  for (const pc of d.det.pieces) { const key = `${d.solid ? 1 : 0}|${d.join}|${pc.x0},${pc.y0},${pc.x1},${pc.y1}`;
+    if (!d.cuts[key]) { const im = await cutPiece(d.im, d.det, pc, d.solid); d.cuts[key] = { im, thumb: drawSticker(im.canvas, 200, 40, 'fit', false).toDataURL('image/png') }; }
+    pc.cut = d.cuts[key]; await new Promise(r => setTimeout(r, 0)); }
+  d.busy = false; drawSep();
 }
 function drawSep(){ const box = $('#sheet .sheetbox'); if (!box) return; box.innerHTML = sepHTML();
   const view = box.querySelector('.sepview'); if (view) view.addEventListener('pointerdown', e => {
@@ -3551,7 +3588,8 @@ function drawSep(){ const box = $('#sheet .sheetbox'); if (!box) return; box.inn
       det.pieces.push({ id: 0, x0, y0, x1, y1, on: true, manual: true }); buzz([8, 20, 8]); drawSep(); };
     view.addEventListener('pointermove', move); view.addEventListener('pointerup', up); view.addEventListener('pointercancel', up);
   });
-  const r = box.querySelector('[data-sep=join]'); if (r) r.addEventListener('change', e => { S.importDraft.join = +e.target.value; S.importDraft.det = findStickers(S.importDraft.im, S.importDraft.join); drawSep(); }); }
+  const r = box.querySelector('[data-sep=join]'); if (r) r.addEventListener('change', e => { S.importDraft.join = +e.target.value; S.importDraft.fixOpen = true; S.importDraft.det = findStickers(S.importDraft.im, S.importDraft.join); sepPreview(); });
+  const fx = box.querySelector('.sepfix'); if (fx) fx.addEventListener('toggle', () => { S.importDraft.fixOpen = fx.open; }); }
 function drawImport(){ const box = $('#sheet .sheetbox'); if (!box) return; box.innerHTML = importCardHTML();
   const f = $('#impFile'); if (f) f.addEventListener('change', async e => { const file = e.target.files[0]; e.target.value = ''; if (!file) return;
     if (!file.type.startsWith('image/')) return toast('That file is not a picture.');
@@ -6312,12 +6350,17 @@ const ACTIONS = {
     if (!d.lines) return toast('Tell us if it already has cut lines.');
     if (S.sheets.filter(sh => sh.items.length).length >= S.settings.maxSheets) return toast(`That's the most sheets for one order (${S.settings.maxSheets}).`);
     if (d.lines === 'no' && !d.asIs) { d.join = d.join || 1; d.arr = d.arr || 'keep'; d.det = findStickers(d.im, d.join);
-      if (!d.det.error && !d.det.pieces.length) d.det = { error: 'none' }; drawSep(); return; }
+      if (!d.det.error && !d.det.pieces.length) d.det = { error: 'none' }; if (d.det.error) drawSep(); else sepPreview(); return; }
     const im = { ...d.im, sheet: true }; S.images.push(im);
     const sheet = { imported: { lines: d.lines }, items: [{ uid: uid(), imageId: im.id, ...importRect(im, sheetQuality(im).cls !== 'ok' && (d.size || 'small') === 'small'), fit: 'fit' }] };
     const empty = S.sheets.findIndex(sh => !sh.items.length); if (empty >= 0) S.sheets[empty] = sheet; else S.sheets.push(sheet);
     S.cur = S.sheets.indexOf(sheet); S.selItem = null; S.importDraft = null; closeSheet(); buzz([8, 30, 8]); toast('Sheet added! It prints exactly as you see it.'); drawDesigner();
   },
+  sepTog: t => { const p = S.importDraft.det.pieces[+t.dataset.i]; p.on = !p.on; buzz(6); drawSep(); },
+  sepAll: () => { S.importDraft.det.pieces.forEach(p => { p.on = true; }); drawSep(); },
+  sepSolid: t => { S.importDraft.solid = !S.importDraft.solid; S.importDraft.fixOpen = true; sepPreview(); },
+  sepDraw: () => { S.importDraft.mode = 'draw'; drawSep(); },
+  sepDone: () => { S.importDraft.mode = null; sepPreview(); },
   sepArr: t => { S.importDraft.arr = t.dataset.v; drawSep(); },
   sepBack: () => { S.importDraft = { lines: 'no' }; drawImport(); },
   sepAsIs: () => { S.importDraft.asIs = true; ACTIONS.importAdd(); },
@@ -6326,7 +6369,7 @@ const ACTIONS = {
     if (keep.length > CONFIG.freeMax) return toast(`That's more than fit on one sheet (${CONFIG.freeMax}). Tap a few to leave them out.`);
     t.disabled = true; t.classList.add('busy');
     const rect = importRect(d.im, true), mmPerPx = rect.w / d.im.w, extra = 2 * (CONFIG.outlineMm + 0.8), sheet = { free: true, fromImport: { auto: true }, items: [] };
-    for (const pc of keep) { const im = await cutPiece(d.im, d.det, pc); S.images.push(im);
+    for (const pc of keep) { const im = pc.cut ? pc.cut.im : await cutPiece(d.im, d.det, pc, d.solid); S.images.push(im);
       const w = Math.max(CONFIG.freeMinMm, Math.max(im.w, im.h) * mmPerPx + extra), cx = rect.x + ((pc.x0 + pc.x1 + 1) / 2) / d.det.k * mmPerPx, cy = rect.y + ((pc.y0 + pc.y1 + 1) / 2) / d.det.k * mmPerPx, b = sheetBox();
       sheet.items.push({ uid: uid(), imageId: im.id, x: +Math.max(b.x0, Math.min(b.x1 - w, cx - w / 2)).toFixed(2), y: +Math.max(b.y0, Math.min(b.y1 - w, cy - w / 2)).toFixed(2), w: +w.toFixed(2), fit: 'fit' }); }
     let msg = 'Your stickers are ready! Drag or resize any of them.';
