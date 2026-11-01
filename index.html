@@ -1592,6 +1592,11 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .brushes{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
 .brushes button{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer}
 .brushes button i{display:block;border-radius:50%;background:#283971}.brushes button.on{border-color:#283971;box-shadow:inset 0 0 0 1.5px #283971;background:#EEF2FC}
+.tplbar{display:flex;flex-direction:column;gap:8px;margin:0 0 14px;padding:12px;border-radius:16px;background:#FFF3C4;border:2px solid #E3A400}
+.tplbar .tb-h{display:flex;gap:6px;align-items:center;color:#283971}.tplbar .tb-acts{display:flex;gap:8px;flex-wrap:wrap}
+.tplpick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tplpick button{font:inherit;display:flex;flex-direction:column;gap:2px;text-align:left;padding:12px;border-radius:14px;border:2px solid var(--line);background:#fff;color:#283971;cursor:pointer}
+.tplpick button:hover{border-color:#283971}.tplpick small{color:var(--muted);font-size:12.5px;line-height:1.3}
 .starters{margin:0 0 14px;padding:12px;border-radius:16px;background:#F4F7FF;border:1.5px solid var(--line)}
 .st-h{display:flex;gap:6px;align-items:center;font-size:14px;color:#283971;margin-bottom:10px}.st-h svg{color:#C9951A}
 .st-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -2728,13 +2733,35 @@ async function openTemplate(){
   if (!TPL) return;
   try { const t = await api.template(TPL); if (t) await useTemplate(t); } catch (e) { console.warn('template', e); toast("That design didn't open. You can still make your own."); }
 }
+/* Ready-made mode: an admin lays out a ready-made design in the real designer, then saves exactly what's on screen */
+function tplBarHTML(type){
+  const m = S.tplMode; if (!m || m.type !== type) return '';
+  return `<div class="tplbar"><span class="tb-h">${ic('sparkle', 16)}<b>Ready-made design · ${esc(P(type).name)}</b></span>
+    <input class="inp" id="tplModeName" maxlength="60" placeholder="Name people will see, like: XU pride" value="${esc(m.name || '')}">
+    <span class="tb-acts">${smallBtn('Save as ready-made', 'check', 'tplModeSave', 'dark')}${smallBtn('Cancel', 'x', 'tplModeCancel', 'plain')}</span></div>`;
+}
+document.addEventListener('input', e => { if (e.target.id === 'tplModeName' && S.tplMode) S.tplMode.name = e.target.value; });
+async function tplModeImage(type){
+  if (type === 'stickers') {   // the whole sheet, drawn like the print (cut lines included)
+    const sheet = S.sheets[S.cur]; if (!sheet || !sheet.items.length) return null;
+    const g = geom(), dpi = 170, k = dpi / 25.4, c = document.createElement('canvas'); c.width = Math.round(g.widthMm * k); c.height = Math.round(g.heightMm * k);
+    const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
+    for (const it of sheet.items) { const im = imgById(it.imageId); if (!im) continue; const r = itemRect(it);
+      if (it.h) x.drawImage(im.canvas, r.x * k, r.y * k, r.w * k, r.h * k);
+      else x.drawImage(drawSticker(im.canvas, Math.round(r.w * k), r.w, it.fit, true, { border: it.border }), r.x * k, r.y * k, r.w * k, r.w * k); }
+    return c.toDataURL('image/jpeg', 0.88);
+  }
+  const f = S.fd, im = f && f.front.imageId && imgById(f.front.imageId); if (!im) return null;
+  const out = renderFramed(im.canvas, f.front, frameMm(f), 260, type === 'pins'); return out.data;
+}
 async function useTemplate(t){
   {
     if (!t || !CONFIG.products[t.type] || !isLive(t.type) || t.type === 'prints') { if (t) toast(`${t.name} isn't available right now.`); return; }
     const blob = await (await fetch(t.image)).blob();
     if (t.type === 'stickers') {   // a ready-made sticker sheet, printed as it is
       const im = { ...(await processFile(new File([blob], `${t.slug}.png`, { type: blob.type || 'image/png' }), 4200)), sheet: true }; S.images.push(im);
-      const sheet = { imported: { lines: 'yes' }, template: { slug: t.slug, name: t.name }, items: [{ uid: uid(), imageId: im.id, ...importRect(im, sheetQuality(im).cls !== 'ok'), fit: 'fit' }] };
+      const pg = Math.abs(im.w / im.h - CONFIG.sheet.widthMm / CONFIG.sheet.heightMm) < 0.01, rect = pg ? { x: 0, y: 0, w: CONFIG.sheet.widthMm, h: CONFIG.sheet.heightMm } : importRect(im, sheetQuality(im).cls !== 'ok');
+      const sheet = { imported: { lines: 'yes' }, template: { slug: t.slug, name: t.name }, items: [{ uid: uid(), imageId: im.id, ...rect, fit: 'fit' }] };
       const empty = S.sheets.findIndex(sh => !sh.items.length); if (empty >= 0) S.sheets[empty] = sheet; else S.sheets.push(sheet);
       S.cur = S.sheets.indexOf(sheet); S.selItem = null; toast(`${t.name} is on your sheet!`);
       if (location.hash.startsWith('#/design')) drawDesigner(); else location.hash = '#/design'; return;
@@ -3273,6 +3300,7 @@ function drawCtrl(){
   else if (S.selImage) hint = [ 'sparkle', 'Tap anywhere on the sheet to stick it there. Drag a sticker to move it.' ];
   else hint = [ 'image', 'Add a picture first, then it shows up here ready to use.' ];
   $('#ctrl').innerHTML = `
+    ${tplBarHTML('stickers')}
     <section class="phead">
       <h2>Stickers</h2>
       <p class="muted small">${esc(P('stickers').blurb)}</p>
@@ -3779,7 +3807,7 @@ function drawFramedCtrl(){
   const f = S.fd, p = P(f.type), d = activeDesign(), sizes = liveSizes(f.type);
   const kc = f.type === 'keychains', backSide = kc && f.side === 'back';
   let n = 0; const step = t => `<div class="stephead"><i>${++n}</i>${t}</div>`;
-  $('#ctrl').innerHTML = `${f.template && f.side !== 'back' ? `<div class="tplnote">${ic('sparkle', 18)}<span><b>${esc(f.template.name)}</b> is ready. Pick how many, then check out. You can still move or zoom it.</span></div>` : ''}
+  $('#ctrl').innerHTML = `${tplBarHTML(f.type)}${f.template && f.side !== 'back' ? `<div class="tplnote">${ic('sparkle', 18)}<span><b>${esc(f.template.name)}</b> is ready. Pick how many, then check out. You can still move or zoom it.</span></div>` : ''}
     <section class="phead">
       <h2>${esc(p.name)}</h2>
       <p class="muted small">${esc(p.blurb)}</p>
@@ -6963,7 +6991,26 @@ const ACTIONS = {
     try { await api.logAddMany(todo.map(lbFromOrderRow)); S.admin.lbAt = 0; toast(`Added ${todo.length} to the log book.`); drawAdminBody(); }
     catch (e) { toast(/duplicate|one_per_order/.test(String(e.message || e)) ? 'Some were already logged. Refresh and try again.' : friendlyError(e)); }
   },
-  tplNew: () => tplNewSheet(),
+  tplNew: () => { const types = ['stickers', 'pins', 'keychains', 'posters'].filter(k => CONFIG.products[k]);
+    showSheet(`<div class="impcard"><div class="imphead"><b>New ready-made design</b><button type="button" class="linkbtn" data-act="importClose" aria-label="Close">${ic('x', 18)}</button></div>
+      <p class="help" style="margin:-6px 0 0">Pick what it is. You'll design it on the real design page, so it looks exactly how it prints.</p>
+      <div class="tplpick">${types.map(k => `<button type="button" data-act="tplStart" data-k="${k}"><b>${esc(P(k).name)}</b><small>${esc(P(k).blurb || '')}</small></button>`).join('')}</div>
+      <button type="button" class="linkbtn" data-act="tplUpload" style="align-self:center">Upload a finished picture instead</button></div>`); },
+  tplUpload: () => tplNewSheet(),
+  tplStart: t => { const k = t.dataset.k; S.tplMode = { type: k, name: '' }; S.images = []; S.selItem = null; S.selImage = null;
+    if (k === 'stickers') { S.sheets = [{ items: [] }]; S.cur = 0; } else S.fd = newFd(k);
+    closeSheet(); location.hash = designRoute(k); toast('Design it like a customer would, then name it and tap Save as ready-made.'); },
+  tplModeCancel: () => { S.tplMode = null; S.admin.tab = 'posters'; location.hash = '#/admin'; },
+  tplModeSave: async t => { const m = S.tplMode; if (!m) return; const name = (m.name || '').trim();
+    if (!name) { toast('Give it a name first, like "XU pride".'); const i = $('#tplModeName'); if (i) i.focus(); return; }
+    const image = await tplModeImage(m.type); if (!image) return toast(m.type === 'stickers' ? 'Put some stickers on the sheet first.' : 'Add a picture first.');
+    if (image.length > 2800000) return toast('That design is too big to save. Try fewer or smaller pictures.');
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'design';
+    if ((S.admin.tpls || []).some(x => x.slug === slug) && !confirm(`There's already a design called "${name}". Replace it?`)) return;
+    t.disabled = true;
+    try { await api.saveTemplate({ slug, name, type: m.type, size: m.type === 'stickers' ? null : (S.fd && S.fd.size) || null, image, enabled: true });
+      S.tplMode = null; S.starters = {}; S.admin.tab = 'posters'; location.hash = '#/admin'; buzz([8, 30, 8]); toast(`${name} is saved! Tap "Show on the design page" to offer it as a starter.`); }
+    catch (e) { t.disabled = false; toast(friendlyError(e)); } },
   tplType: t => { S.admin.tplDraft.type = t.dataset.k; document.querySelectorAll('#tplTypes .chip').forEach(c => c.classList.toggle('on', c.dataset.k === t.dataset.k));
     const im = $('#tplPv img'); if (im) im.classList.toggle('round', t.dataset.k === 'pins'); },
   tplSave: async () => {
