@@ -1590,3 +1590,9 @@ grant execute on function public.seller_reward_given(uuid) to authenticated;
 update public.shop_settings
    set config = coalesce(config, '{}'::jsonb) || '{"seller_mode": "flat", "seller_flat_rate": 20, "seller_welcome": 20, "seller_welcome_on": true, "seller_reward_on": true, "seller_reward_every": 10, "seller_reward_item": "sticker sheet or pin", "seller_tiers_v5": true}'::jsonb
  where id = 1 and coalesce(config->>'seller_tiers_v5', '') <> 'true';
+
+-- Starter designs: ready-made designs can be stickers too, and up to 3 per product show on the design page
+alter table public.templates drop constraint if exists templates_type_check;
+alter table public.templates add constraint templates_type_check check (type in ('stickers', 'pins', 'keychains', 'posters'));
+alter table public.templates add column if not exists starter boolean not null default false;   -- shown on the design page
+alter table public.templates add column if not exists sort int not null default 0;              -- order on the design page

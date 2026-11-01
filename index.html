@@ -1592,6 +1592,13 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .brushes{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
 .brushes button{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer}
 .brushes button i{display:block;border-radius:50%;background:#283971}.brushes button.on{border-color:#283971;box-shadow:inset 0 0 0 1.5px #283971;background:#EEF2FC}
+.starters{margin:0 0 14px;padding:12px;border-radius:16px;background:#F4F7FF;border:1.5px solid var(--line)}
+.st-h{display:flex;gap:6px;align-items:center;font-size:14px;color:#283971;margin-bottom:10px}.st-h svg{color:#C9951A}
+.st-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.st-card{display:flex;flex-direction:column;gap:6px;align-items:center;padding:6px;border-radius:12px;border:1.5px solid var(--line);background:#fff;cursor:pointer;font:inherit;transition:transform .12s,border-color .12s}
+.st-card:hover{border-color:#283971;transform:translateY(-1px)}.st-card span{width:100%;aspect-ratio:1;border-radius:8px;background:#fff center/contain no-repeat}
+.st-card small{font-size:12px;font-weight:700;color:#283971;text-align:center;line-height:1.2}.st-card.busy{opacity:.5;pointer-events:none}
+.tplstart{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:8px 0}
 .sepgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;max-height:46vh;overflow:auto;padding:2px}
 .sepcard{position:relative;aspect-ratio:1;border-radius:14px;border:2px solid #283971;padding:6px;cursor:pointer;background:repeating-conic-gradient(#E8EBF2 0 25%,#F6F7FA 0 50%) 0 0/14px 14px;transition:transform .12s,opacity .12s}
 .sepcard img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 1px 2px rgba(40,57,113,.25))}
@@ -2549,11 +2556,11 @@ function cartImageIds(){
 function serializeItems(items, pathFor){
   return items.map(it => {
     const p = P(it.type), z = p.sizes.find(x => x.id === it.size) || p.sizes[0];
-    const base = { type: it.type, size: it.size, size_label: z.label, addons: it.addons || [],
+    const base = { type: it.type, size: it.size, size_label: z.label, addons: it.addons || [], ...(it.template && it.template.slug ? { template: it.template.slug } : {}),
       addon_labels: (it.addons || []).map(id => (p.addons.find(a => a.id === id) || {}).label).filter(Boolean), unit_price: unitPrice(it) };
     if (it.type === 'prints') return { ...base, qty: it.qty, pages: it.pages, duplex: !!it.duplex,
       files: (it.files || []).map(f => ({ path: pathFor[f.id], name: f.name, pages: f.pages, kind: f.kind, orient: f.orient || null })) };
-    if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ ...(sh.free ? { free: true } : {}), ...(sh.imported ? { imported: sh.imported } : {}), ...(sh.fromImport ? { fromImport: sh.fromImport } : {}), items: sh.items.map(x => ({ path: pathFor[x.imageId], ...(isFree(x) ? { x: x.x, y: x.y, w: x.w, ...(x.h ? { h: x.h } : {}) } : { col: x.col, row: x.row, size: x.size }), fit: x.fit, ...(x.border === 'none' ? { border: 'none' } : {}) })) })) };
+    if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ ...(sh.free ? { free: true } : {}), ...(sh.imported ? { imported: sh.imported } : {}), ...(sh.fromImport ? { fromImport: sh.fromImport } : {}), ...(sh.template ? { template: sh.template.slug } : {}), items: sh.items.map(x => ({ path: pathFor[x.imageId], ...(isFree(x) ? { x: x.x, y: x.y, w: x.w, ...(x.h ? { h: x.h } : {}) } : { col: x.col, row: x.row, size: x.size }), fit: x.fit, ...(x.border === 'none' ? { border: 'none' } : {}) })) })) };
     const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy, bg: x.bg || '#ffffff' } : null;
     if (it.type === 'posters' && it.mode === 'pages') return { ...base, qty: it.qty, mode: 'pages', pages: it.pages, across: it.across, tiles: it.pages,
       pdf: { path: pathFor[it.pdf.id], name: it.pdf.name, pages: it.pages } };
@@ -2608,7 +2615,8 @@ function SupaBackend(){
     async cancel(code, nick){ await rpc('cancel_order', { p_code: code, p_nickname: nick }); },
     async feedback(code, nick, stage, rating, tags, comment){ return await rpc('leave_feedback', { p_code: code, p_nickname: nick, p_stage: stage, p_rating: rating, p_tags: tags || [], p_comment: comment || null }); },
     async template(slug){ const { data, error } = await sb.from('templates').select('slug,name,type,size,image').eq('slug', slug).eq('enabled', true).maybeSingle(); if (error) throw error; return data; },
-    async listTemplates(){ const { data, error } = await sb.from('templates').select('slug,name,type,size,image,enabled,created_at').order('created_at', { ascending: false }); if (error) throw error; return data || []; },
+    async starters(type){ const { data, error } = await sb.from('templates').select('slug,name,type,size,image').eq('enabled', true).eq('starter', true).eq('type', type).order('sort').limit(3); if (error) throw error; return data || []; },
+    async listTemplates(){ const { data, error } = await sb.from('templates').select('slug,name,type,size,image,enabled,created_at,starter,sort').order('created_at', { ascending: false }); if (error) throw error; return data || []; },
     async saveTemplate(t){ const { error } = await sb.from('templates').upsert(t); if (error) throw error; },
     async setTemplate(slug, patch){ const { error } = await sb.from('templates').update(patch).eq('slug', slug); if (error) throw error; },
     async delTemplate(slug){ const { error } = await sb.from('templates').delete().eq('slug', slug); if (error) throw error; },
@@ -2718,17 +2726,35 @@ function groupDates(){ const out = []; for (let i = 2; i <= 30 && out.length < 1
 if (params.has('src') || params.has('t') || params.has('s') || params.has('g')) { try { const q = new URLSearchParams(location.search); q.delete('src'); q.delete('t'); q.delete('s'); q.delete('g'); history.replaceState(history.state, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); } catch {} }
 async function openTemplate(){
   if (!TPL) return;
-  try {
-    const t = await api.template(TPL);
-    if (!t || !CONFIG.products[t.type] || !isLive(t.type) || ['stickers', 'prints'].includes(t.type)) { if (t) toast(`${t.name} isn't available right now.`); return; }
+  try { const t = await api.template(TPL); if (t) await useTemplate(t); } catch (e) { console.warn('template', e); toast("That design didn't open. You can still make your own."); }
+}
+async function useTemplate(t){
+  {
+    if (!t || !CONFIG.products[t.type] || !isLive(t.type) || t.type === 'prints') { if (t) toast(`${t.name} isn't available right now.`); return; }
     const blob = await (await fetch(t.image)).blob();
+    if (t.type === 'stickers') {   // a ready-made sticker sheet, printed as it is
+      const im = { ...(await processFile(new File([blob], `${t.slug}.png`, { type: blob.type || 'image/png' }), 4200)), sheet: true }; S.images.push(im);
+      const sheet = { imported: { lines: 'yes' }, template: { slug: t.slug, name: t.name }, items: [{ uid: uid(), imageId: im.id, ...importRect(im, sheetQuality(im).cls !== 'ok'), fit: 'fit' }] };
+      const empty = S.sheets.findIndex(sh => !sh.items.length); if (empty >= 0) S.sheets[empty] = sheet; else S.sheets.push(sheet);
+      S.cur = S.sheets.indexOf(sheet); S.selItem = null; toast(`${t.name} is on your sheet!`);
+      if (location.hash.startsWith('#/design')) drawDesigner(); else location.hash = '#/design'; return;
+    }
     const im = await processFile(new File([blob], `${t.slug}.png`, { type: blob.type || 'image/png' }), t.type === 'posters' ? 6000 : 2400);
     S.images.push(im); S.editing = null;
     S.fd = newFd(t.type); if (t.size && liveSizes(t.type).some(z => z.id === t.size)) S.fd.size = t.size;
     Object.assign(S.fd.front, { imageId: im.id, zoom: 1, ox: 0, oy: 0 }); S.fd.template = { slug: t.slug, name: t.name };
     if (t.type === 'posters') posterRegrid(S.fd);
-    location.hash = designRoute(t.type);
-  } catch (e) { console.warn('template', e); toast("That design didn't open. You can still make your own."); }
+    if (location.hash === designRoute(t.type)) drawFramed(); else location.hash = designRoute(t.type);
+  }
+}
+/* Starter designs: up to 3 ready-made designs at the top of each design page, until the customer adds their own */
+S.starters = {};
+function starterRowHTML(type){
+  const list = S.starters[type];
+  if (list === undefined) { S.starters[type] = null; api.starters(type).then(l => { S.starters[type] = l; if (l.length) { if (type === 'stickers' && location.hash.startsWith('#/design')) drawCtrl(); else if (location.hash === designRoute(type) && S.fd && S.fd.type === type) drawFramed(); } }).catch(() => { S.starters[type] = []; }); return ''; }
+  if (!list || !list.length) return '';
+  return `<div class="starters"><div class="st-h">${ic('sparkle', 16)}<b>Not sure where to start? Try one of ours</b></div>
+    <div class="st-row">${list.map(t => `<button type="button" class="st-card" data-act="starterUse" data-slug="${esc(t.slug)}"><span style="background-image:url('${t.image}')"></span><small>${esc(t.name)}</small></button>`).join('')}</div></div>`;
 }
 // "Follow us" buttons for the home page footer
 const SOCIAL_ICONS = {
@@ -3253,6 +3279,7 @@ function drawCtrl(){
     </section>
     <section>
       <div class="stephead"><i>1</i>Add pictures</div>
+      ${!S.images.length && !S.sheets.some(sh => sh.items.length) ? starterRowHTML('stickers') : ''}
       <button type="button" class="importbtn" data-act="importOpen"><span class="ui">${ic('image', 20)}</span><span><b>Import your own sheet <em>New</em></b><small>Got a sticker sheet from Pinterest? We'll print it, or cut out each sticker for you.</small></span>${ic('arrow', 16)}</button>
       <div class="ordiv"><span>or</span></div>
       <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose pictures<small>From your phone, tablet, or computer. PNG with a see-through background works best</small></span>
@@ -3763,6 +3790,7 @@ function drawFramedCtrl(){
         `<label class="choice"><input type="radio" name="backMode" value="${v}" ${f.backMode === v ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>` : ''}
     </section>` : ''}
     ${!backSide || f.backMode === 'different' ? `<section>${step(backSide ? 'Back picture' : 'Add a picture')}
+      ${!f.front.imageId ? starterRowHTML(f.type) : ''}
       <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>${f.type === 'posters' ? 'Choose a picture or PDF' : 'Choose a picture'}<small>${f.type === 'posters' ? 'A picture, or a PDF. Got a Rasterbator PDF? Upload it and we print its pages as they are.' : `From your phone, tablet, or computer. One picture fills the whole ${esc(p.unit)}`}</small></span>
         <input id="fileIn" type="file" accept="${f.type === 'posters' ? 'image/*,application/pdf' : 'image/*'}" hidden></label>
       ${S.images.some(im => !im.sheet) ? `<div class="tray">${S.images.filter(im => !im.sheet).map(im => `
@@ -6207,7 +6235,10 @@ function drawTemplates(base){
       return `<div class="tplrow ${t.enabled ? '' : 'off'}"><span class="tplthumb ${t.type === 'pins' ? 'round' : ''}"><img src="${esc(t.image)}" alt=""></span>
       <div class="tplinfo"><b>${esc(t.name)}</b><span class="small muted">${esc(P(t.type) ? P(t.type).name : t.type)}${tplPrice(t) ? ' · ' + money(tplPrice(t)) : ''}${t.enabled ? '' : ' · <b>off</b>'}</span>
         <span class="small muted">${sc[src] || 0} scan${sc[src] === 1 ? '' : 's'} · ${n} order${n === 1 ? '' : 's'}</span></div>
-      <div class="acts">${smallBtn('Sticker', 'download', 'tplSticker', 'dark', `data-slug="${esc(t.slug)}"`)}${smallBtn('QR only', 'qr', 'tplQr', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('Copy link', 'copy', 'tplCopy', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('Try it', 'arrow', 'tplTry', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn(t.enabled ? 'Turn off' : 'Turn on', t.enabled ? 'eye' : 'check', 'tplToggle', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('', 'trash', 'tplDel', 'plain', `data-slug="${esc(t.slug)}" aria-label="Delete ${esc(t.name)}"`)}</div></div>`; }).join('')
+      <div class="tplstart"><span class="small muted">${ic('box', 13)} Used in ${(S.admin.orders || []).filter(o => JSON.stringify(o.layout || {}).includes(`"template":"${t.slug}"`)).length} order(s)</span>
+        ${smallBtn(t.starter ? 'On the design page' : 'Show on the design page', t.starter ? 'check' : 'sparkle', 'tplStarter', t.starter ? 'dark' : 'plain', `data-slug="${esc(t.slug)}"`)}
+        ${t.starter ? `${smallBtn('', 'arrow', 'tplSort', 'plain', `data-slug="${esc(t.slug)}" data-d="-1" aria-label="Show earlier" style="transform:rotate(-90deg)"`)}${smallBtn('', 'arrow', 'tplSort', 'plain', `data-slug="${esc(t.slug)}" data-d="1" aria-label="Show later" style="transform:rotate(90deg)"`)}` : ''}</div>
+      <div class="acts">${t.type === 'stickers' ? '' : smallBtn('Sticker', 'download', 'tplSticker', 'dark', `data-slug="${esc(t.slug)}"`)}${smallBtn('QR only', 'qr', 'tplQr', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('Copy link', 'copy', 'tplCopy', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('Try it', 'arrow', 'tplTry', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn(t.enabled ? 'Turn off' : 'Turn on', t.enabled ? 'eye' : 'check', 'tplToggle', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('', 'trash', 'tplDel', 'plain', `data-slug="${esc(t.slug)}" aria-label="Delete ${esc(t.name)}"`)}</div></div>`; }).join('')
       : `<button type="button" class="tplempty" data-act="tplNew">${ic('plus', 26)}<span><b>Make your first one</b><small>Pick a picture, give it a name, done. Takes a minute.</small></span></button>`;
     const sel = $('#qrOpens'); if (sel && sel.options.length !== list.filter(t => t.enabled).length + 1) { const v = sel.value; sel.innerHTML = `<option value="">The shop's home page</option>${list.filter(t => t.enabled).map(t => `<option value="${esc(t.slug)}">Ready-made: ${esc(t.name)}</option>`).join('')}`; sel.value = v; }
   };
@@ -6215,7 +6246,7 @@ function drawTemplates(base){
 }
 /* the 3-step "new ready-made design" sheet */
 function tplNewSheet(){
-  const types = ['pins', 'keychains', 'posters'].filter(k => CONFIG.products[k]);
+  const types = ['stickers', 'pins', 'keychains', 'posters'].filter(k => CONFIG.products[k]);
   S.admin.tplDraft = { type: types[0] || 'pins', file: null };
   showSheet(`<h3 style="margin-bottom:4px">New ready-made design</h3><p class="help" style="margin:0 0 14px">Three quick steps. Anyone who scans its sticker goes straight to ordering it.</p>
     <div class="tplstep"><i>1</i><b>Pick the picture</b></div>
@@ -6417,6 +6448,8 @@ const ACTIONS = {
     Object.assign(im, { blob, ext: 'png', alpha: true, url: URL.createObjectURL(blob) });
     for (const k of [...stickerCache.keys()]) if (k.startsWith(im.id + '|')) stickerCache.delete(k);
     toast('Sticker fixed!'); drawCtrl(); drawSheet(); },
+  starterUse: async t => { const all = Object.values(S.starters).flat().filter(Boolean), tp = all.find(x => x.slug === t.dataset.slug); if (!tp) return;
+    t.classList.add('busy'); try { await useTemplate(tp); } catch { toast("That design didn't open. You can still make your own."); } },
   importOpen: () => { S.importDraft = S.importDraft && S.importDraft.im ? S.importDraft : {}; showSheet(''); drawImport(); },
   importClose: () => closeSheet(),
   importLines: t => { S.importDraft.lines = t.dataset.v; drawImport(); },
@@ -6957,6 +6990,13 @@ const ACTIONS = {
   tplSticker: el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (t) tplDownloadSticker(t); },
   tplQr: el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t || !window.QRCode) return; qrCanvas(tplLink(t), 1000).toBlob(b => saveBlob(b, `qr-${t.slug}.png`), 'image/png'); },
   tplCopy: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t) return; try { await navigator.clipboard.writeText(tplLink(t)); toast('Link copied.'); } catch { toast(tplLink(t)); } },
+  tplStarter: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t) return;
+    const same = (S.admin.tpls || []).filter(x => x.type === t.type && x.starter && x.slug !== t.slug);
+    if (!t.starter && same.length >= 3) return toast(`${P(t.type).name} already shows 3. Take one off first.`);
+    try { await api.setTemplate(t.slug, { starter: !t.starter, sort: t.starter ? 0 : same.length }); S.starters = {}; toast(t.starter ? 'Taken off the design page.' : `Now on the ${P(t.type).name.toLowerCase()} design page.`); drawPosters(); } catch (e) { toast(friendlyError(e)); } },
+  tplSort: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t) return;
+    const list = (S.admin.tpls || []).filter(x => x.type === t.type && x.starter).sort((a, b) => a.sort - b.sort), i = list.indexOf(t), j = i + +el.dataset.d; if (j < 0 || j >= list.length) return;
+    [list[i], list[j]] = [list[j], list[i]]; try { await Promise.all(list.map((x, k) => api.setTemplate(x.slug, { sort: k }))); S.starters = {}; drawPosters(); } catch (e) { toast(friendlyError(e)); } },
   tplToggle: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t) return; try { await api.setTemplate(t.slug, { enabled: !t.enabled }); drawPosters(); } catch (e) { toast(friendlyError(e)); } },
   tplDel: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t || !confirm(`Delete "${t.name}"? QR codes that open it will go to the home page instead.`)) return; try { await api.delTemplate(t.slug); drawPosters(); } catch (e) { toast(friendlyError(e)); } },
   tplTry: el => { window.open(`${CONFIG.siteUrl || location.origin + location.pathname}?t=${encodeURIComponent(el.dataset.slug)}`, '_blank'); },
