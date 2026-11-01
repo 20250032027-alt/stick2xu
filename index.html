@@ -1572,12 +1572,14 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
   .setnav #setAll{justify-self:start;align-self:flex-start}
 }
 /* Import a whole sheet */
-.importbtn{display:flex;gap:12px;align-items:center;width:100%;margin-top:10px;padding:14px;border-radius:18px;border:2px solid #283971;background:linear-gradient(120deg,#FFF3C4,#FFE58A);color:#283971;font:inherit;text-align:left;cursor:pointer;box-shadow:4px 4px 0 #283971;transition:transform .15s}
-.importbtn:hover{transform:translate(-1px,-1px)}.importbtn em{font-style:normal;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;background:#283971;color:#F2BC2E;padding:2px 7px;border-radius:999px;margin-left:6px;vertical-align:2px}
+.importbtn{display:flex;gap:12px;align-items:center;width:100%;padding:14px;border-radius:var(--r-md,18px);border:2px dashed #E3A400;background:#FFF8E1;color:#283971;font:inherit;text-align:left;cursor:pointer;transition:background .15s}
+.importbtn:hover{background:#FFF1C4}.ordiv{display:flex;align-items:center;gap:10px;margin:10px 0;color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.06em}.ordiv::before,.ordiv::after{content:"";flex:1;height:1px;background:var(--line)}
+.importbtn em{font-style:normal;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;background:#283971;color:#F2BC2E;padding:2px 7px;border-radius:999px;margin-left:6px;vertical-align:2px}
 .importbtn > span:nth-child(2){flex:1;display:flex;flex-direction:column}.importbtn small{color:var(--muted);font-size:13px;line-height:1.35}
-.importbtn .ui{flex:none;width:44px;height:44px;border-radius:14px;background:#283971;color:#F2BC2E;display:grid;place-items:center}
+.importbtn .ui{flex:none;width:40px;height:40px;border-radius:12px;background:#283971;color:#F2BC2E;display:grid;place-items:center}
 .addtxt{display:flex;flex-direction:column;gap:2px;line-height:1.35}.addtxt small{color:var(--muted);font-size:13px}
 .dropping{outline:3px dashed #F2BC2E!important;outline-offset:3px;background-color:#FFF8E1!important}
+.printline{display:inline-flex;gap:8px;align-items:center;margin-top:16px;padding:8px 14px;border-radius:999px;background:#EEF2FC;color:#283971;text-decoration:none;font-size:14.5px}.printline:hover{background:#E2E8F8}
 .printnudge{display:flex;gap:14px;align-items:center;max-width:720px;margin:22px auto 0;padding:14px 16px;border-radius:18px;border:1.5px solid var(--line);background:#fff;color:var(--ink);text-decoration:none}
 .printnudge > span:nth-child(2){flex:1;display:flex;flex-direction:column}.printnudge small{color:var(--muted);font-size:14px;line-height:1.4}
 .pn-ic{flex:none;width:44px;height:44px;border-radius:14px;background:#EEF2FC;color:#283971;display:grid;place-items:center}
@@ -2999,10 +3001,10 @@ function viewHome(){
           <li>${ic('school', 18)}<span>Pickup inside campus</span></li>
         </ul>
         ${countdownHTML()}
+        ${P('prints') && P('prints').enabled ? `<a class="printline" href="${designRoute('prints')}">${ic('printer', 16)}<span><b>No printer?</b> Print your files here, from ${money(Math.min(...P('prints').sizes.filter(z => z.enabled !== false).map(z => z.price)))} a page.</span>${ic('arrow', 14)}</a>` : ''}
       </div>
       ${heroArt()}
     </section>
-    ${P('prints') && P('prints').enabled ? `<a class="printnudge" href="${designRoute('prints')}"><span class="pn-ic">${ic('printer', 22)}</span><span><b>Need something printed?</b><small>No printer, or it's due tomorrow? Send us your file and pick it up at school, from ${money(Math.min(...P('prints').sizes.filter(z => z.enabled !== false).map(z => z.price)))} a page.</small></span>${ic('arrow', 18)}</a>` : ''}
     <footer><span>${esc(CONFIG.shopName)} is run by students. It isn't an official school service.${CONFIG.sellersOn && !S.group ? ` <a href="#/sell" class="earnlink">${ic('sparkle', 14)}Earn with ${esc(CONFIG.shopName)}</a>` : ''}</span>${socialHTML()}</footer>
   </main>`;
 }
@@ -3234,9 +3236,10 @@ function drawCtrl(){
     </section>
     <section>
       <div class="stephead"><i>1</i>Add pictures</div>
+      <button type="button" class="importbtn" data-act="importOpen"><span class="ui">${ic('image', 20)}</span><span><b>Import your own sheet <em>New</em></b><small>Got a sticker sheet from Pinterest? We'll print it, or cut out each sticker for you.</small></span>${ic('arrow', 16)}</button>
+      <div class="ordiv"><span>or</span></div>
       <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose pictures<small>From your phone, tablet, or computer. PNG with a see-through background works best</small></span>
         <input id="fileIn" type="file" accept="image/*" multiple hidden></label>
-      <button type="button" class="importbtn" data-act="importOpen"><span class="ui">${ic('image', 22)}</span><span><b>Import your own sheet <em>New</em></b><small>Found a sticker sheet you love, like on Pinterest? Bring it here. We can even cut out each sticker for you.</small></span>${ic('arrow', 18)}</button>
       ${S.images.some(im => !im.sheet) ? `<div class="tray">${S.images.filter(im => !im.sheet).map(im => `
         <button class="thumb ${S.selImage === im.id && !sel ? 'on' : ''}" type="button" data-act="pickImg" data-id="${im.id}" style="background-image:url('${im.url}')" aria-label="Use this picture" aria-pressed="${S.selImage === im.id && !sel}">
           <span class="x" data-act="delImg" data-id="${im.id}" role="button" aria-label="Remove picture">${ic('x', 14)}</span></button>`).join('')}</div>` : ''}
@@ -3656,7 +3659,7 @@ function drawFramedCtrl(){
     ${!backSide || f.backMode === 'different' ? `<section>${step(backSide ? 'Back picture' : 'Add a picture')}
       <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>${f.type === 'posters' ? 'Choose a picture or PDF' : 'Choose a picture'}<small>${f.type === 'posters' ? 'A picture, or a PDF. Got a Rasterbator PDF? Upload it and we print its pages as they are.' : `From your phone, tablet, or computer. One picture fills the whole ${esc(p.unit)}`}</small></span>
         <input id="fileIn" type="file" accept="${f.type === 'posters' ? 'image/*,application/pdf' : 'image/*'}" hidden></label>
-      ${S.images.length ? `<div class="tray">${S.images.map(im => `
+      ${S.images.some(im => !im.sheet) ? `<div class="tray">${S.images.filter(im => !im.sheet).map(im => `
         <button class="thumb ${d && d.imageId === im.id ? 'on' : ''}" type="button" data-act="fdImg" data-id="${im.id}" style="background-image:url('${im.url}')" aria-label="Use this picture" aria-pressed="${!!d && d.imageId === im.id}">
           <span class="x" data-act="delImg" data-id="${im.id}" role="button" aria-label="Remove picture">${ic('x', 14)}</span></button>`).join('')}</div>` : ''}
     </section>` : ''}
@@ -5745,7 +5748,7 @@ function setupSettingsNav(){
   let building = false;
   const build = () => {
     if (building || !document.body.contains(nav)) return; building = true;
-    const list = sections().filter(x => titleOf(x));
+    const list = sections().filter(x => titleOf(x) && x.firstElementChild && x.firstElementChild.matches('.sub, h3, .tghead'));   // only sections that start with a title fold
     list.forEach((x, i) => { x.classList.add('cfold'); x.dataset.sec = titleOf(x); if (open.has(x.dataset.sec)) x.classList.add('open'); });
     $('#setList').innerHTML = list.map(x => `<button type="button" data-go="${esc(x.dataset.sec)}" class="${x.classList.contains('open') ? 'on' : ''}">${esc(x.dataset.sec)}</button>`).join('');
     $('#setJump').innerHTML = `<option value="">Jump to…</option>` + list.map(x => `<option>${esc(x.dataset.sec)}</option>`).join('');
@@ -5755,10 +5758,11 @@ function setupSettingsNav(){
   const toggle = (el, force) => { const on = force === undefined ? !el.classList.contains('open') : force; el.classList.toggle('open', on); on ? open.add(el.dataset.sec) : open.delete(el.dataset.sec); save();
     const b = nav.querySelector(`[data-go="${CSS.escape(el.dataset.sec)}"]`); if (b) b.classList.toggle('on', on); };
   const go = name => { const el = sections().find(x => x.dataset.sec === name); if (!el) return; toggle(el, true); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
-  body.addEventListener('click', e => {
-    const head = e.target.closest('.cfold > .sub, .cfold > h3, .cfold > .tghead, .cfold > :first-child');
-    if (head && !e.target.closest('input, button, select, a, label') && head.parentElement.classList.contains('cfold') && head === head.parentElement.firstElementChild) toggle(head.parentElement);
-  });
+  S.setToggle = toggle;   // the one click handler below always uses the latest Settings page
+  if (!body.dataset.navBound) { body.dataset.navBound = '1';
+    body.addEventListener('click', e => { if (!body.classList.contains('setgrid')) return;
+      const head = e.target.closest('.cfold > .sub, .cfold > h3, .cfold > .tghead');
+      if (head && !e.target.closest('input, button, select, a, label') && head === head.parentElement.firstElementChild && S.setToggle) S.setToggle(head.parentElement); }); }
   nav.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) go(b.dataset.go); });
   $('#setJump').addEventListener('change', e => { if (e.target.value) go(e.target.value); e.target.value = ''; });
   $('#setAll').addEventListener('click', () => { const all = sections().filter(x => x.classList.contains('cfold')), anyClosed = all.some(x => !x.classList.contains('open'));
