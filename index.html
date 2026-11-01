@@ -1571,6 +1571,42 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
   .setnav .setlist button:hover{background:#E6EAF4}.setnav .setlist button.on{font-weight:800;background:#E6EAF4}
   .setnav #setAll{justify-self:start;align-self:flex-start}
 }
+/* Import a whole sheet */
+.importbtn{display:flex;gap:12px;align-items:center;width:100%;margin-top:10px;padding:12px 14px;border-radius:18px;border:2px dashed #F2BC2E;background:#FFF8E1;color:#283971;font:inherit;text-align:left;cursor:pointer}
+.importbtn > span:nth-child(2){flex:1;display:flex;flex-direction:column}.importbtn small{color:var(--muted);font-size:13px;line-height:1.35}
+.importbtn .ui{flex:none;width:40px;height:40px;border-radius:50%;background:#F2BC2E;display:grid;place-items:center}
+.impcard{display:flex;flex-direction:column;gap:16px}.imphead{display:flex;justify-content:space-between;align-items:center}.imphead b{font-family:var(--display);font-size:22px;color:#283971}
+.imppick{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px 14px;align-items:center}.imppick .linkbtn{grid-column:2;justify-self:start;font-size:14px}
+.impthumb{grid-row:span 2;width:96px;height:124px;border-radius:12px;background:#fff center/contain no-repeat;border:1.5px solid var(--line);box-shadow:0 2px 8px rgba(40,57,113,.12)}
+.impq{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:14px}.impq > span{display:flex;flex-direction:column}.impq small{font-size:13px;line-height:1.35}
+.impq.ok{background:#E8F7EE;color:#155F33}.impq.mid{background:#FFF6DA;color:#7A5600}.impq.bad{background:#FDECEC;color:#9B2C2C}
+.impq2{display:flex;flex-direction:column;gap:8px}.impq2 > b{color:#283971}
+.impchoice{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.impchoice button{font:inherit;display:flex;flex-direction:column;gap:2px;text-align:left;padding:12px;border-radius:14px;border:2px solid var(--line);background:#fff;color:#283971;cursor:pointer}
+.impchoice button small{color:var(--muted);font-size:12.5px;line-height:1.3}.impchoice button.on{border-color:#283971;background:#EEF2FC;box-shadow:inset 0 0 0 1px #283971}
+.impcard .radio{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer}
+.impcard .radio input{width:18px;height:18px;accent-color:#283971}
+.impbar{display:flex;gap:10px;align-items:center;margin:4px 0 10px;padding:10px 12px;border-radius:14px;background:#EEF2FC;color:#283971}
+.impbar > span{flex:1;display:flex;flex-direction:column}.impbar small{color:var(--muted);font-size:13px}
+.page .impimg{position:absolute;background:center/100% 100% no-repeat;box-shadow:0 0 0 1px rgba(40,57,113,.12)}
+.sepview{position:relative;width:100%;max-height:52vh;margin:0 auto;background:#fff center/100% 100% no-repeat;border-radius:10px;box-shadow:0 0 0 1.5px var(--line)}
+.seppc{position:absolute;border:2.5px solid #F2BC2E;border-radius:10px;background:rgba(242,188,46,.10);cursor:pointer;padding:0}
+.seppc i{position:absolute;top:-10px;left:-10px;min-width:22px;height:22px;padding:0 5px;border-radius:999px;background:#283971;color:#fff;font:700 12px/22px var(--sans,inherit);font-style:normal;display:grid;place-items:center}
+.seppc.off{border-color:#B9BFCC;border-style:dashed;background:rgba(255,255,255,.65)}.seppc.off i{background:#9AA1B5}
+.sepjoin{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}.sepjoin input{accent-color:#283971;width:100%}
+/* Free sticker layout */
+.modebar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:4px 0 10px}
+.modeseg{display:grid;grid-template-columns:1fr 1fr;border:2px solid #283971;border-radius:16px;overflow:hidden;flex:1 1 240px;max-width:340px}
+.modeseg button{font:inherit;display:flex;flex-direction:column;align-items:center;padding:7px 6px;border:0;background:#fff;color:#283971;cursor:pointer;line-height:1.2}
+.modeseg button small{font-size:11.5px;color:var(--muted)}.modeseg button + button{border-left:1.5px solid var(--line)}
+.modeseg button.on{background:#283971;color:#fff}.modeseg button.on small{color:#DCE3F5}
+.page.free{background-image:radial-gradient(rgba(40,57,113,.13) 1px,transparent 1.2px);background-size:4.76% 3.37%}
+.page .freehit{position:absolute;inset:0;border:0;background:transparent;cursor:crosshair;padding:0}
+.page.free .stk{z-index:1}
+.stk .rsz{position:absolute;right:-9px;bottom:-9px;width:22px;height:22px;border-radius:50%;background:#F2BC2E;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3);cursor:nwse-resize;touch-action:none;z-index:3}
+.stk.badsize{outline:3px solid #E5484D;outline-offset:2px}
+.drop.snap{outline:2px solid #F2BC2E;outline-offset:1px}
+.selbar .sizer{display:inline-flex;align-items:center;gap:6px}.selbar .sizer b{min-width:52px;text-align:center;font-size:14px}
 .grpchip{display:flex;gap:8px;align-items:center;margin:0 0 12px;font-size:14px;font-weight:700;color:var(--muted)}.grpchip svg{color:#1E8E4A}.grpchip .linkbtn{font-size:13px;margin-left:auto}
 .schoolcard{border:1.5px solid var(--line);border-radius:18px;padding:14px;margin:12px 0}.schoolcard.off{opacity:.65}
 .sc-head{display:flex;gap:12px;align-items:center}.sc-head .inp{flex:1}
@@ -1746,6 +1782,7 @@ const CONFIG = {
 
   // Match this to the sticker paper (A4 = 210 x 297 mm).
   sheet: { widthMm: 210, heightMm: 297, cols: 4, rows: 6, marginMm: 4, gapMm: 1.5 },
+  freeOn: true, freeMinMm: 20, freeMax: 30, freeGapMm: 2, smoothCut: true,   // Free sticker layout and cut lines
   pinGapMm: 7,             // space between pins on a pin sheet (room to cut around each circle)
   kcGapMm: 4,              // space between keychain inserts on a keychain sheet   // 4 mm edge: about as close as home printers print
   outlineMm: 2.2,          // thickness of the white sticker border
@@ -2089,13 +2126,56 @@ function fits(sheet, col, row, size, ignore){
   if (col < 0 || row < 0 || col + size > g.cols || row + size > g.rows) return false;
   return !sheet.items.some(it => it.uid !== ignore && col < it.col + it.size && col + size > it.col && row < it.row + it.size && row + size > it.row);
 }
-function lowRes(img, size){ return !!img && Math.min(img.w, img.h) < rectMm(0, 0, size).w / 25.4 * 150; }
+function lowRes(img, size){ return lowResMm(img, rectMm(0, 0, size).w); }
+function lowResMm(img, mm){ return !!img && Math.min(img.w, img.h) < mm / 25.4 * 150; }
+/* Free layout: a sticker keeps its own spot and size in mm (x, y, w). Grid stickers keep col, row, size. */
+const isFree = it => !!it && it.x != null;
+function itemRect(it){ return isFree(it) ? { x: it.x, y: it.y, w: it.w, h: it.h ?? it.w } : rectMm(it.col, it.row, it.size); }
+/* Imported sheets: one picture of a whole sticker sheet, printed exactly as it is, as big as the page allows */
+function importRect(im){ const b = sheetBox(), W = b.x1 - b.x0, H = b.y1 - b.y0, k = Math.min(W / im.w, H / im.h), w = im.w * k, h = im.h * k;
+  return { x: +(b.x0 + (W - w) / 2).toFixed(2), y: +(b.y0 + (H - h) / 2).toFixed(2), w: +w.toFixed(2), h: +h.toFixed(2) }; }
+function sheetQuality(im){ const dpi = Math.round(im.w / (importRect(im).w / 25.4));
+  return dpi >= 200 ? { dpi, cls: 'ok', icon: 'check', t: 'Sharp', d: 'This will print nice and clear.' }
+    : dpi >= 120 ? { dpi, cls: 'mid', icon: 'warn', t: 'Okay', d: 'It may look a little soft up close. A bigger version would be sharper.' }
+    : { dpi, cls: 'bad', icon: 'warn', t: 'Too small', d: 'This picture is small, so it will print blurry. Try to find a bigger version (on Pinterest, open the pin and save the full-size picture).' }; }
+const RIGHTS = { permission: 'I have permission to use these designs', own: 'These are my own designs' };
+function sheetBox(){ const s = CONFIG.sheet; return { x0: s.marginMm, y0: s.marginMm, x1: s.widthMm - s.marginMm, y1: s.heightMm - s.marginMm }; }
+function freeFits(sheet, r, ignore){
+  const b = sheetBox(), gap = CONFIG.freeGapMm, e = 0.01;
+  if (r.x < b.x0 - e || r.y < b.y0 - e || r.x + r.w > b.x1 + e || r.y + r.w > b.y1 + e) return false;
+  return !sheet.items.some(o => { if (o.uid === ignore) return false; const q = itemRect(o); return r.x < q.x + q.w + gap - e && r.x + r.w + gap - e > q.x && r.y < q.y + q.h + gap - e && r.y + r.w + gap - e > q.y; });
+}
+function freeSpot(sheet, w, near, ignore){   // the open spot closest to "near" (or the first one, reading order)
+  const b = sheetBox(); let best = null, bd = Infinity;
+  for (let y = b.y0; y + w <= b.y1 + 0.01; y += 2) for (let x = b.x0; x + w <= b.x1 + 0.01; x += 2) {
+    const r = { x, y, w }; if (!freeFits(sheet, r, ignore)) continue;
+    const d = near ? Math.hypot(x + w / 2 - near.x, y + w / 2 - near.y) : y * 1000 + x; if (d < bd) { bd = d; best = r; } }
+  return best;
+}
+function autoArrange(sheet){   // pack rows, biggest first, each row centred; false if they don't all fit
+  const b = sheetBox(), gap = CONFIG.freeGapMm, its = [...sheet.items].sort((a, c) => itemRect(c).w - itemRect(a).w), rows = [];
+  let row = { items: [], w: 0, h: 0 };
+  for (const it of its) { const w = itemRect(it).w; if (row.items.length && row.w + gap + w > b.x1 - b.x0 + 0.01) { rows.push(row); row = { items: [], w: 0, h: 0 }; }
+    row.w += (row.items.length ? gap : 0) + w; row.h = Math.max(row.h, w); row.items.push(it); }
+  if (row.items.length) rows.push(row);
+  if (rows.reduce((t, r) => t + r.h, 0) + gap * (rows.length - 1) > b.y1 - b.y0 + 0.01) return false;
+  let y = b.y0; rows.forEach(r => { let x = b.x0 + (b.x1 - b.x0 - r.w) / 2; r.items.forEach(it => { const w = itemRect(it).w; it.x = +x.toFixed(2); it.y = +y.toFixed(2); it.w = +w.toFixed(2); x += w + gap; }); y += r.h + gap; });
+  return true;
+}
+function snapFree(sheet, r, ignore){   // line up with the sheet edges and the other stickers when close (2.5 mm)
+  const b = sheetBox(), gap = CONFIG.freeGapMm, xs = [b.x0, b.x1 - r.w], ys = [b.y0, b.y1 - r.w];
+  sheet.items.forEach(o => { if (o.uid === ignore) return; const q = itemRect(o); xs.push(q.x, q.x + q.w + gap, q.x - gap - r.w, q.x + q.w - r.w); ys.push(q.y, q.y + q.h + gap, q.y - gap - r.w, q.y + q.h - r.w); });
+  let bx = null, by = null; xs.forEach(v => { if (Math.abs(v - r.x) < 2.5 && (bx === null || Math.abs(v - r.x) < Math.abs(bx - r.x))) bx = v; });
+  ys.forEach(v => { if (Math.abs(v - r.y) < 2.5 && (by === null || Math.abs(v - r.y) < Math.abs(by - r.y))) by = v; });
+  return { x: bx ?? r.x, y: by ?? r.y, w: r.w, snapX: bx !== null, snapY: by !== null };
+}
 
 /* Die-cut sticker: the picture plus a white border that follows its shape.
    With cut = true it also draws a thin grey cutting line around the border (for printing). */
-function drawSticker(src, px, mm, fit, cut){
+function drawSticker(src, px, mm, fit, cut, opts){
   const mk = () => { const c = document.createElement('canvas'); c.width = px; c.height = px; return c; };
-  const b = Math.max(2, Math.round(px * CONFIG.outlineMm / mm));
+  const noBorder = opts && opts.border === 'none';   // "no border": cut right at the picture's edge
+  const b = noBorder ? 0 : Math.max(2, Math.round(px * CONFIG.outlineMm / mm));
   const cl = cut ? Math.max(2, Math.round(px * 0.45 / mm)) : 0;   // cut line thickness (about 0.45 mm), printed as dots
   const pad = b + cl + 1, inner = px - 2 * pad;
   const iw = src.naturalWidth || src.width, ih = src.naturalHeight || src.height;
@@ -2104,7 +2184,12 @@ function drawSticker(src, px, mm, fit, cut){
   const dw = iw * s, dh = ih * s;
   a.save(); a.beginPath(); a.rect(pad, pad, inner, inner); a.clip();
   a.drawImage(src, pad + (inner - dw) / 2, pad + (inner - dh) / 2, dw, dh); a.restore();
-  const sil = color => { const c = mk(), x = c.getContext('2d'); x.drawImage(art, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = color; x.fillRect(0, 0, px, px); return c; };
+  // smoother cut lines: round off the outline's little nooks so it's quick to cut with scissors.
+  // (Cut at the halfway point of the blur, so corners round off without the shape getting bigger.)
+  let shape = art;
+  if (CONFIG.smoothCut && b > 0) { const m = mk(), mx = m.getContext('2d'); mx.filter = `blur(${Math.max(1, b * 0.8)}px)`; mx.drawImage(art, 0, 0); mx.filter = 'none';
+    const d = mx.getImageData(0, 0, px, px), p = d.data; for (let i = 3; i < p.length; i += 4) p[i] = p[i] > 120 ? 255 : 0; mx.putImageData(d, 0, 0); shape = m; }
+  const sil = color => { const c = mk(), x = c.getContext('2d'); x.drawImage(shape, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = color; x.fillRect(0, 0, px, px); return c; };
   const out = mk(), o = out.getContext('2d');
   const stamp = (c, r) => {
     for (const rr of [r, r * 0.66, r * 0.33]) for (let i = 0; i < 28; i++) { const t = i / 28 * Math.PI * 2; o.drawImage(c, Math.cos(t) * rr, Math.sin(t) * rr); }
@@ -2129,10 +2214,11 @@ function drawSticker(src, px, mm, fit, cut){
 const stickerCache = new Map();
 function stickerURL(it){
   const im = S.images.find(i => i.id === it.imageId); if (!im) return '';
-  const key = `${it.imageId}|${it.size}|${it.fit}`;
+  if (it.h) return im.url;   // an imported sheet shows exactly as it is
+  const mm = itemRect(it).w, key = `${it.imageId}|${Math.round(mm)}|${it.fit}|${it.border || 'white'}|${CONFIG.smoothCut ? 's' : ''}`;
   if (!stickerCache.has(key)) {
-    const px = Math.min(640, 170 * it.size);
-    stickerCache.set(key, drawSticker(im.canvas, px, rectMm(0, 0, it.size).w, it.fit, false).toDataURL('image/png'));
+    const px = Math.min(640, Math.round(170 * mm / geom().cell));
+    stickerCache.set(key, drawSticker(im.canvas, px, mm, it.fit, false, { border: it.border }).toDataURL('image/png'));
   }
   return stickerCache.get(key);
 }
@@ -2140,7 +2226,7 @@ function miniSheet(sheet, urlFor, deleted, outlined){
   if (deleted) return `<div class="mini"><div class="gone">pictures cleaned up</div></div>`;
   return `<div class="mini">${sheet.items.map(it => {
     const u = urlFor(it);
-    return `<span class="${outlined ? 'o' : it.fit === 'fit' ? 'fit' : ''}" style="${pctStyle(rectMm(it.col, it.row, it.size))};${u ? `background-image:url('${u}')` : ''}"></span>`;
+    return `<span class="${outlined ? 'o' : it.fit === 'fit' ? 'fit' : ''}" style="${pctStyle(itemRect(it))};${u ? `background-image:url('${u}')` : ''}"></span>`;
   }).join('')}</div>`;
 }
 
@@ -2222,6 +2308,8 @@ function applyShopConfig(c){
   CONFIG.posterExtraSheet = numOr(c.poster_extra_sheet, D.posterExtraSheet);
   CONFIG.posterMarginMm = Math.max(3, Math.min(15, numOr(c.poster_margin_mm, D.posterMarginMm)));
   CONFIG.pinGapMm = Math.max(2, Math.min(20, numOr(c.pin_gap_mm, D.pinGapMm)));
+  CONFIG.freeOn = c.free_on !== false; CONFIG.smoothCut = c.smooth_cut !== false;
+  CONFIG.freeMinMm = Math.max(10, Math.min(100, numOr(c.free_min_mm, D.freeMinMm))); CONFIG.freeMax = Math.max(1, Math.min(200, numOr(c.free_max, D.freeMax))); CONFIG.freeGapMm = Math.max(1, Math.min(10, numOr(c.free_gap_mm, D.freeGapMm)));
   CONFIG.kcGapMm = Math.max(1, Math.min(20, numOr(c.kc_gap_mm, D.kcGapMm)));
   CONFIG.sheet = { ...D.sheet, marginMm: Math.max(3, Math.min(15, numOr(c.sticker_margin_mm, D.sheet.marginMm))), gapMm: Math.max(0.5, Math.min(6, numOr(c.sticker_gap_mm, D.sheet.gapMm))) };
   CONFIG.posterOverlapMm = Math.max(0, Math.min(30, numOr(c.poster_overlap_mm, D.posterOverlapMm)));
@@ -2336,6 +2424,10 @@ function itemDetails(it){
   const labels = it.addon_labels || (it.addons || []).map(id => (P(it.type).addons.find(a => a.id === id) || {}).label).filter(Boolean);
   if (labels.length) bits.push(labels.join(', '));
   if (it.type === 'prints') { if (!labels.length) bits.push('Black and white'); bits.push(it.duplex ? 'double-sided' : 'one side'); }
+  if (it.type === 'stickers') { const sep = (it.sheets || []).filter(sh => sh.fromImport);
+    if (sep.length) bits.push(`${sep.length} sheet${sep.length === 1 ? '' : 's'} cut out from an imported sheet; ${[...new Set(sep.map(sh => sh.fromImport.rights === 'own' ? 'their own designs' : 'they have permission to use these designs'))].join(' / ')}`);
+    const imps = (it.sheets || []).filter(sh => sh.imported);
+    if (imps.length) bits.push(`${imps.length} imported sheet${imps.length === 1 ? '' : 's'}: ${[...new Set(imps.map(sh => sh.imported.lines === 'yes' ? 'has its own cut lines' : 'cut around each design'))].join(' / ')}; ${[...new Set(imps.map(sh => (RIGHTS[sh.imported.rights] || '').replace(/^I have/, 'they have').replace(/^These are my own/, 'their own')))].join(' / ')}`); }
   if (it.type === 'keychains') { const m = it.back_mode || it.backMode; bits.push(m === 'different' ? 'different back' : m === 'blank' ? 'clear back' : 'same picture both sides'); }
   return bits.join(' · ');
 }
@@ -2430,7 +2522,7 @@ function serializeItems(items, pathFor){
       addon_labels: (it.addons || []).map(id => (p.addons.find(a => a.id === id) || {}).label).filter(Boolean), unit_price: unitPrice(it) };
     if (it.type === 'prints') return { ...base, qty: it.qty, pages: it.pages, duplex: !!it.duplex,
       files: (it.files || []).map(f => ({ path: pathFor[f.id], name: f.name, pages: f.pages, kind: f.kind, orient: f.orient || null })) };
-    if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ items: sh.items.map(x => ({ path: pathFor[x.imageId], col: x.col, row: x.row, size: x.size, fit: x.fit })) })) };
+    if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ ...(sh.free ? { free: true } : {}), ...(sh.imported ? { imported: sh.imported } : {}), ...(sh.fromImport ? { fromImport: sh.fromImport } : {}), items: sh.items.map(x => ({ path: pathFor[x.imageId], ...(isFree(x) ? { x: x.x, y: x.y, w: x.w, ...(x.h ? { h: x.h } : {}) } : { col: x.col, row: x.row, size: x.size }), fit: x.fit, ...(x.border === 'none' ? { border: 'none' } : {}) })) })) };
     const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy, bg: x.bg || '#ffffff' } : null;
     if (it.type === 'posters' && it.mode === 'pages') return { ...base, qty: it.qty, mode: 'pages', pages: it.pages, across: it.across, tiles: it.pages,
       pdf: { path: pathFor[it.pdf.id], name: it.pdf.name, pages: it.pages } };
@@ -3131,7 +3223,8 @@ function drawCtrl(){
       <div class="stephead"><i>1</i>Add pictures</div>
       <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose pictures<small>From your phone, tablet, or computer. PNG with a see-through background works best</small></span>
         <input id="fileIn" type="file" accept="image/*" multiple hidden></label>
-      ${S.images.length ? `<div class="tray">${S.images.map(im => `
+      <button type="button" class="importbtn" data-act="importOpen"><span class="ui">${ic('image', 20)}</span><span><b>Import a whole sheet</b><small>Found a sticker sheet you love, like on Pinterest? Print it as is.</small></span>${ic('arrow', 18)}</button>
+      ${S.images.some(im => !im.sheet) ? `<div class="tray">${S.images.filter(im => !im.sheet).map(im => `
         <button class="thumb ${S.selImage === im.id && !sel ? 'on' : ''}" type="button" data-act="pickImg" data-id="${im.id}" style="background-image:url('${im.url}')" aria-label="Use this picture" aria-pressed="${S.selImage === im.id && !sel}">
           <span class="x" data-act="delImg" data-id="${im.id}" role="button" aria-label="Remove picture">${ic('x', 14)}</span></button>`).join('')}</div>` : ''}
     </section>
@@ -3152,20 +3245,25 @@ function drawCtrl(){
 }
 
 function drawSheet(){
-  const g = geom(), sheet = S.sheets[S.cur], sel = selected();
-  let cells = '';
-  for (let r = 0; r < g.rows; r++) for (let c = 0; c < g.cols; c++)
+  const g = geom(), sheet = S.sheets[S.cur], imp = !!sheet.imported, sel = imp ? null : selected(), free = !imp && !!sheet.free && CONFIG.freeOn;
+  let cells = free ? `<button class="freehit" type="button" data-act="freeTap" aria-label="Place your picture here"></button>` : '';
+  if (!free && !imp) for (let r = 0; r < g.rows; r++) for (let c = 0; c < g.cols; c++)
     cells += `<button class="cell" type="button" data-act="cell" data-col="${c}" data-row="${r}" style="${pctStyle(rectMm(c, r, 1))}" aria-label="Row ${r + 1}, spot ${c + 1}"></button>`;
-  const stickers = sheet.items.map(it => `<button class="stk ${it.uid === S.selItem ? 'sel' : ''} ${it.uid === S.justPlaced ? 'pop' : ''}" type="button" data-act="stk" data-uid="${it.uid}"
-      style="${pctStyle(rectMm(it.col, it.row, it.size))};background-image:url('${stickerURL(it)}')" aria-label="Sticker, tap to edit">
-      ${lowRes(imgById(it.imageId), it.size) ? `<span class="w">${ic('warn', 11)}blurry</span>` : ''}</button>`).join('');
+  const stickers = imp ? sheet.items.map(it => `<div class="impimg" style="${pctStyle(itemRect(it))};background-image:url('${stickerURL(it)}')" role="img" aria-label="Your imported sheet"></div>`).join('') : sheet.items.map(it => `<button class="stk ${it.uid === S.selItem ? 'sel' : ''} ${it.uid === S.justPlaced ? 'pop' : ''}" type="button" data-act="stk" data-uid="${it.uid}"
+      style="${pctStyle(itemRect(it))};background-image:url('${stickerURL(it)}')" aria-label="Sticker, tap to edit">
+      ${lowResMm(imgById(it.imageId), itemRect(it).w) ? `<span class="w">${ic('warn', 11)}blurry</span>` : ''}${free && it.uid === S.selItem ? `<span class="rsz" data-uid="${it.uid}" aria-label="Drag to resize"></span>` : ''}</button>`).join('');
   S.justPlaced = null;
   $('#sheetArea').innerHTML = `
     <div class="tabs" role="tablist">${S.sheets.map((s, i) => `<button class="tab ${i === S.cur ? 'on' : ''}" type="button" role="tab" aria-selected="${i === S.cur}" data-act="tab" data-i="${i}">Sheet ${i + 1}</button>`).join('')}
       ${S.sheets.length < S.settings.maxSheets ? `<button class="tab add" type="button" data-act="addSheet">${ic('plus', 16)}Add a sheet</button>` : `<span class="muted small" style="align-self:center">${S.settings.maxSheets} sheets max per order</span>`}</div>
-    <p class="hint mob">${ic('sparkle', 18)}<span>${sel ? 'Tap an empty spot to move it.' : S.selImage ? 'Tap the sheet to stick your picture. Drag a sticker to move it.' : 'Choose pictures to start, then tap the sheet to place them.'}</span></p>
-    <div class="page" id="page">${cells}${stickers}${!S.images.length ? `<label class="sheet-empty"><span class="ui">${ic('plus', 22)}</span><b>Choose pictures</b><small>Then tap the sheet to place them</small><input id="fileIn2" type="file" accept="image/*" multiple hidden></label>` : ''}</div>
+    <p class="hint mob">${ic('sparkle', 18)}<span>${imp ? 'This sheet prints exactly as you see it. Add another sheet for your own pictures.' : free ? (sel ? 'Drag it anywhere. Pull the corner dot to resize.' : S.selImage ? 'Tap anywhere on the sheet to stick your picture.' : 'Pick a picture, then tap anywhere on the sheet.') : sel ? 'Tap an empty spot to move it.' : S.selImage ? 'Tap the sheet to stick your picture. Drag a sticker to move it.' : 'Choose pictures to start, then tap the sheet to place them.'}</span></p>
+    ${imp ? `<div class="impbar">${ic('image', 18)}<span><b>Imported sheet</b><small>${sheet.imported.lines === 'yes' ? 'Has its own cut lines' : 'We cut around each design'} · printed exactly as is</small></span>${smallBtn('Remove', 'trash', 'delSheet', 'plain')}</div>` : ''}
+    ${CONFIG.freeOn && !imp ? `<div class="modebar"><div class="modeseg" role="group" aria-label="How stickers are placed">${[['', 'Grid', 'Neat squares'], ['1', 'Free', 'Any size, anywhere']].map(([v, l, h]) => `<button type="button" data-act="sheetMode" data-v="${v}" class="${(v === '1') === free ? 'on' : ''}"><b>${l}</b><small>${h}</small></button>`).join('')}</div>
+      ${free && sheet.items.length > 1 ? smallBtn('Auto-arrange', 'sparkle', 'freeArrange', 'plain') : ''}</div>` : ''}
+    <div class="page ${free ? 'free' : ''} ${imp ? 'imp' : ''}" id="page">${cells}${stickers}${!S.images.length ? `<label class="sheet-empty"><span class="ui">${ic('plus', 22)}</span><b>Choose pictures</b><small>Then tap the sheet to place them</small><input id="fileIn2" type="file" accept="image/*" multiple hidden></label>` : ''}</div>
     ${sel ? `<div class="selbar">
+        ${free ? `<span class="sizer">${smallBtn('', 'minus', 'freeSize', 'plain', 'data-d="-5" aria-label="Smaller"')}<b>${(itemRect(sel).w / 10).toFixed(1)} cm</b>${smallBtn('', 'plus', 'freeSize', 'plain', 'data-d="5" aria-label="Bigger"')}</span>` : ''}
+        ${smallBtn(sel.border === 'none' ? 'Add white border' : 'No border', sel.border === 'none' ? 'fit' : 'fill', 'borderToggle', 'plain')}
         ${smallBtn(sel.fit === 'fit' ? 'Fill the square' : 'Show whole picture', sel.fit === 'fit' ? 'fill' : 'fit', 'fitToggle', 'plain')}
         ${smallBtn('Remove', 'trash', 'removeItem', 'danger')}
         ${smallBtn('Done', 'check', 'deselect', 'dark')}</div>`
@@ -3173,7 +3271,7 @@ function drawSheet(){
         ${S.sheets.length > 1 ? smallBtn('Remove this sheet', 'trash', 'delSheet', 'plain') : ''}</div>`}
     ${liveAddons('stickers').length ? `<div class="mob-only extras-mob"><div class="stephead"><i>${ic('plus', 14)}</i>Extras</div>${addonChecks('stickers', S.stickerAddons)}</div>` : ''}`;
   const f2 = $('#fileIn2'); if (f2) f2.addEventListener('change', onFiles);
-  $('#page').querySelectorAll('.stk').forEach(el => el.addEventListener('pointerdown', e => startStickerDrag(e, el)));
+  $('#page').querySelectorAll('.stk').forEach(el => el.addEventListener('pointerdown', e => { if (e.target.closest('.rsz')) return startResize(e, el); startStickerDrag(e, el); }));
 }
 
 /* Press and drag a placed sticker to move it. It snaps to the grid when you let go. */
@@ -3198,6 +3296,11 @@ function onDragMove(e){
   drag.el.style.transform = `translate(${dx}px, ${dy}px) scale(1.06)`;
   const g = geom(), pr = drag.pr, size = drag.it.size, step = g.cell + g.gapMm;
   const xMm = (e.clientX - drag.gx - pr.left) / pr.width * g.widthMm, yMm = (e.clientY - drag.gy - pr.top) / pr.height * g.heightMm;
+  if (isFree(drag.it)) {
+    const sh = S.sheets[S.cur], r = snapFree(sh, { x: xMm, y: yMm, w: drag.it.w }, drag.it.uid), ok = freeFits(sh, r, drag.it.uid);
+    drag.target = { x: r.x, y: r.y, ok }; drag.ghost.setAttribute('style', pctStyle({ ...r, h: r.w })); drag.ghost.classList.toggle('bad', !ok);
+    drag.ghost.classList.toggle('snap', r.snapX || r.snapY); return;
+  }
   const col = Math.max(0, Math.min(g.cols - size, Math.round((xMm - g.offX) / step)));
   const row = Math.max(0, Math.min(g.rows - size, Math.round((yMm - g.offY) / step)));
   const ok = fits(S.sheets[S.cur], col, row, size, drag.it.uid);
@@ -3212,8 +3315,23 @@ function onDragEnd(){
   if (!d.moving) return;
   S.suppressClick = true; setTimeout(() => { S.suppressClick = false; }, 80);
   if (d.ghost) d.ghost.remove();
-  if (d.target && d.target.ok) { buzz(8); d.it.col = d.target.col; d.it.row = d.target.row; S.justPlaced = d.it.uid; S.selItem = null; drawDesigner(); }
-  else { d.el.style.transform = ''; d.el.classList.remove('dragging'); shakePage(); toast("That spot's taken, so it went back."); }
+  if (d.target && d.target.ok) { buzz(8); if (isFree(d.it)) { d.it.x = +d.target.x.toFixed(2); d.it.y = +d.target.y.toFixed(2); } else { d.it.col = d.target.col; d.it.row = d.target.row; }
+    S.justPlaced = d.it.uid; if (!isFree(d.it)) S.selItem = null; drawDesigner(); }
+  else { d.el.style.transform = ''; d.el.classList.remove('dragging'); shakePage(); toast(isFree(d.it) ? 'Too close to another sticker (or off the sheet), so it went back.' : "That spot's taken, so it went back."); }
+}
+/* Free layout: pull the corner dot to resize (keeps its gap from the others, never smaller than the minimum) */
+function startResize(e, el){
+  e.preventDefault(); e.stopPropagation();
+  const it = S.sheets[S.cur].items.find(i => i.uid === el.dataset.uid); if (!it) return;
+  const page = $('#page'), pr = page.getBoundingClientRect(), g = geom(), sh = S.sheets[S.cur], start = it.w; let ok = true, nw = start;
+  const move = ev => { const xMm = (ev.clientX - pr.left) / pr.width * g.widthMm, yMm = (ev.clientY - pr.top) / pr.height * g.heightMm;
+    nw = Math.max(CONFIG.freeMinMm, Math.min(sheetBox().x1 - sheetBox().x0, Math.max(xMm - it.x, yMm - it.y)));
+    ok = freeFits(sh, { x: it.x, y: it.y, w: nw }, it.uid); el.setAttribute('style', `${pctStyle({ x: it.x, y: it.y, w: nw, h: nw })};background-image:${el.style.backgroundImage}`); el.classList.toggle('badsize', !ok); };
+  const up = () => { document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up);
+    S.suppressClick = true; setTimeout(() => { S.suppressClick = false; }, 80);
+    if (ok) { it.w = +nw.toFixed(2); buzz(8); } else { toast('It would touch another sticker. Move it first, or try Auto-arrange.'); }
+    drawSheet(); drawBottom(); };
+  document.addEventListener('pointermove', move); document.addEventListener('pointerup', up);
 }
 
 function bumpTotal(){
@@ -3223,12 +3341,12 @@ function bumpTotal(){
 }
 function drawBottom(){
   const used = S.sheets.filter(s => s.items.length).length;
-  const count = S.sheets.reduce((a, s) => a + s.items.length, 0);
+  const count = S.sheets.filter(s => !s.imported).reduce((a, s) => a + s.items.length, 0), imps = S.sheets.filter(s => s.imported && s.items.length).length;
   const each = unitPrice({ type: 'stickers', size: 'a4', addons: S.stickerAddons });
   const draft = { type: 'stickers', size: 'a4', addons: S.stickerAddons, sheets: S.sheets };
   const hint = used ? dealNudges(S.cart.filter((_, i) => i !== S.editing).concat([draft])).find(t => t.product === 'stickers') : null;
   $('#bottom').innerHTML = `${hint ? `<div class="bb-hint">${ic('sparkle', 13)}<span>${esc(hint.text)}</span></div>` : ''}<div><div class="tot num">${money(used * each)}</div>
-      <div class="sub">${count} sticker${count === 1 ? '' : 's'} on ${used} sheet${used === 1 ? '' : 's'}</div></div>
+      <div class="sub">${[count ? `${count} sticker${count === 1 ? '' : 's'}` : '', imps ? `${imps} imported sheet${imps === 1 ? '' : 's'}` : ''].filter(Boolean).join(' + ')}${count ? ` on ${used} sheet${used === 1 ? '' : 's'}` : ''}</div></div>
     ${btn(S.editing !== null ? 'Save changes' : 'Add to order', { act: 'addStickers', icon: S.editing !== null ? 'check' : 'arrow', attrs: count ? '' : 'disabled' })}`;
   bumpTotal();
 }
@@ -3296,6 +3414,91 @@ function posterPagesStage(f){
   return `<div class="ppgrid" style="grid-template-columns:repeat(${f.across},1fr);width:min(100%, ${Math.round(Math.min(620, 160 * f.across))}px, calc(52svh * ${(f.across * ratio / rows).toFixed(4)}))">${cells}</div>
     <p class="under">${n ? `${n} pages, laid out ${f.across} across and ${rows} down.` : 'Type the page count to see the layout.'}${n && thumbs.filter(Boolean).length < n ? ` Loading previews (${thumbs.filter(Boolean).length} of ${n})…` : ''} We print every page exactly as it is, then cut along your PDF's own cut marks and put the poster together for you.</p>`;
 }
+function importCardHTML(){
+  const d = S.importDraft || {}, im = d.im, q = im && sheetQuality(im);
+  return `<div class="impcard"><div class="imphead"><b>Import a whole sheet</b><button type="button" class="linkbtn" data-act="importClose" aria-label="Close">${ic('x', 18)}</button></div>
+    ${im ? `<div class="imppick"><span class="impthumb" style="background-image:url('${im.url}')"></span><span class="impq ${q.cls}">${ic(q.icon, 16)}<span><b>${q.t}</b><small>${esc(q.d)}</small></span></span>
+        <label class="linkbtn">Choose another<input id="impFile" type="file" accept="image/*" hidden></label></div>`
+      : `<label class="upload impdrop"><span class="ui">${ic('plus', 22)}</span><span>Choose the sheet picture<small>One picture of the whole sheet. Bigger pictures print sharper.</small></span><input id="impFile" type="file" accept="image/*" hidden></label>`}
+    <div class="impq2"><b>Does it already have cut lines or white borders around each sticker?</b>
+      <div class="impchoice">${[['yes', 'Yes, it has them', 'We print it and cut along its lines.'], ['no', 'No, just the designs', 'We print it and cut neatly around each design.']].map(([v, t, h]) =>
+        `<button type="button" class="${d.lines === v ? 'on' : ''}" data-act="importLines" data-v="${v}"><b>${t}</b><small>${h}</small></button>`).join('')}</div></div>
+    <div class="impq2"><b>Whose designs are these?</b>
+      ${Object.entries(RIGHTS).map(([v, t]) => `<label class="radio"><input type="radio" name="imprights" value="${v}" ${d.rights === v ? 'checked' : ''} data-act="importRights"><span>${t}</span></label>`).join('')}</div>
+    ${btn('Add this sheet', { act: 'importAdd', icon: 'check', cls: 'dark wide' })}
+    <p class="help" style="text-align:center;margin:8px 0 0">It's one sheet at the normal sheet price, printed exactly as you see it.</p></div>`;
+}
+/* Phase 3: find each sticker on a sheet that has no cut lines.
+   Works on plain backgrounds: the background colour is read from the edges, everything that differs is a design,
+   nearby bits join into one sticker (the "join" level), and tiny specks are ignored. */
+function findStickers(im, join){
+  const src = im.canvas, k = Math.min(1, 900 / Math.max(src.width, src.height)), W = Math.max(1, Math.round(src.width * k)), H = Math.max(1, Math.round(src.height * k));
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); x.drawImage(src, 0, 0, W, H);
+  const px = x.getImageData(0, 0, W, H).data;
+  // background: the edge pixels. Too varied = a busy background we can't separate
+  const edge = []; for (let i = 0; i < W; i += 3) edge.push(i, (H - 1) * W + i); for (let j = 0; j < H; j += 3) edge.push(j * W, j * W + W - 1);
+  const opaque = edge.filter(p => px[p * 4 + 3] > 200);
+  let bg = [255, 255, 255], spread = 0;
+  if (opaque.length > edge.length * 0.5) {
+    bg = [0, 1, 2].map(ch => { const v = opaque.map(p => px[p * 4 + ch]).sort((a, b) => a - b); return v[v.length >> 1]; });
+    spread = opaque.reduce((t, p) => t + Math.hypot(px[p * 4] - bg[0], px[p * 4 + 1] - bg[1], px[p * 4 + 2] - bg[2]), 0) / opaque.length;
+  }
+  if (spread > 38) return { error: 'busy' };
+  const T = 42, fg = new Uint8Array(W * H);
+  for (let i = 0; i < W * H; i++) { const a = px[i * 4 + 3]; fg[i] = a > 40 && Math.hypot(px[i * 4] - bg[0], px[i * 4 + 1] - bg[1], px[i * 4 + 2] - bg[2]) > T ? 1 : 0; }
+  // join nearby bits: grow the shapes by r pixels (a square brush, done as two quick passes)
+  const r = Math.max(1, Math.round([0.4, 0.8, 1.4, 2.2, 3.2][Math.max(0, Math.min(4, join - 1))] * Math.max(W, H) / 200));
+  const tmp = new Uint8Array(W * H), grown = new Uint8Array(W * H);
+  for (let yy = 0; yy < H; yy++) { let run = -1e9; for (let xx = 0; xx < W; xx++) { if (fg[yy * W + xx]) run = xx; tmp[yy * W + xx] = xx - run <= r ? 1 : 0; }
+    run = 1e9; for (let xx = W - 1; xx >= 0; xx--) { if (fg[yy * W + xx]) run = xx; if (run - xx <= r) tmp[yy * W + xx] = 1; } }
+  for (let xx = 0; xx < W; xx++) { let run = -1e9; for (let yy = 0; yy < H; yy++) { if (tmp[yy * W + xx]) run = yy; grown[yy * W + xx] = yy - run <= r ? 1 : 0; }
+    run = 1e9; for (let yy = H - 1; yy >= 0; yy--) { if (tmp[yy * W + xx]) run = yy; if (run - yy <= r) grown[yy * W + xx] = 1; } }
+  // label the joined shapes; each one is a sticker
+  const lab = new Int32Array(W * H), pieces = [], stack = new Int32Array(W * H); let n = 0;
+  for (let i = 0; i < W * H; i++) { if (!grown[i] || lab[i]) continue;
+    n++; let sp = 0, x0 = W, y0 = H, x1 = 0, y1 = 0, area = 0; stack[sp++] = i; lab[i] = n;
+    while (sp) { const p = stack[--sp], px0 = p % W, py0 = (p / W) | 0; if (fg[p]) { area++; if (px0 < x0) x0 = px0; if (px0 > x1) x1 = px0; if (py0 < y0) y0 = py0; if (py0 > y1) y1 = py0; }
+      for (const q of [p - 1, p + 1, p - W, p + W]) { if (q < 0 || q >= W * H || lab[q] || !grown[q]) continue; if ((q === p - 1 && px0 === 0) || (q === p + 1 && px0 === W - 1)) continue; lab[q] = n; stack[sp++] = q; } }
+    if (area > W * H * 0.0015) pieces.push({ id: n, x0, y0, x1, y1, area, on: true }); }
+  return { pieces, lab, W, H, k, bg, T };
+}
+// cut one sticker out of the full-size picture, with its background made see-through
+async function cutPiece(im, det, pc){
+  const src = im.canvas, f = 1 / det.k, pad = 2;
+  const sx = Math.max(0, Math.floor((pc.x0 - pad) * f)), sy = Math.max(0, Math.floor((pc.y0 - pad) * f)), ex = Math.min(src.width, Math.ceil((pc.x1 + 1 + pad) * f)), ey = Math.min(src.height, Math.ceil((pc.y1 + 1 + pad) * f));
+  const w = ex - sx, h = ey - sy, c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.drawImage(src, sx, sy, w, h, 0, 0, w, h);
+  const d = x.getImageData(0, 0, w, h), p = d.data, [br, bgc, bb] = det.bg;
+  for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) {
+    const i = (yy * w + xx) * 4, lx = Math.min(det.W - 1, ((sx + xx) * det.k) | 0), ly = Math.min(det.H - 1, ((sy + yy) * det.k) | 0);
+    if (det.lab[ly * det.W + lx] !== pc.id) { p[i + 3] = 0; continue; }
+    const dist = Math.hypot(p[i] - br, p[i + 1] - bgc, p[i + 2] - bb); if (dist < det.T) p[i + 3] = Math.min(p[i + 3], Math.round(255 * Math.max(0, dist - det.T * 0.5) / (det.T * 0.5)));
+  }
+  x.putImageData(d, 0, 0);
+  const blob = await new Promise(r => c.toBlob(r, 'image/png'));
+  return { id: uid(), blob, ext: 'png', url: URL.createObjectURL(blob), canvas: c, w, h, alpha: true, sheet: true, mmW: w, mmH: h };
+}
+function sepHTML(){
+  const d = S.importDraft, det = d.det, im = d.im;
+  if (det.error) return `<div class="impcard"><div class="imphead"><b>Hmm, this one's tricky</b><button type="button" class="linkbtn" data-act="importClose" aria-label="Close">${ic('x', 18)}</button></div>
+    <p>The background has too much going on for us to find each sticker by itself. Plain white or one-colour backgrounds work best.</p>
+    ${btn('Just print it as is', { act: 'sepAsIs', icon: 'check', cls: 'dark wide' })}${smallBtn('Choose another picture', 'image', 'sepBack', 'plain')}</div>`;
+  const on = det.pieces.filter(p => p.on).length;
+  return `<div class="impcard"><div class="imphead"><b>We found ${det.pieces.length} sticker${det.pieces.length === 1 ? '' : 's'} ✨</b><button type="button" class="linkbtn" data-act="importClose" aria-label="Close">${ic('x', 18)}</button></div>
+    <p class="help" style="margin:-8px 0 0">Tap any you don't want. Each one gets a white border and a cut line.</p>
+    <div class="sepview" style="aspect-ratio:${im.w}/${im.h};background-image:url('${im.url}')">${det.pieces.map((p, i) => `<button type="button" class="seppc ${p.on ? '' : 'off'}" data-act="sepToggle" data-i="${i}"
+      style="left:${p.x0 / det.W * 100}%;top:${p.y0 / det.H * 100}%;width:${(p.x1 - p.x0 + 1) / det.W * 100}%;height:${(p.y1 - p.y0 + 1) / det.H * 100}%" aria-label="Sticker ${i + 1}, ${p.on ? 'kept' : 'left out'}"><i>${p.on ? i + 1 : ic('x', 12)}</i></button>`).join('')}</div>
+    <label class="sepjoin"><span>Pieces split apart?</span><input type="range" min="1" max="5" step="1" value="${d.join}" data-sep="join" aria-label="Join nearby pieces"><span>Joined together?</span></label>
+    <div class="impchoice">${[['keep', 'Keep the layout', 'Same spots as the original sheet'], ['pack', 'Pack and make bigger', 'Fits them tight and sizes them up']].map(([v, t, h]) =>
+      `<button type="button" class="${d.arr === v ? 'on' : ''}" data-act="sepArr" data-v="${v}"><b>${t}</b><small>${h}</small></button>`).join('')}</div>
+    ${btn(on ? `Make my ${on} sticker${on === 1 ? '' : 's'}` : 'Pick at least one', { act: 'sepMake', icon: 'sparkle', cls: 'dark wide' })}
+    <button type="button" class="linkbtn" data-act="sepAsIs" style="align-self:center">Just print it as is instead</button></div>`;
+}
+function drawSep(){ const box = $('#sheet .sheetbox'); if (!box) return; box.innerHTML = sepHTML();
+  const r = box.querySelector('[data-sep=join]'); if (r) r.addEventListener('change', e => { S.importDraft.join = +e.target.value; S.importDraft.det = findStickers(S.importDraft.im, S.importDraft.join); drawSep(); }); }
+function drawImport(){ const box = $('#sheet .sheetbox'); if (!box) return; box.innerHTML = importCardHTML();
+  const f = $('#impFile'); if (f) f.addEventListener('change', async e => { const file = e.target.files[0]; e.target.value = ''; if (!file) return;
+    if (!file.type.startsWith('image/')) return toast('That file is not a picture.');
+    try { S.importDraft = { ...(S.importDraft || {}), im: await processFile(file, 4200) }; drawImport(); } catch { toast("That picture didn't open. Try saving it again, or take a screenshot of it."); } }); }
 async function onFiles(e){
   const files = [...e.target.files]; e.target.value = '';
   const up = e.target.closest('.upload'); if (up && files.length) up.classList.add('busy');
@@ -4902,8 +5105,14 @@ async function makePdf(o, batch, asPng){
       for (let si = 0; si < it.sheets.length; si++) {
         page(g.widthMm, g.heightMm, true);
         for (const x of it.sheets[si].items) {
-          const r = rectMm(x.col, x.row, x.size);
-          try { const img = await getImg(x.path); doc.addImage(drawSticker(img, Math.min(1800, Math.round(r.w / 25.4 * 300)), r.w, x.fit, printLabels()).toDataURL('image/png'), 'PNG', r.x, r.y, r.w, r.w); }
+          const r = itemRect(x);
+          if (x.h) {   // an imported sheet: the picture exactly as it is
+            try { const img = await getImg(x.path), iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height, k = Math.min(1, (r.w / 25.4 * 300) / iw);
+              const c = document.createElement('canvas'); c.width = Math.round(iw * k); c.height = Math.round(ih * k); const cx = c.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, c.width, c.height); cx.drawImage(img, 0, 0, c.width, c.height);
+              doc.addImage(c.toDataURL('image/jpeg', 0.92), 'JPEG', r.x, r.y, r.w, r.h); } catch (e) { console.warn('image failed', x.path, e); }
+            continue;
+          }
+          try { const img = await getImg(x.path); doc.addImage(drawSticker(img, Math.min(1800, Math.round(r.w / 25.4 * 300)), r.w, x.fit, printLabels(), { border: x.border }).toDataURL('image/png'), 'PNG', r.x, r.y, r.w, r.w); }
           catch (e) { console.warn('image failed', x.path, e); }
         }
         if (printLabels()) {   // the stickers fill the sheet top to bottom, so the order line runs up the left margin
@@ -5032,7 +5241,7 @@ function drawSettings(){
     seller_mode: CONFIG.sellerMode, seller_flat_rate: CONFIG.sellerFlatRate, seller_welcome_on: CONFIG.sellerWelcomeOn, seller_reward_on: CONFIG.sellerRewardOn,
     seller_reward_every: CONFIG.sellerRewardEvery, seller_reward_item: CONFIG.sellerRewardItem, seller_goal_by: CONFIG.sellerGoalBy, seller_goal_orders: CONFIG.sellerGoalOrders, seller_pro_orders: CONFIG.sellerProOrders, seller_min_order: CONFIG.sellerMinOrder, seller_pro_goal: CONFIG.sellerProGoal, seller_pro_rate: CONFIG.sellerProRate, seller_buyer_off: CONFIG.sellerBuyerOff, seller_welcome: CONFIG.sellerWelcome, sellers_max: CONFIG.sellersMax, seller_min_payout: CONFIG.sellerMinPayout, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
-    print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, pin_gap_mm: CONFIG.pinGapMm, kc_gap_mm: CONFIG.kcGapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
+    print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, pin_gap_mm: CONFIG.pinGapMm, kc_gap_mm: CONFIG.kcGapMm, free_on: CONFIG.freeOn, smooth_cut: CONFIG.smoothCut, free_min_mm: CONFIG.freeMinMm, free_max: CONFIG.freeMax, free_gap_mm: CONFIG.freeGapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, feedback_on: CONFIG.feedbackOn, rush_on: CONFIG.rushOn, rush_make: CONFIG.rushMake, rush_cutoff_hour: CONFIG.rushCutoff, max_rush_per_day: CONFIG.maxRushPerDay, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
     grades: CONFIG.grades.slice(), gcash: { ...CONFIG.gcash }, cleanup_days: CONFIG.cleanupDays, max_pictures: CONFIG.maxPictures, max_noshows: CONFIG.maxNoShows,
     max_qty: Object.fromEntries(['pins', 'posters', 'keychains'].map(k => [k, maxQtyFor(k)])),
@@ -5148,6 +5357,14 @@ function drawShopForm(){
       <div class="pgrid2"><label class="dnum"><span>Space between pins (mm)</span>${n('pin_gap_mm', c.pin_gap_mm, 2, 20)}</label>
         <label class="dnum"><span>Space between keychains (mm)</span>${n('kc_gap_mm', c.kc_gap_mm, 1, 20)}</label></div>
       <p class="help" style="margin-top:6px">More space is easier to cut but fits fewer on a page. At 7 mm, 20 pins fit on one A4 sheet; at 3.5 mm, 24.</p></div>
+
+    <div class="cfgsec"><div class="sub">Free sticker layout and cutting</div>
+      <label class="switch" style="margin-bottom:8px"><input type="checkbox" data-cfgbool="free_on" ${c.free_on !== false ? 'checked' : ''}><span>Let customers place stickers freely (any size, anywhere), not only on the grid</span></label>
+      <label class="switch" style="margin-bottom:10px"><input type="checkbox" data-cfgbool="smooth_cut" ${c.smooth_cut !== false ? 'checked' : ''}><span>Smoother cut lines (rounded, simpler outlines that are much faster to cut with scissors)</span></label>
+      <div class="pgrid2"><label class="dnum"><span>Smallest sticker (mm)</span>${n('free_min_mm', c.free_min_mm, 10, 100)}</label>
+        <label class="dnum"><span>Most stickers on one sheet</span>${n('free_max', c.free_max, 1, 200)}</label>
+        <label class="dnum"><span>Space between stickers (mm)</span>${n('free_gap_mm', c.free_gap_mm, 1, 10)}</label></div>
+      <p class="help" style="margin-top:6px">Keeps every sticker big enough and far enough apart to cut by hand.</p></div>
 
     <div class="cfgsec"><div class="sub">Sticker sheets</div>
       <div class="pgrid2"><label class="dnum"><span>Blank edge around the sheet (mm)</span>${n('sticker_margin_mm', c.sticker_margin_mm, 3, 15)}</label>
@@ -6003,11 +6220,86 @@ const ACTIONS = {
     drawDesigner();
   },
   cell: t => tapCell(+t.dataset.col, +t.dataset.row),
+  freeTap: (t, e) => {
+    const sheet = S.sheets[S.cur], g = geom(), pr = $('#page').getBoundingClientRect(), at = { x: (e.clientX - pr.left) / pr.width * g.widthMm, y: (e.clientY - pr.top) / pr.height * g.heightMm };
+    if (selected()) { S.selItem = null; drawCtrl(); drawSheet(); return; }
+    if (!S.selImage) { toast(S.images.length ? 'Tap one of your pictures first.' : 'Add a picture first.'); return; }
+    if (sheet.items.length >= CONFIG.freeMax) { toast(`That's the most for one sheet (${CONFIG.freeMax}). Add another sheet.`); return; }
+    const w = Math.max(CONFIG.freeMinMm, rectMm(0, 0, S.selSize || 1).w), spot = freeSpot(sheet, w, at);
+    if (!spot) { shakePage(); toast('No room for that size. Pick a smaller size, or tap Auto-arrange.'); return; }
+    const it = { uid: uid(), imageId: S.selImage, x: +spot.x.toFixed(2), y: +spot.y.toFixed(2), w: +w.toFixed(2), fit: imgById(S.selImage).alpha ? 'fit' : 'fill' };
+    sheet.items.push(it); S.justPlaced = it.uid; buzz(8); drawSheet(); drawBottom();
+  },
+  sheetMode: t => {
+    const sheet = S.sheets[S.cur], toFree = t.dataset.v === '1'; if (!!sheet.free === toFree) return;
+    if (toFree) { sheet.items.forEach(it => { const r = rectMm(it.col, it.row, it.size); Object.assign(it, { x: +r.x.toFixed(2), y: +r.y.toFixed(2), w: +r.w.toFixed(2) }); }); sheet.free = true; }
+    else {   // back to the grid: each sticker takes the nearest grid size that still fits
+      const g = geom(), step = g.cell + g.gapMm, items = [...sheet.items].sort((a, b) => b.w - a.w), kept = []; sheet.items = [];
+      for (const it of items) { let placed = false;
+        for (let size = Math.max(1, Math.min(g.cols, Math.round((it.w + g.gapMm) / step))); size >= 1 && !placed; size--)
+          for (let r = 0; r <= g.rows - size && !placed; r++) for (let c = 0; c <= g.cols - size && !placed; c++)
+            if (fits(sheet, c, r, size)) { delete it.x; delete it.y; delete it.w; Object.assign(it, { col: c, row: r, size }); sheet.items.push(it); placed = true; }
+        if (!placed) kept.push(it); }
+      sheet.free = false; if (kept.length) toast(`${kept.length} sticker${kept.length === 1 ? '' : 's'} didn't fit the grid and ${kept.length === 1 ? 'was' : 'were'} taken off.`);
+    }
+    S.selItem = null; drawDesigner();
+  },
+  importOpen: () => { S.importDraft = S.importDraft && S.importDraft.im ? S.importDraft : {}; showSheet(''); drawImport(); },
+  importClose: () => closeSheet(),
+  importLines: t => { S.importDraft.lines = t.dataset.v; drawImport(); },
+  importRights: t => { S.importDraft.rights = t.value; drawImport(); },
+  importAdd: () => {
+    const d = S.importDraft || {};
+    if (!d.im) return toast('Choose the sheet picture first.');
+    if (!d.lines) return toast('Tell us if it already has cut lines.');
+    if (!d.rights) return toast('Pick whose designs these are.');
+    if (S.sheets.filter(sh => sh.items.length).length >= S.settings.maxSheets) return toast(`That's the most sheets for one order (${S.settings.maxSheets}).`);
+    if (d.lines === 'no' && !d.asIs) { d.join = d.join || 3; d.arr = d.arr || 'keep'; d.det = findStickers(d.im, d.join);
+      if (!d.det.error && !d.det.pieces.length) d.det = { error: 'none' }; drawSep(); return; }
+    const im = { ...d.im, sheet: true }; S.images.push(im);
+    const sheet = { imported: { lines: d.lines, rights: d.rights }, items: [{ uid: uid(), imageId: im.id, ...importRect(im), fit: 'fit' }] };
+    const empty = S.sheets.findIndex(sh => !sh.items.length); if (empty >= 0) S.sheets[empty] = sheet; else S.sheets.push(sheet);
+    S.cur = S.sheets.indexOf(sheet); S.selItem = null; S.importDraft = null; closeSheet(); buzz([8, 30, 8]); toast('Sheet added! It prints exactly as you see it.'); drawDesigner();
+  },
+  sepToggle: t => { const p = S.importDraft.det.pieces[+t.dataset.i]; p.on = !p.on; drawSep(); },
+  sepArr: t => { S.importDraft.arr = t.dataset.v; drawSep(); },
+  sepBack: () => { S.importDraft = { lines: 'no', rights: S.importDraft.rights }; drawImport(); },
+  sepAsIs: () => { S.importDraft.asIs = true; ACTIONS.importAdd(); },
+  sepMake: async t => {
+    const d = S.importDraft, keep = d.det.pieces.filter(p => p.on); if (!keep.length) return toast('Pick at least one sticker.');
+    if (keep.length > CONFIG.freeMax) return toast(`That's more than fit on one sheet (${CONFIG.freeMax}). Tap a few to leave them out.`);
+    t.disabled = true; t.classList.add('busy');
+    const rect = importRect(d.im), mmPerPx = rect.w / d.im.w, extra = 2 * (CONFIG.outlineMm + 0.8), sheet = { free: true, fromImport: { rights: d.rights }, items: [] };
+    for (const pc of keep) { const im = await cutPiece(d.im, d.det, pc); S.images.push(im);
+      const w = Math.max(CONFIG.freeMinMm, Math.max(im.w, im.h) * mmPerPx + extra), cx = rect.x + ((pc.x0 + pc.x1 + 1) / 2) / d.det.k * mmPerPx, cy = rect.y + ((pc.y0 + pc.y1 + 1) / 2) / d.det.k * mmPerPx, b = sheetBox();
+      sheet.items.push({ uid: uid(), imageId: im.id, x: +Math.max(b.x0, Math.min(b.x1 - w, cx - w / 2)).toFixed(2), y: +Math.max(b.y0, Math.min(b.y1 - w, cy - w / 2)).toFixed(2), w: +w.toFixed(2), fit: 'fit' }); }
+    let msg = 'Your stickers are ready! Drag or resize any of them.';
+    const clash = sheet.items.some(it => !freeFits(sheet, it, it.uid));
+    if (d.arr === 'pack' || clash) {   // pack tight, then grow them as much as the sheet allows
+      // grow only as far as each picture still prints sharp (150 dpi), so packing never makes anything blurry
+      const base = sheet.items.map(it => it.w), sharp = sheet.items.map(it => { const im = imgById(it.imageId); return Math.min(im.w, im.h) / 150 * 25.4 - 0.5; }); let done = false;   // same rule as the "blurry" tag
+      for (let f = 1.8; f >= 0.6 && !done; f -= 0.05) { sheet.items.forEach((it, i) => { it.w = +Math.max(CONFIG.freeMinMm, Math.min(sheetBox().x1 - sheetBox().x0, f > 1 ? Math.min(base[i] * f, Math.max(base[i], sharp[i])) : base[i] * f)).toFixed(2); }); done = autoArrange(sheet); }
+      if (d.arr !== 'pack') msg = 'A few were too close to cut apart, so we packed them neatly instead.';
+    }
+    const empty = S.sheets.findIndex(sh => !sh.items.length); if (empty >= 0) S.sheets[empty] = sheet; else S.sheets.push(sheet);
+    S.cur = S.sheets.indexOf(sheet); S.selItem = null; S.importDraft = null; closeSheet(); confetti(); buzz([8, 30, 8]); toast(msg); drawDesigner();
+  },
+  freeArrange: () => { const sheet = S.sheets[S.cur], before = sheet.items.map(i => [i.x, i.y]);
+    if (autoArrange(sheet)) { buzz([8, 30, 8]); toast('Packed neatly.', () => { sheet.items.forEach((it, i) => { it.x = before[i][0]; it.y = before[i][1]; }); drawSheet(); }); }
+    else toast("They don't all fit at these sizes. Make some smaller, or move a few to another sheet."); drawSheet(); },
+  freeSize: t => { const it = selected(), sheet = S.sheets[S.cur]; if (!it || !isFree(it)) return;
+    const nw = Math.max(CONFIG.freeMinMm, Math.min(sheetBox().x1 - sheetBox().x0, it.w + +t.dataset.d));
+    if (nw === it.w) return toast(+t.dataset.d < 0 ? `That's the smallest (${CONFIG.freeMinMm / 10} cm), so it's easy to cut.` : "That's as big as the sheet allows.");
+    if (freeFits(sheet, { x: it.x, y: it.y, w: nw }, it.uid)) { it.w = +nw.toFixed(2); drawSheet(); drawBottom(); }
+    else { const spot = +t.dataset.d > 0 ? freeSpot(sheet, nw, { x: it.x + nw / 2, y: it.y + nw / 2 }, it.uid) : null;
+      if (spot) { it.x = +spot.x.toFixed(2); it.y = +spot.y.toFixed(2); it.w = +nw.toFixed(2); drawSheet(); drawBottom(); } else toast('No room to make it bigger here. Try Auto-arrange.'); } },
+  borderToggle: () => { const it = selected(); if (!it) return; it.border = it.border === 'none' ? undefined : 'none';
+    if (it.border === 'none') toast('No border: we cut right at the edge of your picture. A white border is easier to cut and peel.'); drawSheet(); },
   stk: t => { if (S.suppressClick) return; S.selItem = S.selItem === t.dataset.uid ? null : t.dataset.uid; drawCtrl(); drawSheet(); },
   tab: t => { S.cur = +t.dataset.i; S.selItem = null; drawDesigner(); },
   addSheet: () => { if (S.sheets.length < S.settings.maxSheets) { S.sheets.push({ items: [] }); S.cur = S.sheets.length - 1; S.selItem = null; drawDesigner(); } },
   delSheet: () => {
-    const i = S.cur, removed = S.sheets.splice(i, 1)[0]; S.cur = Math.max(0, i - 1); drawDesigner();
+    const i = S.cur, removed = S.sheets.splice(i, 1)[0]; if (!S.sheets.length) S.sheets.push({ items: [] }); S.cur = Math.max(0, Math.min(S.sheets.length - 1, i - 1)); drawDesigner();
     toast('Sheet removed.', () => { S.sheets.splice(i, 0, removed); S.cur = i; drawDesigner(); });
   },
   fitToggle: () => { const it = selected(); if (it) { it.fit = it.fit === 'fit' ? 'fill' : 'fit'; drawSheet(); } },
