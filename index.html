@@ -1586,6 +1586,8 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .pn-ic{flex:none;width:44px;height:44px;border-radius:14px;background:#EEF2FC;color:#283971;display:grid;place-items:center}
 .sephelp{display:flex;gap:8px;align-items:flex-start;margin:-6px 0 0;font-size:13.5px;color:var(--muted)}.sephelp svg{flex:none;color:#C9951A;margin-top:2px}
 .sepview{touch-action:none;user-select:none}
+.modeseg.fixseg{max-width:none;flex:none}.fixview{display:grid;place-items:center;padding:12px;border-radius:16px;background:repeating-conic-gradient(#DCE1EC 0 25%,#F6F7FA 0 50%) 0 0/16px 16px;border:1.5px solid var(--line)}
+.fixview img{max-width:100%;max-height:48vh;cursor:crosshair;touch-action:manipulation}
 .sepgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;max-height:46vh;overflow:auto;padding:2px}
 .sepcard{position:relative;aspect-ratio:1;border-radius:14px;border:2px solid #283971;padding:6px;cursor:pointer;background:repeating-conic-gradient(#E8EBF2 0 25%,#F6F7FA 0 50%) 0 0/14px 14px;transition:transform .12s,opacity .12s}
 .sepcard img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 1px 2px rgba(40,57,113,.25))}
@@ -3290,6 +3292,7 @@ function drawSheet(){
     <div class="page ${free ? 'free' : ''} ${imp ? 'imp' : ''}" id="page">${cells}${stickers}${!S.images.length ? `<label class="sheet-empty"><span class="ui">${ic('plus', 22)}</span><b>Choose pictures</b><small>Then tap the sheet to place them</small><input id="fileIn2" type="file" accept="image/*" multiple hidden></label>` : ''}</div>
     ${sel ? `<div class="selbar">
         ${free ? `<span class="sizer">${smallBtn('', 'minus', 'freeSize', 'plain', 'data-d="-5" aria-label="Smaller"')}<b>${(itemRect(sel).w / 10).toFixed(1)} cm</b>${smallBtn('', 'plus', 'freeSize', 'plain', 'data-d="5" aria-label="Bigger"')}</span>` : ''}
+        ${smallBtn('Fix this sticker', 'edit', 'stkFixOpen', 'plain')}
         ${smallBtn(sel.border === 'none' ? 'Add white border' : 'No border', sel.border === 'none' ? 'fit' : 'fill', 'borderToggle', 'plain')}
         ${smallBtn(sel.fit === 'fit' ? 'Fill the square' : 'Show whole picture', sel.fit === 'fit' ? 'fill' : 'fit', 'fitToggle', 'plain')}
         ${smallBtn('Remove', 'trash', 'removeItem', 'danger')}
@@ -3520,6 +3523,7 @@ async function cutPiece(im, det, pc, solid){
   const src = im.canvas, f = 1 / det.k, pad = 3;
   const sx = Math.max(0, Math.floor((pc.x0 - pad) * f)), sy = Math.max(0, Math.floor((pc.y0 - pad) * f)), ex = Math.min(src.width, Math.ceil((pc.x1 + 1 + pad) * f)), ey = Math.min(src.height, Math.ceil((pc.y1 + 1 + pad) * f));
   const w = ex - sx, h = ey - sy, c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.drawImage(src, sx, sy, w, h, 0, 0, w, h);
+  const orig = document.createElement('canvas'); orig.width = w; orig.height = h; orig.getContext('2d').drawImage(c, 0, 0);   // untouched copy, for "Fill in"
   const d = x.getImageData(0, 0, w, h), p = d.data, [br, bgc, bb] = det.bg, bgLike = new Uint8Array(w * h);
   for (let i = 0; i < w * h; i++) bgLike[i] = p[i * 4 + 3] < 40 || Math.hypot(p[i * 4] - br, p[i * 4 + 1] - bgc, p[i * 4 + 2] - bb) < det.T ? 1 : 0;
   const keep = sealedKeep(bgLike, w, h, Math.max(2, Math.round(Math.max(w, h) / (solid ? 60 : 160))));   // "fill in" seals bigger gaps
@@ -3529,7 +3533,7 @@ async function cutPiece(im, det, pc, solid){
     if (!on) p[i * 4 + 3] = 0; }
   x.putImageData(d, 0, 0);
   const blob = await new Promise(r => c.toBlob(r, 'image/png'));
-  return { id: uid(), blob, ext: 'png', url: URL.createObjectURL(blob), canvas: c, w, h, alpha: true, sheet: true };
+  return { id: uid(), blob, ext: 'png', url: URL.createObjectURL(blob), canvas: c, orig, w, h, alpha: true, sheet: true };
 }
 function sepHTML(){
   const d = S.importDraft, det = d.det, im = d.im;
@@ -3590,6 +3594,49 @@ function drawSep(){ const box = $('#sheet .sheetbox'); if (!box) return; box.inn
   });
   const r = box.querySelector('[data-sep=join]'); if (r) r.addEventListener('change', e => { S.importDraft.join = +e.target.value; S.importDraft.fixOpen = true; S.importDraft.det = findStickers(S.importDraft.im, S.importDraft.join); sepPreview(); });
   const fx = box.querySelector('.sepfix'); if (fx) fx.addEventListener('toggle', () => { S.importDraft.fixOpen = fx.open; }); }
+/* "Fix this sticker": tap a see-through spot to fill it back in (the picture's colours are still there, just hidden),
+   or tap a leftover patch to erase it. Works on one sticker, with undo. */
+function stkFill(c, tx, ty, orig){
+  const w = c.width, h = c.height, x = c.getContext('2d'), d = x.getImageData(0, 0, w, h), p = d.data, start = ty * w + tx;
+  const o = orig && orig.width === w && orig.height === h ? orig.getContext('2d').getImageData(0, 0, w, h).data : null;   // the sticker's real colours
+  if (p[start * 4 + 3] >= 128) return 'solid';
+  const opaque = new Uint8Array(w * h); for (let i = 0; i < w * h; i++) opaque[i] = p[i * 4 + 3] >= 128 ? 1 : 0;
+  for (const div of [90, 45, 22, 12]) {   // seal bigger and bigger gaps until the spot is closed off from the outside
+    const r = Math.max(1, Math.round(Math.max(w, h) / div)), bar = grow(opaque, w, h, r); if (bar[start]) continue;
+    const reg = new Uint8Array(w * h), st = [start]; reg[start] = 1; let edge = false;
+    while (st.length) { const q = st.pop(), qx = q % w, qy = (q / w) | 0; if (qx === 0 || qy === 0 || qx === w - 1 || qy === h - 1) { edge = true; break; }
+      for (const n of [q - 1, q + 1, q - w, q + w]) if (!reg[n] && !bar[n] && !opaque[n]) { reg[n] = 1; st.push(n); } }
+    if (edge) continue;
+    const g = grow(reg, w, h, r); let n = 0; for (let i = 0; i < w * h; i++) if (g[i] && !opaque[i]) { for (let k = 0; k < 3; k++) p[i * 4 + k] = o ? o[i * 4 + k] : 255; p[i * 4 + 3] = 255; n++; }
+    x.putImageData(d, 0, 0); return n ? 'ok' : 'solid';
+  }
+  return 'open';
+}
+function stkErase(c, tx, ty){
+  const w = c.width, h = c.height, x = c.getContext('2d'), d = x.getImageData(0, 0, w, h), p = d.data, start = ty * w + tx;
+  if (p[start * 4 + 3] < 128) return 'clear';
+  const [r0, g0, b0] = [p[start * 4], p[start * 4 + 1], p[start * 4 + 2]], reg = new Uint8Array(w * h), st = [start]; reg[start] = 1; let n = 0, total = 0;
+  for (let i = 0; i < w * h; i++) if (p[i * 4 + 3] >= 128) total++;
+  while (st.length) { const q = st.pop(), qx = q % w; n++;
+    for (const m of [qx > 0 ? q - 1 : -1, qx < w - 1 ? q + 1 : -1, q - w, q + w]) { if (m < 0 || m >= w * h || reg[m] || p[m * 4 + 3] < 128) continue;
+      if (Math.hypot(p[m * 4] - r0, p[m * 4 + 1] - g0, p[m * 4 + 2] - b0) < 34) { reg[m] = 1; st.push(m); } } }
+  if (n > total * 0.6) return 'big';
+  for (let i = 0; i < w * h; i++) if (reg[i]) p[i * 4 + 3] = 0; x.putImageData(d, 0, 0); return 'ok';
+}
+function fixHTML(){
+  const f = S.fixer, im = imgById(f.id);
+  return `<div class="impcard"><div class="imphead"><b>Fix this sticker</b><button type="button" class="linkbtn" data-act="fixDone">${ic('check', 18)} Done</button></div>
+    <div class="modeseg fixseg">${[['fill', 'Fill in', 'Tap a see-through spot'], ['erase', 'Erase', 'Tap a leftover patch']].map(([v, l, h]) => `<button type="button" data-act="fixMode" data-v="${v}" class="${f.mode === v ? 'on' : ''}"><b>${l}</b><small>${h}</small></button>`).join('')}</div>
+    <div class="fixview"><img id="fixImg" src="${im.canvas.toDataURL('image/png')}" alt="Your sticker"></div>
+    <div class="seprow">${smallBtn('Undo', 'refresh', 'fixUndo', 'plain', f.undo.length ? '' : 'disabled')}<span>${f.mode === 'fill' ? 'Checkered = see-through. Tap it to fill it in.' : 'Tap a patch of leftover background to remove it.'}</span></div>
+    ${btn('Done', { act: 'fixDone', icon: 'check', cls: 'dark wide' })}</div>`;
+}
+function drawFix(){ const box = $('#sheet .sheetbox'); if (!box) return; box.innerHTML = fixHTML();
+  $('#fixImg').addEventListener('click', e => { const f = S.fixer, im = imgById(f.id), r = e.target.getBoundingClientRect(), c = im.canvas;
+    const tx = Math.max(0, Math.min(c.width - 1, Math.round((e.clientX - r.left) / r.width * c.width))), ty = Math.max(0, Math.min(c.height - 1, Math.round((e.clientY - r.top) / r.height * c.height)));
+    const before = c.getContext('2d').getImageData(0, 0, c.width, c.height), res = f.mode === 'fill' ? stkFill(c, tx, ty, im.orig) : stkErase(c, tx, ty);
+    if (res === 'ok') { f.undo.push(before); if (f.undo.length > 12) f.undo.shift(); f.changed = true; buzz(8); drawFix(); }
+    else toast({ solid: 'That spot is already filled in. Tap a checkered spot.', open: "That spot opens to the outside, so we can't tell where to stop. Try tapping nearer the middle of it.", clear: "That's already see-through.", big: 'That would erase most of the sticker. Tap a smaller leftover patch.' }[res]); }); }
 function drawImport(){ const box = $('#sheet .sheetbox'); if (!box) return; box.innerHTML = importCardHTML();
   const f = $('#impFile'); if (f) f.addEventListener('change', async e => { const file = e.target.files[0]; e.target.value = ''; if (!file) return;
     if (!file.type.startsWith('image/')) return toast('That file is not a picture.');
@@ -6340,6 +6387,14 @@ const ACTIONS = {
     }
     S.selItem = null; drawDesigner();
   },
+  stkFixOpen: () => { const it = selected(); if (!it) return; S.fixer = { id: it.imageId, mode: 'fill', undo: [] }; showSheet(''); drawFix(); },
+  fixMode: t => { S.fixer.mode = t.dataset.v; drawFix(); },
+  fixUndo: () => { const f = S.fixer, im = imgById(f.id); if (!f.undo.length) return; im.canvas.getContext('2d').putImageData(f.undo.pop(), 0, 0); drawFix(); },
+  fixDone: async () => { const f = S.fixer; closeSheet(); if (!f || !f.changed) return;
+    const im = imgById(f.id), blob = await new Promise(r => im.canvas.toBlob(r, 'image/png'));
+    Object.assign(im, { blob, ext: 'png', alpha: true, url: URL.createObjectURL(blob) });
+    for (const k of [...stickerCache.keys()]) if (k.startsWith(im.id + '|')) stickerCache.delete(k);
+    toast('Sticker fixed!'); drawCtrl(); drawSheet(); },
   importOpen: () => { S.importDraft = S.importDraft && S.importDraft.im ? S.importDraft : {}; showSheet(''); drawImport(); },
   importClose: () => closeSheet(),
   importLines: t => { S.importDraft.lines = t.dataset.v; drawImport(); },
