@@ -2805,7 +2805,8 @@ async function tplModeImage(type){
     return c.toDataURL('image/jpeg', 0.88);
   }
   const f = S.fd, im = f && f.front.imageId && imgById(f.front.imageId); if (!im) return null;
-  const out = renderFramed(im.canvas, f.front, frameMm(f), 260, type === 'pins'); return out.data;
+  const img = await loadImg(im.url);   // renderFramed needs a loaded image (a canvas has no natural size, which made pins come out blank)
+  const out = renderFramed(img, f.front, frameMm(f), 260, type === 'pins'); return out.data;
 }
 async function useTemplate(t){
   {
