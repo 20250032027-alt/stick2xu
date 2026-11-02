@@ -1601,10 +1601,12 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .st-h{display:flex;gap:6px;align-items:center;font-size:14px;color:#283971;margin-bottom:10px}.st-h svg{color:#C9951A}
 .st-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .st-card{display:flex;flex-direction:column;gap:6px;align-items:center;padding:6px;border-radius:12px;border:1.5px solid var(--line);background:#fff;cursor:pointer;font:inherit;transition:transform .12s,border-color .12s}
-.st-card:hover{border-color:#283971;transform:translateY(-1px)}.st-card span{width:100%;aspect-ratio:1;border-radius:8px;background:#fff center/contain no-repeat}
+.st-card:hover{border-color:#283971;transform:translateY(-1px)}.st-card span{width:100%;aspect-ratio:1;border-radius:50%;background:#fff center/cover no-repeat;box-shadow:0 0 0 1.5px var(--line)}
 .st-card small{font-size:12px;font-weight:700;color:#283971;text-align:center;line-height:1.2}.st-card.busy{opacity:.5;pointer-events:none}
 .tplrow .tplstart{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:2px 0}.tplstart > span:first-child{margin-right:auto}
 .tplstart .btn{white-space:nowrap}.tplthumbbtn{cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.thumbwrap{position:relative;width:min(100%,280px);aspect-ratio:1;margin:0 auto;border-radius:50%;overflow:hidden;box-shadow:0 0 0 3px #283971,0 0 0 8px #F2BC2E33;touch-action:none;cursor:grab}
+.thumbwrap canvas{width:100%;height:100%;display:block}
 .startsec .st-row{margin-top:2px}.startsec .stephead i svg{color:#283971}
 .importbtn .newtag{align-self:flex-start;font-style:normal;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:#283971;color:#F2BC2E;padding:2px 8px;border-radius:999px;margin-bottom:3px}
 .importbtn b{line-height:1.25}
@@ -2746,9 +2748,26 @@ function tplBarHTML(type){
 }
 document.addEventListener('input', e => { if (e.target.id === 'tplModeName' && S.tplMode) S.tplMode.name = e.target.value; });
 // a custom thumbnail for a ready-made design (shown on the design page)
-document.addEventListener('change', async e => { const slug = e.target.dataset && e.target.dataset.tplthumb, file = slug && e.target.files[0]; if (!file) return;
-  try { const im = await processFile(file, 360), c = im.canvas; await api.setTemplate(slug, { thumb: c.toDataURL(im.alpha ? 'image/png' : 'image/jpeg', 0.86) }); S.starters = {}; toast('Thumbnail saved.'); drawPosters(); }
-  catch (err) { toast(friendlyError(err)); } });
+document.addEventListener('change', async e => { const slug = e.target.dataset && e.target.dataset.tplthumb, file = slug && e.target.files[0]; if (!file) return; e.target.value = '';
+  try { const im = await processFile(file, 1200); S.thumbEd = { slug, im, zoom: 1, ox: 0, oy: 0 }; showSheet(''); drawThumbEd(); } catch (err) { toast(friendlyError(err)); } });
+/* Thumbnail editor: a round frame; drag to move, slider to zoom */
+function thumbDraw(c, t, size){ const x = c.getContext('2d'), im = t.im.canvas, k = Math.max(size / im.width, size / im.height) * t.zoom;
+  x.clearRect(0, 0, size, size); x.fillStyle = '#fff'; x.fillRect(0, 0, size, size);
+  x.drawImage(im, size / 2 - im.width * k / 2 + t.ox * size, size / 2 - im.height * k / 2 + t.oy * size, im.width * k, im.height * k); }
+function drawThumbEd(){ const box = $('#sheet .sheetbox'); if (!box) return; const t = S.thumbEd;
+  box.innerHTML = `<div class="impcard"><div class="imphead"><b>Set the thumbnail</b><button type="button" class="linkbtn" data-act="importClose" aria-label="Close">${ic('x', 18)}</button></div>
+    <p class="help" style="margin:-6px 0 0">Drag to move it. Use the slider to zoom.</p>
+    <div class="thumbwrap"><canvas id="thumbCv" width="520" height="520"></canvas></div>
+    <label class="sepjoin"><span>${ic('minus', 14)}</span><input type="range" id="thumbZoom" min="1" max="4" step="0.01" value="${t.zoom}" aria-label="Zoom"><span>${ic('plus', 14)}</span></label>
+    ${btn('Save thumbnail', { act: 'thumbSave', icon: 'check', cls: 'dark wide' })}</div>`;
+  const cv = $('#thumbCv'); thumbDraw(cv, t, 520);
+  $('#thumbZoom').addEventListener('input', e => { t.zoom = +e.target.value; thumbDraw(cv, t, 520); });
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); try { cv.setPointerCapture(e.pointerId); } catch {}
+    const r = cv.getBoundingClientRect(), sx = e.clientX, sy = e.clientY, ox = t.ox, oy = t.oy;
+    const mv = ev => { t.ox = ox + (ev.clientX - sx) / r.width; t.oy = oy + (ev.clientY - sy) / r.height; thumbDraw(cv, t, 520); };
+    const up = () => { cv.removeEventListener('pointermove', mv); cv.removeEventListener('pointerup', up); };
+    cv.addEventListener('pointermove', mv); cv.addEventListener('pointerup', up); });
+}
 async function tplModeImage(type){
   if (type === 'stickers') {   // the whole sheet, drawn like the print (cut lines included)
     const sheet = S.sheets[S.cur]; if (!sheet || !sheet.items.length) return null;
@@ -3443,7 +3462,7 @@ function drawBottom(){
   const hint = used ? dealNudges(S.cart.filter((_, i) => i !== S.editing).concat([draft])).find(t => t.product === 'stickers') : null;
   $('#bottom').innerHTML = `${hint ? `<div class="bb-hint">${ic('sparkle', 13)}<span>${esc(hint.text)}</span></div>` : ''}<div><div class="tot num">${money(used * each)}</div>
       <div class="sub">${[count ? `${count} sticker${count === 1 ? '' : 's'}` : '', imps ? `${imps} imported sheet${imps === 1 ? '' : 's'}` : ''].filter(Boolean).join(' + ')}${count ? ` on ${used} sheet${used === 1 ? '' : 's'}` : ''}</div></div>
-    ${btn(S.editing !== null ? 'Save changes' : 'Add to order', { act: 'addStickers', icon: S.editing !== null ? 'check' : 'arrow', attrs: count ? '' : 'disabled' })}`;
+    ${btn(S.editing !== null ? 'Save changes' : 'Add to order', { act: 'addStickers', icon: S.editing !== null ? 'check' : 'arrow', attrs: count || imps ? '' : 'disabled' })}`;   // imported and ready-made sheets count too
   bumpTotal();
 }
 
@@ -6267,7 +6286,7 @@ function drawTemplates(base){
   const paint = list => {
     S.admin.tpls = list; const sc = S.admin.scans || {};
     box.innerHTML = list.length ? list.map(t => { const src = `${t.slug}-sticker`, n = S.admin.orders.filter(o => o.src === src).length;
-      return `<div class="tplrow ${t.enabled ? '' : 'off'}"><span class="tplthumb ${t.type === 'pins' ? 'round' : ''}"><img src="${esc(t.thumb || t.image)}" alt=""></span>
+      return `<div class="tplrow ${t.enabled ? '' : 'off'}"><span class="tplthumb ${t.type === 'pins' || t.thumb ? 'round' : ''}"><img src="${esc(t.thumb || t.image)}" alt=""></span>
       <div class="tplinfo"><b>${esc(t.name)}</b><span class="small muted">${esc(P(t.type) ? P(t.type).name : t.type)}${tplPrice(t) ? ' · ' + money(tplPrice(t)) : ''}${t.enabled ? '' : ' · <b>off</b>'}</span>
         <span class="small muted">${sc[src] || 0} scan${sc[src] === 1 ? '' : 's'} · ${n} order${n === 1 ? '' : 's'}</span></div>
       <div class="tplstart"><span class="small muted">${ic('box', 13)} Used in ${(S.admin.orders || []).filter(o => JSON.stringify(o.layout || {}).includes(`"template":"${t.slug}"`)).length} order(s)</span>
@@ -7045,6 +7064,10 @@ const ACTIONS = {
   tplSticker: el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (t) tplDownloadSticker(t); },
   tplQr: el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t || !window.QRCode) return; qrCanvas(tplLink(t), 1000).toBlob(b => saveBlob(b, `qr-${t.slug}.png`), 'image/png'); },
   tplCopy: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t) return; try { await navigator.clipboard.writeText(tplLink(t)); toast('Link copied.'); } catch { toast(tplLink(t)); } },
+  thumbSave: async t => { const ed = S.thumbEd; if (!ed) return; t.disabled = true;
+    const c = document.createElement('canvas'); c.width = c.height = 320; thumbDraw(c, ed, 320);
+    try { await api.setTemplate(ed.slug, { thumb: c.toDataURL('image/jpeg', 0.88) }); S.thumbEd = null; S.starters = {}; closeSheet(); toast('Thumbnail saved.'); drawPosters(); }
+    catch (e) { t.disabled = false; toast(friendlyError(e)); } },
   tplStarter: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t) return;
     const same = (S.admin.tpls || []).filter(x => x.type === t.type && x.starter && x.slug !== t.slug);
     if (!t.starter && same.length >= 3) return toast(`${P(t.type).name} already shows 3. Take one off first.`);
