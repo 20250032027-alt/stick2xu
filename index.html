@@ -3733,7 +3733,7 @@ function tapRegion(c, orig, tx, ty, keep){
     if (keep ? p[q * 4 + 3] < 255 : p[q * 4 + 3] > 0) n++;
     if (keep) { for (let k = 0; k < 3; k++) p[q * 4 + k] = src[q * 4 + k]; p[q * 4 + 3] = 255; } else p[q * 4 + 3] = 0;
     for (const m of [qx > 0 ? q - 1 : -1, qx < w - 1 ? q + 1 : -1, q - w, q + w]) { if (m < 0 || m >= w * h || reg[m]) continue;
-      if (Math.hypot(src[m * 4] - seed[0], src[m * 4 + 1] - seed[1], src[m * 4 + 2] - seed[2]) < 38) { reg[m] = 1; st.push(m); } } }
+      if (Math.hypot(src[m * 4] - seed[0], src[m * 4 + 1] - seed[1], src[m * 4 + 2] - seed[2]) < 38 && Math.hypot(src[m * 4] - src[q * 4], src[m * 4 + 1] - src[q * 4 + 1], src[m * 4 + 2] - src[q * 4 + 2]) < 6.5) { reg[m] = 1; st.push(m); } } }
   if (!n) return 'none'; x.putImageData(d, 0, 0); return 'ok';
 }
 function stkErase(c, tx, ty){
@@ -3748,7 +3748,7 @@ function stkErase(c, tx, ty){
   for (let i = 0; i < w * h; i++) if (reg[i]) p[i * 4 + 3] = 0; x.putImageData(d, 0, 0); return 'ok';
 }
 function fixHTML(){
-  const f = S.fixer, tip = f.mode === 'split' ? 'Draw a line between the stickers to cut them apart.' : f.brushOn ? (f.mode === 'keep' ? 'Brush over parts to bring them back.' : 'Brush over parts to remove them.') : (f.mode === 'keep' ? 'Tap an area to bring it back.' : 'Tap an area to remove it.');
+  const f = S.fixer, tip = f.mode === 'split' ? 'Draw a line between the stickers to cut them apart.' : f.brushOn ? (f.mode === 'keep' ? 'Brush over parts to bring them back.' : 'Brush over parts to remove them.') : (f.mode === 'keep' ? 'Tap an area, or drag a box, to bring it back.' : 'Tap an area, or drag a box, to remove it.');
   return `<div class="impcard"><div class="imphead"><b>${esc(f.title || 'Edit picture')}</b><button type="button" class="linkbtn" data-act="fixDone">${ic('check', 18)} Done</button></div>
     <div class="modeseg fixseg three">${[['keep', 'Keep', 'check'], ['remove', 'Remove', 'trash'], ...(f.onSheet ? [['split', 'Split', 'minus']] : [])].map(([v, l, icn]) => `<button type="button" data-act="fixMode" data-v="${v}" class="${f.mode === v ? 'on' : ''}">${ic(icn, 16)}<b>${l}</b></button>`).join('')}</div>
     ${f.mode !== 'split' ? `<div class="brushes"><span class="tapbrush">${[['', 'Tap'], ['1', 'Brush']].map(([v, l]) => `<button type="button" data-act="fixBrushOn" data-v="${v}" class="${!!v === !!f.brushOn ? 'on' : ''}">${l}</button>`).join('')}</span>
@@ -3770,13 +3770,23 @@ function drawFix(){ const box = $('#sheet .sheetbox'); if (!box) return; box.inn
   let stroke = null; if (f.ac) f.ac.abort(); f.ac = new AbortController(); const once = { signal: f.ac.signal };   // the canvas is reused: replace, never stack, its handlers
   c.addEventListener('pointerdown', e => { e.preventDefault(); try { c.setPointerCapture(e.pointerId); } catch {}
     const pt = at(e), before = c.getContext('2d').getImageData(0, 0, c.width, c.height);
-    if ((f.mode === 'keep' || f.mode === 'remove') && !f.brushOn) { const tx = Math.max(0, Math.min(c.width - 1, Math.round(pt.x))), ty = Math.max(0, Math.min(c.height - 1, Math.round(pt.y))), res = tapRegion(c, im.orig, tx, ty, f.mode === 'keep');
-      if (res === 'ok') { f.undo.push(before); if (f.undo.length > 12) f.undo.shift(); f.changed = true; buzz(8); drawFix(); }
-      else toast({ solid: 'That spot is already filled in. Tap a checkered spot, or use Draw.', open: 'That spot opens to the outside. Use Keep to brush it in instead.', clear: "That spot's already removed.", none: f.mode === 'keep' ? "That's already kept." : "That's already removed.", big: 'That would remove most of the picture. Tap a smaller patch, or use the Remove brush.' }[res]); return; }
+    if ((f.mode === 'keep' || f.mode === 'remove') && !f.brushOn) { stroke = { tap: true, start: pt, sx: e.clientX, sy: e.clientY, before }; return; }   // a tap, or a dragged box (decided on release)
     const rad = f.mode === 'split' ? 2.2 * pt.k : { s: 3, m: 7, l: 13 }[f.brush] * pt.k; stroke = { last: pt, rad, before }; dab(pt.x, pt.y, rad, f.mode !== 'keep'); }, once);
-  c.addEventListener('pointermove', e => { if (!stroke) return; const pt = at(e), dx = pt.x - stroke.last.x, dy = pt.y - stroke.last.y, steps = Math.max(1, Math.ceil(Math.hypot(dx, dy) / (stroke.rad / 2)));
+  c.addEventListener('pointermove', e => { if (!stroke) return;
+    if (stroke.tap) { if (Math.hypot(e.clientX - stroke.sx, e.clientY - stroke.sy) < 8 && !stroke.box) return;
+      const vr = view.getBoundingClientRect(); if (!stroke.box) { stroke.box = document.createElement('div'); stroke.box.className = 'sepdraw'; view.style.position = 'relative'; view.appendChild(stroke.box); }
+      Object.assign(stroke.box.style, { left: Math.min(e.clientX, stroke.sx) - vr.left + view.scrollLeft + 'px', top: Math.min(e.clientY, stroke.sy) - vr.top + view.scrollTop + 'px', width: Math.abs(e.clientX - stroke.sx) + 'px', height: Math.abs(e.clientY - stroke.sy) + 'px' });
+      stroke.end = at(e); return; } const pt = at(e), dx = pt.x - stroke.last.x, dy = pt.y - stroke.last.y, steps = Math.max(1, Math.ceil(Math.hypot(dx, dy) / (stroke.rad / 2)));
     for (let k = 1; k <= steps; k++) dab(stroke.last.x + dx * k / steps, stroke.last.y + dy * k / steps, stroke.rad, f.mode !== 'keep'); stroke.last = pt; }, once);
-  const end = () => { if (!stroke) return; f.undo.push(stroke.before); if (f.undo.length > 12) f.undo.shift(); f.changed = true; stroke = null;
+  const end = () => { if (!stroke) return;
+    if (stroke.tap) { const t = stroke; stroke = null; let res;
+      if (t.box) { t.box.remove(); const x0 = Math.max(0, Math.round(Math.min(t.start.x, t.end.x))), y0 = Math.max(0, Math.round(Math.min(t.start.y, t.end.y))), x1 = Math.min(c.width, Math.round(Math.max(t.start.x, t.end.x))), y1 = Math.min(c.height, Math.round(Math.max(t.start.y, t.end.y)));
+        if (x1 - x0 < 2 || y1 - y0 < 2) return; const x = c.getContext('2d'), d = x.getImageData(x0, y0, x1 - x0, y1 - y0), o = im.orig && im.orig.width === c.width ? im.orig.getContext('2d').getImageData(x0, y0, x1 - x0, y1 - y0).data : null;
+        for (let k = 0; k < d.data.length; k += 4) { if (f.mode === 'keep') { if (o) { d.data[k] = o[k]; d.data[k + 1] = o[k + 1]; d.data[k + 2] = o[k + 2]; } d.data[k + 3] = 255; } else d.data[k + 3] = 0; }
+        x.putImageData(d, x0, y0); res = 'ok';
+      } else res = tapRegion(c, im.orig, Math.max(0, Math.min(c.width - 1, Math.round(t.start.x))), Math.max(0, Math.min(c.height - 1, Math.round(t.start.y))), f.mode === 'keep');
+      if (res === 'ok') { f.undo.push(t.before); if (f.undo.length > 12) f.undo.shift(); f.changed = true; buzz(8); drawFix(); } else toast(f.mode === 'keep' ? "That's already kept." : "That's already removed."); return; }
+    f.undo.push(stroke.before); if (f.undo.length > 12) f.undo.shift(); f.changed = true; stroke = null;
     if (f.mode === 'split') { splitSticker().then(n => { if (!n) { c.getContext('2d').putImageData(f.undo.pop(), 0, 0); toast("That didn't cut it into separate pieces. Draw the line all the way across the gap."); } }); return; }
     const u = box.querySelector('[data-act=fixUndo]'); if (u) u.removeAttribute('disabled'); };
   c.addEventListener('pointerup', end, once); c.addEventListener('pointercancel', end, once);
