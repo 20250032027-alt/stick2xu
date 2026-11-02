@@ -1589,8 +1589,10 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .modeseg.fixseg{max-width:none;flex:none}.fixtools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.fixtools .btn.dark{flex:1 1 100%;justify-content:center}.fixtools b{min-width:46px;text-align:center;font-size:14px}
 .fixview{overflow:auto;max-height:52vh;display:grid;place-items:center;padding:12px;border-radius:16px;background:repeating-conic-gradient(#DCE1EC 0 25%,#F6F7FA 0 50%) 0 0/16px 16px;border:1.5px solid var(--line)}
 .fixview .fixcanvas{display:block;max-width:100%;max-height:46vh;width:auto;height:auto;cursor:crosshair;touch-action:none}
-.modeseg.three{grid-template-columns:repeat(3,1fr)}.modeseg.three button{flex-direction:row;gap:6px;justify-content:center;padding:10px 6px}
-.brushes{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.modeseg.three{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}.modeseg.three button{flex-direction:row;gap:6px;justify-content:center;padding:10px 6px}
+.brushes{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);min-height:40px}
+.tapbrush{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;margin-right:auto}.tapbrush button{font:inherit;font-size:13px;font-weight:700;padding:7px 14px;border:0;background:#fff;color:var(--muted);cursor:pointer}.tapbrush button.on{background:#EEF2FC;color:#283971}.brushes .tapbrush button{width:auto;height:auto;border-radius:0;display:block}
+.impcard .seprow{flex-wrap:wrap;gap:8px 12px}.impcard .seprow > span{flex:1 1 150px;font-size:13px;line-height:1.35}
 .brushes button{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer}
 .brushes button i{display:block;border-radius:50%;background:#283971}.brushes button.on{border-color:#283971;box-shadow:inset 0 0 0 1.5px #283971;background:#EEF2FC}
 .tplbar{display:flex;flex-direction:column;gap:8px;margin:0 0 14px;padding:12px;border-radius:16px;background:#FFF3C4;border:2px solid #E3A400}
@@ -3723,6 +3725,17 @@ function stkFill(c, tx, ty, orig){
   }
   return 'open';
 }
+function tapRegion(c, orig, tx, ty, keep){
+  const w = c.width, h = c.height, x = c.getContext('2d'), d = x.getImageData(0, 0, w, h), p = d.data;
+  const src = orig && orig.width === w && orig.height === h ? orig.getContext('2d').getImageData(0, 0, w, h).data : p, s0 = (ty * w + tx) * 4, seed = [src[s0], src[s0 + 1], src[s0 + 2]];
+  const reg = new Uint8Array(w * h), st = [ty * w + tx]; reg[ty * w + tx] = 1; let n = 0;
+  while (st.length) { const q = st.pop(), qx = q % w;
+    if (keep ? p[q * 4 + 3] < 255 : p[q * 4 + 3] > 0) n++;
+    if (keep) { for (let k = 0; k < 3; k++) p[q * 4 + k] = src[q * 4 + k]; p[q * 4 + 3] = 255; } else p[q * 4 + 3] = 0;
+    for (const m of [qx > 0 ? q - 1 : -1, qx < w - 1 ? q + 1 : -1, q - w, q + w]) { if (m < 0 || m >= w * h || reg[m]) continue;
+      if (Math.hypot(src[m * 4] - seed[0], src[m * 4 + 1] - seed[1], src[m * 4 + 2] - seed[2]) < 38) { reg[m] = 1; st.push(m); } } }
+  if (!n) return 'none'; x.putImageData(d, 0, 0); return 'ok';
+}
 function stkErase(c, tx, ty){
   const w = c.width, h = c.height, x = c.getContext('2d'), d = x.getImageData(0, 0, w, h), p = d.data, start = ty * w + tx;
   if (p[start * 4 + 3] < 128) return 'clear';
@@ -3735,10 +3748,11 @@ function stkErase(c, tx, ty){
   for (let i = 0; i < w * h; i++) if (reg[i]) p[i * 4 + 3] = 0; x.putImageData(d, 0, 0); return 'ok';
 }
 function fixHTML(){
-  const f = S.fixer, tip = { draw: 'Brush over the parts of the original you want to keep.', erase: "Brush over anything you don't want.", tap: 'Tap a leftover patch (like a bit of wall) to remove it.', split: 'Draw a line between the stickers to cut them apart.' }[f.mode];
+  const f = S.fixer, tip = f.mode === 'split' ? 'Draw a line between the stickers to cut them apart.' : f.brushOn ? (f.mode === 'keep' ? 'Brush over parts to bring them back.' : 'Brush over parts to remove them.') : (f.mode === 'keep' ? 'Tap an area to bring it back.' : 'Tap an area to remove it.');
   return `<div class="impcard"><div class="imphead"><b>${esc(f.title || 'Edit picture')}</b><button type="button" class="linkbtn" data-act="fixDone">${ic('check', 18)} Done</button></div>
-    <div class="modeseg fixseg three">${[['draw', 'Keep', 'edit'], ['erase', 'Remove', 'trash'], ['tap', 'Tap', 'fill'], ...(f.onSheet ? [['split', 'Split', 'minus']] : [])].map(([v, l, icn]) => `<button type="button" data-act="fixMode" data-v="${v}" class="${f.mode === v ? 'on' : ''}">${ic(icn, 16)}<b>${l}</b></button>`).join('')}</div>
-    ${!['fill', 'split', 'tap'].includes(f.mode) ? `<div class="brushes"><span>Brush</span>${[['s', 6], ['m', 14], ['l', 26]].map(([v, d]) => `<button type="button" data-act="fixBrush" data-v="${v}" class="${f.brush === v ? 'on' : ''}" aria-label="${{ s: 'Small', m: 'Medium', l: 'Large' }[v]} brush"><i style="width:${d}px;height:${d}px"></i></button>`).join('')}</div>` : ''}
+    <div class="modeseg fixseg three">${[['keep', 'Keep', 'check'], ['remove', 'Remove', 'trash'], ...(f.onSheet ? [['split', 'Split', 'minus']] : [])].map(([v, l, icn]) => `<button type="button" data-act="fixMode" data-v="${v}" class="${f.mode === v ? 'on' : ''}">${ic(icn, 16)}<b>${l}</b></button>`).join('')}</div>
+    ${f.mode !== 'split' ? `<div class="brushes"><span class="tapbrush">${[['', 'Tap'], ['1', 'Brush']].map(([v, l]) => `<button type="button" data-act="fixBrushOn" data-v="${v}" class="${!!v === !!f.brushOn ? 'on' : ''}">${l}</button>`).join('')}</span>
+      ${f.brushOn ? [['s', 6], ['m', 14], ['l', 26]].map(([v, d]) => `<button type="button" data-act="fixBrush" data-v="${v}" class="${f.brush === v ? 'on' : ''}" aria-label="${{ s: 'Small', m: 'Medium', l: 'Large' }[v]} brush"><i style="width:${d}px;height:${d}px"></i></button>`).join('') : ''}</div>` : ''}
     <div class="fixview" id="fixView"></div>
     <div class="fixtools">${smallBtn('Remove background', 'sparkle', 'fixAutoBg', 'dark')}${smallBtn('', 'minus', 'fixZoom', 'plain', 'data-d="-1" aria-label="Zoom out"')}<b>${Math.round((f.zoom || 1) * 100)}%</b>${smallBtn('', 'plus', 'fixZoom', 'plain', 'data-d="1" aria-label="Zoom in"')}</div>
     <div class="seprow">${smallBtn('Undo', 'refresh', 'fixUndo', 'plain', f.undo.length ? '' : 'disabled')}<span>${tip}</span></div>
@@ -3756,12 +3770,12 @@ function drawFix(){ const box = $('#sheet .sheetbox'); if (!box) return; box.inn
   let stroke = null; if (f.ac) f.ac.abort(); f.ac = new AbortController(); const once = { signal: f.ac.signal };   // the canvas is reused: replace, never stack, its handlers
   c.addEventListener('pointerdown', e => { e.preventDefault(); try { c.setPointerCapture(e.pointerId); } catch {}
     const pt = at(e), before = c.getContext('2d').getImageData(0, 0, c.width, c.height);
-    if (f.mode === 'fill' || f.mode === 'tap') { const tx = Math.max(0, Math.min(c.width - 1, Math.round(pt.x))), ty = Math.max(0, Math.min(c.height - 1, Math.round(pt.y))), res = f.mode === 'tap' ? stkErase(c, tx, ty) : stkFill(c, tx, ty, im.orig);
+    if ((f.mode === 'keep' || f.mode === 'remove') && !f.brushOn) { const tx = Math.max(0, Math.min(c.width - 1, Math.round(pt.x))), ty = Math.max(0, Math.min(c.height - 1, Math.round(pt.y))), res = tapRegion(c, im.orig, tx, ty, f.mode === 'keep');
       if (res === 'ok') { f.undo.push(before); if (f.undo.length > 12) f.undo.shift(); f.changed = true; buzz(8); drawFix(); }
-      else toast({ solid: 'That spot is already filled in. Tap a checkered spot, or use Draw.', open: 'That spot opens to the outside. Use Keep to brush it in instead.', clear: "That spot's already removed.", big: 'That would remove most of the picture. Tap a smaller patch, or use the Remove brush.' }[res]); return; }
-    const rad = f.mode === 'split' ? 2.2 * pt.k : { s: 3, m: 7, l: 13 }[f.brush] * pt.k; stroke = { last: pt, rad, before }; dab(pt.x, pt.y, rad, f.mode !== 'draw'); }, once);
+      else toast({ solid: 'That spot is already filled in. Tap a checkered spot, or use Draw.', open: 'That spot opens to the outside. Use Keep to brush it in instead.', clear: "That spot's already removed.", none: f.mode === 'keep' ? "That's already kept." : "That's already removed.", big: 'That would remove most of the picture. Tap a smaller patch, or use the Remove brush.' }[res]); return; }
+    const rad = f.mode === 'split' ? 2.2 * pt.k : { s: 3, m: 7, l: 13 }[f.brush] * pt.k; stroke = { last: pt, rad, before }; dab(pt.x, pt.y, rad, f.mode !== 'keep'); }, once);
   c.addEventListener('pointermove', e => { if (!stroke) return; const pt = at(e), dx = pt.x - stroke.last.x, dy = pt.y - stroke.last.y, steps = Math.max(1, Math.ceil(Math.hypot(dx, dy) / (stroke.rad / 2)));
-    for (let k = 1; k <= steps; k++) dab(stroke.last.x + dx * k / steps, stroke.last.y + dy * k / steps, stroke.rad, f.mode !== 'draw'); stroke.last = pt; }, once);
+    for (let k = 1; k <= steps; k++) dab(stroke.last.x + dx * k / steps, stroke.last.y + dy * k / steps, stroke.rad, f.mode !== 'keep'); stroke.last = pt; }, once);
   const end = () => { if (!stroke) return; f.undo.push(stroke.before); if (f.undo.length > 12) f.undo.shift(); f.changed = true; stroke = null;
     if (f.mode === 'split') { splitSticker().then(n => { if (!n) { c.getContext('2d').putImageData(f.undo.pop(), 0, 0); toast("That didn't cut it into separate pieces. Draw the line all the way across the gap."); } }); return; }
     const u = box.querySelector('[data-act=fixUndo]'); if (u) u.removeAttribute('disabled'); };
@@ -3816,7 +3830,7 @@ function removeBgCanvas(src){
 function openPicEditor(ids){ if (!ids.length) return; S.editQueue = ids.slice(1); S.editTotal = S.editTotal && S.editQueue.length ? S.editTotal : ids.length; openEditFor(ids[0]); }
 function openEditFor(id){ const im = imgById(id); if (!im) return;
   if (!im.orig) { const o = document.createElement('canvas'); o.width = im.canvas.width; o.height = im.canvas.height; o.getContext('2d').drawImage(im.canvas, 0, 0); im.orig = o; }
-  const n = S.editTotal || 1, k = n - (S.editQueue || []).length; S.fixer = { id, mode: 'erase', brush: 'm', undo: [], onSheet: false, title: n > 1 ? `Edit picture ${k} of ${n}` : 'Edit picture' }; showSheet(''); drawFix(); }
+  const n = S.editTotal || 1, k = n - (S.editQueue || []).length; S.fixer = { id, mode: 'remove', brush: 'm', undo: [], onSheet: false, title: n > 1 ? `Edit picture ${k} of ${n}` : 'Edit picture' }; showSheet(''); drawFix(); }
 async function offerBgRemoval(list){
   const cands = []; for (const im of list) { if (im.alpha) continue; const cut = removeBgCanvas(im.canvas); if (cut) cands.push({ im, cut, url: cut.toDataURL('image/png'), use: true }); }
   if (!cands.length) return; S.bgOffer = cands; S.bgIdx = 0; showSheet(''); drawBgOffer();
@@ -6596,12 +6610,12 @@ const ACTIONS = {
     S.selItem = null; drawDesigner();
   },
   stkFixOpen: () => { const it = selected(); if (!it) return; const im0 = imgById(it.imageId); if (im0 && !im0.orig) { const o = document.createElement('canvas'); o.width = im0.canvas.width; o.height = im0.canvas.height; o.getContext('2d').drawImage(im0.canvas, 0, 0); im0.orig = o; }
-    S.editQueue = []; S.fixer = { id: it.imageId, mode: 'erase', brush: 'm', undo: [], onSheet: isFree(it), title: 'Edit sticker' }; showSheet(''); drawFix(); },
+    S.editQueue = []; S.fixer = { id: it.imageId, mode: 'remove', brush: 'm', undo: [], onSheet: isFree(it), title: 'Edit sticker' }; showSheet(''); drawFix(); },
   fixMode: t => { S.fixer.mode = t.dataset.v; drawFix(); },
   fixAutoBg: () => { const f = S.fixer, im = imgById(f.id), src = im.orig || im.canvas, cut = removeBgCanvas(src);
     if (!cut) return toast("Couldn't find a plain background. Use the Remove brush or Tap remove.");
     const c = im.canvas, x = c.getContext('2d'); f.undo.push(x.getImageData(0, 0, c.width, c.height)); x.clearRect(0, 0, c.width, c.height); x.drawImage(cut, 0, 0, c.width, c.height);
-    f.changed = true; f.mode = 'draw'; toast('Background removed. Use Keep or Remove to touch it up.'); drawFix(); },
+    f.changed = true; f.mode = 'keep'; toast('Background removed. Tap anything to keep or remove it.'); drawFix(); },
   bgPick: t => { S.bgOffer[S.bgIdx || 0].use = !!t.dataset.v; buzz(6); drawBgOffer(); },
   bgNav: t => { const n = S.bgOffer.length; S.bgIdx = ((S.bgIdx || 0) + +t.dataset.d + n) % n; drawBgOffer(); },
   bgKeepAll: () => { S.bgOffer = null; closeSheet(); },
@@ -6612,6 +6626,7 @@ const ACTIONS = {
     if (n) { toast(`Background removed from ${n} picture${n === 1 ? '' : 's'}!`); drawCtrl(); drawSheet(); } },
   whiteBgToggle: () => { S.admin.whiteBg = S.admin.whiteBg === false; toast(S.admin.whiteBg ? 'Imported sheets print with a white background.' : 'Imported sheets print exactly as sent.'); drawAdminBody(); },
   fixZoom: t => { const f = S.fixer; f.zoom = Math.max(1, Math.min(4, (f.zoom || 1) * (+t.dataset.d > 0 ? 1.5 : 1 / 1.5))); drawFix(); },
+  fixBrushOn: t => { S.fixer.brushOn = !!t.dataset.v; drawFix(); },
   fixBrush: t => { S.fixer.brush = t.dataset.v; drawFix(); },
   fixUndo: () => { const f = S.fixer, im = imgById(f.id); if (!f.undo.length) return; im.canvas.getContext('2d').putImageData(f.undo.pop(), 0, 0); drawFix(); },
   fixDone: async () => { const f = S.fixer; closeSheet(); if (f && f.ac) f.ac.abort();
