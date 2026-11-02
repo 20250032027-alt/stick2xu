@@ -1586,7 +1586,8 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .pn-ic{flex:none;width:44px;height:44px;border-radius:14px;background:#EEF2FC;color:#283971;display:grid;place-items:center}
 .sephelp{display:flex;gap:8px;align-items:flex-start;margin:-6px 0 0;font-size:13.5px;color:var(--muted)}.sephelp svg{flex:none;color:#C9951A;margin-top:2px}
 .sepview{touch-action:none;user-select:none}
-.modeseg.fixseg{max-width:none;flex:none}.fixview{display:grid;place-items:center;padding:12px;border-radius:16px;background:repeating-conic-gradient(#DCE1EC 0 25%,#F6F7FA 0 50%) 0 0/16px 16px;border:1.5px solid var(--line)}
+.modeseg.fixseg{max-width:none;flex:none}.fixtools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.fixtools b{min-width:46px;text-align:center;font-size:14px}.fixtools .btn:last-child{margin-left:auto}
+.fixview{overflow:auto;max-height:52vh;display:grid;place-items:center;padding:12px;border-radius:16px;background:repeating-conic-gradient(#DCE1EC 0 25%,#F6F7FA 0 50%) 0 0/16px 16px;border:1.5px solid var(--line)}
 .fixview .fixcanvas{display:block;max-width:100%;max-height:46vh;width:auto;height:auto;cursor:crosshair;touch-action:none}
 .modeseg.three{grid-template-columns:repeat(3,1fr)}.modeseg.three button{flex-direction:row;gap:6px;justify-content:center;padding:10px 6px}
 .brushes{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
@@ -3728,11 +3729,12 @@ function fixHTML(){
     <div class="modeseg fixseg three">${[['fill', 'Fill', 'fill'], ['draw', 'Draw', 'edit'], ['erase', 'Erase', 'trash'], ...(isFree(selected() || {}) ? [['split', 'Split', 'minus']] : [])].map(([v, l, icn]) => `<button type="button" data-act="fixMode" data-v="${v}" class="${f.mode === v ? 'on' : ''}">${ic(icn, 16)}<b>${l}</b></button>`).join('')}</div>
     ${!['fill', 'split'].includes(f.mode) ? `<div class="brushes"><span>Brush</span>${[['s', 6], ['m', 14], ['l', 26]].map(([v, d]) => `<button type="button" data-act="fixBrush" data-v="${v}" class="${f.brush === v ? 'on' : ''}" aria-label="${{ s: 'Small', m: 'Medium', l: 'Large' }[v]} brush"><i style="width:${d}px;height:${d}px"></i></button>`).join('')}</div>` : ''}
     <div class="fixview" id="fixView"></div>
+    <div class="fixtools">${smallBtn('', 'minus', 'fixZoom', 'plain', 'data-d="-1" aria-label="Zoom out"')}<b>${Math.round((f.zoom || 1) * 100)}%</b>${smallBtn('', 'plus', 'fixZoom', 'plain', 'data-d="1" aria-label="Zoom in"')}${smallBtn('Remove background', 'sparkle', 'fixRemoveBg', 'plain')}</div>
     <div class="seprow">${smallBtn('Undo', 'refresh', 'fixUndo', 'plain', f.undo.length ? '' : 'disabled')}<span>${tip}</span></div>
     ${btn('Done', { act: 'fixDone', icon: 'check', cls: 'dark wide' })}</div>`;
 }
 function drawFix(){ const box = $('#sheet .sheetbox'); if (!box) return; box.innerHTML = fixHTML();
-  const f = S.fixer, im = imgById(f.id), c = im.canvas, view = $('#fixView'); c.className = 'fixcanvas'; view.appendChild(c);   // the sticker itself, so drawing shows live
+  const f = S.fixer, im = imgById(f.id), c = im.canvas, view = $('#fixView'); c.className = 'fixcanvas'; view.appendChild(c); const z = f.zoom || 1; c.style.width = z > 1 ? `${z * 100}%` : ''; c.style.maxWidth = c.style.maxHeight = z > 1 ? 'none' : '';   // the sticker itself, so drawing shows live
   const o = im.orig && im.orig.width === c.width && im.orig.height === c.height ? im.orig.getContext('2d').getImageData(0, 0, c.width, c.height).data : null;
   const at = e => { const r = c.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * c.width, y: (e.clientY - r.top) / r.height * c.height, k: c.width / r.width }; };
   const dab = (x0, y0, rad, erase) => { const x = c.getContext('2d'), L = Math.max(0, Math.floor(x0 - rad)), T = Math.max(0, Math.floor(y0 - rad)), R = Math.min(c.width, Math.ceil(x0 + rad)), B = Math.min(c.height, Math.ceil(y0 + rad));
@@ -3787,6 +3789,11 @@ async function combineStickers(a, b){
   sheet.items = sheet.items.filter(i => i.uid !== a.uid && i.uid !== b.uid).concat(item); if (!freeFits(sheet, item, item.uid)) autoArrange(sheet);
   S.selItem = item.uid; S.combineFrom = null; buzz([8, 30, 8]); toast('Combined into one sticker!'); drawDesigner();
 }
+// turn everything outside the stickers' white borders white (patterned sheet backgrounds use a lot of ink)
+function whitenOutside(c){ const w = c.width, h = c.height, x = c.getContext('2d'), d = x.getImageData(0, 0, w, h), p = d.data, notWhite = new Uint8Array(w * h);
+  for (let i = 0; i < w * h; i++) notWhite[i] = Math.min(p[i * 4], p[i * 4 + 1], p[i * 4 + 2]) < 232 ? 1 : 0;
+  const inside = outsideFill(notWhite, w, h); for (let i = 0; i < w * h; i++) if (!inside[i]) { p[i * 4] = p[i * 4 + 1] = p[i * 4 + 2] = 255; }
+  x.putImageData(d, 0, 0); }
 function drawImport(){ const box = $('#sheet .sheetbox'); if (!box) return; box.innerHTML = importCardHTML();
   const f = $('#impFile'); if (f) f.addEventListener('change', async e => { const file = e.target.files[0]; e.target.value = ''; if (!file) return;
     if (!file.type.startsWith('image/')) return toast('That file is not a picture.');
@@ -5053,6 +5060,7 @@ async function drawAdminBody(){
       const units = ko.flatMap(o => orderItems(o).filter(it => it.type === 'keychains' && it.front).flatMap(it => Array.from({ length: +it.qty || 0 }, () => ({ bk: it.back_mode !== 'blank' }))));
       const paired = units.some(u => u.bk), sheets = kcPlace(units, kcGrid(mm.w, mm.h, false), kcStack()).length;
       return `<div class="batchbar pinbar">${ic('keychain', 18)}<span><b>${n} keychain${n === 1 ? '' : 's'}</b> from ${ko.length} order${ko.length === 1 ? '' : 's'}, on <b>${sheets} sheet${sheets === 1 ? '' : 's'}</b>. Each insert prints at <b>${mm.w / 10} × ${mm.h / 10} cm</b>.</span>${paired ? kcLayoutSwitch() : ''}${smallBtn('Keychains PDF', 'printer', 'aKcSheet', 'dark')}${smallBtn('PNG', 'download', 'aKcSheetPng', 'plain')}</div>`; })() : ''}
+    ${['approved', 'printing', 'ready'].includes(f) ? `<div class="batchbar">${ic('image', 18)}<span>Imported sheets' background: <b>${S.admin.whiteBg === false ? 'as the customer sent it' : 'white (saves ink)'}</b></span>${smallBtn(S.admin.whiteBg === false ? 'Make white' : 'Keep as sent', 'image', 'whiteBgToggle', 'plain')}</div>` : ''}
     ${['approved', 'printing', 'ready'].includes(f) ? `<div class="batchbar">${ic('edit', 18)}<span>Order codes, names and cut lines on printouts: <b>${printLabels() ? 'on' : 'off'}</b></span>${smallBtn(printLabels() ? 'Turn off' : 'Turn on', '', 'aLabels', 'plain')}</div>` : ''}
     ${f === 'done' && doneM.length ? `<div class="donesum"><div><span class="small muted">Picked up this month</span><b class="num">${peso(doneM.reduce((t, o) => t + (+o.total || 0), 0))}</b><span class="small muted">${doneM.length} order${doneM.length === 1 ? '' : 's'}${doneTodo.length ? `, <b>${doneTodo.length} not in the log book yet</b>` : ', all in the log book'}</span><span class="donebar" aria-hidden="true"><i style="width:${Math.round((doneM.length - doneTodo.length) / doneM.length * 100)}%"></i></span></div>${doneTodo.length ? smallBtn(`Add ${doneTodo.length === 1 ? 'it' : 'all ' + doneTodo.length} to log book`, 'plus', 'lbAllDone', 'dark') : `<span class="tag ok">${ic('check', 14)}All logged</span>`}</div>` : ''}
     ${f === 'printing' ? (() => { const ko = all.filter(kcAgain), po = all.filter(pinsAgain); if (!ko.length && !po.length) return '';
@@ -5401,7 +5409,7 @@ async function makePdf(o, batch, asPng){
           const r = itemRect(x);
           if (x.h) {   // an imported sheet: the picture exactly as it is
             try { const img = await getImg(x.path), iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height, k = Math.min(1, (r.w / 25.4 * 300) / iw);
-              const c = document.createElement('canvas'); c.width = Math.round(iw * k); c.height = Math.round(ih * k); const cx = c.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, c.width, c.height); cx.drawImage(img, 0, 0, c.width, c.height);
+              const c = document.createElement('canvas'); c.width = Math.round(iw * k); c.height = Math.round(ih * k); const cx = c.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, c.width, c.height); cx.drawImage(img, 0, 0, c.width, c.height); if (S.admin.whiteBg !== false) whitenOutside(c);
               doc.addImage(c.toDataURL('image/jpeg', 0.92), 'JPEG', r.x, r.y, r.w, r.h); } catch (e) { console.warn('image failed', x.path, e); }
             continue;
           }
@@ -6551,6 +6559,16 @@ const ACTIONS = {
   },
   stkFixOpen: () => { const it = selected(); if (!it) return; S.fixer = { id: it.imageId, mode: 'fill', brush: 'm', undo: [] }; showSheet(''); drawFix(); },
   fixMode: t => { S.fixer.mode = t.dataset.v; drawFix(); },
+  whiteBgToggle: () => { S.admin.whiteBg = S.admin.whiteBg === false; toast(S.admin.whiteBg ? 'Imported sheets print with a white background.' : 'Imported sheets print exactly as sent.'); drawAdminBody(); },
+  fixZoom: t => { const f = S.fixer; f.zoom = Math.max(1, Math.min(4, (f.zoom || 1) * (+t.dataset.d > 0 ? 1.5 : 1 / 1.5))); drawFix(); },
+  fixRemoveBg: () => { const f = S.fixer, c = imgById(f.id).canvas, w = c.width, h = c.height, x = c.getContext('2d'), d = x.getImageData(0, 0, w, h), p = d.data;
+    const edge = []; for (let i = 0; i < w; i += 2) edge.push(i, (h - 1) * w + i); for (let j = 0; j < h; j += 2) edge.push(j * w, j * w + w - 1);
+    const op = edge.filter(q => p[q * 4 + 3] > 200); if (op.length < edge.length * 0.4) return toast('The background already looks see-through. Use Erase to tidy up.');
+    const bg = [0, 1, 2].map(ch => { const v = op.map(q => p[q * 4 + ch]).sort((a, b) => a - b); return v[v.length >> 1]; }), like = new Uint8Array(w * h);
+    for (let i = 0; i < w * h; i++) like[i] = p[i * 4 + 3] < 40 || Math.hypot(p[i * 4] - bg[0], p[i * 4 + 1] - bg[1], p[i * 4 + 2] - bg[2]) < 40 ? 1 : 0;
+    const keep = sealedKeep(like, w, h, Math.max(2, Math.round(Math.max(w, h) / 160))); f.undo.push(x.getImageData(0, 0, w, h)); let n = 0;
+    for (let i = 0; i < w * h; i++) if (!keep[i] && p[i * 4 + 3]) { p[i * 4 + 3] = 0; n++; } x.putImageData(d, 0, 0); f.changed = true;
+    toast(n ? 'Background removed! Use Draw or Erase to touch it up.' : "Couldn't find a plain background. Use Erase to brush it away."); drawFix(); },
   fixBrush: t => { S.fixer.brush = t.dataset.v; drawFix(); },
   fixUndo: () => { const f = S.fixer, im = imgById(f.id); if (!f.undo.length) return; im.canvas.getContext('2d').putImageData(f.undo.pop(), 0, 0); drawFix(); },
   fixDone: async () => { const f = S.fixer; closeSheet(); if (f && f.ac) f.ac.abort(); if (!f || !f.changed) return;
@@ -6593,6 +6611,8 @@ const ACTIONS = {
     for (const pc of keep) { const im = pc.cut ? pc.cut.im : await cutPiece(d.im, d.det, pc, d.solid); S.images.push(im);
       const w = Math.max(CONFIG.freeMinMm, Math.max(im.w, im.h) * mmPerPx + extra), cx = rect.x + ((pc.x0 + pc.x1 + 1) / 2) / d.det.k * mmPerPx, cy = rect.y + ((pc.y0 + pc.y1 + 1) / 2) / d.det.k * mmPerPx, b = sheetBox();
       sheet.items.push({ uid: uid(), imageId: im.id, x: +Math.max(b.x0, Math.min(b.x1 - w, cx - w / 2)).toFixed(2), y: +Math.max(b.y0, Math.min(b.y1 - w, cy - w / 2)).toFixed(2), w: +w.toFixed(2), fit: 'fit' }); }
+    { const b = sheetBox(), rs = sheet.items.map(itemRect), x0 = Math.min(...rs.map(r => r.x)), y0 = Math.min(...rs.map(r => r.y)), x1 = Math.max(...rs.map(r => r.x + r.w)), y1 = Math.max(...rs.map(r => r.y + r.h));
+      const dx = (b.x0 + b.x1) / 2 - (x0 + x1) / 2, dy = (b.y0 + b.y1) / 2 - (y0 + y1) / 2; sheet.items.forEach(it => { it.x = +(it.x + dx).toFixed(2); it.y = +(it.y + dy).toFixed(2); }); }   // centred, not stuck at the top
     let msg = 'Your stickers are ready! Drag or resize any of them.';
     const clash = sheet.items.some(it => !freeFits(sheet, it, it.uid));
     if (d.arr === 'pack' || clash) {   // pack tight, then grow them as much as the sheet allows
