@@ -1586,7 +1586,7 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .pn-ic{flex:none;width:44px;height:44px;border-radius:14px;background:#EEF2FC;color:#283971;display:grid;place-items:center}
 .sephelp{display:flex;gap:8px;align-items:flex-start;margin:-6px 0 0;font-size:13.5px;color:var(--muted)}.sephelp svg{flex:none;color:#C9951A;margin-top:2px}
 .sepview{touch-action:none;user-select:none}
-.modeseg.fixseg{max-width:none;flex:none}.fixtools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.fixtools b{min-width:46px;text-align:center;font-size:14px}.fixtools .btn:last-child{margin-left:auto}
+.modeseg.fixseg{max-width:none;flex:none}.fixtools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.fixtools .btn.dark{flex:1 1 100%;justify-content:center}.fixtools b{min-width:46px;text-align:center;font-size:14px}
 .fixview{overflow:auto;max-height:52vh;display:grid;place-items:center;padding:12px;border-radius:16px;background:repeating-conic-gradient(#DCE1EC 0 25%,#F6F7FA 0 50%) 0 0/16px 16px;border:1.5px solid var(--line)}
 .fixview .fixcanvas{display:block;max-width:100%;max-height:46vh;width:auto;height:auto;cursor:crosshair;touch-action:none}
 .modeseg.three{grid-template-columns:repeat(3,1fr)}.modeseg.three button{flex-direction:row;gap:6px;justify-content:center;padding:10px 6px}
@@ -3402,7 +3402,7 @@ function drawSheet(){
     <div class="page ${free ? 'free' : ''} ${imp ? 'imp' : ''}" id="page">${cells}${stickers}${!S.images.length ? `<label class="sheet-empty"><span class="ui">${ic('plus', 22)}</span><b>Choose pictures</b><small>Then tap the sheet to place them</small><input id="fileIn2" type="file" accept="image/*" multiple hidden></label>` : ''}</div>
     ${sel ? `<div class="selbar">
         ${free ? `<span class="sizer">${smallBtn('', 'minus', 'freeSize', 'plain', 'data-d="-5" aria-label="Smaller"')}<b>${(itemRect(sel).w / 10).toFixed(1)} cm</b>${smallBtn('', 'plus', 'freeSize', 'plain', 'data-d="5" aria-label="Bigger"')}</span>` : ''}
-        ${smallBtn('Fix this sticker', 'edit', 'stkFixOpen', 'plain')}
+        ${smallBtn('Edit', 'edit', 'stkFixOpen', 'plain')}
         ${free ? smallBtn(S.combineFrom === sel.uid ? 'Now tap another…' : 'Combine', 'plus', 'stkCombine', S.combineFrom === sel.uid ? 'dark' : 'plain') : ''}
         ${smallBtn(sel.border === 'none' ? 'Add white border' : 'No border', sel.border === 'none' ? 'fit' : 'fill', 'borderToggle', 'plain')}
         ${smallBtn(sel.fit === 'fit' ? 'Fill the square' : 'Show whole picture', sel.fit === 'fit' ? 'fill' : 'fit', 'fitToggle', 'plain')}
@@ -3735,12 +3735,12 @@ function stkErase(c, tx, ty){
   for (let i = 0; i < w * h; i++) if (reg[i]) p[i * 4 + 3] = 0; x.putImageData(d, 0, 0); return 'ok';
 }
 function fixHTML(){
-  const f = S.fixer, tip = { fill: 'Tap a checkered (see-through) spot to fill it in.', draw: 'Brush over the parts you want back.', erase: "Brush over anything you don't want.", split: 'Draw a line between the stickers to cut them apart.' }[f.mode];
-  return `<div class="impcard"><div class="imphead"><b>Fix this sticker</b><button type="button" class="linkbtn" data-act="fixDone">${ic('check', 18)} Done</button></div>
-    <div class="modeseg fixseg three">${[['fill', 'Fill', 'fill'], ['draw', 'Draw', 'edit'], ['erase', 'Erase', 'trash'], ...(isFree(selected() || {}) ? [['split', 'Split', 'minus']] : [])].map(([v, l, icn]) => `<button type="button" data-act="fixMode" data-v="${v}" class="${f.mode === v ? 'on' : ''}">${ic(icn, 16)}<b>${l}</b></button>`).join('')}</div>
-    ${!['fill', 'split'].includes(f.mode) ? `<div class="brushes"><span>Brush</span>${[['s', 6], ['m', 14], ['l', 26]].map(([v, d]) => `<button type="button" data-act="fixBrush" data-v="${v}" class="${f.brush === v ? 'on' : ''}" aria-label="${{ s: 'Small', m: 'Medium', l: 'Large' }[v]} brush"><i style="width:${d}px;height:${d}px"></i></button>`).join('')}</div>` : ''}
+  const f = S.fixer, tip = { draw: 'Brush over the parts of the original you want to keep.', erase: "Brush over anything you don't want.", tap: 'Tap a leftover patch (like a bit of wall) to remove it.', split: 'Draw a line between the stickers to cut them apart.' }[f.mode];
+  return `<div class="impcard"><div class="imphead"><b>${esc(f.title || 'Edit picture')}</b><button type="button" class="linkbtn" data-act="fixDone">${ic('check', 18)} Done</button></div>
+    <div class="modeseg fixseg three">${[['draw', 'Keep', 'edit'], ['erase', 'Remove', 'trash'], ['tap', 'Tap', 'fill'], ...(f.onSheet ? [['split', 'Split', 'minus']] : [])].map(([v, l, icn]) => `<button type="button" data-act="fixMode" data-v="${v}" class="${f.mode === v ? 'on' : ''}">${ic(icn, 16)}<b>${l}</b></button>`).join('')}</div>
+    ${!['fill', 'split', 'tap'].includes(f.mode) ? `<div class="brushes"><span>Brush</span>${[['s', 6], ['m', 14], ['l', 26]].map(([v, d]) => `<button type="button" data-act="fixBrush" data-v="${v}" class="${f.brush === v ? 'on' : ''}" aria-label="${{ s: 'Small', m: 'Medium', l: 'Large' }[v]} brush"><i style="width:${d}px;height:${d}px"></i></button>`).join('')}</div>` : ''}
     <div class="fixview" id="fixView"></div>
-    <div class="fixtools">${smallBtn('', 'minus', 'fixZoom', 'plain', 'data-d="-1" aria-label="Zoom out"')}<b>${Math.round((f.zoom || 1) * 100)}%</b>${smallBtn('', 'plus', 'fixZoom', 'plain', 'data-d="1" aria-label="Zoom in"')}</div>
+    <div class="fixtools">${smallBtn('Remove background', 'sparkle', 'fixAutoBg', 'dark')}${smallBtn('', 'minus', 'fixZoom', 'plain', 'data-d="-1" aria-label="Zoom out"')}<b>${Math.round((f.zoom || 1) * 100)}%</b>${smallBtn('', 'plus', 'fixZoom', 'plain', 'data-d="1" aria-label="Zoom in"')}</div>
     <div class="seprow">${smallBtn('Undo', 'refresh', 'fixUndo', 'plain', f.undo.length ? '' : 'disabled')}<span>${tip}</span></div>
     ${btn('Done', { act: 'fixDone', icon: 'check', cls: 'dark wide' })}</div>`;
 }
@@ -3756,9 +3756,9 @@ function drawFix(){ const box = $('#sheet .sheetbox'); if (!box) return; box.inn
   let stroke = null; if (f.ac) f.ac.abort(); f.ac = new AbortController(); const once = { signal: f.ac.signal };   // the canvas is reused: replace, never stack, its handlers
   c.addEventListener('pointerdown', e => { e.preventDefault(); try { c.setPointerCapture(e.pointerId); } catch {}
     const pt = at(e), before = c.getContext('2d').getImageData(0, 0, c.width, c.height);
-    if (f.mode === 'fill') { const res = stkFill(c, Math.max(0, Math.min(c.width - 1, Math.round(pt.x))), Math.max(0, Math.min(c.height - 1, Math.round(pt.y))), im.orig);
+    if (f.mode === 'fill' || f.mode === 'tap') { const tx = Math.max(0, Math.min(c.width - 1, Math.round(pt.x))), ty = Math.max(0, Math.min(c.height - 1, Math.round(pt.y))), res = f.mode === 'tap' ? stkErase(c, tx, ty) : stkFill(c, tx, ty, im.orig);
       if (res === 'ok') { f.undo.push(before); if (f.undo.length > 12) f.undo.shift(); f.changed = true; buzz(8); drawFix(); }
-      else toast({ solid: 'That spot is already filled in. Tap a checkered spot, or use Draw.', open: 'That spot opens to the outside. Use Draw to brush it in instead.' }[res]); return; }
+      else toast({ solid: 'That spot is already filled in. Tap a checkered spot, or use Draw.', open: 'That spot opens to the outside. Use Keep to brush it in instead.', clear: "That spot's already removed.", big: 'That would remove most of the picture. Tap a smaller patch, or use the Remove brush.' }[res]); return; }
     const rad = f.mode === 'split' ? 2.2 * pt.k : { s: 3, m: 7, l: 13 }[f.brush] * pt.k; stroke = { last: pt, rad, before }; dab(pt.x, pt.y, rad, f.mode !== 'draw'); }, once);
   c.addEventListener('pointermove', e => { if (!stroke) return; const pt = at(e), dx = pt.x - stroke.last.x, dy = pt.y - stroke.last.y, steps = Math.max(1, Math.ceil(Math.hypot(dx, dy) / (stroke.rad / 2)));
     for (let k = 1; k <= steps; k++) dab(stroke.last.x + dx * k / steps, stroke.last.y + dy * k / steps, stroke.rad, f.mode !== 'draw'); stroke.last = pt; }, once);
@@ -3813,6 +3813,10 @@ function removeBgCanvas(src){
   if (n < w * h * 0.02 || n > w * h * 0.97) return null; x.putImageData(d, 0, 0); return c;   // only skip when there's nothing to remove
 }
 /* After "Choose pictures": photos get their background removed, Instagram-sticker style. Tap one to keep it as it was. */
+function openPicEditor(ids){ if (!ids.length) return; S.editQueue = ids.slice(1); S.editTotal = S.editTotal && S.editQueue.length ? S.editTotal : ids.length; openEditFor(ids[0]); }
+function openEditFor(id){ const im = imgById(id); if (!im) return;
+  if (!im.orig) { const o = document.createElement('canvas'); o.width = im.canvas.width; o.height = im.canvas.height; o.getContext('2d').drawImage(im.canvas, 0, 0); im.orig = o; }
+  const n = S.editTotal || 1, k = n - (S.editQueue || []).length; S.fixer = { id, mode: 'erase', brush: 'm', undo: [], onSheet: false, title: n > 1 ? `Edit picture ${k} of ${n}` : 'Edit picture' }; showSheet(''); drawFix(); }
 async function offerBgRemoval(list){
   const cands = []; for (const im of list) { if (im.alpha) continue; const cut = removeBgCanvas(im.canvas); if (cut) cands.push({ im, cut, url: cut.toDataURL('image/png'), use: true }); }
   if (!cands.length) return; S.bgOffer = cands; S.bgIdx = 0; showSheet(''); drawBgOffer();
@@ -3845,7 +3849,7 @@ async function onFiles(e){
     } catch { toast("That picture didn't open. Try a screenshot of it instead."); }
     if (S.view === 'framed') break;
   }
-  if (S.view === 'framed') drawFramed(); else { drawCtrl(); drawSheet(); offerBgRemoval(S.images.slice(-files.length)); }
+  if (S.view === 'framed') drawFramed(); else { drawCtrl(); drawSheet(); openPicEditor(S.images.slice(-files.length).filter(i => !i.alpha).map(i => i.id)); }
 }
 async function processFile(file, maxPx = 2400){
   const u0 = URL.createObjectURL(file);
@@ -6591,8 +6595,13 @@ const ACTIONS = {
     }
     S.selItem = null; drawDesigner();
   },
-  stkFixOpen: () => { const it = selected(); if (!it) return; S.fixer = { id: it.imageId, mode: 'fill', brush: 'm', undo: [] }; showSheet(''); drawFix(); },
+  stkFixOpen: () => { const it = selected(); if (!it) return; const im0 = imgById(it.imageId); if (im0 && !im0.orig) { const o = document.createElement('canvas'); o.width = im0.canvas.width; o.height = im0.canvas.height; o.getContext('2d').drawImage(im0.canvas, 0, 0); im0.orig = o; }
+    S.editQueue = []; S.fixer = { id: it.imageId, mode: 'erase', brush: 'm', undo: [], onSheet: isFree(it), title: 'Edit sticker' }; showSheet(''); drawFix(); },
   fixMode: t => { S.fixer.mode = t.dataset.v; drawFix(); },
+  fixAutoBg: () => { const f = S.fixer, im = imgById(f.id), src = im.orig || im.canvas, cut = removeBgCanvas(src);
+    if (!cut) return toast("Couldn't find a plain background. Use the Remove brush or Tap remove.");
+    const c = im.canvas, x = c.getContext('2d'); f.undo.push(x.getImageData(0, 0, c.width, c.height)); x.clearRect(0, 0, c.width, c.height); x.drawImage(cut, 0, 0, c.width, c.height);
+    f.changed = true; f.mode = 'draw'; toast('Background removed. Use Keep or Remove to touch it up.'); drawFix(); },
   bgPick: t => { S.bgOffer[S.bgIdx || 0].use = !!t.dataset.v; buzz(6); drawBgOffer(); },
   bgNav: t => { const n = S.bgOffer.length; S.bgIdx = ((S.bgIdx || 0) + +t.dataset.d + n) % n; drawBgOffer(); },
   bgKeepAll: () => { S.bgOffer = null; closeSheet(); },
@@ -6605,11 +6614,13 @@ const ACTIONS = {
   fixZoom: t => { const f = S.fixer; f.zoom = Math.max(1, Math.min(4, (f.zoom || 1) * (+t.dataset.d > 0 ? 1.5 : 1 / 1.5))); drawFix(); },
   fixBrush: t => { S.fixer.brush = t.dataset.v; drawFix(); },
   fixUndo: () => { const f = S.fixer, im = imgById(f.id); if (!f.undo.length) return; im.canvas.getContext('2d').putImageData(f.undo.pop(), 0, 0); drawFix(); },
-  fixDone: async () => { const f = S.fixer; closeSheet(); if (f && f.ac) f.ac.abort(); if (!f || !f.changed) return;
+  fixDone: async () => { const f = S.fixer; closeSheet(); if (f && f.ac) f.ac.abort();
+    const next = () => { if (S.editQueue && S.editQueue.length) setTimeout(() => openEditFor(S.editQueue.shift()), 60); else S.editTotal = 0; };
+    if (!f || !f.changed) return next();
     const im = imgById(f.id), blob = await new Promise(r => im.canvas.toBlob(r, 'image/png'));
     Object.assign(im, { blob, ext: 'png', alpha: true, url: URL.createObjectURL(blob) });
     for (const k of [...stickerCache.keys()]) if (k.startsWith(im.id + '|')) stickerCache.delete(k);
-    toast('Sticker fixed!'); drawCtrl(); drawSheet(); },
+    toast('Saved.'); drawCtrl(); drawSheet(); next(); },
   starterUse: async t => { const all = Object.values(S.starters).flat().filter(Boolean), tp = all.find(x => x.slug === t.dataset.slug); if (!tp) return;
     t.classList.add('busy'); try { await useTemplate(tp); } catch { toast("That design didn't open. You can still make your own."); } },
   stkCombine: () => { const it = selected(); if (!it) return; S.combineFrom = S.combineFrom === it.uid ? null : it.uid; if (S.combineFrom) toast('Now tap the sticker to join it with.'); drawCtrl(); drawSheet(); },
