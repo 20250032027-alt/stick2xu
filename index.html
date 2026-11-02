@@ -3803,11 +3803,12 @@ function removeBgCanvas(src){
   const w = src.width, h = src.height, c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.drawImage(src, 0, 0);
   const d = x.getImageData(0, 0, w, h), p = d.data, edge = []; for (let i = 0; i < w; i += 2) edge.push(i, (h - 1) * w + i); for (let j = 0; j < h; j += 2) edge.push(j * w, j * w + w - 1);
   const bg = [0, 1, 2].map(ch => { const v = edge.map(q => p[q * 4 + ch]).sort((a, b) => a - b); return v[v.length >> 1]; });
-  const spread = edge.reduce((t, q) => t + Math.hypot(p[q * 4] - bg[0], p[q * 4 + 1] - bg[1], p[q * 4 + 2] - bg[2]), 0) / edge.length; if (spread > 40) return null;   // busy background: leave it
-  const like = new Uint8Array(w * h); for (let i = 0; i < w * h; i++) like[i] = Math.hypot(p[i * 4] - bg[0], p[i * 4 + 1] - bg[1], p[i * 4 + 2] - bg[2]) < 40 ? 1 : 0;
+  const spread = edge.reduce((t, q) => t + Math.hypot(p[q * 4] - bg[0], p[q * 4 + 1] - bg[1], p[q * 4 + 2] - bg[2]), 0) / edge.length;
+  const T = Math.max(40, Math.min(75, 30 + spread * 1.5));   // the tolerance follows the background: plain = strict, uneven = looser
+  const like = new Uint8Array(w * h); for (let i = 0; i < w * h; i++) like[i] = Math.hypot(p[i * 4] - bg[0], p[i * 4 + 1] - bg[1], p[i * 4 + 2] - bg[2]) < T ? 1 : 0;
   const keep = sealedKeep(like, w, h, Math.max(2, Math.round(Math.max(w, h) / 160))); let n = 0;
   for (let i = 0; i < w * h; i++) if (!keep[i]) { p[i * 4 + 3] = 0; n++; }
-  if (n < w * h * 0.05 || n > w * h * 0.95) return null; x.putImageData(d, 0, 0); return c;
+  if (n < w * h * 0.02 || n > w * h * 0.97) return null; x.putImageData(d, 0, 0); return c;   // only skip when there's nothing to remove
 }
 /* After "Choose pictures": photos get their background removed, Instagram-sticker style. Tap one to keep it as it was. */
 async function offerBgRemoval(list){
@@ -6595,7 +6596,7 @@ const ACTIONS = {
   bgKeepAll: () => { S.bgOffer = null; closeSheet(); },
   bgUse: async () => { const L = S.bgOffer || []; S.bgOffer = null; closeSheet(); let n = 0;
     for (const c of L) { if (!c.use) continue; const blob = await new Promise(r => c.cut.toBlob(r, 'image/png'));
-      Object.assign(c.im, { canvas: c.cut, blob, ext: 'png', url: URL.createObjectURL(blob), alpha: true }); n++;
+      Object.assign(c.im, { orig: c.im.canvas, canvas: c.cut, blob, ext: 'png', url: URL.createObjectURL(blob), alpha: true }); n++;   // keep the photo so Draw can bring parts back
       for (const k of [...stickerCache.keys()]) if (k.startsWith(c.im.id + '|')) stickerCache.delete(k); }
     if (n) { toast(`Background removed from ${n} picture${n === 1 ? '' : 's'}!`); drawCtrl(); drawSheet(); } },
   whiteBgToggle: () => { S.admin.whiteBg = S.admin.whiteBg === false; toast(S.admin.whiteBg ? 'Imported sheets print with a white background.' : 'Imported sheets print exactly as sent.'); drawAdminBody(); },
