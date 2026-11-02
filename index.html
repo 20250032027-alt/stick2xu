@@ -2825,6 +2825,7 @@ async function useTemplate(t){
     S.fd = newFd(t.type); if (t.size && liveSizes(t.type).some(z => z.id === t.size)) S.fd.size = t.size;
     Object.assign(S.fd.front, { imageId: im.id, zoom: 1, ox: 0, oy: 0 }); S.fd.template = { slug: t.slug, name: t.name };
     if (t.type === 'posters') posterRegrid(S.fd);
+    toast(`${t.name} is in!`);   // same quiet message as sticker sheets, no box on the page
     if (location.hash === designRoute(t.type)) drawFramed(); else location.hash = designRoute(t.type);
   }
 }
@@ -3941,7 +3942,7 @@ function drawFramedCtrl(){
   const f = S.fd, p = P(f.type), d = activeDesign(), sizes = liveSizes(f.type);
   const kc = f.type === 'keychains', backSide = kc && f.side === 'back';
   let n = 0; const step = t => `<div class="stephead"><i>${++n}</i>${t}</div>`;
-  $('#ctrl').innerHTML = `${tplBarHTML(f.type)}${f.template && f.side !== 'back' ? `<div class="tplnote">${ic('sparkle', 18)}<span><b>${esc(f.template.name)}</b> is ready. Pick how many, then check out. You can still move or zoom it.</span></div>` : ''}
+  $('#ctrl').innerHTML = `${tplBarHTML(f.type)}
     <section class="phead">
       <h2>${esc(p.name)}</h2>
       <p class="muted small">${esc(p.blurb)}</p>
