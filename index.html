@@ -1619,6 +1619,14 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .sepcard{position:relative;aspect-ratio:1;border-radius:14px;border:2px solid #283971;padding:6px;cursor:pointer;background:repeating-conic-gradient(#E8EBF2 0 25%,#F6F7FA 0 50%) 0 0/14px 14px;transition:transform .12s,opacity .12s}
 .sepcard img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 1px 2px rgba(40,57,113,.25))}
 .sepcard i{position:absolute;top:-6px;right:-6px;display:grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#1E8E4A;color:#fff;font-style:normal;font-size:11px;font-weight:800;border:2px solid #fff}
+.bgmaker{gap:14px}.bgmaker .imphead{min-height:40px}.bgnav{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted)}
+.bgbig{display:grid;place-items:center;aspect-ratio:1;max-height:56vh;border-radius:18px;background:repeating-conic-gradient(#E4E8F1 0 25%,#F7F8FB 0 50%) 0 0/18px 18px}
+.bgbig img{max-width:88%;max-height:88%;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(40,57,113,.25))}
+.bgopts{display:flex;gap:14px;justify-content:center}
+.bgopts button{font:inherit;font-size:13.5px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;cursor:pointer}
+.bgopts span{width:76px;height:76px;border-radius:18px;background:#F1F3F8 center/80% no-repeat;border:2px solid transparent}
+.bgopts button.on{color:#283971}.bgopts button.on span{border-color:#283971;box-shadow:0 0 0 3px #F2BC2E55}
+@media(max-width:480px){.bgbig{border-radius:14px}.bgopts span{width:70px;height:70px}}
 .bgcard i{background:#283971!important;font-size:10px;top:auto!important;right:auto!important;bottom:5px;left:50%;transform:translateX(-50%);white-space:nowrap;height:18px;padding:0 7px}.bgcard[aria-pressed=false] i{background:#9AA1B5!important}
 .sepcard.off{border-color:var(--line);opacity:.45}.sepcard.off i{background:#9AA1B5}.sepcard:active{transform:scale(.96)}
 .seprow{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted)}
@@ -3648,7 +3656,7 @@ function sepHTML(){
     <div class="sepview" style="aspect-ratio:${im.w}/${im.h};background-image:url('${im.url}')">${det.pieces.map((p, i) => `<button type="button" class="seppc ${p.on ? '' : 'off'} ${p.manual ? 'man' : ''}" data-i="${i}"
       style="left:${p.x0 / det.W * 100}%;top:${p.y0 / det.H * 100}%;width:${(p.x1 - p.x0 + 1) / det.W * 100}%;height:${(p.y1 - p.y0 + 1) / det.H * 100}%" aria-label="Sticker ${i + 1}"><i>${p.on ? i + 1 : ic('x', 12)}</i></button>`).join('')}</div>
     ${btn('Done', { act: 'sepDone', icon: 'check', cls: 'dark wide' })}</div>`;
-  return `<div class="impcard"><div class="imphead"><b>We found ${n} sticker${n === 1 ? '' : 's'} ✨</b><button type="button" class="linkbtn" data-act="importClose" aria-label="Close">${ic('x', 18)}</button></div>
+  return `<div class="impcard"><div class="imphead"><b>We found ${n} sticker${n === 1 ? '' : 's'}</b><button type="button" class="linkbtn" data-act="importClose" aria-label="Close">${ic('x', 18)}</button></div>
     <p class="sephelp">${ic('sparkle', 15)}<span>This is exactly how each one prints. <b>Tap</b> any you don't want.</span></p>
     <div class="sepgrid">${det.pieces.map((p, i) => `<button type="button" class="sepcard ${p.on ? '' : 'off'}" data-act="sepTog" data-i="${i}" aria-pressed="${p.on}" aria-label="Sticker ${i + 1}">
       ${p.cut ? `<img src="${p.cut.thumb}" alt="">` : ''}<i>${p.on ? ic('check', 13) : 'Left out'}</i></button>`).join('')}</div>
@@ -3804,14 +3812,15 @@ function removeBgCanvas(src){
 /* After "Choose pictures": photos get their background removed, Instagram-sticker style. Tap one to keep it as it was. */
 async function offerBgRemoval(list){
   const cands = []; for (const im of list) { if (im.alpha) continue; const cut = removeBgCanvas(im.canvas); if (cut) cands.push({ im, cut, url: cut.toDataURL('image/png'), use: true }); }
-  if (!cands.length) return; S.bgOffer = cands; showSheet(''); drawBgOffer();
+  if (!cands.length) return; S.bgOffer = cands; S.bgIdx = 0; showSheet(''); drawBgOffer();
 }
-function drawBgOffer(){ const box = $('#sheet .sheetbox'); if (!box) return; const L = S.bgOffer;
-  box.innerHTML = `<div class="impcard"><div class="imphead"><b>Make ${L.length === 1 ? 'it a sticker' : 'them stickers'}? ✨</b><button type="button" class="linkbtn" data-act="bgKeepAll" aria-label="Close">${ic('x', 18)}</button></div>
-    <p class="sephelp">${ic('sparkle', 15)}<span>We took the background off. <b>Tap</b> any you'd rather keep as they were.</span></p>
-    <div class="sepgrid">${L.map((c, i) => `<button type="button" class="sepcard bgcard" data-act="bgTog" data-i="${i}" aria-pressed="${c.use}"><img src="${c.use ? c.url : c.im.url}" alt=""><i>${c.use ? 'No background' : 'Original'}</i></button>`).join('')}</div>
-    ${btn('Use these', { act: 'bgUse', icon: 'check', cls: 'dark wide' })}
-    <small class="muted" style="text-align:center">Missed a bit? Tap the sticker on your sheet, then "Fix this sticker".</small></div>`; }
+function drawBgOffer(){ const box = $('#sheet .sheetbox'); if (!box) return; const L = S.bgOffer, k = S.bgIdx = Math.min(S.bgIdx || 0, L.length - 1), c = L[k];
+  if (!c.stk) { c.stk = drawSticker(c.cut, 360, 40, 'fit', false).toDataURL('image/png'); }
+  box.innerHTML = `<div class="impcard bgmaker"><div class="imphead"><button type="button" class="linkbtn" data-act="bgKeepAll" aria-label="Close">${ic('x', 20)}</button>
+      ${L.length > 1 ? `<span class="bgnav">${smallBtn('', 'arrow', 'bgNav', 'plain', 'data-d="-1" aria-label="Previous picture" style="transform:scaleX(-1)"')}<b>${k + 1} of ${L.length}</b>${smallBtn('', 'arrow', 'bgNav', 'plain', 'data-d="1" aria-label="Next picture"')}</span>` : '<span></span>'}</div>
+    <div class="bgbig"><img src="${c.use ? c.stk : c.im.url}" alt="Preview"></div>
+    <div class="bgopts">${[[true, 'Sticker', c.stk], [false, 'Original', c.im.url]].map(([v, l, u]) => `<button type="button" class="${c.use === v ? 'on' : ''}" data-act="bgPick" data-v="${v ? 1 : ''}"><span style="background-image:url('${u}')"></span>${l}</button>`).join('')}</div>
+    ${btn('Done', { act: 'bgUse', icon: 'check', cls: 'dark wide' })}</div>`; }
 function whitenOutside(c){ const w = c.width, h = c.height, x = c.getContext('2d'), d = x.getImageData(0, 0, w, h), p = d.data, notWhite = new Uint8Array(w * h);
   for (let i = 0; i < w * h; i++) notWhite[i] = Math.min(p[i * 4], p[i * 4 + 1], p[i * 4 + 2]) < 232 ? 1 : 0;
   const inside = outsideFill(notWhite, w, h); for (let i = 0; i < w * h; i++) if (!inside[i]) { p[i * 4] = p[i * 4 + 1] = p[i * 4 + 2] = 255; }
@@ -6581,7 +6590,8 @@ const ACTIONS = {
   },
   stkFixOpen: () => { const it = selected(); if (!it) return; S.fixer = { id: it.imageId, mode: 'fill', brush: 'm', undo: [] }; showSheet(''); drawFix(); },
   fixMode: t => { S.fixer.mode = t.dataset.v; drawFix(); },
-  bgTog: t => { const c = S.bgOffer[+t.dataset.i]; c.use = !c.use; buzz(6); drawBgOffer(); },
+  bgPick: t => { S.bgOffer[S.bgIdx || 0].use = !!t.dataset.v; buzz(6); drawBgOffer(); },
+  bgNav: t => { const n = S.bgOffer.length; S.bgIdx = ((S.bgIdx || 0) + +t.dataset.d + n) % n; drawBgOffer(); },
   bgKeepAll: () => { S.bgOffer = null; closeSheet(); },
   bgUse: async () => { const L = S.bgOffer || []; S.bgOffer = null; closeSheet(); let n = 0;
     for (const c of L) { if (!c.use) continue; const blob = await new Promise(r => c.cut.toBlob(r, 'image/png'));
