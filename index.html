@@ -1594,6 +1594,10 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .brushes button i{display:block;border-radius:50%;background:#283971}.brushes button.on{border-color:#283971;box-shadow:inset 0 0 0 1.5px #283971;background:#EEF2FC}
 .tplbar{display:flex;flex-direction:column;gap:8px;margin:0 0 14px;padding:12px;border-radius:16px;background:#FFF3C4;border:2px solid #E3A400}
 .tplbar .tb-h{display:flex;gap:6px;align-items:center;color:#283971}.tplbar .tb-acts{display:flex;gap:8px;flex-wrap:wrap}
+.printchip{display:inline-flex;gap:7px;align-items:center;padding:9px 14px;border-radius:999px;border:1.5px dashed #9AA6C8;color:#283971;text-decoration:none;font-weight:700;font-size:14.5px;background:transparent;transition:border-color .15s,background .15s}
+.printchip:hover{border-color:#283971;background:#fff}.printchip svg{color:#C9951A}.printchip small{font-weight:500;color:var(--muted);font-size:12.5px}
+.contactline{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px;color:var(--ink)}.contactline a{font-weight:700;color:#283971}
+.modeseg.three.four,.modeseg.three:has(button:nth-child(4)){grid-template-columns:repeat(4,1fr)}
 .tplchoose{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .tplchoose button{font:inherit;display:flex;flex-direction:column;gap:2px;text-align:left;padding:12px;border-radius:14px;border:2px solid var(--line);background:#fff;color:#283971;cursor:pointer}
 .tplchoose button:hover{border-color:#283971}.tplchoose small{color:var(--muted);font-size:12.5px;line-height:1.3}
@@ -1634,7 +1638,7 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .impcard .radio input{width:18px;height:18px;accent-color:#283971}
 .impbar{display:flex;gap:10px;align-items:center;margin:4px 0 10px;padding:10px 12px;border-radius:14px;background:#EEF2FC;color:#283971}
 .impbar > span{flex:1;display:flex;flex-direction:column}.impbar small{color:var(--muted);font-size:13px}
-.page .impimg{position:absolute;background:center/100% 100% no-repeat;box-shadow:0 0 0 1px rgba(40,57,113,.12)}
+.page .impimg{position:absolute;background:center/100% 100% no-repeat;box-shadow:0 0 0 1px rgba(40,57,113,.12);pointer-events:none}   /* taps go through to the sheet */
 .sepview{position:relative;width:100%;max-height:52vh;margin:0 auto;background:#fff center/100% 100% no-repeat;border-radius:10px;box-shadow:0 0 0 1.5px var(--line)}
 .seppc{position:absolute;border:2.5px solid #F2BC2E;border-radius:10px;background:rgba(242,188,46,.10);cursor:pointer;padding:0}
 .seppc i{position:absolute;top:-10px;left:-10px;min-width:22px;height:22px;padding:0 5px;border-radius:999px;background:#283971;color:#fff;font:700 12px/22px var(--sans,inherit);font-style:normal;display:grid;place-items:center}
@@ -1828,6 +1832,7 @@ const CONFIG = {
 
   // Match this to the sticker paper (A4 = 210 x 297 mm).
   sheet: { widthMm: 210, heightMm: 297, cols: 4, rows: 6, marginMm: 4, gapMm: 1.5 },
+  contactOn: false, contactEmail: '', contactPhone: '',   // "Questions?" line; off until ready
   freeOn: true, freeMinMm: 20, freeMax: 30, freeGapMm: 2, smoothCut: true,   // Free sticker layout and cut lines
   pinGapMm: 7,             // space between pins on a pin sheet (room to cut around each circle)
   kcGapMm: 4,              // space between keychain inserts on a keychain sheet   // 4 mm edge: about as close as home printers print
@@ -2192,7 +2197,7 @@ function sheetBox(){ const s = CONFIG.sheet; return { x0: s.marginMm, y0: s.marg
 function freeFits(sheet, r, ignore){
   const b = sheetBox(), gap = CONFIG.freeGapMm, e = 0.01;
   if (r.x < b.x0 - e || r.y < b.y0 - e || r.x + r.w > b.x1 + e || r.y + r.w > b.y1 + e) return false;
-  return !sheet.items.some(o => { if (o.uid === ignore) return false; const q = itemRect(o); return r.x < q.x + q.w + gap - e && r.x + r.w + gap - e > q.x && r.y < q.y + q.h + gap - e && r.y + r.w + gap - e > q.y; });
+  return !sheet.items.some(o => { if (o.uid === ignore || o.bg) return false; const q = itemRect(o); return r.x < q.x + q.w + gap - e && r.x + r.w + gap - e > q.x && r.y < q.y + q.h + gap - e && r.y + r.w + gap - e > q.y; });
 }
 function freeSpot(sheet, w, near, ignore){   // the open spot closest to "near" (or the first one, reading order)
   const b = sheetBox(); let best = null, bd = Infinity;
@@ -2202,7 +2207,7 @@ function freeSpot(sheet, w, near, ignore){   // the open spot closest to "near" 
   return best;
 }
 function autoArrange(sheet){   // pack rows, biggest first, each row centred; false if they don't all fit
-  const b = sheetBox(), gap = CONFIG.freeGapMm, its = [...sheet.items].sort((a, c) => itemRect(c).w - itemRect(a).w), rows = [];
+  const b = sheetBox(), gap = CONFIG.freeGapMm, its = sheet.items.filter(i => !i.bg).sort((a, c) => itemRect(c).w - itemRect(a).w), rows = [];
   let row = { items: [], w: 0, h: 0 };
   for (const it of its) { const w = itemRect(it).w; if (row.items.length && row.w + gap + w > b.x1 - b.x0 + 0.01) { rows.push(row); row = { items: [], w: 0, h: 0 }; }
     row.w += (row.items.length ? gap : 0) + w; row.h = Math.max(row.h, w); row.items.push(it); }
@@ -2213,7 +2218,7 @@ function autoArrange(sheet){   // pack rows, biggest first, each row centred; fa
 }
 function snapFree(sheet, r, ignore){   // line up with the sheet edges and the other stickers when close (2.5 mm)
   const b = sheetBox(), gap = CONFIG.freeGapMm, xs = [b.x0, b.x1 - r.w], ys = [b.y0, b.y1 - r.w];
-  sheet.items.forEach(o => { if (o.uid === ignore) return; const q = itemRect(o); xs.push(q.x, q.x + q.w + gap, q.x - gap - r.w, q.x + q.w - r.w); ys.push(q.y, q.y + q.h + gap, q.y - gap - r.w, q.y + q.h - r.w); });
+  sheet.items.forEach(o => { if (o.uid === ignore || o.bg) return; const q = itemRect(o); xs.push(q.x, q.x + q.w + gap, q.x - gap - r.w, q.x + q.w - r.w); ys.push(q.y, q.y + q.h + gap, q.y - gap - r.w, q.y + q.h - r.w); });
   let bx = null, by = null; xs.forEach(v => { if (Math.abs(v - r.x) < 2.5 && (bx === null || Math.abs(v - r.x) < Math.abs(bx - r.x))) bx = v; });
   ys.forEach(v => { if (Math.abs(v - r.y) < 2.5 && (by === null || Math.abs(v - r.y) < Math.abs(by - r.y))) by = v; });
   return { x: bx ?? r.x, y: by ?? r.y, w: r.w, snapX: bx !== null, snapY: by !== null };
@@ -2357,6 +2362,7 @@ function applyShopConfig(c){
   CONFIG.posterExtraSheet = numOr(c.poster_extra_sheet, D.posterExtraSheet);
   CONFIG.posterMarginMm = Math.max(3, Math.min(15, numOr(c.poster_margin_mm, D.posterMarginMm)));
   CONFIG.pinGapMm = Math.max(2, Math.min(20, numOr(c.pin_gap_mm, D.pinGapMm)));
+  CONFIG.contactOn = c.contact_on === true; CONFIG.contactEmail = String(c.contact_email || '').slice(0, 80); CONFIG.contactPhone = String(c.contact_phone || '').slice(0, 30);
   CONFIG.freeOn = c.free_on !== false; CONFIG.smoothCut = c.smooth_cut !== false;
   CONFIG.freeMinMm = Math.max(10, Math.min(100, numOr(c.free_min_mm, D.freeMinMm))); CONFIG.freeMax = Math.max(1, Math.min(200, numOr(c.free_max, D.freeMax))); CONFIG.freeGapMm = Math.max(1, Math.min(10, numOr(c.free_gap_mm, D.freeGapMm)));
   CONFIG.kcGapMm = Math.max(1, Math.min(20, numOr(c.kc_gap_mm, D.kcGapMm)));
@@ -2740,9 +2746,15 @@ async function openTemplate(){
   try { const t = await api.template(TPL); if (t) await useTemplate(t); } catch (e) { console.warn('template', e); toast("That design didn't open. You can still make your own."); }
 }
 /* Ready-made mode: an admin lays out a ready-made design in the real designer, then saves exactly what's on screen */
+function tplSlug(name, type, keep){   // same name is fine across products: a pin "Usagi" doesn't replace the sticker sheet "Usagi"
+  if (keep) return { slug: keep, replace: false };
+  const base = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'design', all = S.admin.tpls || [];
+  let slug = base; const hit = all.find(x => x.slug === slug); if (hit && hit.type !== type) slug = `${base}-${type}`.slice(0, 48);
+  return { slug, replace: all.some(x => x.slug === slug && x.type === type) };
+}
 function tplBarHTML(type){
   const m = S.tplMode; if (!m || m.type !== type) return '';
-  return `<div class="tplbar"><span class="tb-h">${ic('sparkle', 16)}<b>Ready-made design · ${esc(P(type).name)}</b></span>
+  return `<div class="tplbar"><span class="tb-h">${ic('sparkle', 16)}<b>${m.slug ? 'Editing' : 'Ready-made design'} · ${esc(P(type).name)}</b></span>
     <input class="inp" id="tplModeName" maxlength="60" placeholder="Name people will see, like: XU pride" value="${esc(m.name || '')}">
     <span class="tb-acts">${smallBtn('Save as ready-made', 'check', 'tplModeSave', 'dark')}${smallBtn('Cancel', 'x', 'tplModeCancel', 'plain')}</span></div>`;
 }
@@ -3089,6 +3101,7 @@ function viewHome(){
         <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center">
           ${btn('Start designing', { href: '#/shop' })}
           <a class="pilllink" href="#/status">${ic('search', 18)}Check my order</a>
+          ${P('prints') && P('prints').enabled ? `<a class="printchip" href="${designRoute('prints')}">${ic('printer', 16)}Print a file<small>from ${money(Math.min(...P('prints').sizes.filter(z => z.enabled !== false).map(z => z.price)))}/page</small></a>` : ''}
         </div>
         <ul class="facts">
           ${(() => { const others = liveProducts().filter(x => x.key !== 'stickers').map(x => x.name.toLowerCase());
@@ -3101,7 +3114,7 @@ function viewHome(){
       </div>
       ${heroArt()}
     </section>
-    <footer><span>${esc(CONFIG.shopName)} is run by students. It isn't an official school service.${CONFIG.sellersOn && !S.group ? ` <a href="#/sell" class="earnlink">${ic('sparkle', 14)}Earn with ${esc(CONFIG.shopName)}</a>` : ''}</span>${socialHTML()}</footer>
+    <footer><span>${CONFIG.contactOn && (CONFIG.contactEmail || CONFIG.contactPhone) ? `<span class="contactline">${ic('bell', 14)}<b>Questions?</b> ${[CONFIG.contactEmail ? `<a href="mailto:${esc(CONFIG.contactEmail)}">Email us</a>` : '', CONFIG.contactPhone ? `<a href="sms:${esc(CONFIG.contactPhone.replace(/\s+/g, ''))}">text ${esc(CONFIG.contactPhone)}</a>` : ''].filter(Boolean).join(' or ')}</span>` : ''}${esc(CONFIG.shopName)} is run by students. It isn't an official school service.${CONFIG.sellersOn && !S.group ? ` <a href="#/sell" class="earnlink">${ic('sparkle', 14)}Earn with ${esc(CONFIG.shopName)}</a>` : ''}</span>${socialHTML()}</footer>
   </main>`;
 }
 
@@ -3359,11 +3372,11 @@ function drawCtrl(){
 }
 
 function drawSheet(){
-  const g = geom(), sheet = S.sheets[S.cur], imp = !!sheet.imported, sel = imp ? null : selected(), free = !imp && !!sheet.free && CONFIG.freeOn;
+  const g = geom(), sheet = S.sheets[S.cur], imp = !!sheet.imported && !sheet.free, sel = imp ? null : selected(), free = !imp && !!sheet.free && (CONFIG.freeOn || sheet.imported);
   let cells = free ? `<button class="freehit" type="button" data-act="freeTap" aria-label="Place your picture here"></button>` : '';
   if (!free && !imp) for (let r = 0; r < g.rows; r++) for (let c = 0; c < g.cols; c++)
     cells += `<button class="cell" type="button" data-act="cell" data-col="${c}" data-row="${r}" style="${pctStyle(rectMm(c, r, 1))}" aria-label="Row ${r + 1}, spot ${c + 1}"></button>`;
-  const stickers = imp ? sheet.items.map(it => `<div class="impimg" style="${pctStyle(itemRect(it))};background-image:url('${stickerURL(it)}')" role="img" aria-label="Your imported sheet"></div>`).join('') : sheet.items.map(it => `<button class="stk ${it.uid === S.selItem ? 'sel' : ''} ${it.uid === S.justPlaced ? 'pop' : ''}" type="button" data-act="stk" data-uid="${it.uid}"
+  const stickers = imp ? sheet.items.map(it => `<div class="impimg" style="${pctStyle(itemRect(it))};background-image:url('${stickerURL(it)}')" role="img" aria-label="Your imported sheet"></div>`).join('') : sheet.items.map(it => it.bg ? `<div class="impimg" style="${pctStyle(itemRect(it))};background-image:url('${stickerURL(it)}')" role="img" aria-label="Your imported sheet"></div>` : `<button class="stk ${it.uid === S.selItem ? 'sel' : ''} ${it.uid === S.justPlaced ? 'pop' : ''}" type="button" data-act="stk" data-uid="${it.uid}"
       style="${pctStyle(itemRect(it))};background-image:url('${stickerURL(it)}')" aria-label="Sticker, tap to edit">
       ${lowResItem(it) ? `<span class="w">${ic('warn', 11)}blurry</span>` : ''}${free && it.uid === S.selItem ? `<span class="rsz" data-uid="${it.uid}" aria-label="Drag to resize"></span>` : ''}</button>`).join('');
   S.justPlaced = null;
@@ -3371,13 +3384,14 @@ function drawSheet(){
     <div class="tabs" role="tablist">${S.sheets.map((s, i) => `<button class="tab ${i === S.cur ? 'on' : ''}" type="button" role="tab" aria-selected="${i === S.cur}" data-act="tab" data-i="${i}">Sheet ${i + 1}</button>`).join('')}
       ${S.sheets.length < S.settings.maxSheets ? `<button class="tab add" type="button" data-act="addSheet">${ic('plus', 16)}Add a sheet</button>` : `<span class="muted small" style="align-self:center">${S.settings.maxSheets} sheets max per order</span>`}</div>
     <p class="hint mob">${ic('sparkle', 18)}<span>${imp ? 'This sheet prints exactly as you see it. Add another sheet for your own pictures.' : free ? (sel ? 'Drag it anywhere. Pull the corner dot to resize.' : S.selImage ? 'Tap anywhere on the sheet to stick your picture.' : 'Pick a picture, then tap anywhere on the sheet.') : sel ? 'Tap an empty spot to move it.' : S.selImage ? 'Tap the sheet to stick your picture. Drag a sticker to move it.' : 'Choose pictures to start, then tap the sheet to place them.'}</span></p>
-    ${imp ? `<div class="impbar">${ic('image', 18)}<span><b>Imported sheet</b><small>${sheet.imported.lines === 'yes' ? 'Has its own cut lines' : 'We cut around each design'} · printed exactly as is</small></span>${smallBtn('Remove', 'trash', 'delSheet', 'plain')}</div>` : ''}
+    ${imp ? `<div class="impbar">${ic('image', 18)}<span><b>Imported sheet</b><small>${sheet.imported.lines === 'yes' ? 'Has its own cut lines' : 'We cut around each design'} · printed exactly as is</small></span>${smallBtn('Add your own stickers', 'plus', 'impToFree', 'dark')}${smallBtn('Remove', 'trash', 'delSheet', 'plain')}</div>` : ''}
     ${CONFIG.freeOn && !imp ? `<div class="modebar"><div class="modeseg" role="group" aria-label="How stickers are placed">${[['', 'Grid', 'Neat squares'], ['1', 'Free', 'Any size, anywhere']].map(([v, l, h]) => `<button type="button" data-act="sheetMode" data-v="${v}" class="${(v === '1') === free ? 'on' : ''}"><b>${l}</b><small>${h}</small></button>`).join('')}</div>
       ${free && sheet.items.length > 1 ? smallBtn('Auto-arrange', 'sparkle', 'freeArrange', 'plain') : ''}</div>` : ''}
     <div class="page ${free ? 'free' : ''} ${imp ? 'imp' : ''}" id="page">${cells}${stickers}${!S.images.length ? `<label class="sheet-empty"><span class="ui">${ic('plus', 22)}</span><b>Choose pictures</b><small>Then tap the sheet to place them</small><input id="fileIn2" type="file" accept="image/*" multiple hidden></label>` : ''}</div>
     ${sel ? `<div class="selbar">
         ${free ? `<span class="sizer">${smallBtn('', 'minus', 'freeSize', 'plain', 'data-d="-5" aria-label="Smaller"')}<b>${(itemRect(sel).w / 10).toFixed(1)} cm</b>${smallBtn('', 'plus', 'freeSize', 'plain', 'data-d="5" aria-label="Bigger"')}</span>` : ''}
         ${smallBtn('Fix this sticker', 'edit', 'stkFixOpen', 'plain')}
+        ${free ? smallBtn(S.combineFrom === sel.uid ? 'Now tap another…' : 'Combine', 'plus', 'stkCombine', S.combineFrom === sel.uid ? 'dark' : 'plain') : ''}
         ${smallBtn(sel.border === 'none' ? 'Add white border' : 'No border', sel.border === 'none' ? 'fit' : 'fill', 'borderToggle', 'plain')}
         ${smallBtn(sel.fit === 'fit' ? 'Fill the square' : 'Show whole picture', sel.fit === 'fit' ? 'fill' : 'fit', 'fitToggle', 'plain')}
         ${smallBtn('Remove', 'trash', 'removeItem', 'danger')}
@@ -3709,10 +3723,10 @@ function stkErase(c, tx, ty){
   for (let i = 0; i < w * h; i++) if (reg[i]) p[i * 4 + 3] = 0; x.putImageData(d, 0, 0); return 'ok';
 }
 function fixHTML(){
-  const f = S.fixer, tip = { fill: 'Tap a checkered (see-through) spot to fill it in.', draw: 'Brush over the parts you want back.', erase: "Brush over anything you don't want." }[f.mode];
+  const f = S.fixer, tip = { fill: 'Tap a checkered (see-through) spot to fill it in.', draw: 'Brush over the parts you want back.', erase: "Brush over anything you don't want.", split: 'Draw a line between the stickers to cut them apart.' }[f.mode];
   return `<div class="impcard"><div class="imphead"><b>Fix this sticker</b><button type="button" class="linkbtn" data-act="fixDone">${ic('check', 18)} Done</button></div>
-    <div class="modeseg fixseg three">${[['fill', 'Tap to fill', 'fill'], ['draw', 'Draw', 'edit'], ['erase', 'Erase', 'trash']].map(([v, l, icn]) => `<button type="button" data-act="fixMode" data-v="${v}" class="${f.mode === v ? 'on' : ''}">${ic(icn, 16)}<b>${l}</b></button>`).join('')}</div>
-    ${f.mode !== 'fill' ? `<div class="brushes"><span>Brush</span>${[['s', 6], ['m', 14], ['l', 26]].map(([v, d]) => `<button type="button" data-act="fixBrush" data-v="${v}" class="${f.brush === v ? 'on' : ''}" aria-label="${{ s: 'Small', m: 'Medium', l: 'Large' }[v]} brush"><i style="width:${d}px;height:${d}px"></i></button>`).join('')}</div>` : ''}
+    <div class="modeseg fixseg three">${[['fill', 'Fill', 'fill'], ['draw', 'Draw', 'edit'], ['erase', 'Erase', 'trash'], ...(isFree(selected() || {}) ? [['split', 'Split', 'minus']] : [])].map(([v, l, icn]) => `<button type="button" data-act="fixMode" data-v="${v}" class="${f.mode === v ? 'on' : ''}">${ic(icn, 16)}<b>${l}</b></button>`).join('')}</div>
+    ${!['fill', 'split'].includes(f.mode) ? `<div class="brushes"><span>Brush</span>${[['s', 6], ['m', 14], ['l', 26]].map(([v, d]) => `<button type="button" data-act="fixBrush" data-v="${v}" class="${f.brush === v ? 'on' : ''}" aria-label="${{ s: 'Small', m: 'Medium', l: 'Large' }[v]} brush"><i style="width:${d}px;height:${d}px"></i></button>`).join('')}</div>` : ''}
     <div class="fixview" id="fixView"></div>
     <div class="seprow">${smallBtn('Undo', 'refresh', 'fixUndo', 'plain', f.undo.length ? '' : 'disabled')}<span>${tip}</span></div>
     ${btn('Done', { act: 'fixDone', icon: 'check', cls: 'dark wide' })}</div>`;
@@ -3732,12 +3746,46 @@ function drawFix(){ const box = $('#sheet .sheetbox'); if (!box) return; box.inn
     if (f.mode === 'fill') { const res = stkFill(c, Math.max(0, Math.min(c.width - 1, Math.round(pt.x))), Math.max(0, Math.min(c.height - 1, Math.round(pt.y))), im.orig);
       if (res === 'ok') { f.undo.push(before); if (f.undo.length > 12) f.undo.shift(); f.changed = true; buzz(8); drawFix(); }
       else toast({ solid: 'That spot is already filled in. Tap a checkered spot, or use Draw.', open: 'That spot opens to the outside. Use Draw to brush it in instead.' }[res]); return; }
-    const rad = { s: 3, m: 7, l: 13 }[f.brush] * pt.k; stroke = { last: pt, rad, before }; dab(pt.x, pt.y, rad, f.mode === 'erase'); }, once);
+    const rad = f.mode === 'split' ? 2.2 * pt.k : { s: 3, m: 7, l: 13 }[f.brush] * pt.k; stroke = { last: pt, rad, before }; dab(pt.x, pt.y, rad, f.mode !== 'draw'); }, once);
   c.addEventListener('pointermove', e => { if (!stroke) return; const pt = at(e), dx = pt.x - stroke.last.x, dy = pt.y - stroke.last.y, steps = Math.max(1, Math.ceil(Math.hypot(dx, dy) / (stroke.rad / 2)));
-    for (let k = 1; k <= steps; k++) dab(stroke.last.x + dx * k / steps, stroke.last.y + dy * k / steps, stroke.rad, f.mode === 'erase'); stroke.last = pt; }, once);
+    for (let k = 1; k <= steps; k++) dab(stroke.last.x + dx * k / steps, stroke.last.y + dy * k / steps, stroke.rad, f.mode !== 'draw'); stroke.last = pt; }, once);
   const end = () => { if (!stroke) return; f.undo.push(stroke.before); if (f.undo.length > 12) f.undo.shift(); f.changed = true; stroke = null;
+    if (f.mode === 'split') { splitSticker().then(n => { if (!n) { c.getContext('2d').putImageData(f.undo.pop(), 0, 0); toast("That didn't cut it into separate pieces. Draw the line all the way across the gap."); } }); return; }
     const u = box.querySelector('[data-act=fixUndo]'); if (u) u.removeAttribute('disabled'); };
   c.addEventListener('pointerup', end, once); c.addEventListener('pointercancel', end, once);
+}
+// split the selected sticker into its separate pieces (after a cut line), each its own sticker
+async function splitSticker(){
+  const it = selected(), sheet = S.sheets[S.cur], im = it && imgById(it.imageId); if (!im || !isFree(it)) return 0;
+  const c = im.canvas, w = c.width, h = c.height, p = c.getContext('2d').getImageData(0, 0, w, h).data, lab = new Int32Array(w * h), comps = [];
+  for (let i = 0; i < w * h; i++) { if (lab[i] || p[i * 4 + 3] < 128) continue; const id = comps.length + 1, st = [i]; lab[i] = id; let x0 = w, y0 = h, x1 = 0, y1 = 0, n = 0;
+    while (st.length) { const q = st.pop(), qx = q % w, qy = (q / w) | 0; n++; if (qx < x0) x0 = qx; if (qx > x1) x1 = qx; if (qy < y0) y0 = qy; if (qy > y1) y1 = qy;
+      for (const m of [qx > 0 ? q - 1 : -1, qx < w - 1 ? q + 1 : -1, q - w, q + w]) if (m >= 0 && m < w * h && !lab[m] && p[m * 4 + 3] >= 128) { lab[m] = id; st.push(m); } }
+    comps.push({ id, x0, y0, x1, y1, n }); }
+  const big = comps.filter(cp => cp.n > w * h * 0.01); if (big.length < 2) return 0;
+  const r = itemRect(it), extra = 2 * (CONFIG.outlineMm + 0.8), inner = r.w - extra, s = inner / Math.max(w, h), news = [];
+  for (const cp of big) { const bw = cp.x1 - cp.x0 + 1, bh = cp.y1 - cp.y0 + 1, pc = document.createElement('canvas'); pc.width = bw; pc.height = bh;
+    const px = pc.getContext('2d'), d = px.createImageData(bw, bh);
+    for (let yy = 0; yy < bh; yy++) for (let xx = 0; xx < bw; xx++) { const g = (cp.y0 + yy) * w + cp.x0 + xx, o = (yy * bw + xx) * 4; if (lab[g] !== cp.id) continue; for (let k = 0; k < 4; k++) d.data[o + k] = p[g * 4 + k]; }
+    px.putImageData(d, 0, 0); const blob = await new Promise(rs => pc.toBlob(rs, 'image/png'));
+    const nim = { id: uid(), blob, ext: 'png', url: URL.createObjectURL(blob), canvas: pc, w: bw, h: bh, alpha: true, sheet: true }; S.images.push(nim);
+    const nw = Math.max(CONFIG.freeMinMm, Math.max(bw, bh) * s + extra), cx = r.x + r.w / 2 + ((cp.x0 + cp.x1) / 2 - w / 2) * s, cy = r.y + r.w / 2 + ((cp.y0 + cp.y1) / 2 - h / 2) * s;
+    news.push({ uid: uid(), imageId: nim.id, x: +(cx - nw / 2).toFixed(2), y: +(cy - nw / 2).toFixed(2), w: +nw.toFixed(2), fit: 'fit', border: it.border }); }
+  sheet.items = sheet.items.filter(x => x.uid !== it.uid).concat(news);
+  if (news.some(x => !freeFits(sheet, x, x.uid))) autoArrange(sheet);
+  S.selItem = null; if (S.fixer && S.fixer.ac) S.fixer.ac.abort(); S.fixer = null; closeSheet(); buzz([8, 30, 8]); toast(`Split into ${news.length} stickers!`); drawDesigner(); return news.length;
+}
+// combine two stickers into one (keeps how they sit on the sheet)
+async function combineStickers(a, b){
+  const sheet = S.sheets[S.cur], extra = 2 * (CONFIG.outlineMm + 0.8), parts = [a, b].map(it => { const im = imgById(it.imageId), r = itemRect(it), s = (r.w - extra) / Math.max(im.w, im.h);
+    return { it, im, s, x: r.x + r.w / 2 - im.w * s / 2, y: r.y + r.w / 2 - im.h * s / 2, w: im.w * s, h: im.h * s }; });
+  const x0 = Math.min(...parts.map(q => q.x)), y0 = Math.min(...parts.map(q => q.y)), x1 = Math.max(...parts.map(q => q.x + q.w)), y1 = Math.max(...parts.map(q => q.y + q.h));
+  const k = 1 / Math.min(...parts.map(q => q.s)), c = document.createElement('canvas'); c.width = Math.round((x1 - x0) * k); c.height = Math.round((y1 - y0) * k);
+  const x = c.getContext('2d'); parts.forEach(q => x.drawImage(q.im.canvas, (q.x - x0) * k, (q.y - y0) * k, q.w * k, q.h * k));
+  const blob = await new Promise(rs => c.toBlob(rs, 'image/png')), nim = { id: uid(), blob, ext: 'png', url: URL.createObjectURL(blob), canvas: c, w: c.width, h: c.height, alpha: true, sheet: true }; S.images.push(nim);
+  const nw = Math.max(x1 - x0, y1 - y0) + extra, item = { uid: uid(), imageId: nim.id, x: +((x0 + x1) / 2 - nw / 2).toFixed(2), y: +((y0 + y1) / 2 - nw / 2).toFixed(2), w: +nw.toFixed(2), fit: 'fit', border: a.border };
+  sheet.items = sheet.items.filter(i => i.uid !== a.uid && i.uid !== b.uid).concat(item); if (!freeFits(sheet, item, item.uid)) autoArrange(sheet);
+  S.selItem = item.uid; S.combineFrom = null; buzz([8, 30, 8]); toast('Combined into one sticker!'); drawDesigner();
 }
 function drawImport(){ const box = $('#sheet .sheetbox'); if (!box) return; box.innerHTML = importCardHTML();
   const f = $('#impFile'); if (f) f.addEventListener('change', async e => { const file = e.target.files[0]; e.target.value = ''; if (!file) return;
@@ -4866,7 +4914,7 @@ async function viewAdmin(){
     return;
   }
   forgetPoster();   // an admin's own phone never tags orders with a poster
-  $('#app').innerHTML = `<header class="top"><span class="mark">Stick<b>2</b>It</span>
+  $('#app').innerHTML = `<header class="top"><a class="mark" href="#/" aria-label="Back to the shop">Stick<b>2</b>It</a>
       <button class="pilllink" type="button" data-act="logout">${ic('logout', 18)}Log out</button></header>
     <main id="main" class="wrap">
       <nav class="atabs" aria-label="Admin sections">
@@ -5486,7 +5534,7 @@ function drawSettings(){
     seller_mode: CONFIG.sellerMode, seller_flat_rate: CONFIG.sellerFlatRate, seller_welcome_on: CONFIG.sellerWelcomeOn, seller_reward_on: CONFIG.sellerRewardOn,
     seller_reward_every: CONFIG.sellerRewardEvery, seller_reward_item: CONFIG.sellerRewardItem, seller_goal_by: CONFIG.sellerGoalBy, seller_goal_orders: CONFIG.sellerGoalOrders, seller_pro_orders: CONFIG.sellerProOrders, seller_min_order: CONFIG.sellerMinOrder, seller_pro_goal: CONFIG.sellerProGoal, seller_pro_rate: CONFIG.sellerProRate, seller_buyer_off: CONFIG.sellerBuyerOff, seller_welcome: CONFIG.sellerWelcome, sellers_max: CONFIG.sellersMax, seller_min_payout: CONFIG.sellerMinPayout, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
-    print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, pin_gap_mm: CONFIG.pinGapMm, kc_gap_mm: CONFIG.kcGapMm, free_on: CONFIG.freeOn, smooth_cut: CONFIG.smoothCut, free_min_mm: CONFIG.freeMinMm, free_max: CONFIG.freeMax, free_gap_mm: CONFIG.freeGapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
+    print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, pin_gap_mm: CONFIG.pinGapMm, kc_gap_mm: CONFIG.kcGapMm, contact_on: CONFIG.contactOn, contact_email: CONFIG.contactEmail, contact_phone: CONFIG.contactPhone, free_on: CONFIG.freeOn, smooth_cut: CONFIG.smoothCut, free_min_mm: CONFIG.freeMinMm, free_max: CONFIG.freeMax, free_gap_mm: CONFIG.freeGapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, feedback_on: CONFIG.feedbackOn, rush_on: CONFIG.rushOn, rush_make: CONFIG.rushMake, rush_cutoff_hour: CONFIG.rushCutoff, max_rush_per_day: CONFIG.maxRushPerDay, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
     grades: CONFIG.grades.slice(), gcash: { ...CONFIG.gcash }, cleanup_days: CONFIG.cleanupDays, max_pictures: CONFIG.maxPictures, max_noshows: CONFIG.maxNoShows,
     max_qty: Object.fromEntries(['pins', 'posters', 'keychains'].map(k => [k, maxQtyFor(k)])),
@@ -5602,6 +5650,11 @@ function drawShopForm(){
       <div class="pgrid2"><label class="dnum"><span>Space between pins (mm)</span>${n('pin_gap_mm', c.pin_gap_mm, 2, 20)}</label>
         <label class="dnum"><span>Space between keychains (mm)</span>${n('kc_gap_mm', c.kc_gap_mm, 1, 20)}</label></div>
       <p class="help" style="margin-top:6px">More space is easier to cut but fits fewer on a page. At 7 mm, 20 pins fit on one A4 sheet; at 3.5 mm, 24.</p></div>
+
+    <div class="cfgsec"><div class="sub">Contact (email and phone)</div>
+      <label class="switch" style="margin-bottom:10px"><input type="checkbox" data-cfgbool="contact_on" ${c.contact_on ? 'checked' : ''}><span>Show "Questions? Message us" at the bottom of the site</span></label>
+      <div class="pgrid2"><label class="dnum"><span>Email</span><input class="inp" type="email" data-cfgtxt="contact_email" maxlength="80" value="${esc(c.contact_email || '')}" placeholder="hello@stick2it.me"></label>
+        <label class="dnum"><span>Phone (for texts)</span><input class="inp" type="tel" data-cfgtxt="contact_phone" maxlength="30" value="${esc(c.contact_phone || '')}" placeholder="0917 123 4567"></label></div></div>
 
     <div class="cfgsec"><div class="sub">Free sticker layout and cutting</div>
       <label class="switch" style="margin-bottom:8px"><input type="checkbox" data-cfgbool="free_on" ${c.free_on !== false ? 'checked' : ''}><span>Let customers place stickers freely (any size, anywhere), not only on the grid</span></label>
@@ -6293,7 +6346,7 @@ function drawTemplates(base){
         ${smallBtn(t.starter ? 'On the design page' : 'Show on the design page', t.starter ? 'check' : 'sparkle', 'tplStarter', t.starter ? 'dark' : 'plain', `data-slug="${esc(t.slug)}"`)}
         <label class="btn small plain tplthumbbtn">${ic('image', 16)}<span>${t.thumb ? 'Change thumbnail' : 'Add thumbnail'}</span><input type="file" accept="image/*" data-tplthumb="${esc(t.slug)}" hidden></label>
         ${t.starter ? `${smallBtn('', 'arrow', 'tplSort', 'plain', `data-slug="${esc(t.slug)}" data-d="-1" aria-label="Show earlier" style="transform:rotate(-90deg)"`)}${smallBtn('', 'arrow', 'tplSort', 'plain', `data-slug="${esc(t.slug)}" data-d="1" aria-label="Show later" style="transform:rotate(90deg)"`)}` : ''}</div>
-      <div class="acts">${t.type === 'stickers' ? '' : smallBtn('Sticker', 'download', 'tplSticker', 'dark', `data-slug="${esc(t.slug)}"`)}${smallBtn('QR only', 'qr', 'tplQr', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('Copy link', 'copy', 'tplCopy', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('Try it', 'arrow', 'tplTry', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn(t.enabled ? 'Turn off' : 'Turn on', t.enabled ? 'eye' : 'check', 'tplToggle', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('', 'trash', 'tplDel', 'plain', `data-slug="${esc(t.slug)}" aria-label="Delete ${esc(t.name)}"`)}</div></div>`; }).join('')
+      <div class="acts">${smallBtn('Edit', 'edit', 'tplEdit', 'dark', `data-slug="${esc(t.slug)}"`)}${t.type === 'stickers' ? '' : smallBtn('Sticker', 'download', 'tplSticker', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('QR only', 'qr', 'tplQr', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('Copy link', 'copy', 'tplCopy', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('Try it', 'arrow', 'tplTry', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn(t.enabled ? 'Turn off' : 'Turn on', t.enabled ? 'eye' : 'check', 'tplToggle', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('', 'trash', 'tplDel', 'plain', `data-slug="${esc(t.slug)}" aria-label="Delete ${esc(t.name)}"`)}</div></div>`; }).join('')
       : `<button type="button" class="tplempty" data-act="tplNew">${ic('plus', 26)}<span><b>Make your first one</b><small>Pick a picture, give it a name, done. Takes a minute.</small></span></button>`;
     const sel = $('#qrOpens'); if (sel && sel.options.length !== list.filter(t => t.enabled).length + 1) { const v = sel.value; sel.innerHTML = `<option value="">The shop's home page</option>${list.filter(t => t.enabled).map(t => `<option value="${esc(t.slug)}">Ready-made: ${esc(t.name)}</option>`).join('')}`; sel.value = v; }
   };
@@ -6480,8 +6533,10 @@ const ACTIONS = {
     const it = { uid: uid(), imageId: S.selImage, x: +spot.x.toFixed(2), y: +spot.y.toFixed(2), w: +w.toFixed(2), fit: imgById(S.selImage).alpha ? 'fit' : 'fill' };
     sheet.items.push(it); S.justPlaced = it.uid; buzz(8); drawSheet(); drawBottom();
   },
+  impToFree: () => { const sh = S.sheets[S.cur]; sh.free = true; sh.items.forEach(i => { i.bg = true; }); S.selItem = null; toast('Pick a picture, then tap a blank spot on the sheet.'); drawDesigner(); },
   sheetMode: t => {
     const sheet = S.sheets[S.cur], toFree = t.dataset.v === '1'; if (!!sheet.free === toFree) return;
+    if (sheet.imported) return toast('Imported sheets stay in Free layout.');
     if (toFree) { sheet.items.forEach(it => { const r = rectMm(it.col, it.row, it.size); Object.assign(it, { x: +r.x.toFixed(2), y: +r.y.toFixed(2), w: +r.w.toFixed(2) }); }); sheet.free = true; }
     else {   // back to the grid: each sticker takes the nearest grid size that still fits
       const g = geom(), step = g.cell + g.gapMm, items = [...sheet.items].sort((a, b) => b.w - a.w), kept = []; sheet.items = [];
@@ -6505,6 +6560,7 @@ const ACTIONS = {
     toast('Sticker fixed!'); drawCtrl(); drawSheet(); },
   starterUse: async t => { const all = Object.values(S.starters).flat().filter(Boolean), tp = all.find(x => x.slug === t.dataset.slug); if (!tp) return;
     t.classList.add('busy'); try { await useTemplate(tp); } catch { toast("That design didn't open. You can still make your own."); } },
+  stkCombine: () => { const it = selected(); if (!it) return; S.combineFrom = S.combineFrom === it.uid ? null : it.uid; if (S.combineFrom) toast('Now tap the sticker to join it with.'); drawCtrl(); drawSheet(); },
   importOpen: () => { S.importDraft = S.importDraft && S.importDraft.im ? S.importDraft : {}; showSheet(''); drawImport(); },
   importClose: () => closeSheet(),
   importLines: t => { S.importDraft.lines = t.dataset.v; drawImport(); },
@@ -6559,7 +6615,9 @@ const ACTIONS = {
       if (spot) { it.x = +spot.x.toFixed(2); it.y = +spot.y.toFixed(2); it.w = +nw.toFixed(2); drawSheet(); drawBottom(); } else toast('No room to make it bigger here. Try Auto-arrange.'); } },
   borderToggle: () => { const it = selected(); if (!it) return; it.border = it.border === 'none' ? undefined : 'none';
     if (it.border === 'none') toast('No border: we cut right at the edge of your picture. A white border is easier to cut and peel.'); drawSheet(); },
-  stk: t => { if (S.suppressClick) return; S.selItem = S.selItem === t.dataset.uid ? null : t.dataset.uid; drawCtrl(); drawSheet(); },
+  stk: t => { if (S.suppressClick) return;
+    if (S.combineFrom && S.combineFrom !== t.dataset.uid) { const sh = S.sheets[S.cur], a = sh.items.find(i => i.uid === S.combineFrom), b = sh.items.find(i => i.uid === t.dataset.uid); if (a && b) return combineStickers(a, b); }
+    S.combineFrom = null; S.selItem = S.selItem === t.dataset.uid ? null : t.dataset.uid; drawCtrl(); drawSheet(); },
   tab: t => { S.cur = +t.dataset.i; S.selItem = null; drawDesigner(); },
   addSheet: () => { if (S.sheets.length < S.settings.maxSheets) { S.sheets.push({ items: [] }); S.cur = S.sheets.length - 1; S.selItem = null; drawDesigner(); } },
   delSheet: () => {
@@ -7032,8 +7090,7 @@ const ACTIONS = {
     if (!name) { toast('Give it a name first, like "XU pride".'); const i = $('#tplModeName'); if (i) i.focus(); return; }
     const image = await tplModeImage(m.type); if (!image) return toast(m.type === 'stickers' ? 'Put some stickers on the sheet first.' : 'Add a picture first.');
     if (image.length > 2800000) return toast('That design is too big to save. Try fewer or smaller pictures.');
-    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'design';
-    if ((S.admin.tpls || []).some(x => x.slug === slug) && !confirm(`There's already a design called "${name}". Replace it?`)) return;
+    const { slug, replace } = tplSlug(name, m.type, m.slug); if (replace && !confirm(`There's already a ${P(m.type).name.toLowerCase()} design called "${name}". Replace it?`)) return;
     t.disabled = true;
     try { await api.saveTemplate({ slug, name, type: m.type, size: m.type === 'stickers' ? null : (S.fd && S.fd.size) || null, image, enabled: true });
       S.tplMode = null; S.starters = {}; S.admin.tab = 'posters'; location.hash = '#/admin'; buzz([8, 30, 8]); toast(`${name} is saved! Tap "Show on the design page" to offer it as a starter.`); }
@@ -7044,8 +7101,7 @@ const ACTIONS = {
     const dft = S.admin.tplDraft || {}, name = $('#tplName').value.trim(), file = dft.file, type = dft.type;
     if (!file || !file.type.startsWith('image/')) { toast('Pick the picture first.'); return; }
     if (!name) { toast('Type a name, like "Fortis pin".'); $('#tplName').focus(); return; }
-    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'design';
-    if ((S.admin.tpls || []).some(x => x.slug === slug) && !confirm(`There's already a design called "${name}". Replace it?`)) return;
+    const { slug, replace } = tplSlug(name, S.admin.tplDraft.type); if (replace && !confirm(`There's already a design called "${name}". Replace it?`)) return;
     const b = $('#sheet [data-act=tplSave]'); if (b) { b.disabled = true; b.querySelector('span').textContent = 'Saving…'; }
     try {
       const image = await templateImage(file);
@@ -7077,6 +7133,10 @@ const ACTIONS = {
     [list[i], list[j]] = [list[j], list[i]]; try { await Promise.all(list.map((x, k) => api.setTemplate(x.slug, { sort: k }))); S.starters = {}; drawPosters(); } catch (e) { toast(friendlyError(e)); } },
   tplToggle: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t) return; try { await api.setTemplate(t.slug, { enabled: !t.enabled }); drawPosters(); } catch (e) { toast(friendlyError(e)); } },
   tplDel: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t || !confirm(`Delete "${t.name}"? QR codes that open it will go to the home page instead.`)) return; try { await api.delTemplate(t.slug); drawPosters(); } catch (e) { toast(friendlyError(e)); } },
+  tplEdit: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t) return;
+    S.tplMode = { type: t.type, name: t.name, slug: t.slug }; S.images = []; S.selItem = null; S.selImage = null;
+    if (t.type === 'stickers') { S.sheets = [{ items: [] }]; S.cur = 0; } else S.fd = newFd(t.type);
+    await useTemplate(t); toast(t.type === 'stickers' ? 'Editing. Tap "Add your own stickers" to add more, then Save.' : 'Editing. Change anything, then Save.'); },
   tplTry: el => { window.open(`${CONFIG.siteUrl || location.origin + location.pathname}?t=${encodeURIComponent(el.dataset.slug)}`, '_blank'); },
   tgMorning: async () => { try { const r = await api.telegramMorning(); toast(r === 'none' ? 'No pickups today. Sent a short note to Telegram.' : 'Sent. Check Telegram.'); } catch (e) { toast(friendlyError(e)); } },
   aPdf: t => makePdf(S.admin.orders.find(o => o.id === t.dataset.id)).catch(e => toast(friendlyError(e))),
