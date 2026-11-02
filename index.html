@@ -1594,16 +1594,20 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .brushes button i{display:block;border-radius:50%;background:#283971}.brushes button.on{border-color:#283971;box-shadow:inset 0 0 0 1.5px #283971;background:#EEF2FC}
 .tplbar{display:flex;flex-direction:column;gap:8px;margin:0 0 14px;padding:12px;border-radius:16px;background:#FFF3C4;border:2px solid #E3A400}
 .tplbar .tb-h{display:flex;gap:6px;align-items:center;color:#283971}.tplbar .tb-acts{display:flex;gap:8px;flex-wrap:wrap}
-.tplpick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.tplpick button{font:inherit;display:flex;flex-direction:column;gap:2px;text-align:left;padding:12px;border-radius:14px;border:2px solid var(--line);background:#fff;color:#283971;cursor:pointer}
-.tplpick button:hover{border-color:#283971}.tplpick small{color:var(--muted);font-size:12.5px;line-height:1.3}
+.tplchoose{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tplchoose button{font:inherit;display:flex;flex-direction:column;gap:2px;text-align:left;padding:12px;border-radius:14px;border:2px solid var(--line);background:#fff;color:#283971;cursor:pointer}
+.tplchoose button:hover{border-color:#283971}.tplchoose small{color:var(--muted);font-size:12.5px;line-height:1.3}
 .starters{margin:0 0 14px;padding:12px;border-radius:16px;background:#F4F7FF;border:1.5px solid var(--line)}
 .st-h{display:flex;gap:6px;align-items:center;font-size:14px;color:#283971;margin-bottom:10px}.st-h svg{color:#C9951A}
 .st-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .st-card{display:flex;flex-direction:column;gap:6px;align-items:center;padding:6px;border-radius:12px;border:1.5px solid var(--line);background:#fff;cursor:pointer;font:inherit;transition:transform .12s,border-color .12s}
 .st-card:hover{border-color:#283971;transform:translateY(-1px)}.st-card span{width:100%;aspect-ratio:1;border-radius:8px;background:#fff center/contain no-repeat}
 .st-card small{font-size:12px;font-weight:700;color:#283971;text-align:center;line-height:1.2}.st-card.busy{opacity:.5;pointer-events:none}
-.tplstart{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.tplrow .tplstart{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:2px 0}.tplstart > span:first-child{margin-right:auto}
+.tplstart .btn{white-space:nowrap}.tplthumbbtn{cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.startsec .st-row{margin-top:2px}.startsec .stephead i svg{color:#283971}
+.importbtn .newtag{align-self:flex-start;font-style:normal;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:#283971;color:#F2BC2E;padding:2px 8px;border-radius:999px;margin-bottom:3px}
+.importbtn b{line-height:1.25}
 .sepgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;max-height:46vh;overflow:auto;padding:2px}
 .sepcard{position:relative;aspect-ratio:1;border-radius:14px;border:2px solid #283971;padding:6px;cursor:pointer;background:repeating-conic-gradient(#E8EBF2 0 25%,#F6F7FA 0 50%) 0 0/14px 14px;transition:transform .12s,opacity .12s}
 .sepcard img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 1px 2px rgba(40,57,113,.25))}
@@ -2620,8 +2624,8 @@ function SupaBackend(){
     async cancel(code, nick){ await rpc('cancel_order', { p_code: code, p_nickname: nick }); },
     async feedback(code, nick, stage, rating, tags, comment){ return await rpc('leave_feedback', { p_code: code, p_nickname: nick, p_stage: stage, p_rating: rating, p_tags: tags || [], p_comment: comment || null }); },
     async template(slug){ const { data, error } = await sb.from('templates').select('slug,name,type,size,image').eq('slug', slug).eq('enabled', true).maybeSingle(); if (error) throw error; return data; },
-    async starters(type){ const { data, error } = await sb.from('templates').select('slug,name,type,size,image').eq('enabled', true).eq('starter', true).eq('type', type).order('sort').limit(3); if (error) throw error; return data || []; },
-    async listTemplates(){ const { data, error } = await sb.from('templates').select('slug,name,type,size,image,enabled,created_at,starter,sort').order('created_at', { ascending: false }); if (error) throw error; return data || []; },
+    async starters(type){ const { data, error } = await sb.from('templates').select('slug,name,type,size,image,thumb').eq('enabled', true).eq('starter', true).eq('type', type).order('sort').limit(3); if (error) throw error; return data || []; },
+    async listTemplates(){ const { data, error } = await sb.from('templates').select('slug,name,type,size,image,thumb,enabled,created_at,starter,sort').order('created_at', { ascending: false }); if (error) throw error; return data || []; },
     async saveTemplate(t){ const { error } = await sb.from('templates').upsert(t); if (error) throw error; },
     async setTemplate(slug, patch){ const { error } = await sb.from('templates').update(patch).eq('slug', slug); if (error) throw error; },
     async delTemplate(slug){ const { error } = await sb.from('templates').delete().eq('slug', slug); if (error) throw error; },
@@ -2741,6 +2745,10 @@ function tplBarHTML(type){
     <span class="tb-acts">${smallBtn('Save as ready-made', 'check', 'tplModeSave', 'dark')}${smallBtn('Cancel', 'x', 'tplModeCancel', 'plain')}</span></div>`;
 }
 document.addEventListener('input', e => { if (e.target.id === 'tplModeName' && S.tplMode) S.tplMode.name = e.target.value; });
+// a custom thumbnail for a ready-made design (shown on the design page)
+document.addEventListener('change', async e => { const slug = e.target.dataset && e.target.dataset.tplthumb, file = slug && e.target.files[0]; if (!file) return;
+  try { const im = await processFile(file, 360), c = im.canvas; await api.setTemplate(slug, { thumb: c.toDataURL(im.alpha ? 'image/png' : 'image/jpeg', 0.86) }); S.starters = {}; toast('Thumbnail saved.'); drawPosters(); }
+  catch (err) { toast(friendlyError(err)); } });
 async function tplModeImage(type){
   if (type === 'stickers') {   // the whole sheet, drawn like the print (cut lines included)
     const sheet = S.sheets[S.cur]; if (!sheet || !sheet.items.length) return null;
@@ -2780,8 +2788,8 @@ function starterRowHTML(type){
   const list = S.starters[type];
   if (list === undefined) { S.starters[type] = null; api.starters(type).then(l => { S.starters[type] = l; if (l.length) { if (type === 'stickers' && location.hash.startsWith('#/design')) drawCtrl(); else if (location.hash === designRoute(type) && S.fd && S.fd.type === type) drawFramed(); } }).catch(() => { S.starters[type] = []; }); return ''; }
   if (!list || !list.length) return '';
-  return `<div class="starters"><div class="st-h">${ic('sparkle', 16)}<b>Not sure where to start? Try one of ours</b></div>
-    <div class="st-row">${list.map(t => `<button type="button" class="st-card" data-act="starterUse" data-slug="${esc(t.slug)}"><span style="background-image:url('${t.image}')"></span><small>${esc(t.name)}</small></button>`).join('')}</div></div>`;
+  return `<section class="startsec"><div class="stephead"><i>${ic('sparkle', 14)}</i>Or start with one of ours</div>
+    <div class="st-row">${list.map(t => `<button type="button" class="st-card" data-act="starterUse" data-slug="${esc(t.slug)}"><span style="background-image:url('${t.thumb || t.image}')"></span><small>${esc(t.name)}</small></button>`).join('')}</div></section>`;
 }
 // "Follow us" buttons for the home page footer
 const SOCIAL_ICONS = {
@@ -3071,7 +3079,6 @@ function viewHome(){
           <li>${ic('school', 18)}<span>Pickup inside campus</span></li>
         </ul>
         ${countdownHTML()}
-        ${P('prints') && P('prints').enabled ? `<a class="printline" href="${designRoute('prints')}">${ic('printer', 16)}<span><b>No printer?</b> Print your files here, from ${money(Math.min(...P('prints').sizes.filter(z => z.enabled !== false).map(z => z.price)))} a page.</span>${ic('arrow', 14)}</a>` : ''}
       </div>
       ${heroArt()}
     </section>
@@ -3307,8 +3314,7 @@ function drawCtrl(){
     </section>
     <section>
       <div class="stephead"><i>1</i>Add pictures</div>
-      ${!S.images.length && !S.sheets.some(sh => sh.items.length) ? starterRowHTML('stickers') : ''}
-      <button type="button" class="importbtn" data-act="importOpen"><span class="ui">${ic('image', 20)}</span><span><b>Import your own sheet <em>New</em></b><small>Got a sticker sheet from Pinterest? We'll print it, or cut out each sticker for you.</small></span>${ic('arrow', 16)}</button>
+      <button type="button" class="importbtn" data-act="importOpen"><span class="ui">${ic('image', 20)}</span><span><em class="newtag">New</em><b>Import your own sheet</b><small>Got a sticker sheet from Pinterest? We'll print it, or cut out each sticker for you.</small></span>${ic('arrow', 16)}</button>
       <div class="ordiv"><span>or</span></div>
       <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose pictures<small>From your phone, tablet, or computer. PNG with a see-through background works best</small></span>
         <input id="fileIn" type="file" accept="image/*" multiple hidden></label>
@@ -3316,6 +3322,7 @@ function drawCtrl(){
         <button class="thumb ${S.selImage === im.id && !sel ? 'on' : ''}" type="button" data-act="pickImg" data-id="${im.id}" style="background-image:url('${im.url}')" aria-label="Use this picture" aria-pressed="${S.selImage === im.id && !sel}">
           <span class="x" data-act="delImg" data-id="${im.id}" role="button" aria-label="Remove picture">${ic('x', 14)}</span></button>`).join('')}</div>` : ''}
     </section>
+    ${starterRowHTML('stickers')}
     <section>
       <div class="stephead"><i>2</i>Pick a size</div>
       <div class="sizes">${CONFIG.sizes.filter(z => z.n <= Math.min(g.cols, g.rows)).map(z => `
@@ -3818,13 +3825,13 @@ function drawFramedCtrl(){
         `<label class="choice"><input type="radio" name="backMode" value="${v}" ${f.backMode === v ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>` : ''}
     </section>` : ''}
     ${!backSide || f.backMode === 'different' ? `<section>${step(backSide ? 'Back picture' : 'Add a picture')}
-      ${!f.front.imageId ? starterRowHTML(f.type) : ''}
       <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>${f.type === 'posters' ? 'Choose a picture or PDF' : 'Choose a picture'}<small>${f.type === 'posters' ? 'A picture, or a PDF. Got a Rasterbator PDF? Upload it and we print its pages as they are.' : `From your phone, tablet, or computer. One picture fills the whole ${esc(p.unit)}`}</small></span>
         <input id="fileIn" type="file" accept="${f.type === 'posters' ? 'image/*,application/pdf' : 'image/*'}" hidden></label>
       ${S.images.some(im => !im.sheet) ? `<div class="tray">${S.images.filter(im => !im.sheet).map(im => `
         <button class="thumb ${d && d.imageId === im.id ? 'on' : ''}" type="button" data-act="fdImg" data-id="${im.id}" style="background-image:url('${im.url}')" aria-label="Use this picture" aria-pressed="${!!d && d.imageId === im.id}">
           <span class="x" data-act="delImg" data-id="${im.id}" role="button" aria-label="Remove picture">${ic('x', 14)}</span></button>`).join('')}</div>` : ''}
-    </section>` : ''}
+    </section>
+    ${!backSide ? starterRowHTML(f.type) : ''}` : ''}
     ${!backSide && (sizes.length > 1 || f.type === 'posters') ? `<section>${step('Pick a size')}
       ${sizes.length > 1 ? `<div class="sizes">${sizes.map(z => `<button class="size ${f.size === z.id ? 'on' : ''}" type="button" data-act="fdSize" data-size="${esc(z.id)}" aria-pressed="${f.size === z.id}">
         ${f.type === 'pins' ? `<span class="szc" style="width:${Math.round(z.faceMm / 58 * 34)}px"></span>` : ''}<span>${esc(z.label)}<small class="num">${money(z.price)}</small></span></button>`).join('')}</div>` : ''}
@@ -6260,11 +6267,12 @@ function drawTemplates(base){
   const paint = list => {
     S.admin.tpls = list; const sc = S.admin.scans || {};
     box.innerHTML = list.length ? list.map(t => { const src = `${t.slug}-sticker`, n = S.admin.orders.filter(o => o.src === src).length;
-      return `<div class="tplrow ${t.enabled ? '' : 'off'}"><span class="tplthumb ${t.type === 'pins' ? 'round' : ''}"><img src="${esc(t.image)}" alt=""></span>
+      return `<div class="tplrow ${t.enabled ? '' : 'off'}"><span class="tplthumb ${t.type === 'pins' ? 'round' : ''}"><img src="${esc(t.thumb || t.image)}" alt=""></span>
       <div class="tplinfo"><b>${esc(t.name)}</b><span class="small muted">${esc(P(t.type) ? P(t.type).name : t.type)}${tplPrice(t) ? ' · ' + money(tplPrice(t)) : ''}${t.enabled ? '' : ' · <b>off</b>'}</span>
         <span class="small muted">${sc[src] || 0} scan${sc[src] === 1 ? '' : 's'} · ${n} order${n === 1 ? '' : 's'}</span></div>
       <div class="tplstart"><span class="small muted">${ic('box', 13)} Used in ${(S.admin.orders || []).filter(o => JSON.stringify(o.layout || {}).includes(`"template":"${t.slug}"`)).length} order(s)</span>
         ${smallBtn(t.starter ? 'On the design page' : 'Show on the design page', t.starter ? 'check' : 'sparkle', 'tplStarter', t.starter ? 'dark' : 'plain', `data-slug="${esc(t.slug)}"`)}
+        <label class="btn small plain tplthumbbtn">${ic('image', 16)}<span>${t.thumb ? 'Change thumbnail' : 'Add thumbnail'}</span><input type="file" accept="image/*" data-tplthumb="${esc(t.slug)}" hidden></label>
         ${t.starter ? `${smallBtn('', 'arrow', 'tplSort', 'plain', `data-slug="${esc(t.slug)}" data-d="-1" aria-label="Show earlier" style="transform:rotate(-90deg)"`)}${smallBtn('', 'arrow', 'tplSort', 'plain', `data-slug="${esc(t.slug)}" data-d="1" aria-label="Show later" style="transform:rotate(90deg)"`)}` : ''}</div>
       <div class="acts">${t.type === 'stickers' ? '' : smallBtn('Sticker', 'download', 'tplSticker', 'dark', `data-slug="${esc(t.slug)}"`)}${smallBtn('QR only', 'qr', 'tplQr', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('Copy link', 'copy', 'tplCopy', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('Try it', 'arrow', 'tplTry', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn(t.enabled ? 'Turn off' : 'Turn on', t.enabled ? 'eye' : 'check', 'tplToggle', 'plain', `data-slug="${esc(t.slug)}"`)}${smallBtn('', 'trash', 'tplDel', 'plain', `data-slug="${esc(t.slug)}" aria-label="Delete ${esc(t.name)}"`)}</div></div>`; }).join('')
       : `<button type="button" class="tplempty" data-act="tplNew">${ic('plus', 26)}<span><b>Make your first one</b><small>Pick a picture, give it a name, done. Takes a minute.</small></span></button>`;
@@ -6994,7 +7002,7 @@ const ACTIONS = {
   tplNew: () => { const types = ['stickers', 'pins', 'keychains', 'posters'].filter(k => CONFIG.products[k]);
     showSheet(`<div class="impcard"><div class="imphead"><b>New ready-made design</b><button type="button" class="linkbtn" data-act="importClose" aria-label="Close">${ic('x', 18)}</button></div>
       <p class="help" style="margin:-6px 0 0">Pick what it is. You'll design it on the real design page, so it looks exactly how it prints.</p>
-      <div class="tplpick">${types.map(k => `<button type="button" data-act="tplStart" data-k="${k}"><b>${esc(P(k).name)}</b><small>${esc(P(k).blurb || '')}</small></button>`).join('')}</div>
+      <div class="tplchoose">${types.map(k => `<button type="button" data-act="tplStart" data-k="${k}"><b>${esc(P(k).name)}</b><small>${esc(P(k).blurb || '')}</small></button>`).join('')}</div>
       <button type="button" class="linkbtn" data-act="tplUpload" style="align-self:center">Upload a finished picture instead</button></div>`); },
   tplUpload: () => tplNewSheet(),
   tplStart: t => { const k = t.dataset.k; S.tplMode = { type: k, name: '' }; S.images = []; S.selItem = null; S.selImage = null;

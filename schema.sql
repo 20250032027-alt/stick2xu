@@ -1596,3 +1596,4 @@ alter table public.templates drop constraint if exists templates_type_check;
 alter table public.templates add constraint templates_type_check check (type in ('stickers', 'pins', 'keychains', 'posters'));
 alter table public.templates add column if not exists starter boolean not null default false;   -- shown on the design page
 alter table public.templates add column if not exists sort int not null default 0;              -- order on the design page
+alter table public.templates add column if not exists thumb text check (thumb is null or (thumb like 'data:image/%' and char_length(thumb) < 400000));   -- optional small picture for the design page
