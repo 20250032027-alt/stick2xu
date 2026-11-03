@@ -1049,6 +1049,20 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 #pframe img{position:absolute;max-width:none;user-select:none;-webkit-user-drag:none}
 .pgctl{display:grid;gap:10px;justify-items:start;width:min(100%,420px)}
 
+/* sticker outlines, promo code help, pickup people summary */
+.outlbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:12px}
+.outl-l{font-weight:700;font-size:15px}
+.outlbar .seg button{min-height:40px;padding:6px 16px}
+.outl-h{color:var(--muted);font-size:14px}
+.cc-where{grid-column:1/-1;margin-top:8px}
+.cc-where summary{display:inline-flex;cursor:pointer;font-weight:700;font-size:14.5px;color:var(--accent);text-decoration:underline;text-underline-offset:3px;list-style:none;min-height:32px;align-items:center}
+.cc-where summary::-webkit-details-marker{display:none}
+.cc-where p{margin:4px 0 8px;font-size:14.5px;color:var(--muted)}
+.cc-where .social{margin:0;flex-wrap:wrap;justify-content:flex-start}
+.cc-where .social > .muted{display:none}
+.pp-sum{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:var(--ok-soft, #E3F4E8);font-size:15px;margin:10px 0 14px}
+.pp-sum svg{flex:none;margin-top:3px}
+.pp-sum.warn{background:var(--gold-soft)}
 /* pickup people: checkout and settings */
 #gateNudge[hidden]{display:none}
 .pgroup-h{margin:14px 0 8px;font-weight:700;font-size:15px;color:var(--muted)}
@@ -1901,6 +1915,7 @@ const CONFIG = {
   // Match this to the sticker paper (A4 = 210 x 297 mm).
   sheet: { widthMm: 210, heightMm: 297, cols: 4, rows: 6, marginMm: 4, gapMm: 1.5 },
   contactOn: false, contactEmail: '', contactPhone: '',   // "Questions?" line; off until ready
+  showSignal: true,   // "At the gate, look for ..." (switch in Settings -> Pickup signal)
   freeOn: true, freeMinMm: 20, freeMax: 30, freeGapMm: 2, smoothCut: true,   // Free sticker layout and cut lines
   pinGapMm: 7,             // space between pins on a pin sheet (room to cut around each circle)
   kcGapMm: 4,              // space between keychain inserts on a keychain sheet   // 4 mm edge: about as close as home printers print
@@ -2296,12 +2311,20 @@ function snapFree(sheet, r, ignore){   // line up with the sheet edges and the o
 }
 
 /* Die-cut sticker: the picture plus a white border that follows its shape.
-   With cut = true it also draws a thin grey cutting line around the border (for printing). */
+   With cut = true it also draws a cut guide for printing: a thin, light line with a small white gap
+   outside the border, so cutting a little off the line only changes how much white is left, never shows grey.
+   opts.smooth: true rounds off the outline (easier to cut), false follows the picture exactly. Not set = shop default. */
+// Cut guides on printouts: one thin, light, solid line. Rectangles sit a small gap outside the picture,
+// so cutting a little off the line leaves white paper, not grey. (Pins cut on the circle: the edge wraps behind the pin.)
+const CUT_GAP = 0.4;
+const cutGuide = doc => { doc.setDrawColor(195); doc.setLineWidth(0.15); doc.setLineDashPattern([], 0); doc.setLineCap('butt'); };
+const cutRect = (doc, x, y, w, h) => doc.rect(x - CUT_GAP, y - CUT_GAP, w + 2 * CUT_GAP, h + 2 * CUT_GAP, 'S');
 function drawSticker(src, px, mm, fit, cut, opts){
   const mk = () => { const c = document.createElement('canvas'); c.width = px; c.height = px; return c; };
   const noBorder = opts && opts.border === 'none';   // "no border": cut right at the picture's edge
   const b = noBorder ? 0 : Math.max(2, Math.round(px * CONFIG.outlineMm / mm));
-  const cl = cut ? Math.max(2, Math.round(px * 0.45 / mm)) : 0;   // cut line thickness (about 0.45 mm), printed as dots
+  const cl = cut ? Math.max(3, Math.round(px * 0.6 / mm)) : 0;   // room for the cut guide: about 0.45 mm white gap + 0.15 mm line
+  const smooth = opts && typeof opts.smooth === 'boolean' ? opts.smooth : CONFIG.smoothCut;
   const pad = b + cl + 1, inner = px - 2 * pad;
   const iw = src.naturalWidth || src.width, ih = src.naturalHeight || src.height;
   const art = mk(), a = art.getContext('2d');
@@ -2312,7 +2335,7 @@ function drawSticker(src, px, mm, fit, cut, opts){
   // smoother cut lines: round off the outline's little nooks so it's quick to cut with scissors.
   // (Cut at the halfway point of the blur, so corners round off without the shape getting bigger.)
   let shape = art;
-  if (CONFIG.smoothCut && b > 0) { const m = mk(), mx = m.getContext('2d'); mx.filter = `blur(${Math.max(1, b * 0.8)}px)`; mx.drawImage(art, 0, 0); mx.filter = 'none';
+  if (smooth && b > 0) { const m = mk(), mx = m.getContext('2d'); mx.filter = `blur(${Math.max(1, b * 0.8)}px)`; mx.drawImage(art, 0, 0); mx.filter = 'none';
     const d = mx.getImageData(0, 0, px, px), p = d.data; for (let i = 3; i < p.length; i += 4) p[i] = p[i] > 120 ? 255 : 0; mx.putImageData(d, 0, 0); shape = m; }
   const sil = color => { const c = mk(), x = c.getContext('2d'); x.drawImage(shape, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = color; x.fillRect(0, 0, px, px); return c; };
   const out = mk(), o = out.getContext('2d');
@@ -2320,30 +2343,24 @@ function drawSticker(src, px, mm, fit, cut, opts){
     for (const rr of [r, r * 0.66, r * 0.33]) for (let i = 0; i < 28; i++) { const t = i / 28 * Math.PI * 2; o.drawImage(c, Math.cos(t) * rr, Math.sin(t) * rr); }
     o.drawImage(c, 0, 0);
   };
-  if (cut) {
-    // cut line as dots: draw the grey band on its own, keep only a grid of dots from it, then lay it down
-    const ring = mk(), rg = ring.getContext('2d'), gs = sil('#8E8E98');
-    for (const rr of [b + cl, (b + cl) * 0.66, (b + cl) * 0.33]) for (let i = 0; i < 28; i++) { const t = i / 28 * Math.PI * 2; rg.drawImage(gs, Math.cos(t) * rr, Math.sin(t) * rr); }
-    // slanted stripes cut the band into dashes on every side and around curves. (A grid of dots used to miss
-    // whole edges: the right and bottom often fell between two rows of dots and came out with no line at all.)
-    const sp = Math.max(6, Math.round(px * 1.5 / mm));   // about 0.75 mm dash, 0.75 mm gap along any edge
-    const dots = mk(), dg = dots.getContext('2d'); dg.strokeStyle = '#000'; dg.lineWidth = sp / 2; dg.lineCap = 'butt';
-    for (let k = -px - sp; k < px + sp; k += sp) { dg.beginPath(); dg.moveTo(k, 0); dg.lineTo(k + px, px); dg.stroke(); }
-    rg.globalCompositeOperation = 'destination-in'; rg.drawImage(dots, 0, 0);
-    o.drawImage(ring, 0, 0);
+  if (cut) {   // the light line, then white paper inside it (the gap), then the sticker's own white border on top
+    const lt = Math.max(1, Math.round(px * 0.15 / mm));
+    stamp(sil('#C3C6CF'), b + cl);
+    stamp(sil('#FFFFFF'), b + cl - lt);
   }
   stamp(sil('#FFFFFF'), b);
   o.drawImage(art, 0, 0);
   return out;
 }
 const stickerCache = new Map();
+const itemSmooth = it => typeof it.smooth === 'boolean' ? it.smooth : CONFIG.smoothCut;   // the customer's choice, or the shop default
 function stickerURL(it){
   const im = S.images.find(i => i.id === it.imageId); if (!im) return '';
   if (it.h) return im.url;   // an imported sheet shows exactly as it is
-  const mm = itemRect(it).w, key = `${it.imageId}|${Math.round(mm)}|${it.fit}|${it.border || 'white'}|${CONFIG.smoothCut ? 's' : ''}`;
+  const mm = itemRect(it).w, key = `${it.imageId}|${Math.round(mm)}|${it.fit}|${it.border || 'white'}|${itemSmooth(it) ? 's' : ''}`;
   if (!stickerCache.has(key)) {
     const px = Math.min(640, Math.round(170 * mm / geom().cell));
-    stickerCache.set(key, drawSticker(im.canvas, px, mm, it.fit, false, { border: it.border }).toDataURL('image/png'));
+    stickerCache.set(key, drawSticker(im.canvas, px, mm, it.fit, false, { border: it.border, smooth: itemSmooth(it) }).toDataURL('image/png'));
   }
   return stickerCache.get(key);
 }
@@ -2434,6 +2451,7 @@ function applyShopConfig(c){
   CONFIG.posterMarginMm = Math.max(3, Math.min(15, numOr(c.poster_margin_mm, D.posterMarginMm)));
   CONFIG.pinGapMm = Math.max(2, Math.min(20, numOr(c.pin_gap_mm, D.pinGapMm)));
   CONFIG.contactOn = c.contact_on === true; CONFIG.contactEmail = String(c.contact_email || '').slice(0, 80); CONFIG.contactPhone = String(c.contact_phone || '').slice(0, 30);
+  CONFIG.showSignal = c.show_signal !== false;
   CONFIG.freeOn = c.free_on !== false; CONFIG.smoothCut = c.smooth_cut !== false;
   CONFIG.freeMinMm = Math.max(10, Math.min(100, numOr(c.free_min_mm, D.freeMinMm))); CONFIG.freeMax = Math.max(1, Math.min(200, numOr(c.free_max, D.freeMax))); CONFIG.freeGapMm = Math.max(1, Math.min(10, numOr(c.free_gap_mm, D.freeGapMm)));
   CONFIG.kcGapMm = Math.max(1, Math.min(20, numOr(c.kc_gap_mm, D.kcGapMm)));
@@ -2648,7 +2666,7 @@ function serializeItems(items, pathFor){
       addon_labels: (it.addons || []).map(id => (p.addons.find(a => a.id === id) || {}).label).filter(Boolean), unit_price: unitPrice(it) };
     if (it.type === 'prints') return { ...base, qty: it.qty, pages: it.pages, duplex: !!it.duplex,
       files: (it.files || []).map(f => ({ path: pathFor[f.id], name: f.name, pages: f.pages, kind: f.kind, orient: f.orient || null })) };
-    if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ ...(sh.free ? { free: true } : {}), ...(sh.imported ? { imported: sh.imported } : {}), ...(sh.fromImport ? { fromImport: sh.fromImport } : {}), ...(sh.template ? { template: sh.template.slug } : {}), items: sh.items.map(x => ({ path: pathFor[x.imageId], ...(isFree(x) ? { x: x.x, y: x.y, w: x.w, ...(x.h ? { h: x.h } : {}) } : { col: x.col, row: x.row, size: x.size }), fit: x.fit, ...(x.border === 'none' ? { border: 'none' } : {}) })) })) };
+    if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ ...(sh.free ? { free: true } : {}), ...(sh.imported ? { imported: sh.imported } : {}), ...(sh.fromImport ? { fromImport: sh.fromImport } : {}), ...(sh.template ? { template: sh.template.slug } : {}), items: sh.items.map(x => ({ path: pathFor[x.imageId], ...(isFree(x) ? { x: x.x, y: x.y, w: x.w, ...(x.h ? { h: x.h } : {}) } : { col: x.col, row: x.row, size: x.size }), fit: x.fit, ...(x.border === 'none' ? { border: 'none' } : {}), ...(typeof x.smooth === 'boolean' ? { smooth: x.smooth } : {}) })) })) };
     const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy, bg: x.bg || '#ffffff' } : null;
     if (it.type === 'posters' && it.mode === 'pages') return { ...base, qty: it.qty, mode: 'pages', pages: it.pages, across: it.across, tiles: it.pages,
       pdf: { path: pathFor[it.pdf.id], name: it.pdf.name, pages: it.pages } };
@@ -2702,7 +2720,7 @@ function SupaBackend(){
     async confirm(code, nick){ await rpc('confirm_order', { p_code: code, p_nickname: nick }); },
     async cancel(code, nick){ await rpc('cancel_order', { p_code: code, p_nickname: nick }); },
     async feedback(code, nick, stage, rating, tags, comment){ return await rpc('leave_feedback', { p_code: code, p_nickname: nick, p_stage: stage, p_rating: rating, p_tags: tags || [], p_comment: comment || null }); },
-    async template(slug){ const { data, error } = await sb.from('templates').select('slug,name,type,size,image').eq('slug', slug).eq('enabled', true).maybeSingle(); if (error) throw error; return data; },
+    async template(slug){ const { data, error } = await sb.from('templates').select('slug,name,type,size,image,layout').eq('slug', slug).eq('enabled', true).maybeSingle(); if (error) throw error; return data; },
     async starters(type){ const { data, error } = await sb.from('templates').select('slug,name,type,size,image,thumb').eq('enabled', true).eq('starter', true).eq('type', type).order('sort').limit(3); if (error) throw error; return data || []; },
     async listTemplates(){ const { data, error } = await sb.from('templates').select('slug,name,type,size,image,thumb,enabled,created_at,starter,sort').order('created_at', { ascending: false }); if (error) throw error; return data || []; },
     async saveTemplate(t){ const { error } = await sb.from('templates').upsert(t); if (error) throw error; },
@@ -2870,15 +2888,48 @@ async function tplModeImage(type){
     const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
     for (const it of sheet.items) { const im = imgById(it.imageId); if (!im) continue; const r = itemRect(it);
       if (it.h) x.drawImage(im.canvas, r.x * k, r.y * k, r.w * k, r.h * k);
-      else x.drawImage(drawSticker(im.canvas, Math.round(r.w * k), r.w, it.fit, true, { border: it.border }), r.x * k, r.y * k, r.w * k, r.w * k); }
+      else x.drawImage(drawSticker(im.canvas, Math.round(r.w * k), r.w, it.fit, true, { border: it.border, smooth: itemSmooth(it) }), r.x * k, r.y * k, r.w * k, r.w * k); }
     return c.toDataURL('image/jpeg', 0.88);
   }
   const f = S.fd, im = f && f.front.imageId && imgById(f.front.imageId); if (!im) return null;
   const img = await loadImg(im.url);   // renderFramed needs a loaded image (a canvas has no natural size, which made pins come out blank)
   const out = renderFramed(img, f.front, frameMm(f), 260, type === 'pins'); return out.data;
 }
+/* A ready-made sticker sheet saved as its separate stickers: each picture once, plus where each sticker sits.
+   Older designs are one flat picture; those still open as a printed-as-is sheet. */
+function tplPic(cv, mmW){
+  const max = Math.min(900, Math.round(mmW / 25.4 * 300)), s = Math.min(1, max / Math.max(cv.width, cv.height));
+  const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(cv.width * s)); c.height = Math.max(1, Math.round(cv.height * s));
+  c.getContext('2d').drawImage(cv, 0, 0, c.width, c.height);
+  const w = c.toDataURL('image/webp', 0.9); return w.startsWith('data:image/webp') ? w : c.toDataURL('image/png');
+}
+function tplLayout(){
+  const sheet = S.sheets[S.cur]; if (!sheet || !sheet.items.length || sheet.imported) return null;
+  const pics = {}, items = [];
+  for (const it of sheet.items) {
+    if (it.bg || it.h) return null;   // imported pieces: keep the flat picture
+    const im = imgById(it.imageId); if (!im) continue;
+    const { uid: _u, imageId, ...rest } = it;
+    if (!pics[imageId]) pics[imageId] = tplPic(im.canvas, itemRect(it).w);
+    items.push({ ...rest, pic: imageId });
+  }
+  return items.length ? { v: 1, free: !!sheet.free, pics, items } : null;
+}
 async function useTemplate(t){
   {
+    if (t && t.type === 'stickers' && !('layout' in t)) { try { const full = await api.template(t.slug); if (full) t = full; } catch {} }
+    if (t && t.type === 'stickers' && t.layout && Array.isArray(t.layout.items) && t.layout.items.length && CONFIG.products.stickers && isLive('stickers')) {
+      const ids = {};
+      for (const [k, srcUrl] of Object.entries(t.layout.pics || {})) {
+        const blob = await (await fetch(srcUrl)).blob();
+        const im = await processFile(new File([blob], `${t.slug}-${k}.png`, { type: blob.type || 'image/png' }), 2400); S.images.push(im); ids[k] = im.id;
+      }
+      const sheet = { ...(t.layout.free ? { free: true } : {}), template: { slug: t.slug, name: t.name },
+        items: t.layout.items.filter(x => ids[x.pic]).map(({ pic, ...rest }) => ({ ...rest, uid: uid(), imageId: ids[pic] })) };
+      const empty = S.sheets.findIndex(sh => !sh.items.length); if (empty >= 0) S.sheets[empty] = sheet; else S.sheets.push(sheet);
+      S.cur = S.sheets.indexOf(sheet); S.selItem = null; toast(`${t.name} is on your sheet! Tap any sticker to change it.`);
+      if (location.hash.startsWith('#/design')) drawDesigner(); else location.hash = '#/design'; return;
+    }
     if (!t || !CONFIG.products[t.type] || !isLive(t.type) || t.type === 'prints') { if (t) toast(`${t.name} isn't available right now.`); return; }
     const blob = await (await fetch(t.image)).blob();
     if (t.type === 'stickers') {   // a ready-made sticker sheet, printed as it is
@@ -2941,7 +2992,7 @@ function actionStripHTML(){
     ${smallBtn("I'll be there", 'thumb', 'stripConfirm', 'dark')}</div></div>`;
   if (act === 'here') return `<div class="actstrip go"><div class="in">${ic('pin', 20)}<span><b>It's pickup day!</b> Your order is ready at ${esc(o.pickup)}, ${esc(o.pickup_time || '')}. At the gate, tap:</span>
     ${smallBtn("I'm here", 'pin', 'stripHere', 'dark')}</div></div>`;
-  return `<div class="actstrip ok"><div class="in">${ic('check', 20)}<span><b>They know you're here.</b> Look for ${esc(signal())} at ${esc(o.pickup)}.</span></div></div>`;
+  return `<div class="actstrip ok"><div class="in">${ic('check', 20)}<span><b>They know you're here.</b> ${CONFIG.showSignal ? `Look for ${esc(signal())} at ${esc(o.pickup)}.` : `Head to ${esc(o.pickup)}.`}</span></div></div>`;
 }
 async function loadMyOrder(){
   if (S.halt) return;
@@ -3456,6 +3507,14 @@ function drawCtrl(){
   $('#fileIn').addEventListener('change', onFiles);
 }
 
+/* One switch for the whole sheet's outlines (each sticker can still be changed on its own) */
+function outlineBarHTML(sheet, imp){
+  const list = imp ? [] : sheet.items.filter(it => !it.bg && !it.h && it.border !== 'none'); if (!list.length) return '';
+  const sm = list.filter(itemSmooth).length, cur = sm === list.length ? '1' : sm === 0 ? '0' : '';
+  return `<div class="outlbar"><span class="outl-l">Outlines</span><div class="seg" role="group" aria-label="Sticker outlines">${[['1', 'Smooth'], ['0', 'Exact']].map(([v, l]) =>
+    `<button type="button" class="${cur === v ? 'on' : ''}" data-act="sheetSmooth" data-v="${v}" aria-pressed="${cur === v}">${l}</button>`).join('')}</div>
+    <small class="outl-h">${cur === '1' ? 'Rounded and simple, easy to cut.' : cur === '0' ? 'Follows every corner of your pictures.' : 'Mixed: some smooth, some exact.'}</small></div>`;
+}
 function drawSheet(){
   const g = geom(), sheet = S.sheets[S.cur], imp = !!sheet.imported && !sheet.free, sel = imp ? null : selected(), free = !imp && !!sheet.free && (CONFIG.freeOn || sheet.imported);
   let cells = free ? `<button class="freehit" type="button" data-act="freeTap" aria-label="Place your picture here"></button>` : '';
@@ -3478,11 +3537,12 @@ function drawSheet(){
         ${smallBtn('Edit', 'edit', 'stkFixOpen', 'plain')}
         ${free ? smallBtn(S.combineFrom === sel.uid ? 'Now tap another…' : 'Combine', 'plus', 'stkCombine', S.combineFrom === sel.uid ? 'dark' : 'plain') : ''}
         ${smallBtn(sel.border === 'none' ? 'Add white border' : 'No border', sel.border === 'none' ? 'fit' : 'fill', 'borderToggle', 'plain')}
+        ${sel.border !== 'none' ? smallBtn(itemSmooth(sel) ? 'Exact outline' : 'Smooth outline', 'sparkle', 'smoothToggle', 'plain') : ''}
         ${smallBtn(sel.fit === 'fit' ? 'Fill the square' : 'Show whole picture', sel.fit === 'fit' ? 'fill' : 'fit', 'fitToggle', 'plain')}
         ${smallBtn('Remove', 'trash', 'removeItem', 'danger')}
         ${smallBtn('Done', 'check', 'deselect', 'dark')}</div>`
       : `<div class="under" ${imp ? 'hidden' : ''}><span>${sheet.items.length ? `${sheet.items.length} sticker${sheet.items.length > 1 ? 's' : ''} on this sheet. Drag one to move it, or tap it to change it.` : 'This sheet is empty. The white borders show where each sticker gets cut.'}</span>
-        ${S.sheets.length > 1 ? smallBtn('Remove this sheet', 'trash', 'delSheet', 'plain') : ''}</div>`}
+        ${S.sheets.length > 1 ? smallBtn('Remove this sheet', 'trash', 'delSheet', 'plain') : ''}</div>${outlineBarHTML(sheet, imp)}`}
     ${liveAddons('stickers').length ? `<div class="mob-only extras-mob"><div class="stephead"><i>${ic('plus', 14)}</i>Extras</div>${addonChecks('stickers', S.stickerAddons)}</div>` : ''}`;
   const f2 = $('#fileIn2'); if (f2) f2.addEventListener('change', onFiles);
   $('#page').querySelectorAll('.stk').forEach(el => el.addEventListener('pointerdown', e => { if (e.target.closest('.rsz')) return startResize(e, el); startStickerDrag(e, el); }));
@@ -3868,7 +3928,7 @@ async function splitSticker(){
     px.putImageData(d, 0, 0); const blob = await new Promise(rs => pc.toBlob(rs, 'image/png'));
     const nim = { id: uid(), blob, ext: 'png', url: URL.createObjectURL(blob), canvas: pc, w: bw, h: bh, alpha: true, sheet: true }; S.images.push(nim);
     const nw = Math.max(CONFIG.freeMinMm, Math.max(bw, bh) * s + extra), cx = r.x + r.w / 2 + ((cp.x0 + cp.x1) / 2 - w / 2) * s, cy = r.y + r.w / 2 + ((cp.y0 + cp.y1) / 2 - h / 2) * s;
-    news.push({ uid: uid(), imageId: nim.id, x: +(cx - nw / 2).toFixed(2), y: +(cy - nw / 2).toFixed(2), w: +nw.toFixed(2), fit: 'fit', border: it.border }); }
+    news.push({ uid: uid(), imageId: nim.id, x: +(cx - nw / 2).toFixed(2), y: +(cy - nw / 2).toFixed(2), w: +nw.toFixed(2), fit: 'fit', border: it.border, smooth: it.smooth }); }
   sheet.items = sheet.items.filter(x => x.uid !== it.uid).concat(news);
   if (news.some(x => !freeFits(sheet, x, x.uid))) autoArrange(sheet);
   S.selItem = null; if (S.fixer && S.fixer.ac) S.fixer.ac.abort(); S.fixer = null; closeSheet(); buzz([8, 30, 8]); toast(`Split into ${news.length} stickers!`); drawDesigner(); return news.length;
@@ -3881,7 +3941,7 @@ async function combineStickers(a, b){
   const k = 1 / Math.min(...parts.map(q => q.s)), c = document.createElement('canvas'); c.width = Math.round((x1 - x0) * k); c.height = Math.round((y1 - y0) * k);
   const x = c.getContext('2d'); parts.forEach(q => x.drawImage(q.im.canvas, (q.x - x0) * k, (q.y - y0) * k, q.w * k, q.h * k));
   const blob = await new Promise(rs => c.toBlob(rs, 'image/png')), nim = { id: uid(), blob, ext: 'png', url: URL.createObjectURL(blob), canvas: c, w: c.width, h: c.height, alpha: true, sheet: true }; S.images.push(nim);
-  const nw = Math.max(x1 - x0, y1 - y0) + extra, item = { uid: uid(), imageId: nim.id, x: +((x0 + x1) / 2 - nw / 2).toFixed(2), y: +((y0 + y1) / 2 - nw / 2).toFixed(2), w: +nw.toFixed(2), fit: 'fit', border: a.border };
+  const nw = Math.max(x1 - x0, y1 - y0) + extra, item = { uid: uid(), imageId: nim.id, x: +((x0 + x1) / 2 - nw / 2).toFixed(2), y: +((y0 + y1) / 2 - nw / 2).toFixed(2), w: +nw.toFixed(2), fit: 'fit', border: a.border, smooth: a.smooth };
   sheet.items = sheet.items.filter(i => i.uid !== a.uid && i.uid !== b.uid).concat(item); if (!freeFits(sheet, item, item.uid)) autoArrange(sheet);
   S.selItem = item.uid; S.combineFrom = null; buzz([8, 30, 8]); toast('Combined into one sticker!'); drawDesigner();
 }
@@ -4563,7 +4623,7 @@ function viewCheckout(){
           <input class="inp" id="otherPlace" maxlength="80" aria-describedby="e-place">
           <p class="ferr" id="e-place" role="alert"></p>
         </div>` : ''}
-        <p class="nudge" id="gateNudge">${ic('search', 18)}At the gate, look for ${esc(signal())}.</p>
+        ${CONFIG.showSignal ? `<p class="nudge" id="gateNudge">${ic('search', 18)}At the gate, look for ${esc(signal())}.</p>` : ''}
         ${S.people.length && !S.linkPerson ? peopleChoicesHTML() : ''}
         <p class="ferr" id="e-where" role="alert"></p>
       </fieldset>
@@ -4778,7 +4838,8 @@ function codeCardHTML(){
       <small>${sell ? `Stick2It Sellers share codes that take <b>${CONFIG.sellerBuyerOff}% off</b> your order. Promo codes work here too.` : 'Type it here and the discount comes off your total.'}</small></span>
     <div class="cc-row"><label class="lab sr" for="promo">Code</label><input class="inp" id="promo" maxlength="20" autocapitalize="characters" autocomplete="off" placeholder="Type your code" style="text-transform:uppercase">
       ${smallBtn('Apply', 'check', 'promoApply', 'dark')}</div>
-    <p class="ferr" id="e-promo" role="alert"></p>${sell ? '<p class="cc-skip">No code? No problem, just skip this.</p>' : ''}</div>`;
+    <p class="ferr" id="e-promo" role="alert"></p>${socialHTML() ? `<details class="cc-where"><summary>Where to get promo codes</summary>
+      <p>We share codes on our pages. Follow us so you don't miss the next one.</p>${socialHTML()}</details>` : ''}${sell ? '<p class="cc-skip">No code? No problem, just skip this.</p>' : ''}</div>`;
 }
 function checkoutSummary(ds){
   const form = $('#orderForm'); ds = ds || (form ? radio(form, 'pdate') : null);
@@ -4881,7 +4942,7 @@ function icsFor(o){
     `UID:${o.code}@stick2xu`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`,
     `DTSTART:${t(h, mi)}`, `DTEND:${t(Math.floor(end / 60), end % 60)}`,
     `SUMMARY:Pick up Stick2It order ${o.code}`, `LOCATION:${o.pickup}${o.group ? '' : ' (inside campus)'}`,
-    `DESCRIPTION:${o.group ? `Meet ${o.person_name || 'your pickup person'} at ${o.pickup} for your Stick2It order.` : `Look for ${signal()}. Tap I'm here in My order when you arrive.`}`,
+    `DESCRIPTION:${o.group ? `Meet ${o.person_name || 'your pickup person'} at ${o.pickup} for your Stick2It order.` : `${CONFIG.showSignal ? `Look for ${signal()}. ` : ''}Tap I'm here in My order when you arrive.`}`,
     'BEGIN:VALARM', 'TRIGGER:-PT30M', 'ACTION:DISPLAY', 'DESCRIPTION:Stick2It pickup soon', 'END:VALARM',
     'END:VEVENT',
     ...(confirmBy(o) ? ['BEGIN:VEVENT', `UID:${o.code}-confirm@stick2xu`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`,
@@ -4921,7 +4982,7 @@ function viewDone(){
           ? `<li><b>Confirm by ${esc(dayWord(confirmBy(o)))}.</b> In My order, tap "I'll be there".</li>`
           : `<li><b>You're confirmed.</b> We'll start on it right away.</li>`}
         ${o.group ? `<li><b>Meet ${esc(o.person_name || 'your pickup person')} at ${esc(o.pickup)}</b> on ${esc(fmtDate(o.pickup_date, { weekday: 'long', month: 'short', day: 'numeric' }))}.</li>
-        <li><b>Bring ${money(o.total)}${gcash ? ' (or your GCash reference)' : ''}.</b></li>` : `<li><b>At the gate, tap "I'm here".</b> Look for ${esc(signal())}.</li>
+        <li><b>Bring ${money(o.total)}${gcash ? ' (or your GCash reference)' : ''}.</b></li>` : `<li><b>At the gate, tap "I'm here".</b>${CONFIG.showSignal ? ` Look for ${esc(signal())}.` : ''}</li>
         <li><b>Bring ${money(o.total)}${gcash ? ' (or your GCash reference)' : ''}</b> and your school ID.</li>`}
       </ol>
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px">${btn('Check my order', { act: 'leaveDone', cls: 'dark', attrs: 'data-href="#/status"' })}
@@ -5012,10 +5073,10 @@ function drawStatus(){
       ${o.status === 'rejected' && o.reject_reason ? `<p style="margin-top:14px"><b>Reason:</b> ${esc(o.reject_reason)}</p>${btn('Make a new design', { href: '#/design' })}` : ''}
       ${o.status === 'ready' ? `<div class="pt hi" style="margin-top:16px">
           <span class="k">${ic('search', 16)}At pickup</span>
-          <b>${o.group ? `Meet ${esc(o.person_name || 'your pickup person')} at ${esc(o.pickup)}` : `Look for ${esc(signal())} at ${esc(o.pickup)}`}</b>
+          <b>${o.group ? `Meet ${esc(o.person_name || 'your pickup person')} at ${esc(o.pickup)}` : CONFIG.showSignal ? `Look for ${esc(signal())} at ${esc(o.pickup)}` : `Pick up at ${esc(o.pickup)}`}</b>
           <span>${o.paid ? "You've already paid, so just grab your stickers. That's it." : `Bring <b class="num" style="font-size:inherit;font-family:inherit">${money(o.total - (o.amount_paid || 0))}</b>${o.amount_paid ? ` (you've paid ${money(o.amount_paid)} already)` : ''}, exact change if you can. Grab your order, and that's it.`}</span></div>
         ${o.group ? '' : `<div style="margin-top:14px">${o.arrived
-          ? `<span class="tag ok" style="font-size:15px;padding:8px 12px">${ic('check', 16)}They know you're here. Look for ${esc(signal())}.</span>`
+          ? `<span class="tag ok" style="font-size:15px;padding:8px 12px">${ic('check', 16)}They know you're here.${CONFIG.showSignal ? ` Look for ${esc(signal())}.` : ''}</span>`
           : btn("I'm here", { act: 'imHere', icon: 'pin', cls: 'wide' })}</div>`}` : ''}
       <details class="odetails"><summary>Order details</summary><dl class="kv">${o.pickup_date ? `<dt>Pickup</dt><dd>${esc(fmtDate(o.pickup_date))}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</dd>` : ''}<dt>Where</dt><dd>${esc(o.pickup)}</dd>
         <dt>Total</dt><dd class="num">${money(o.total)}${o.paid ? ', paid' : o.amount_paid ? `, paid ${money(o.amount_paid)}, ${money(o.total - o.amount_paid)} left` : ''}</dd>
@@ -5470,8 +5531,7 @@ async function pinSheets(asPng, again){
       g.list.slice(k, k + gr.per).forEach((pc, i) => {
         const x = gr.x0 + (i % gr.cols) * (g.d + gr.gap), y = gr.y0 + Math.floor(i / gr.cols) * (g.d + gr.gap);
         doc.addImage(pc.fr.data, pc.fr.fmt, x, y, g.d, g.d, pc.fr.alias, 'FAST');
-        if (printLabels()) { doc.setDrawColor(160); doc.setLineCap('round'); doc.setLineWidth(0.45); doc.setLineDashPattern([0.2, 1.0], 0);
-          doc.circle(x + g.d / 2, y + g.d / 2, g.d / 2, 'S'); doc.setLineDashPattern([], 0); doc.setLineCap('butt'); }
+        if (printLabels()) { cutGuide(doc); doc.circle(x + g.d / 2, y + g.d / 2, g.d / 2, 'S'); }
         if (printLabels()) { doc.setFontSize(5); doc.setTextColor(150); doc.text(pc.code, x + g.d / 2, y + g.d + 2.3, { align: 'center' }); }
       });
       if (printLabels()) { doc.setFontSize(6); doc.setTextColor(150); doc.text(`Pin sheet ${pageNo} of ${totalPages}`, 205, 3.2, { align: 'right' }); }
@@ -5524,7 +5584,7 @@ async function kcSheets(asPng, again){
       const x = g.x0 + (i % g.cols) * (w + g.gap), y = g.y0 + Math.floor(i / g.cols) * (h + g.gap), pic = c.side === 'back' ? c.u.bk : c.u.fr;
       doc.addImage(pic.data, pic.fmt, x, y, w, h, pic.alias, 'FAST');
       if (printLabels()) {
-        doc.setDrawColor(160); doc.setLineCap('round'); doc.setLineWidth(0.4); doc.setLineDashPattern([0.2, 1.0], 0); doc.rect(x, y, w, h, 'S'); doc.setLineDashPattern([], 0); doc.setLineCap('butt');
+        cutGuide(doc); cutRect(doc, x, y, w, h);
         doc.setFontSize(5); doc.setTextColor(150); doc.text(`${c.u.code}${c.side ? ' ' + c.side : ''}`, x + w / 2, y + h + Math.min(2.4, g.gap - 0.6), { align: 'center' });
       }
     });
@@ -5539,7 +5599,7 @@ async function kcSheets(asPng, again){
       await api.updateOrder(o.id, patch); if (patch.status) o.status = 'printing'; } catch (e) { console.warn(e); }
   }
   const n = units.length;
-  toast(`${n} keychain${n === 1 ? '' : 's'} on ${pages} page${pages === 1 ? '' : 's'}. Print at 100% ("Actual size") and cut on the dotted lines. Each insert is exactly ${w / 10} × ${h / 10} cm.${failed.length ? ` Couldn't open the pictures for: ${[...new Set(failed)].join(', ')}.` : ''}`);
+  toast(`${n} keychain${n === 1 ? '' : 's'} on ${pages} page${pages === 1 ? '' : 's'}. Print at 100% ("Actual size") and cut just inside the light lines. Each insert is exactly ${w / 10} × ${h / 10} cm.${failed.length ? ` Couldn't open the pictures for: ${[...new Set(failed)].join(', ')}.` : ''}`);
   drawAdminBody();
 }
 /* One PDF for every confirmed order picking up on one day */
@@ -5593,7 +5653,7 @@ async function makePdf(o, batch, asPng){
               doc.addImage(c.toDataURL('image/jpeg', 0.92), 'JPEG', r.x, r.y, r.w, r.h); } catch (e) { console.warn('image failed', x.path, e); }
             continue;
           }
-          try { const img = await getImg(x.path); doc.addImage(drawSticker(img, Math.min(1800, Math.round(r.w / 25.4 * 300)), r.w, x.fit, printLabels(), { border: x.border }).toDataURL('image/png'), 'PNG', r.x, r.y, r.w, r.w); }
+          try { const img = await getImg(x.path); doc.addImage(drawSticker(img, Math.min(1800, Math.round(r.w / 25.4 * 300)), r.w, x.fit, printLabels(), { border: x.border, smooth: x.smooth }).toDataURL('image/png'), 'PNG', r.x, r.y, r.w, r.w); }
           catch (e) { console.warn('image failed', x.path, e); }
         }
         if (printLabels()) {   // the stickers fill the sheet top to bottom, so the order line runs up the left margin
@@ -5659,10 +5719,10 @@ async function makePdf(o, batch, asPng){
     if (it.type === 'keychains') {
       const g = kcGrid(mm.w, mm.h, false), placed = kcPlace(Array.from({ length: +it.qty || 0 }, () => ({ fr, bk })), g, kcStack());
       placed.forEach((cells, pgi) => {
-        page(A4W, A4H); cutLine(); doc.setLineCap('round'); doc.setLineWidth(0.45); doc.setLineDashPattern([0.2, 1.0], 0);
+        page(A4W, A4H); cutGuide(doc);
         cells.forEach(c => { const i = c.cell, x = g.x0 + (i % g.cols) * (mm.w + g.gap), y = g.y0 + Math.floor(i / g.cols) * (mm.h + g.gap), pic = c.side === 'back' ? c.unit.bk : c.unit.fr;
           if (pic) doc.addImage(pic.data, pic.fmt, x, y, mm.w, mm.h, `k${ii}_${c.side || 'f'}`, 'FAST');
-          if (printLabels()) doc.rect(x, y, mm.w, mm.h, 'S'); });
+          if (printLabels()) cutRect(doc, x, y, mm.w, mm.h); });
         doc.setLineDashPattern([], 0); doc.setLineCap('butt');
         foot(`${label}${bk ? (kcStack() ? ', each front above its back' : ', front and back side by side') : ''}, page ${pgi + 1} of ${placed.length}`, A4W, A4H);
       });
@@ -5673,11 +5733,11 @@ async function makePdf(o, batch, asPng){
     const cols = grid.cols, rows = grid.rows;
     const per = cols * rows, pages = Math.ceil(pieces.length / per);
     for (let pg = 0; pg < pages; pg++) {
-      page(A4W, A4H); cutLine(); doc.setLineCap('round'); doc.setLineWidth(0.45); doc.setLineDashPattern([0.2, 1.0], 0);   // short round dashes = dots in every viewer and printer
+      page(A4W, A4H); cutGuide(doc);
       pieces.slice(pg * per, (pg + 1) * per).forEach((pc, i) => {
         const x = grid.x0 + (i % cols) * (mm.w + grid.gap), y = grid.y0 + Math.floor(i / cols) * (mm.h + grid.gap);
         if (pc) doc.addImage(pc.data, pc.fmt, x, y, mm.w, mm.h, `p${ii}_${pieces.indexOf(pc)}`, 'FAST');
-        if (printLabels()) { if (mm.round) doc.circle(x + mm.w / 2, y + mm.h / 2, mm.w / 2, 'S'); else doc.rect(x, y, mm.w, mm.h, 'S'); }
+        if (printLabels()) { if (mm.round) doc.circle(x + mm.w / 2, y + mm.h / 2, mm.w / 2, 'S'); else cutRect(doc, x, y, mm.w, mm.h); }
       });
       doc.setLineDashPattern([], 0); doc.setLineCap('butt');
       foot(`${label}${bk ? ', front and back side by side' : ''}, page ${pg + 1} of ${pages}`, A4W, A4H);
@@ -5686,18 +5746,19 @@ async function makePdf(o, batch, asPng){
   if (batch) { batch.doc = doc; return 'ok'; }
   if (asPng) {
     const n = await pdfToPngs(doc, o.code);
-    if (o.status === 'approved') setStatus(o.id, { status: 'printing' }, `${n === 1 ? 'PNG' : n + ' PNGs'} downloaded (300 dpi, A4). Print at 100% ("Actual size") and cut along the dotted lines.`);
+    if (o.status === 'approved') setStatus(o.id, { status: 'printing' }, `${n === 1 ? 'PNG' : n + ' PNGs'} downloaded (300 dpi, A4). Print at 100% ("Actual size") and cut just inside the light lines.`);
     return;
   }
   doc.save(`${o.code}.pdf`);
-  if (o.status === 'approved') setStatus(o.id, { status: 'printing' }, 'PDF downloaded. Print at 100% ("Actual size") and cut along the dotted lines.');
+  if (o.status === 'approved') setStatus(o.id, { status: 'printing' }, 'PDF downloaded. Print at 100% ("Actual size") and cut just inside the light lines.');
 }
 
 function drawSettings(){
   const st = S.settings;
   $('#admBody').innerHTML = `<form class="panel" id="setForm" style="max-width:640px">
     <h3 style="margin-bottom:6px">Pickup signal</h3>
-    <p class="help" style="margin-bottom:16px">What will the seller hold or wear at the gate? Customers see this on their order and when it's ready. Change it anytime.</p>
+    <p class="help" style="margin-bottom:12px">What will the seller hold or wear at the gate? Customers see this on their order and when it's ready. Change it anytime.</p>
+    <label class="switch" style="margin-bottom:16px"><input type="checkbox" id="sigOn" ${CONFIG.showSignal ? 'checked' : ''}><span>Show the pickup signal to customers ("At the gate, look for ...")</span></label>
     <div class="field"><span class="lab">The seller is…</span>
       <div class="gs" style="grid-template-columns:150px 1fr">
         <select class="inp" id="sVerb" aria-label="Holding or wearing">${['holding','wearing'].map(v => `<option value="${v}" ${st.signalVerb === v ? 'selected' : ''}>${v}</option>`).join('')}</select>
@@ -5722,7 +5783,7 @@ function drawSettings(){
     seller_mode: CONFIG.sellerMode, seller_flat_rate: CONFIG.sellerFlatRate, seller_welcome_on: CONFIG.sellerWelcomeOn, seller_reward_on: CONFIG.sellerRewardOn,
     seller_reward_every: CONFIG.sellerRewardEvery, seller_reward_item: CONFIG.sellerRewardItem, seller_goal_by: CONFIG.sellerGoalBy, seller_goal_orders: CONFIG.sellerGoalOrders, seller_pro_orders: CONFIG.sellerProOrders, seller_min_order: CONFIG.sellerMinOrder, seller_pro_goal: CONFIG.sellerProGoal, seller_pro_rate: CONFIG.sellerProRate, seller_buyer_off: CONFIG.sellerBuyerOff, seller_welcome: CONFIG.sellerWelcome, sellers_max: CONFIG.sellersMax, seller_min_payout: CONFIG.sellerMinPayout, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
-    print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, pin_gap_mm: CONFIG.pinGapMm, kc_gap_mm: CONFIG.kcGapMm, contact_on: CONFIG.contactOn, contact_email: CONFIG.contactEmail, contact_phone: CONFIG.contactPhone, free_on: CONFIG.freeOn, smooth_cut: CONFIG.smoothCut, free_min_mm: CONFIG.freeMinMm, free_max: CONFIG.freeMax, free_gap_mm: CONFIG.freeGapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
+    print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, pin_gap_mm: CONFIG.pinGapMm, kc_gap_mm: CONFIG.kcGapMm, contact_on: CONFIG.contactOn, contact_email: CONFIG.contactEmail, contact_phone: CONFIG.contactPhone, free_on: CONFIG.freeOn, smooth_cut: CONFIG.smoothCut, show_signal: CONFIG.showSignal, free_min_mm: CONFIG.freeMinMm, free_max: CONFIG.freeMax, free_gap_mm: CONFIG.freeGapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, feedback_on: CONFIG.feedbackOn, rush_on: CONFIG.rushOn, rush_make: CONFIG.rushMake, rush_cutoff_hour: CONFIG.rushCutoff, max_rush_per_day: CONFIG.maxRushPerDay, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
     grades: CONFIG.grades.slice(), gcash: { ...CONFIG.gcash }, cleanup_days: CONFIG.cleanupDays, max_pictures: CONFIG.maxPictures, max_noshows: CONFIG.maxNoShows,
     max_qty: Object.fromEntries(['pins', 'posters', 'keychains'].map(k => [k, maxQtyFor(k)])),
@@ -5730,6 +5791,12 @@ function drawSettings(){
              keychains: Object.fromEntries(CONFIG.products.keychains.sizes.map(z => [z.id, { wMm: z.wMm, hMm: z.hMm }])) }
   };
   drawShopForm();
+  $('#sigOn').addEventListener('change', async e => {
+    const on = e.target.checked, cfg = { ...(S.settings.configRaw || {}), show_signal: on };
+    try { await api.saveSettings({ config: cfg }); S.settings.configRaw = cfg; CONFIG.showSignal = on; if (S.admin.cfg) S.admin.cfg.show_signal = on;
+      toast(on ? 'Customers see the pickup signal again.' : 'Pickup signal hidden. Customers just see the gate.'); }
+    catch (ex) { e.target.checked = !on; toast(friendlyError(ex)); }
+  });
   const prev = () => { $('#sPrev').textContent = `Look for the person ${$('#sVerb').value} ${$('#sItem').value.trim() || '…'}`; };
   $('#setForm').addEventListener('input', prev); $('#setForm').addEventListener('change', prev); prev();
   $('#setForm').addEventListener('submit', async e => {
@@ -5846,7 +5913,7 @@ function drawShopForm(){
 
     <div class="cfgsec"><div class="sub">Free sticker layout and cutting</div>
       <label class="switch" style="margin-bottom:8px"><input type="checkbox" data-cfgbool="free_on" ${c.free_on !== false ? 'checked' : ''}><span>Let customers place stickers freely (any size, anywhere), not only on the grid</span></label>
-      <label class="switch" style="margin-bottom:10px"><input type="checkbox" data-cfgbool="smooth_cut" ${c.smooth_cut !== false ? 'checked' : ''}><span>Smoother cut lines (rounded, simpler outlines that are much faster to cut with scissors)</span></label>
+      <label class="switch" style="margin-bottom:10px"><input type="checkbox" data-cfgbool="smooth_cut" ${c.smooth_cut !== false ? 'checked' : ''}><span>Smooth outlines by default (customers can switch any sticker to exact) (rounded, simpler outlines that are much faster to cut with scissors)</span></label>
       <div class="pgrid2"><label class="dnum"><span>Smallest sticker (mm)</span>${n('free_min_mm', c.free_min_mm, 10, 100)}</label>
         <label class="dnum"><span>Most stickers on one sheet</span>${n('free_max', c.free_max, 1, 200)}</label>
         <label class="dnum"><span>Space between stickers (mm)</span>${n('free_gap_mm', c.free_gap_mm, 1, 10)}</label></div>
@@ -6151,6 +6218,9 @@ async function drawPeople(){
   box.innerHTML = `<h3 style="margin-bottom:4px">${ic('user', 18)} Pickup people</h3>
     <p class="help">People who hand orders over at their own spots and days. At checkout they show under <b>Where?</b> as "Pick up from a person". Orders need 2 days, skip XU sign-in, and don't count toward the school pickup limits.</p>
     ${list.length ? '' : '<p class="pp-empty">No pickup people yet. Add one to offer pickups outside school.</p>'}
+    ${list.length ? (() => { const ready = p => p.enabled && (p.spots || []).length && (p.days || []).length, pub = list.filter(p => ready(p) && p.public);
+      return pub.length ? `<p class="pp-sum">${ic('check', 16)}<span>At checkout, everyone sees: <b>${pub.map(p => esc(p.first_name || 'Pickup person')).join(', ')}</b>.</span></p>`
+        : `<p class="pp-sum warn">${ic('warn', 16)}<span>Nobody shows at checkout for everyone yet. Switch on <b>Show to everyone</b> for each person customers should be able to pick. People without it only show for customers who open their link.</span></p>`; })() : ''}
     ${list.map(sc => `<div class="schoolcard pcard ${sc.enabled ? '' : 'off'}" data-sid="${sc.id}">
       <div class="pc-top"><span class="pc-av" aria-hidden="true">${esc((sc.first_name || '?').slice(0, 1).toUpperCase())}</span>
         <span class="pc-t"><b>${esc(sc.first_name || 'No name yet')}</b><small>${sc.enabled ? (sc.public ? 'Everyone can pick them' : 'Only people with their link') : 'Off'}${counts[sc.id] ? `, ${counts[sc.id]} open order${counts[sc.id] === 1 ? '' : 's'}` : ''}</small></span></div>
@@ -6836,6 +6906,10 @@ const ACTIONS = {
     if (freeFits(sheet, { x: it.x, y: it.y, w: nw }, it.uid)) { it.w = +nw.toFixed(2); drawSheet(); drawBottom(); }
     else { const spot = +t.dataset.d > 0 ? freeSpot(sheet, nw, { x: it.x + nw / 2, y: it.y + nw / 2 }, it.uid) : null;
       if (spot) { it.x = +spot.x.toFixed(2); it.y = +spot.y.toFixed(2); it.w = +nw.toFixed(2); drawSheet(); drawBottom(); } else toast('No room to make it bigger here. Try Auto-arrange.'); } },
+  smoothToggle: () => { const it = selected(); if (!it) return; it.smooth = !itemSmooth(it);
+    toast(it.smooth ? 'Smooth outline: rounded and simple.' : 'Exact outline: the white border follows every corner.'); drawSheet(); },
+  sheetSmooth: t => { const v = t.dataset.v === '1'; S.sheets[S.cur].items.forEach(it => { if (!it.bg && !it.h) it.smooth = v; });
+    toast(v ? 'All outlines on this sheet are smooth.' : 'All outlines on this sheet follow the exact shape.'); drawSheet(); },
   borderToggle: () => { const it = selected(); if (!it) return; it.border = it.border === 'none' ? undefined : 'none';
     if (it.border === 'none') toast('No border: we cut right at the edge of your picture. A white border is easier to cut and peel.'); drawSheet(); },
   stk: t => { if (S.suppressClick) return;
@@ -7319,9 +7393,11 @@ const ACTIONS = {
     if (!name) { toast('Give it a name first, like "XU pride".'); const i = $('#tplModeName'); if (i) i.focus(); return; }
     const image = await tplModeImage(m.type); if (!image) return toast(m.type === 'stickers' ? 'Put some stickers on the sheet first.' : 'Add a picture first.');
     if (image.length > 2800000) return toast('That design is too big to save. Try fewer or smaller pictures.');
+    const layout = m.type === 'stickers' ? tplLayout() : null;   // keeps each sticker separate, so customers can change them
+    if (layout && JSON.stringify(layout).length > 4500000) return toast('That design is too big to save. Try fewer or smaller pictures.');
     const { slug, replace } = tplSlug(name, m.type, m.slug); if (replace && !confirm(`There's already a ${P(m.type).name.toLowerCase()} design called "${name}". Replace it?`)) return;
     t.disabled = true;
-    try { await api.saveTemplate({ slug, name, type: m.type, size: m.type === 'stickers' ? null : (S.fd && S.fd.size) || null, image, enabled: true });
+    try { await api.saveTemplate({ slug, name, type: m.type, size: m.type === 'stickers' ? null : (S.fd && S.fd.size) || null, image, enabled: true, ...(m.type === 'stickers' ? { layout } : {}) });
       S.tplMode = null; S.starters = {}; S.admin.tab = 'posters'; location.hash = '#/admin'; buzz([8, 30, 8]); toast(`${name} is saved! Tap "Show on the design page" to offer it as a starter.`); }
     catch (e) { t.disabled = false; toast(friendlyError(e)); } },
   tplType: t => { S.admin.tplDraft.type = t.dataset.k; document.querySelectorAll('#tplTypes .chip').forEach(c => c.classList.toggle('on', c.dataset.k === t.dataset.k));

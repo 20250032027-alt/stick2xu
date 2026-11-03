@@ -1666,6 +1666,11 @@ update public.shop_settings
 -- Starter designs: ready-made designs can be stickers too, and up to 3 per product show on the design page
 alter table public.templates drop constraint if exists templates_type_check;
 alter table public.templates add constraint templates_type_check check (type in ('stickers', 'pins', 'keychains', 'posters'));
+-- Ready-made sticker sheets: each sticker kept separate (its picture, place, size, border and outline), so customers can change them.
+-- Older designs have no layout and stay one flat picture.
+alter table public.templates add column if not exists layout jsonb;
+alter table public.templates drop constraint if exists templates_layout_size;
+alter table public.templates add constraint templates_layout_size check (layout is null or pg_column_size(layout) < 6000000);
 alter table public.templates add column if not exists starter boolean not null default false;   -- shown on the design page
 alter table public.templates add column if not exists sort int not null default 0;              -- order on the design page
 alter table public.templates add column if not exists thumb text check (thumb is null or (thumb like 'data:image/%' and char_length(thumb) < 400000));   -- optional small picture for the design page
