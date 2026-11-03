@@ -195,7 +195,41 @@ create table if not exists public.schools (
   enabled boolean not null default true,
   created_at timestamptz not null default now()
 );
-alter table public.orders add column if not exists school_id uuid;
+alter table public.orders add column if not exists school_id uuid;   -- old: replaced by person_id (pickup people) below
+
+-- =====================================================================
+-- Pickup people: someone outside school hours or outside XU who hands orders over at their own spots and days.
+-- Customers see a first name and an optional short label (never a school's name). The private note is only for admins.
+-- "Show to everyone" off: they only appear for people who came through their link (?g=CODE) or typed their code.
+-- =====================================================================
+create table if not exists public.pickup_people (
+  id uuid primary key default gen_random_uuid(),
+  first_name text not null default '' check (char_length(first_name) <= 30),
+  label text not null default '' check (char_length(label) <= 40),
+  note text not null default '' check (char_length(note) <= 80),
+  code text not null unique check (code ~ '^[A-Z0-9]{4,12}$'),
+  spots jsonb not null default '[]'::jsonb,
+  days int[] not null default '{1,2,3,4,5}',
+  enabled boolean not null default true,
+  public boolean not null default false,
+  sort int not null default 0,
+  created_at timestamptz not null default now()
+);
+alter table public.orders add column if not exists person_id uuid;   -- the pickup person this order goes through (null = pickup at school)
+create index if not exists orders_person_id_idx on public.orders (person_id) where person_id is not null;
+
+-- Carry the old "Other schools" codes over as pickup people, once. Same id and same code, so old links and orders keep working.
+-- The school's name moves to the private note; type each person's first name in Settings -> Pickup people.
+do $$ begin
+  if not coalesce((select (config->>'people_moved')::boolean from public.shop_settings where id = 1), false) then
+    insert into public.pickup_people (id, first_name, label, note, code, spots, days, enabled, public, created_at)
+    select s.id, '', '', left(coalesce(s.name, ''), 80), s.code, s.spots, s.days, s.enabled, false, s.created_at
+      from public.schools s
+     where not exists (select 1 from public.pickup_people p where p.id = s.id or p.code = s.code);
+    update public.orders set person_id = school_id where school_id is not null and person_id is null;
+    update public.shop_settings set config = coalesce(config, '{}'::jsonb) || '{"people_moved": true}'::jsonb where id = 1;
+  end if;
+end $$;
 
 -- =====================================================================
 -- Stick2It Sellers: students share their code or link; they earn a commission on picked-up orders.
@@ -221,6 +255,7 @@ drop function if exists public.place_order(text,text,text,text,text,jsonb,text,t
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text,text);
 drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text,text,text);
+drop function if exists public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text,text,text,text);
 alter table public.orders add column if not exists seller_code text;   -- the seller who referred this order (Stick2It Sellers)
 -- Friend codes: one per customer (name + section). A first-time customer using one gets money off;
 -- the owner earns credit when that order is picked up, used up automatically on their next order.
@@ -248,14 +283,14 @@ begin
   v_sellers := coalesce((s.config->>'sellers_at_pickup')::int, 1);
   v_slot := coalesce((s.config->>'max_per_slot')::int, 5);
   v_day := coalesce((s.config->>'max_per_day')::int, 15);
-  if v_day > 0 and (select count(*) from public.orders where school_id is null and pickup_date = p_date and status in ('pending','approved','printing','ready')
+  if v_day > 0 and (select count(*) from public.orders where person_id is null and pickup_date = p_date and status in ('pending','approved','printing','ready')
                     and code is distinct from p_skip_code) >= v_day then raise exception 'DAY_FULL'; end if;
   -- the limit is per spot at each time: Gate 4 at lunch can have v_slot orders, Gate 1 at lunch another v_slot
-  if v_slot > 0 and (select count(*) from public.orders where school_id is null and pickup_date = p_date and pickup_time = trim(p_time) and pickup = trim(p_pickup)
+  if v_slot > 0 and (select count(*) from public.orders where person_id is null and pickup_date = p_date and pickup_time = trim(p_time) and pickup = trim(p_pickup)
                      and status in ('pending','approved','printing','ready') and code is distinct from p_skip_code) >= v_slot then raise exception 'SLOT_FULL'; end if;
-  if v_sellers > 0 and not exists (select 1 from public.orders where school_id is null and pickup_date = p_date and pickup_time = trim(p_time) and pickup = trim(p_pickup)
+  if v_sellers > 0 and not exists (select 1 from public.orders where person_id is null and pickup_date = p_date and pickup_time = trim(p_time) and pickup = trim(p_pickup)
                                    and status in ('pending','approved','printing','ready') and code is distinct from p_skip_code) then
-    select count(distinct pickup) into v_gates from public.orders where school_id is null and pickup_date = p_date and pickup_time = trim(p_time)
+    select count(distinct pickup) into v_gates from public.orders where person_id is null and pickup_date = p_date and pickup_time = trim(p_time)
       and status in ('pending','approved','printing','ready') and code is distinct from p_skip_code;
     if v_gates >= v_sellers then raise exception 'GATE_TAKEN'; end if;
   end if;
@@ -267,7 +302,7 @@ create or replace function public.pickup_availability(p_from date, p_to date)
 returns table (pickup_date date, pickup_time text, pickup text, n int)
 language sql stable security definer set search_path = public as $$
   select o.pickup_date, o.pickup_time, o.pickup, count(*)::int from public.orders o
-  where o.pickup_date between p_from and least(p_to, p_from + 60) and o.status in ('pending','approved','printing','ready') and o.school_id is null
+  where o.pickup_date between p_from and least(p_to, p_from + 60) and o.status in ('pending','approved','printing','ready') and o.person_id is null
   group by 1, 2, 3
 $$;
 grant execute on function public.pickup_availability(date, date) to anon, authenticated;
@@ -275,7 +310,8 @@ grant execute on function public.pickup_availability(date, date) to anon, authen
 create or replace function public.place_order(
   p_nickname text, p_grade_section text, p_pickup text, p_payment text,
   p_gcash_ref text, p_layout jsonb, p_folder text, p_src text, p_pickup_date date, p_pickup_time text,
-  p_promo_code text default null, p_add_to text default null, p_seller text default null, p_school text default null
+  p_promo_code text default null, p_add_to text default null, p_seller text default null, p_school text default null,
+  p_person text default null
 ) returns text
 language plpgsql security definer set search_path = public as $$
 declare
@@ -285,7 +321,7 @@ declare
   v_item jsonb; v_prod jsonb; v_size jsonb; v_addon jsonb; v_addon_id text;
   v_units int; v_unit int; v_total int := 0; v_count int := 0; v_maxq int;
   v_friend public.friends; v_fcode text; v_credit int := 0; v_fon boolean; v_seller public.sellers; v_scode text; v_son boolean;
-  v_school public.schools; v_school_id uuid;
+  v_person public.pickup_people; v_school_id uuid; v_link text;   -- v_school_id: the pickup person's id
   v_email text := lower(coalesce(auth.jwt()->>'email', '')); v_xu boolean;
   v_tiles int; v_pages int; v_has_prints boolean := false; v_only_prints boolean := true;
   v_today date := (now() at time zone 'Asia/Manila')::date; v_next date; v_rush int := 0; v_tm text[]; v_mins int;
@@ -323,14 +359,20 @@ begin
     raise exception 'BAD_INPUT';
   end if;
 
-  -- Other schools: a valid group code; one of that school's spots; one of its hand-off days, at least 2 days from today
-  if v_parent.id is not null then v_school_id := v_parent.school_id;
-  elsif nullif(trim(coalesce(p_school, '')), '') is not null then
-    select * into v_school from public.schools where code = upper(regexp_replace(p_school, '[^A-Za-z0-9]', '', 'g')) and enabled;
-    if not found then raise exception 'GROUP_OFF'; end if;
-    if not (v_school.spots @> to_jsonb(trim(p_pickup))) then raise exception 'BAD_PLACE'; end if;
-    if p_pickup_date < v_today + 2 or not (extract(dow from p_pickup_date)::int = any (v_school.days)) then raise exception 'BAD_DATE'; end if;
-    v_school_id := v_school.id;
+  -- Pickup person: switched on; shown to everyone, or the customer came through their link (p_school = their code);
+  -- one of their spots; one of their handover days, at least 2 days from today
+  v_link := nullif(upper(regexp_replace(coalesce(p_school, ''), '[^A-Za-z0-9]', '', 'g')), '');
+  if v_parent.id is not null then v_school_id := coalesce(v_parent.person_id, v_parent.school_id);
+  elsif nullif(trim(coalesce(p_person, '')), '') is not null or v_link is not null then
+    if nullif(trim(coalesce(p_person, '')), '') ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then
+      select * into v_person from public.pickup_people where id = trim(p_person)::uuid and enabled;
+    elsif nullif(trim(coalesce(p_person, '')), '') is null then
+      select * into v_person from public.pickup_people where code = v_link and enabled;
+    end if;
+    if v_person.id is null or (not v_person.public and v_person.code is distinct from v_link) then raise exception 'GROUP_OFF'; end if;
+    if not (v_person.spots @> to_jsonb(trim(p_pickup))) then raise exception 'BAD_PLACE'; end if;
+    if p_pickup_date < v_today + 2 or not (extract(dow from p_pickup_date)::int = any (v_person.days)) then raise exception 'BAD_DATE'; end if;
+    v_school_id := v_person.id;
   end if;
 
   -- Work out the price on the server, from the prices set in admin
@@ -553,7 +595,7 @@ begin
   -- sheet_count holds the number of things in the order (sheets + pins + posters + keychains)
   insert into public.orders (code, nickname, grade_section, pickup, pickup_date, pickup_time, payment, gcash_ref,
                              layout, folder, sheet_count, total, src, subtotal, discount, promo_code, deal_labels, rush_fee, confirmed, friend_code, friend_credit_used, customer_email,
-                             add_to, admin_note, seller_code, school_id)
+                             add_to, admin_note, seller_code, person_id)
   values (v_code, trim(p_nickname), trim(p_grade_section), trim(p_pickup), p_pickup_date, trim(p_pickup_time), p_payment,
           nullif(trim(left(coalesce(p_gcash_ref, ''), 40)), ''),
           p_layout, p_folder, v_count, v_total,
@@ -575,7 +617,8 @@ language sql stable security definer set search_path = public as $$
     'pickup_date', pickup_date, 'pickup_time', pickup_time, 'arrived', arrived_at is not null,
     'payment', payment, 'total', total, 'sheet_count', sheet_count, 'reject_reason', reject_reason,
     'confirmed', confirmed, 'paid', paid, 'amount_paid', amount_paid, 'missed', missed, 'reschedules', reschedules, 'created_at', created_at,
-    'grade_section', grade_section, 'gcash_ref', gcash_ref, 'add_to', add_to, 'group', school_id is not null,
+    'grade_section', grade_section, 'gcash_ref', gcash_ref, 'add_to', add_to, 'group', person_id is not null,
+    'person_name', (select nullif(p.first_name, '') from public.pickup_people p where p.id = orders.person_id),
     'add_ons', (select coalesce(json_agg(a.code order by a.created_at), '[]'::json) from public.orders a where a.add_to = orders.code and a.status not in ('cancelled','rejected')))
   from public.orders
   where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname)
@@ -606,7 +649,7 @@ begin
      or length(trim(coalesce(p_time, ''))) < 3 or length(p_time) > 40 then
     raise exception 'BAD_DATE';
   end if;
-  if exists (select 1 from public.orders where code = upper(trim(p_code)) and school_id is not null) then raise exception 'GROUP_RESCHEDULE'; end if;
+  if exists (select 1 from public.orders where code = upper(trim(p_code)) and person_id is not null) then raise exception 'GROUP_RESCHEDULE'; end if;
   select pickup into v_pick from public.orders where code = upper(trim(p_code)) and public.name_match(nickname, p_nickname);
   -- orders not printed yet can't move into the rush window (that would skip the rush fee); prints-only orders can
   if p_date < (now() at time zone 'Asia/Manila')::date + coalesce((s.config->>'lead_days')::int, 2)
@@ -683,7 +726,7 @@ begin
     'used_up', v.max_uses is not null and v_used >= v.max_uses);
 end $$;
 
-grant execute on function public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text,text,text,text) to anon, authenticated;
+grant execute on function public.place_order(text,text,text,text,text,jsonb,text,text,date,text,text,text,text,text,text) to anon, authenticated;
 grant execute on function public.update_my_order(text,text,text,text,text) to anon, authenticated;
 grant execute on function public.check_promo(text) to anon, authenticated;
 grant execute on function public.reschedule_order(text,text,date,text) to anon, authenticated;
@@ -785,7 +828,8 @@ begin
   if t is null or not t.enabled then return new; end if;
   n := t.notify;
   who := public.tg_esc(new.nickname) || ', ' || public.tg_esc(new.grade_section);
-  v_when := coalesce(to_char(new.pickup_date, 'Dy, Mon FMDD'), 'no date') || coalesce(', ' || new.pickup_time, '') || ', ' || public.tg_esc(new.pickup);
+  v_when := coalesce(to_char(new.pickup_date, 'Dy, Mon FMDD'), 'no date') || coalesce(', ' || new.pickup_time, '') || ', ' || public.tg_esc(new.pickup)
+    || coalesce(' (pickup person: ' || public.tg_esc((select coalesce(nullif(p.first_name, ''), 'no name yet') from public.pickup_people p where p.id = new.person_id)) || ')', '');
 
   -- Order placed
   if tg_op = 'INSERT' then
@@ -1013,7 +1057,7 @@ create or replace function public.my_orders() returns json
 language sql stable security definer set search_path = public as $$
   select coalesce(json_agg(x order by x.created_at desc), '[]'::json) from (
     select code, nickname, status, pickup, pickup_date, pickup_time, total, paid, amount_paid, confirmed,
-           arrived_at is not null as arrived, created_at, school_id is not null as "group"
+           arrived_at is not null as arrived, created_at, person_id is not null as "group"
     from public.orders
     where customer_email is not null and customer_email = lower(coalesce(auth.jwt()->>'email', ''))
       and lower(coalesce(auth.jwt()->>'email', '')) like '%@my.xu.edu.ph'
@@ -1166,6 +1210,13 @@ begin
     end if;
   elsif tg_table_name = 'telegram' then
     insert into public.activity (actor, kind, text) values (who, 'telegram', 'Changed the Telegram alert settings');
+  elsif tg_table_name = 'pickup_people' then
+    insert into public.activity (actor, kind, text) values (who, 'settings',
+      case tg_op when 'INSERT' then 'Added a pickup person'
+        when 'DELETE' then 'Removed pickup person ' || coalesce(nullif(old.first_name, ''), 'with no name')
+        else 'Changed pickup person ' || coalesce(nullif(new.first_name, ''), 'with no name')
+          || case when new.enabled is distinct from old.enabled then case when new.enabled then ' (turned on)' else ' (turned off)' end else '' end
+          || case when new.public is distinct from old.public then case when new.public then ' (shown to everyone)' else ' (link only)' end else '' end end);
   end if;
   return coalesce(new, old);
 end $$;
@@ -1177,6 +1228,8 @@ drop trigger if exists log_business on public.business;
 create trigger log_business after update on public.business for each row execute function public.log_changes();
 drop trigger if exists log_telegram on public.telegram;
 create trigger log_telegram after update on public.telegram for each row execute function public.log_changes();
+drop trigger if exists log_people on public.pickup_people;
+create trigger log_people after insert or update or delete on public.pickup_people for each row execute function public.log_changes();
 
 -- The admin page asks "is this account an admin?" (a signed-in student is not)
 grant execute on function public.is_admin() to authenticated;
@@ -1547,10 +1600,29 @@ drop policy if exists "admins manage schools" on public.schools;
 create policy "admins manage schools" on public.schools for all to authenticated using (public.is_admin()) with check (public.is_admin());
 grant select, insert, update, delete on public.schools to authenticated;
 
+-- Pickup people: admins manage the table; customers only see what pickup_people_list gives them
+alter table public.pickup_people enable row level security;
+drop policy if exists "admins manage pickup people" on public.pickup_people;
+create policy "admins manage pickup people" on public.pickup_people for all to authenticated using (public.is_admin()) with check (public.is_admin());
+grant select, insert, update, delete on public.pickup_people to authenticated;
+
+-- What checkout shows: everyone switched on and shown to everyone, plus the one whose link (code) this customer came through.
+-- Never the code or the private note.
+create or replace function public.pickup_people_list(p_code text default null) returns json
+language sql stable security definer set search_path = public as $$
+  with c as (select nullif(upper(regexp_replace(coalesce(p_code, ''), '[^A-Za-z0-9]', '', 'g')), '') as code)
+  select coalesce(json_agg(json_build_object('id', p.id, 'name', p.first_name, 'label', p.label, 'spots', p.spots, 'days', p.days,
+                                             'linked', p.code = c.code) order by (p.code = c.code) desc, p.sort, p.created_at), '[]'::json)
+  from public.pickup_people p, c
+  where p.enabled and jsonb_array_length(p.spots) > 0 and cardinality(p.days) > 0 and (p.public or p.code = c.code);
+$$;
+grant execute on function public.pickup_people_list(text) to anon, authenticated;
+
+-- Older pages asked this with a group code. Kept, now answered from pickup people.
 create or replace function public.group_check(p_code text) returns json
 language sql stable security definer set search_path = public as $$
   select json_build_object('code', code, 'spots', spots, 'days', days)
-  from public.schools where code = upper(regexp_replace(coalesce(p_code, ''), '[^A-Za-z0-9]', '', 'g')) and enabled
+  from public.pickup_people where code = upper(regexp_replace(coalesce(p_code, ''), '[^A-Za-z0-9]', '', 'g')) and enabled
     and jsonb_array_length(spots) > 0;
 $$;
 grant execute on function public.group_check(text) to anon, authenticated;

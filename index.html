@@ -1049,6 +1049,53 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 #pframe img{position:absolute;max-width:none;user-select:none;-webkit-user-drag:none}
 .pgctl{display:grid;gap:10px;justify-items:start;width:min(100%,420px)}
 
+/* pickup people: checkout and settings */
+#gateNudge[hidden]{display:none}
+.pgroup-h{margin:14px 0 8px;font-weight:700;font-size:15px;color:var(--muted)}
+fieldset > .pgroup-h:first-of-type{margin-top:4px}
+.pchoice small{display:block;font-weight:500;color:var(--muted);font-size:14px}
+.pbox{margin:-2px 0 12px 14px;padding:12px 0 4px 16px;border-left:3px solid var(--xu-gold)}
+.pbox-l{display:block;font-weight:700;font-size:15px;margin:2px 0 8px}
+.pbox [role=radiogroup] + .pbox-l{margin-top:10px}
+.pchips{margin-top:-6px;align-items:center}
+.pchips-l{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:14px;color:var(--muted);margin-right:2px}
+.pcard .pc-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.pc-av{flex:none;width:40px;height:40px;border-radius:50%;background:var(--xu-gold);border:2px solid var(--ink);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:18px}
+.pc-t{display:grid;min-width:0}.pc-t small{color:var(--muted);font-size:14px}
+.pc-sw{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:12px}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pc-f{display:grid;gap:6px;margin-bottom:10px}.pc-f .lab{margin:0}
+.pp-empty{color:var(--muted);margin:10px 0}
+@media(max-width:600px){.pc-grid{grid-template-columns:1fr;gap:0}.pbox{margin-left:6px;padding-left:12px}}
+/* posters: one consistent set of controls. Same height for every button group and stepper,
+   one label style and spacing, the size summary as one strip, and no button text breaking onto two lines. */
+.flab{display:block;margin:16px 0 8px}
+.pst .flab{font-size:15px;margin:18px 0 8px}
+.pst .stephead + .flab,.pst .sizes + .flab{margin-top:4px}
+.pst .sizes + .flab{margin-top:16px}
+.pst .seg{display:flex;width:100%}
+.pst .seg button{flex:1 1 0;min-width:0;min-height:44px;padding:6px 10px;white-space:nowrap;font-size:15px;line-height:1.2}
+.pst .qty button{width:44px;height:44px;font-size:22px}
+.pst .qty input,.pst .qty .cnt{width:48px;min-width:0;text-align:center;font-family:var(--display);font-weight:800;font-size:20px}
+.pst .bigrow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center}
+.pst .bigrow .seg button{padding:6px 4px}
+.pst .qty .cnt{width:40px}
+.pst .sizeinfo{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,.8fr);gap:0;margin-top:12px;border:1.5px solid var(--line);border-radius:14px;overflow:hidden;background:#FAFBFD}
+.pst .sizeinfo > div{border:0;border-radius:0;background:none;padding:8px 10px;align-content:start}
+.pst .sizeinfo > div + div{border-left:1.5px solid var(--line)}
+.pst .sizeinfo > div:last-child{grid-column:auto}
+.pst .sizeinfo b{white-space:nowrap;font-size:14.5px}
+.pst .sizeinfo small{font-size:12.5px;color:var(--muted);font-weight:600}
+.pst .fhelp{margin:8px 0 0;font-size:14px}
+.pst .pp-alt{margin-top:12px}
+.pst .zoomrow{min-height:44px}
+@media(max-width:420px){
+  .pst .bigrow{grid-template-columns:1fr}.pst .bigrow .qty{justify-self:start}
+  .pst .sizeinfo{grid-template-columns:1fr 1fr}
+  .pst .sizeinfo > div:first-child{grid-column:1/-1;border-bottom:1.5px solid var(--line)}
+  .pst .sizeinfo > div:nth-child(2){border-left:0}}
+@media(max-width:900px){.designer .pst .sizes{grid-template-columns:1fr 1fr}}
+@media(max-width:350px){.pst .seg button{white-space:normal;padding:6px 8px}}
 /* posters: sheet lines, as-printed view, one-sheet page */
 .tline{position:absolute;z-index:2;pointer-events:none;background:rgba(255,255,255,.95);box-shadow:0 0 0 .5px rgba(40,57,113,.45)}
 .tline.v{top:0;bottom:0;width:1.5px;margin-left:-.75px}
@@ -2103,7 +2150,7 @@ function passPicture(o){
   x.font = font(800, 150); x.fillText(o.code, W / 2, 620);
   x.font = font(700, 52); x.fillText(String(o.nickname || '').slice(0, 30), W / 2, 740);
   x.fillStyle = '#5A6488'; x.font = font(600, 42); x.fillText(o.section || '', W / 2, 805);
-  x.fillStyle = '#283971'; x.font = font(700, 44); x.fillText(`${o.pickup}${o.pickup_time ? ', ' + o.pickup_time : ''}`, W / 2, 920);
+  x.fillStyle = '#283971'; x.font = font(700, 44); x.fillText(o.group ? `Meet ${o.person_name || 'your pickup person'} at ${o.pickup}` : `${o.pickup}${o.pickup_time ? ', ' + o.pickup_time : ''}`, W / 2, 920);
   x.fillStyle = '#5A6488'; x.font = font(600, 36); x.fillText(`Bring ${money(o.total)} and your school ID`, W / 2, 1000);
   x.fillStyle = '#fff'; x.font = font(600, 34); x.fillText('Show this at pickup. Check your order at', W / 2, 1200); x.fillText(location.host || 'stick2xu.vercel.app', W / 2, 1250);
   return c.toDataURL('image/png');
@@ -2143,7 +2190,8 @@ function friendlyError(e){
   if (m.includes('SLOT_FULL')) return 'That spot just filled up for this time. Pick another spot, time or day.';
   if (m.includes('DAY_FULL')) return 'That pickup day just filled up. Pick another day.';
   if (m.includes('XU_ONLY')) return 'Please sign in with your XU school account (@my.xu.edu.ph) to order.';
-  if (m.includes('GROUP_OFF')) return 'That group code is switched off right now.';
+  if (m.includes('GROUP_OFF')) return "That pickup person isn't available right now. Pick another way to get your order.";
+  if (m.includes('BAD_PLACE')) return "That meetup spot isn't available anymore. Pick another one.";
   if (m.includes('GROUP_RESCHEDULE')) return 'To change the day, message us and we\'ll sort it out.';
   if (m.includes('OWN_SELLER')) return "That's your own seller code. It's for your classmates' orders, not yours.";
   if (m.includes('SELLERS_CLOSED')) return 'Seller applications are closed right now.';
@@ -2647,7 +2695,7 @@ function SupaBackend(){
       }
       const layout = { items: serializeItems(p.items, pathFor) };
       const code = await rpc('place_order', { p_nickname: p.nickname, p_grade_section: p.section, p_pickup: p.pickup, p_payment: p.payment,
-        p_gcash_ref: p.gcashRef || null, p_layout: layout, p_folder: folder, p_src: p.src || null, p_pickup_date: p.pickupDate, p_pickup_time: p.pickupTime, p_promo_code: p.promo || null, p_seller: p.seller || null, p_school: p.school || null, p_add_to: p.addTo || null });
+        p_gcash_ref: p.gcashRef || null, p_layout: layout, p_folder: folder, p_src: p.src || null, p_pickup_date: p.pickupDate, p_pickup_time: p.pickupTime, p_promo_code: p.promo || null, p_seller: p.seller || null, p_school: p.school || null, p_add_to: p.addTo || null, ...(p.person ? { p_person: p.person } : {}) });
       return { code };
     },
     async getOrder(code, nick){ const d = await rpc('get_order', { p_code: code, p_nickname: nick }); if (!d) throw new Error('NOT_FOUND'); return d; },
@@ -2667,10 +2715,10 @@ function SupaBackend(){
     async logAddMany(rows){ const { error } = await sb.from('logbook').insert(rows); if (error) throw error; },
     async logUpdate(id, row){ const { error } = await sb.from('logbook').update({ ...row, updated_at: new Date().toISOString() }).eq('id', id); if (error) throw error; },
     async logDelete(id){ const { error } = await sb.from('logbook').delete().eq('id', id); if (error) throw error; },
-    async groupCheck(code){ return await rpc('group_check', { p_code: code }); },
-    async schools(){ const { data, error } = await sb.from('schools').select('*').order('created_at'); if (error) throw error; return data || []; },
-    async saveSchool(row){ const { error } = await sb.from('schools').upsert(row); if (error) throw error; },
-    async deleteSchool(id){ const { error } = await sb.from('schools').delete().eq('id', id); if (error) throw error; },
+    async pickupPeople(code){ return (await rpc('pickup_people_list', { p_code: code || null })) || []; },
+    async people(){ const { data, error } = await sb.from('pickup_people').select('*').order('sort').order('created_at'); if (error) throw error; return data || []; },
+    async savePerson(row){ const { error } = await sb.from('pickup_people').upsert(row); if (error) throw error; },
+    async deletePerson(id){ const { error } = await sb.from('pickup_people').delete().eq('id', id); if (error) throw error; },
     async mySeller(){ return await rpc('my_seller', {}); },
     async sellerApply(name, section, pitch, gcash){ return await rpc('seller_apply', { p_name: name, p_section: section, p_pitch: pitch || null, p_gcash: gcash || null }); },
     async sellerGift(id){ return await rpc('seller_reward_given', { p_id: id }); },
@@ -2755,14 +2803,26 @@ const TPL = (params.get('t') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').sli
 const SELLER_NEW = (params.get('s') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12);
 if (SELLER_NEW) safeLS.set('sk_seller', JSON.stringify({ c: SELLER_NEW, t: Date.now() }));
 function sellerRef(){ const v = readJSON('sk_seller'); return v && v.c && Date.now() - (+v.t || 0) < 7 * 864e5 ? String(v.c) : ''; }
-// ?g=CODE turns on "group pickup" (another school's spots and days). Remembered on this phone for 30 days.
+const DAYS3 = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+// Pickup people. ?g=CODE is a person's link: it shows them at checkout even when "Show to everyone" is off.
+// The link is remembered on this phone for 30 days (old "Other schools" links keep working: same codes).
 const GROUP_NEW = (params.get('g') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12);
 if (GROUP_NEW) safeLS.set('sk_group', JSON.stringify({ c: GROUP_NEW, t: Date.now() }));
-async function loadGroup(){
-  const v = readJSON('sk_group'); if (!v || !v.c || Date.now() - (+v.t || 0) > 30 * 864e5) { safeLS.del('sk_group'); S.group = null; return; }
-  try { const g = await api.groupCheck(v.c); S.group = g ? { code: g.code, spots: g.spots || [], days: g.days || [] } : null; if (!g) safeLS.del('sk_group'); } catch { S.group = null; }
+S.people = []; S.linkPerson = null; S.linkCode = '';
+function setPeople(list, code){
+  S.people = Array.isArray(list) ? list.filter(p => p && p.id && (p.spots || []).length && (p.days || []).length) : [];
+  S.linkPerson = S.people.find(p => p.linked) || null; S.linkCode = S.linkPerson ? code : '';
 }
-function groupDates(){ const out = []; for (let i = 2; i <= 30 && out.length < 12; i++) { const d = addDays(ymd(new Date()), i); if ((S.group.days || []).includes(parseYmd(d).getDay())) out.push(d); } return out; }
+async function loadPeople(){
+  const v = readJSON('sk_group'), code = v && v.c && Date.now() - (+v.t || 0) <= 30 * 864e5 ? String(v.c) : '';
+  try { setPeople(await api.pickupPeople(code), code); } catch { setPeople([], ''); }   // not set up yet: checkout just shows school pickup
+  if (!S.linkPerson) safeLS.del('sk_group');
+}
+const personName = p => (p && p.name) || 'Pickup person';
+const DAYS_LONG = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays'];
+const personDays = p => { const d = (p.days || []).slice().sort((a, b) => ((a + 6) % 7) - ((b + 6) % 7));
+  return d.length === 1 ? DAYS_LONG[d[0]] : d.length === 7 ? 'Any day' : d.map(x => DAYS3[x]).join(', '); };
+function personDates(p){ const out = []; for (let i = 2; i <= 40 && out.length < 5; i++) { const d = addDays(ymd(new Date()), i); if ((p.days || []).includes(parseYmd(d).getDay())) out.push(d); } return out; }
 if (params.has('src') || params.has('t') || params.has('s') || params.has('g')) { try { const q = new URLSearchParams(location.search); q.delete('src'); q.delete('t'); q.delete('s'); q.delete('g'); history.replaceState(history.state, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); } catch {} }
 async function openTemplate(){
   if (!TPL) return;
@@ -2918,14 +2978,14 @@ async function xuSignIn(){
   } catch (e) { if (w) w.close(); toast(friendlyError(e)); }
 }
 function xuBoxHTML(){
-  if (S.group) return '';   // group pickups don't use XU sign-in
+  if (S.linkPerson) return '';   // came through a pickup person's link: no XU sign-in needed
   if (S.me) return `<div class="xuchip">${ic('check', 18)}<span>Signed in as <b>${esc(S.me.email)}</b></span><button type="button" class="linkbtn" data-act="xuOut">Not you?</button></div>`;
   const note = `<p class="xunote">${ic('school', 16)}<span>For <b>XU uptown</b> students (Pueblo de Oro): grade school, junior high, and senior high.</span></p>`;
   if (inAppBrowser()) return `<div class="xubox">${note}<p class="xuapp"><b>Open this page in Safari or Chrome to ${CONFIG.requireXu ? 'order' : 'sign in'}.</b> Google doesn't allow sign-in inside apps like TikTok or Facebook. Tap the <b>⋯</b> menu and choose "Open in browser", or copy the link.</p>
     <button type="button" class="pilllink" data-act="copySite">${ic('check', 16)}Copy link</button></div>`;
   return `<div class="xubox">${note}
     <button type="button" class="gbtn" data-act="xuIn"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Continue with your XU account</button>
-    <p class="help" style="margin:6px 0 0">${CONFIG.requireXu ? 'Required to order. Only school accounts ending in <b>' + XU_DOMAIN + '</b> work.' : 'Optional. Signing in keeps all your orders in one place, no codes needed.'}</p>
+    <p class="help" style="margin:6px 0 0">${CONFIG.requireXu ? (S.people.length ? 'Needed for pickup at school. Only accounts ending in <b>' + XU_DOMAIN + '</b> work.' : 'Required to order. Only school accounts ending in <b>' + XU_DOMAIN + '</b> work.') : 'Optional. Signing in keeps all your orders in one place, no codes needed.'}</p>
     <p class="ferr" id="e-xu" role="alert"></p></div>`;
 }
 // The sign-in window lands back here (?signin=1&code=...): finish, check it's a school account, tell the shop page, and close.
@@ -3139,7 +3199,7 @@ function viewHome(){
       </div>
       ${heroArt()}
     </section>
-    <footer><span>${CONFIG.contactOn && (CONFIG.contactEmail || CONFIG.contactPhone) ? `<span class="contactline">${ic('bell', 14)}<b>Questions?</b> ${[CONFIG.contactEmail ? `<a href="mailto:${esc(CONFIG.contactEmail)}">Email us</a>` : '', CONFIG.contactPhone ? `<a href="sms:${esc(CONFIG.contactPhone.replace(/\s+/g, ''))}">text ${esc(CONFIG.contactPhone)}</a>` : ''].filter(Boolean).join(' or ')}</span>` : ''}${esc(CONFIG.shopName)} is run by students. It isn't an official school service.${CONFIG.sellersOn && !S.group ? ` <a href="#/sell" class="earnlink">${ic('sparkle', 14)}Earn with ${esc(CONFIG.shopName)}</a>` : ''}</span>${socialHTML()}</footer>
+    <footer><span>${CONFIG.contactOn && (CONFIG.contactEmail || CONFIG.contactPhone) ? `<span class="contactline">${ic('bell', 14)}<b>Questions?</b> ${[CONFIG.contactEmail ? `<a href="mailto:${esc(CONFIG.contactEmail)}">Email us</a>` : '', CONFIG.contactPhone ? `<a href="sms:${esc(CONFIG.contactPhone.replace(/\s+/g, ''))}">text ${esc(CONFIG.contactPhone)}</a>` : ''].filter(Boolean).join(' or ')}</span>` : ''}${esc(CONFIG.shopName)} is run by students. It isn't an official school service.${CONFIG.sellersOn && !S.linkPerson ? ` <a href="#/sell" class="earnlink">${ic('sparkle', 14)}Earn with ${esc(CONFIG.shopName)}</a>` : ''}</span>${socialHTML()}</footer>
   </main>`;
 }
 
@@ -3549,11 +3609,11 @@ function drawPosterPagesCtrl(){
     <section><div class="stephead"><i>1</i>Your PDF</div>
       <ul class="docs"><li><span class="dt">${ic('doc', 22)}</span><span class="dn"><b title="${esc(f.pdf.name)}">${esc(f.pdf.name)}</b>${n ? `<small>${n} page${n === 1 ? '' : 's'}</small>`
         : `<small class="ask">How many pages? <input class="inp num" type="number" min="1" max="24" id="ppPages" aria-label="Pages in your PDF"></small>`}</span></li></ul>
-      <button type="button" class="pilllink" data-act="ppUsePicture" style="margin-top:10px">${ic('image', 16)}Use a picture instead</button></section>
+      <button type="button" class="pilllink pp-alt" data-act="ppUsePicture">${ic('image', 16)}Use a picture instead</button></section>
     <section><div class="stephead"><i>2</i>How the pages go together</div>
-      <p class="lab" style="margin:0 0 8px">Pages across</p>
-      <div class="qty"><button type="button" data-act="ppAcross" data-d="-1" aria-label="Fewer">−</button><span class="num cnt" style="min-width:40px;text-align:center;font-family:var(--display);font-weight:800;font-size:22px">${f.across}</span><button type="button" data-act="ppAcross" data-d="1" aria-label="More">+</button></div>
-      <p class="help" style="margin-top:8px">Rasterbator calls this "sheets wide". It's only for the preview; we print every page exactly as it is.</p>
+      <p class="lab flab">Pages across</p>
+      <div class="bigrow"><div class="qty"><button type="button" data-act="ppAcross" data-d="-1" aria-label="Fewer">−</button><span class="num cnt">${f.across}</span><button type="button" data-act="ppAcross" data-d="1" aria-label="More">+</button></div></div>
+      <p class="help fhelp">Rasterbator calls this "sheets wide". It's only for the preview; we print every page exactly as it is.</p>
       <div class="sizeinfo"><div><span>Pages</span><b class="num">${n || '?'}</b></div><div><span>Layout</span><b class="num">${n ? `${f.across} × ${Math.ceil(n / f.across)}` : '?'}</b></div><div><span>Price</span><b class="num">${n ? money(base + (n - 1) * CONFIG.posterExtraSheet) : '?'}</b></div></div>
     </section>
     <section><div class="stephead"><i>3</i>How many?</div>
@@ -3947,6 +4007,7 @@ function viewMake(key){
 }
 function drawFramed(){ drawFramedCtrl(); drawFramedStage(); drawFramedBottom(); }
 function drawFramedCtrl(){
+  $('#ctrl').classList.toggle('pst', S.fd.type === 'posters');   // posters: one consistent set of controls (see .pst styles)
   if (S.fd.type === 'posters' && S.fd.mode === 'pages' && S.fd.pdf) return drawPosterPagesCtrl();
   const f = S.fd, p = P(f.type), d = activeDesign(), sizes = liveSizes(f.type);
   const kc = f.type === 'keychains', backSide = kc && f.side === 'back';
@@ -3973,18 +4034,18 @@ function drawFramedCtrl(){
       ${sizes.length > 1 ? `<div class="sizes">${sizes.map(z => `<button class="size ${f.size === z.id ? 'on' : ''}" type="button" data-act="fdSize" data-size="${esc(z.id)}" aria-pressed="${f.size === z.id}">
         ${f.type === 'pins' ? `<span class="szc" style="width:${Math.round(z.faceMm / 58 * 34)}px"></span>` : ''}<span>${esc(z.label)}<small class="num">${money(z.price)}</small></span></button>`).join('')}</div>` : ''}
       ${f.type === 'posters' ? (() => { const mm = frameMm(f), base = (P('posters').sizes.find(z => z.id === f.size) || {}).price || 0, t = f.cols * f.rows;
-        return `<p class="lab" style="margin:14px 0 8px">Each sheet</p>
+        return `<p class="lab flab">Each sheet</p>
         <div class="seg">${['portrait','landscape'].map(o => `<button type="button" class="${f.orient === o ? 'on' : ''}" data-act="fdOrient" data-o="${o}">${o === 'portrait' ? 'Tall' : 'Wide'}</button>`).join('')}</div>
-        <p class="lab" style="margin:14px 0 8px">How many sheets?</p>
+        <p class="lab flab">How many sheets?</p>
         <div class="bigrow"><div class="qty"><button type="button" data-act="fdCount" data-d="-1" aria-label="Smaller">−</button><span class="num cnt">${f.count}</span><button type="button" data-act="fdCount" data-d="1" aria-label="Bigger">+</button></div>
           <div class="seg">${[['wide', 'across'], ['high', 'down']].map(([v, l]) => `<button type="button" class="${f.sizeBy === v ? 'on' : ''}" data-act="fdSizeBy" data-v="${v}">${l}</button>`).join('')}</div></div>
         <div class="sizeinfo">
           <div><span>Poster size</span><b class="num">${Math.round(mm.w / 10)} × ${Math.round(mm.h / 10)} cm</b></div>
-          <div><span>Paper</span><b class="num">${t} sheet${t === 1 ? '' : 's'}${t > 1 ? ` (${mm.cols} × ${mm.rows})` : ''}</b></div>
+          <div><span>Paper</span><b class="num">${t} sheet${t === 1 ? '' : 's'}</b>${t > 1 ? `<small class="num">${mm.cols} × ${mm.rows}</small>` : ''}</div>
           <div><span>Price</span><b class="num">${money(base + (t - 1) * CONFIG.posterExtraSheet)}</b></div></div>
-        <p class="lab" style="margin:16px 0 8px">Fit</p>
+        <p class="lab flab">Fit</p>
         <div class="seg">${[['fit', 'Whole picture'], ['fill', 'Fill the sheets']].map(([v, l]) => `<button type="button" class="${(f.fit || 'fit') === v ? 'on' : ''}" data-act="fdFit" data-v="${v}">${l}</button>`).join('')}</div>
-        <p class="help" style="margin-top:6px">${(f.fit || 'fit') === 'fit'
+        <p class="help fhelp">${(f.fit || 'fit') === 'fit'
           ? `Nothing gets cut off.${t > 1 ? " If the picture doesn't fill the last sheets, we trim off the blank part." : ''}`
           : "Uses every sheet edge to edge. A little of the picture's edges may be cut off. Drag the picture to choose what stays."}${t > 1 ? ' We tape the sheets together for you.' : ''}</p>`; })() : ''}
 
@@ -3993,7 +4054,7 @@ function drawFramedCtrl(){
       <div class="zoomrow">${ic('search', 18)}<input type="range" id="zoom" min="0.4" max="3" step="0.01" value="${d.zoom}" aria-label="Zoom">
         ${smallBtn('Reset', '', 'fdReset', 'plain')}</div>
       <p class="hint" style="margin-top:10px">${ic('move', 18)}<span>Drag the picture to move it. Pinch with two fingers, or use the slider, to zoom in and out.</span></p>
-      <p class="lab" style="margin:16px 0 8px">Background <span class="muted small" style="font-weight:500">shows when you zoom out</span></p>
+      <p class="lab flab">Background <span class="muted small" style="font-weight:500">shows when you zoom out</span></p>
       ${(() => { const bg = (d.bg || '#ffffff').toLowerCase(), custom = bg !== '#ffffff'; return `<div class="swatches">
         <button type="button" class="sw ${custom ? '' : 'on'}" style="background:#fff" data-act="fdBg" data-c="#ffffff" aria-label="White background" aria-pressed="${!custom}"></button>
         <label class="sw rainbow ${custom ? 'on' : ''}" title="Pick any color"><input type="color" id="bgPick" value="${custom ? bg : '#3a52a3'}" aria-label="Pick any background color">
@@ -4403,15 +4464,14 @@ function nextSchoolDay(){ const d = new Date(); d.setHours(0, 0, 0, 0); do { d.s
 /* Rush pickup for made things: a pickup day sooner than the free lead time (normally tomorrow) */
 const freeFrom = () => addDays(ymd(new Date()), CONFIG.leadDays);
 const rushOpenNow = () => CONFIG.rushOn && new Date().getHours() < CONFIG.rushCutoff;
-const isRushMake = ds => !S.group && !!ds && !printsOnly() && ds > ymd(new Date()) && ds < freeFrom();
+const isRushMake = ds => !S.coPerson && !!ds && !printsOnly() && ds > ymd(new Date()) && ds < freeFrom();
 function rushFee(ds){
-  if (S.group) return 0;   // group pickups: no rush, the earliest day is 2 days out
+  if (S.coPerson) return 0;   // pickup people: no rush, the earliest day is 2 days out
   if (isRushMake(ds)) return CONFIG.rushMake;
   if (!ds || !S.cart.some(it => it.type === 'prints')) return 0;
   return ds === ymd(new Date()) ? CONFIG.rushSameDay : ds === nextSchoolDay() ? CONFIG.rushNextDay : 0;
 }
 function checkoutDates(){
-  if (S.group) return groupDates();
   if (!printsOnly()) {
     const rush = [];
     if (rushOpenNow() && !S.addTo) for (let ds = addDays(ymd(new Date()), 1); ds < freeFrom(); ds = addDays(ds, 1))
@@ -4432,7 +4492,8 @@ function checkoutDates(){
    Checkout
    ===================================================================== */
 function viewCheckout(){
-  if (S.group && !S.coStep) S.coStep = 1;
+  if (S.linkPerson && !S.coStep) S.coStep = 1;
+  S.coFreeSec = !!S.linkPerson;   // came through a pickup person's link: grade and section are typed freely (other schools)
   // a seller's link: put their code in for the customer (once), unless they already have a code in
   if (CONFIG.sellersOn && !S.promo && !S.sellerTried && sellerRef()) { S.sellerTried = true;
     api.checkPromo(sellerRef()).then(r => { if (r && r.seller && !S.promo && location.hash.startsWith('#/checkout')) { S.promo = r; viewCheckoutKeep(); toast(`${r.name}'s seller code is in: ${r.value}% off.`); } }).catch(() => {}); }
@@ -4467,7 +4528,7 @@ function viewCheckout(){
         <p class="help sr" id="e-nickhelp">As on your school ID. This is how we find your order at pickup, so bring your ID.</p>
         <p class="ferr" id="e-nick" role="alert"></p></div>
       <div class="field"><span class="lab" id="l-gs">Grade and section <span class="req">*</span></span>
-        ${S.group ? `<select id="grade" hidden aria-hidden="true"><option value="-" selected>-</option></select><input class="inp" id="sec" maxlength="40" autocomplete="off" placeholder="Like: Grade 8 - Rose" aria-labelledby="l-gs" value="${esc(mySec)}" aria-describedby="e-sec">` : `<div class="gs" role="group" aria-labelledby="l-gs">
+        ${S.coFreeSec ? `<select id="grade" hidden aria-hidden="true"><option value="-" selected>-</option></select><input class="inp" id="sec" maxlength="40" autocomplete="off" placeholder="Like: Grade 8 - Rose" aria-labelledby="l-gs" value="${esc(mySec)}" aria-describedby="e-sec">` : `<div class="gs" role="group" aria-labelledby="l-gs">
           <select class="inp" id="grade" aria-label="Grade"><option value="">Grade</option>
             ${CONFIG.grades.map(g => `<option value="${g}" ${String(g) === myGrade ? 'selected' : ''}>${g}</option>`).join('')}</select>
           <span class="dash" aria-hidden="true">-</span>
@@ -4481,26 +4542,30 @@ function viewCheckout(){
       <section class="cstep" data-step="2">
         <div class="chead"><i>2</i><b>Pickup</b><span class="csum" id="csum2"></span><button type="button" class="cchange" data-act="coGo" data-s="2">Change</button></div>
         <div class="cbody">
-      <fieldset><legend>When will you pick it up? <span class="req">*</span></legend>
+      <fieldset id="whenSet"><legend>When will you pick it up? <span class="req">*</span></legend>
         ${dates.map(d => `<label class="choice${isRushMake(d) ? ' rushday' : ''}"><input type="radio" name="pdate" value="${d}" ${d === (dates.find(x => !isRushMake(x)) || dates[0]) ? 'checked' : ''}>${ic('calendar', 20)}<span><b>${d === ymd(new Date()) ? 'Today, ' : d === addDays(ymd(new Date()), 1) ? 'Tomorrow, ' : ''}${fmtDate(d)}</b>${rushFee(d) ? `<small class="rushtag">${isRushMake(d) ? 'Rush pickup' : 'Rush'}, +${money(rushFee(d))}</small>` : ''}</span></label>`).join('')}
-        <p class="help">${S.group ? 'Pick a day for the hand-off. Orders need at least 2 days to be ready.' : po ? `Prints can be picked up any school day. Same-day orders need at least ${CONFIG.prepHours} hour${CONFIG.prepHours === 1 ? '' : 's'} before the pickup time.`
+        <p class="help">${po ? `Prints can be picked up any school day. Same-day orders need at least ${CONFIG.prepHours} hour${CONFIG.prepHours === 1 ? '' : 's'} before the pickup time.`
           : rushOpenNow() && CONFIG.rushMake >= 0 ? `Pick up any ${pickupDaysText()}. Need it sooner? A rush pickup is +${money(CONFIG.rushMake)} and closes at ${hourLabel(CONFIG.rushCutoff)} today. From ${esc(fmtDate(pickupDates()[0] || freeFrom(), { weekday: 'long', month: 'short', day: 'numeric' }))}, no extra fee.`
           : `Pick up any ${pickupDaysText()}. The first date gives us time to check and print your order.${CONFIG.rushOn ? ` (Rush pickups for tomorrow close at ${hourLabel(CONFIG.rushCutoff)}.)` : ''}`}</p>
       </fieldset>
 
-      ${S.group ? '<input type="radio" name="ptime" value="Any time" checked hidden>' : `<fieldset><legend>What time? <span class="req">*</span></legend>
+      ${`<fieldset id="timeSet"><legend>What time? <span class="req">*</span></legend>
         ${CONFIG.pickupTimes.map((t, i) => `<label class="choice"><input type="radio" name="ptime" value="${esc(timeLabel(t))}" ${i === 0 ? 'checked' : ''}>${ic('clock', 20)}<span><b>${esc(t.label)}</b><small>${esc(t.time)}</small></span></label>`).join('')}
       </fieldset>`}
 
-      <fieldset><legend>Where? <span class="req">*</span></legend>
-        ${(S.group ? S.group.spots : CONFIG.pickupOptions).map((o, i) => `<label class="choice"><input type="radio" name="pickup" value="${esc(o)}" ${i === 0 ? 'checked' : ''}>${ic('pin', 20)}<span>${esc(o)}</span></label>`).join('')}
-        ${CONFIG.allowCustomPickup && !S.group ? `<label class="choice"><input type="radio" name="pickup" value="__other">${ic('school', 20)}<span>Somewhere else in school</span></label>
+      <fieldset id="whereSet"><legend>Where? <span class="req">*</span></legend>
+        ${S.people.length && S.linkPerson ? peopleChoicesHTML() : ''}
+        ${S.people.length ? '<p class="pgroup-h">At school</p>' : ''}
+        ${CONFIG.pickupOptions.map((o, i) => `<label class="choice"><input type="radio" name="pickup" value="${esc(o)}" ${i === 0 && !S.linkPerson ? 'checked' : ''}>${ic('pin', 20)}<span>${esc(o)}</span></label>`).join('')}
+        ${CONFIG.allowCustomPickup ? `<label class="choice"><input type="radio" name="pickup" value="__other">${ic('school', 20)}<span>Somewhere else in school</span></label>
         <div id="otherBox" hidden>
           <label class="lab" for="otherPlace" style="display:block;margin:6px 0">Where in school?</label>
           <input class="inp" id="otherPlace" maxlength="80" aria-describedby="e-place">
           <p class="ferr" id="e-place" role="alert"></p>
         </div>` : ''}
-        ${S.group ? '' : `<p class="nudge">${ic('search', 18)}At the gate, look for ${esc(signal())}.</p>`}
+        <p class="nudge" id="gateNudge">${ic('search', 18)}At the gate, look for ${esc(signal())}.</p>
+        ${S.people.length && !S.linkPerson ? peopleChoicesHTML() : ''}
+        <p class="ferr" id="e-where" role="alert"></p>
       </fieldset>
           ${btn('Next', { act: 'coNext', cls: 'wide', icon: 'arrow', attrs: 'data-s="2"' })}
         </div></section>
@@ -4508,7 +4573,7 @@ function viewCheckout(){
       <section class="cstep" data-step="3">
         <div class="chead"><i>3</i><b>Pay</b></div>
         <div class="cbody">
-          ${S.group ? `<p class="grpchip">${ic('check', 15)}<span>Group pickup</span><button type="button" class="linkbtn" data-act="groupOff">Turn off</button></p>` : ''}${codeCardHTML()}
+${codeCardHTML()}
 
       <fieldset><legend>How will you pay?</legend>
         <label class="choice"><input type="radio" name="pay" value="cash" checked>${ic('cash', 20)}<span>Cash when I pick up</span></label>
@@ -4535,6 +4600,8 @@ function viewCheckout(){
     </form></main>`;
   const form = $('#orderForm');
   const sync = () => {
+    syncPerson(form);
+    const pe = S.coPerson;
     if ($('#otherBox')) $('#otherBox').hidden = radio(form, 'pickup') !== '__other';
     if ($('#gcashBox')) $('#gcashBox').hidden = radio(form, 'pay') !== 'gcash';
     const place = radio(form, 'pickup') === '__other' ? 'my chosen spot' : radio(form, 'pickup');
@@ -4543,7 +4610,7 @@ function viewCheckout(){
     const mark = (r, ok, note) => { r.disabled = !ok; const c = r.closest('.choice'); c.classList.toggle('off', !ok); if (note && !ok) c.dataset.note = note; else delete c.dataset.note; if (!ok && r.checked) r.checked = false; };
     const pickFirst = name => { if (!radio(form, name)) { const first = form.querySelector(`input[name="${name}"]:not(:disabled)`); if (first) first.checked = true; } };
     let ds = radio(form, 'pdate');
-    if (!S.group) {   // XU pickup limits; group pickups have their own days and no limits
+    if (!pe) {   // school pickup limits; pickup people have their own days and no limits
     // full days
     form.querySelectorAll('input[name="pdate"]').forEach(r => mark(r, !slotState(r.value).dayFull, 'Full'));
     pickFirst('pdate');
@@ -4554,25 +4621,27 @@ function viewCheckout(){
     pickFirst('ptime');
     // one gate per time slot for each person on pickup duty
     const ts = radio(form, 'ptime'), st2 = slotState(ds, ts);
-    form.querySelectorAll('input[name="pickup"]').forEach(r => { const gate = r.value === '__other' ? null : r.value;
+    form.querySelectorAll('input[name="pickup"]').forEach(r => { if (r.value.startsWith('@')) return; const gate = r.value === '__other' ? null : r.value;
       const sg = gate ? slotState(ds, ts, gate) : null, full = !!sg && sg.slotFull;
       const taken = r.value === '__other' ? CONFIG.sellersAtPickup > 0 && st2.gates.length >= CONFIG.sellersAtPickup : sg.gateTaken;
       mark(r, !taken && !full, full ? 'Full at this time' : `At this time we'll be at ${st2.gates.join(' or ')}`); });
     }
     pickFirst('pickup');
-    const dsx = S.addTo ? S.addTo.pickup_date : ds;   // an add-on uses its order's pickup
+    const dsx = S.addTo ? S.addTo.pickup_date : pe ? radio(form, 'pday') : ds;   // an add-on uses its order's pickup
     $('#sumBox').innerHTML = checkoutSummary(dsx);
     if ($('#gcashAmt')) $('#gcashAmt').textContent = money(checkoutTotal(dsx));
     $('#promiseTxt').innerHTML = S.addTo
       ? `I'll pick it up with <b>${esc(S.addTo.code)}</b> on <b>${esc(fmtDate(S.addTo.pickup_date))}</b>, <b>${esc(S.addTo.pickup_time || '')}</b>, at <b>${esc(S.addTo.pickup || '')}</b>`
+      : pe ? `I'll meet <b>${esc(personName(pe))}</b> on <b>${esc(fmtDate(radio(form, 'pday')))}</b> at <b>${esc(radio(form, 'pspot') || '')}</b>`
       : `I'll pick it up on <b>${esc(fmtDate(radio(form, 'pdate')))}</b>, <b>${esc(radio(form, 'ptime'))}</b>, at <b>${esc(place)}</b>`;
+    if ($('#e-where') && $('#e-where').textContent && (pe || S.me || !CONFIG.requireXu)) $('#e-where').textContent = '';
   };
   form.addEventListener('change', sync); sync();
   loadAvail(dates).then(() => { if (document.body.contains(form)) sync(); });
   if ($('#promo')) $('#promo').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ACTIONS.promoApply(); } });   // no box once a code is in
   // errors clear the moment they're fixed (while typing), so nothing moves when they tap Next
   ['nick','sec','grade','otherPlace'].forEach(id => $('#' + id) && ['input', 'change'].forEach(ev => $('#' + id).addEventListener(ev, () => { validate(false); coRender(); })));
-  form.addEventListener('submit', e => { if (CONFIG.requireXu && !S.group && !S.me && !S.coAdmin) { e.preventDefault(); S.coStep = 1; coRender(); toast('Sign in with your XU account first.'); return; } if (S.coStep < 3) { e.preventDefault(); ACTIONS.coNext({ dataset: { s: String(S.coStep) } }); return; } submitOrder(e); });
+  form.addEventListener('submit', e => { if (xuNeeded()) { e.preventDefault(); S.coStep = S.people.length ? 2 : 1; coRender(); toast(S.people.length ? 'Sign in with your XU account for pickup at school, or pick up from a person.' : 'Sign in with your XU account first.'); return; } if (S.coStep < 3) { e.preventDefault(); ACTIONS.coNext({ dataset: { s: String(S.coStep) } }); return; } submitOrder(e); });
   checkoutAdminMode();
   if (S.addTo) {
     if (!$('#nick').value.trim()) $('#nick').value = S.addTo.nickname || '';
@@ -4583,21 +4652,52 @@ function viewCheckout(){
   }
   coRender();
 }
+/* "Pick up from a person": each person is one choice under Where?. Choosing one opens their own spots and days
+   right under their card, and the school's day and time questions step aside (they don't apply). */
+function peopleChoicesHTML(){
+  return `<p class="pgroup-h">Pick up from a person</p>
+    ${S.people.map(p => `<label class="choice pchoice"><input type="radio" name="pickup" value="@${esc(p.id)}" ${S.linkPerson && S.linkPerson.id === p.id ? 'checked' : ''}>${ic('user', 20)}<span><b>${esc(personName(p))}</b><small>${p.label ? `${esc(p.label)}. ` : ''}${esc(personDays(p))}</small></span></label>`).join('')}`;
+}
+function personBoxHTML(p, keep){
+  const dates = personDates(p), spot = keep && keep.spot, day = keep && keep.day;
+  return `<div class="pbox" id="personBox" data-pid="${esc(p.id)}">
+    <span class="pbox-l" id="l-pspot">Meet ${esc(personName(p))} where?</span>
+    <div role="radiogroup" aria-labelledby="l-pspot">${(p.spots || []).map((s, i) => `<label class="choice"><input type="radio" name="pspot" value="${esc(s)}" ${(spot ? spot === s : i === 0) ? 'checked' : ''}>${ic('pin', 20)}<span>${esc(s)}</span></label>`).join('')}</div>
+    <span class="pbox-l" id="l-pday">Which day?</span>
+    <div role="radiogroup" aria-labelledby="l-pday">${dates.map((d, i) => `<label class="choice"><input type="radio" name="pday" value="${d}" ${(day ? day === d : i === 0) ? 'checked' : ''}>${ic('calendar', 20)}<span><b>${esc(fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' }))}</b></span></label>`).join('')}</div>
+    <p class="help" style="margin:4px 0 0">Ready 2 days after you order. No rush fee.</p></div>`;
+}
+const chosenPerson = form => { const v = radio(form, 'pickup'); return v && v.startsWith('@') ? S.people.find(p => '@' + p.id === v) || null : null; };
+function syncPerson(form){
+  const p = chosenPerson(form), box = $('#personBox');
+  S.coPerson = p;
+  if (p && box && box.dataset.pid === p.id) (S.coPicks = S.coPicks || {})[p.id] = { spot: radio(form, 'pspot'), day: radio(form, 'pday') };
+  ['whenSet', 'timeSet'].forEach(id => { const el = $('#' + id); if (el) el.hidden = !!p; });
+  const nudge = $('#gateNudge'); if (nudge) nudge.hidden = !!p;
+  if (!p) { if (box) box.remove(); return; }
+  if (!box || box.dataset.pid !== p.id) {
+    if (box) box.remove();
+    const card = form.querySelector(`input[name="pickup"][value="@${CSS.escape(p.id)}"]`).closest('.choice');
+    card.insertAdjacentHTML('afterend', personBoxHTML(p, (S.coPicks || {})[p.id]));
+  }
+}
 /* Checkout steps: only the current one is open; finished ones shrink to a one-line summary */
 function coRender(){
   const form = $('#orderForm'); if (!form) return;
   form.querySelectorAll('.cstep').forEach(el => { const n = +el.dataset.step; el.classList.toggle('on', n === S.coStep); el.classList.toggle('done', n < S.coStep); el.classList.toggle('todo', n > S.coStep); });
   const g = $('#grade').value, sec = $('#sec').value.trim(), nm = $('#nick').value.trim();
-  $('#csum1').textContent = nm ? `${nm}${g ? `, ${g} - ${sec}` : ''}` : '';
-  const d = radio(form, 'pdate'), t = radio(form, 'ptime'), pl = radio(form, 'pickup');
-  $('#csum2').textContent = d ? `${fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' })}, ${String(t || '').replace(/\s*\(.*\)/, '')}, ${pl === '__other' ? (($('#otherPlace') || {}).value || 'in school') : pl}` : '';
+  const gs = S.coFreeSec ? sec : g ? `${g} - ${sec}` : '';
+  $('#csum1').textContent = nm ? `${nm}${gs ? `, ${gs}` : ''}` : '';
+  const pe = chosenPerson(form), d = pe ? radio(form, 'pday') : radio(form, 'pdate'), t = radio(form, 'ptime'), pl = radio(form, 'pickup');
+  $('#csum2').textContent = !d ? '' : pe ? `${fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' })}, ${personName(pe)}, ${radio(form, 'pspot') || ''}`
+    : `${fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' })}, ${String(t || '').replace(/\s*\(.*\)/, '')}, ${pl === '__other' ? (($('#otherPlace') || {}).value || 'in school') : pl}`;
   const tot = $('#ordTot'); if (tot) tot.textContent = money(checkoutTotal(d));
   const pb = $('#placeBtn span'); if (pb) pb.textContent = `Place my order · ${money(checkoutTotal(d))}`;
   // the ID preview and the name double-check follow what they type
   const idn = $('#idName'), ids = $('#idSec'), ncn = $('#ncName');
   if (idn) { idn.textContent = nm || 'Your full name'; idn.classList.toggle('ph', !nm); }
-  if (ids) ids.textContent = g || sec ? `Grade ${g || '?'} - ${sec || '?'}` : 'Grade - Section';
-  if (ncn) ncn.textContent = nm ? `${nm}, ${g} - ${sec}` : '';
+  if (ids) ids.textContent = S.coFreeSec ? sec || 'Grade - Section' : g || sec ? `Grade ${g || '?'} - ${sec || '?'}` : 'Grade - Section';
+  if (ncn) ncn.textContent = nm ? `${nm}, ${gs}` : '';
 }
 /* Re-render checkout but keep what the customer already typed */
 /* ---------- Feedback: one tap counts, details are optional, never asked twice for the same order ---------- */
@@ -4692,6 +4792,8 @@ function setErr(inputId, errId, msg){
   const inp = inputId && $('#' + inputId); if (inp) inp.setAttribute('aria-invalid', msg ? 'true' : 'false');
   return !msg;
 }
+// XU sign-in (when required) is for pickup at school. Pickup people don't need it.
+const xuNeeded = () => CONFIG.requireXu && !S.me && !S.coAdmin && !S.linkPerson && !S.coPerson && !S.addTo;
 function validate(all){
   const form = $('#orderForm'); if (!form) return false;
   // While typing, only clear errors that are already showing; new errors appear when they tap Next or Place.
@@ -4706,13 +4808,13 @@ function validateFields(form, which){
   let ok = true;
   if (which.nick) ok = setErr('nick', 'e-nick', nick.length < 2 ? 'Type your full name.' : !/\S+\s+\S+/.test(nick) ? 'Type your first and last name, as on your school ID.' : '') && ok;
   if (which.sec) {
-    const msg = S.group ? (sec.length < 2 ? 'Type your grade and section.' : '') : !grade && sec.length < 2 ? 'Pick your grade and type your section.' : !grade ? 'Pick your grade.' : sec.length < 2 ? 'Type your section.' : '';
+    const msg = S.coFreeSec ? (sec.length < 2 ? 'Type your grade and section.' : '') : !grade && sec.length < 2 ? 'Pick your grade and type your section.' : !grade ? 'Pick your grade.' : sec.length < 2 ? 'Type your section.' : '';
     ok = setErr('sec', 'e-sec', msg) && ok;
     $('#grade').setAttribute('aria-invalid', grade ? 'false' : String(!!msg));
     if (grade && sec.length >= 2) $('#sec').setAttribute('aria-invalid', 'false');
   }
   if (other && which.place) ok = setErr('otherPlace', 'e-place', $('#otherPlace').value.trim().length < 3 ? 'Tell us where in school to meet.' : '') && ok;
-  if (all) ok = setErr(null, 'e-promise', !radio(form, 'pdate') && !S.addTo ? 'Pick a pickup date.' : $('#promise').checked ? '' : 'Tick the box to promise you will pick it up.') && ok;
+  if (all) ok = setErr(null, 'e-promise', !S.addTo && (S.coPerson ? !radio(form, 'pday') || !radio(form, 'pspot') : !radio(form, 'pdate')) ? 'Pick a pickup day and place.' : $('#promise').checked ? '' : 'Tick the box to promise you will pick it up.') && ok;
   return ok;
 }
 async function submitOrder(e){
@@ -4720,9 +4822,11 @@ async function submitOrder(e){
   const form = e.target; $('#formErr').textContent = '';
   if ($('#website').value) return;
   if (!validate(true)) { const bad = form.querySelector('[aria-invalid="true"]') || $('#promise'); bad.focus(); return; }
-  const nickname = $('#nick').value.trim(), section = S.group ? $('#sec').value.trim() : `${$('#grade').value} - ${$('#sec').value.trim()}`;
+  const nickname = $('#nick').value.trim(), section = S.coFreeSec ? $('#sec').value.trim() : `${$('#grade').value} - ${$('#sec').value.trim()}`;
+  const person = S.addTo ? null : chosenPerson(form);
   let pickup = radio(form, 'pickup'); if (pickup === '__other') pickup = 'Other: ' + $('#otherPlace').value.trim();
   let pickupDate = radio(form, 'pdate'), pickupTime = radio(form, 'ptime');
+  if (person) { pickup = radio(form, 'pspot'); pickupDate = radio(form, 'pday'); pickupTime = 'Any time'; }
   if (S.addTo) { pickup = S.addTo.pickup; pickupDate = S.addTo.pickup_date; pickupTime = S.addTo.pickup_time; }   // same pickup as the order it adds to
   const payment = radio(form, 'pay'), gcashRef = $('#gref') ? $('#gref').value.trim() : '';
   const b = $('#placeBtn'); b.disabled = true; b.innerHTML = '<span>Sending your order</span><span class="bi"><span class="spin"></span></span>';
@@ -4734,9 +4838,9 @@ async function submitOrder(e){
       const d = prsDoc(f.id); if (d && d.kind === 'image' && d.canvas) pages[f.id] = await renderPrintPage(f, d, (it.addons || []).includes('color'));
     }
     const uploads = S.images.concat((S.docs || []).map(d => pages[d.id] || d)).filter(i => used.has(i.id));
-    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: S.addTo ? '' : SRC, promo: S.promo && !S.promo.seller && sum.total >= S.promo.min_total ? S.promo.code : null, seller: CONFIG.sellersOn ? (S.promo && S.promo.seller ? S.promo.code : sellerRef()) || null : null, school: S.group ? S.group.code : null, images: uploads, items: S.cart, addTo: S.addTo && S.addTo.code });
+    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: S.addTo ? '' : SRC, promo: S.promo && !S.promo.seller && sum.total >= S.promo.min_total ? S.promo.code : null, seller: CONFIG.sellersOn ? (S.promo && S.promo.seller ? S.promo.code : sellerRef()) || null : null, school: person && person.linked ? S.linkCode : null, person: person ? person.id : null, images: uploads, items: S.cart, addTo: S.addTo && S.addTo.code });
     const addedTo = S.addTo && S.addTo.code; S.addTo = null;
-    S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal, add_to: addedTo || null, for_someone: !!S.coAdmin, group: !!S.group };
+    S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal, add_to: addedTo || null, for_someone: !!S.coAdmin, group: !!person, person_name: person ? personName(person) : null };
     try { const real = await api.getOrder(code, nickname); if (real && real.total !== finalTotal) { S.lastOrder.total = real.total; if (real.total < finalTotal) setTimeout(() => toast(`Your friend credit took ${money(finalTotal - real.total)} off. New total: ${money(real.total)}.`), 900); } } catch {}
     S.promo = null;
     S.celebrate = true; S.codeSaved = false; S.passPrint = true; setTimeout(loadMyOrder, 800); buzz([12, 40, 18]);
@@ -4765,7 +4869,7 @@ function passHTML(o, stamp, live){
     <div class="side">${d ? `<span class="m">${fmtDate(d, { weekday: 'short' })}</span><span class="dd">${parseYmd(d).getDate()}</span><span class="m">${fmtDate(d, { month: 'short' })}</span>` : ic('box', 40)}</div>
     <div class="body"><div class="k">Pickup pass</div><div class="code">${esc(o.code)}</div>
       <div class="who">${esc(o.nickname)}${o.section ? ', ' + esc(o.section) : ''}</div>
-      <p class="tip">${ic('pin', 16)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span></p></div></div>`;
+      <p class="tip">${ic(o.group ? 'user' : 'pin', 16)}<span>${o.group ? `Meet ${esc(o.person_name || 'your pickup person')} at ${esc(o.pickup)}` : `${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}`}</span></p></div></div>`;
 }
 function icsFor(o){
   if (!o.pickup_date) return '';
@@ -4777,7 +4881,7 @@ function icsFor(o){
     `UID:${o.code}@stick2xu`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`,
     `DTSTART:${t(h, mi)}`, `DTEND:${t(Math.floor(end / 60), end % 60)}`,
     `SUMMARY:Pick up Stick2It order ${o.code}`, `LOCATION:${o.pickup}${o.group ? '' : ' (inside campus)'}`,
-    `DESCRIPTION:${o.group ? `Hand-off of your Stick2It order at ${o.pickup}.` : `Look for ${signal()}. Tap I'm here in My order when you arrive.`}`,
+    `DESCRIPTION:${o.group ? `Meet ${o.person_name || 'your pickup person'} at ${o.pickup} for your Stick2It order.` : `Look for ${signal()}. Tap I'm here in My order when you arrive.`}`,
     'BEGIN:VALARM', 'TRIGGER:-PT30M', 'ACTION:DISPLAY', 'DESCRIPTION:Stick2It pickup soon', 'END:VALARM',
     'END:VEVENT',
     ...(confirmBy(o) ? ['BEGIN:VEVENT', `UID:${o.code}-confirm@stick2xu`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`,
@@ -4816,7 +4920,7 @@ function viewDone(){
         ${confirmBy(o) && confirmBy(o) > ymd(new Date())
           ? `<li><b>Confirm by ${esc(dayWord(confirmBy(o)))}.</b> In My order, tap "I'll be there".</li>`
           : `<li><b>You're confirmed.</b> We'll start on it right away.</li>`}
-        ${o.group ? `<li><b>Hand-off at ${esc(o.pickup)}</b> on ${esc(fmtDate(o.pickup_date, { weekday: 'long', month: 'short', day: 'numeric' }))}.</li>
+        ${o.group ? `<li><b>Meet ${esc(o.person_name || 'your pickup person')} at ${esc(o.pickup)}</b> on ${esc(fmtDate(o.pickup_date, { weekday: 'long', month: 'short', day: 'numeric' }))}.</li>
         <li><b>Bring ${money(o.total)}${gcash ? ' (or your GCash reference)' : ''}.</b></li>` : `<li><b>At the gate, tap "I'm here".</b> Look for ${esc(signal())}.</li>
         <li><b>Bring ${money(o.total)}${gcash ? ' (or your GCash reference)' : ''}</b> and your school ID.</li>`}
       </ol>
@@ -4908,7 +5012,7 @@ function drawStatus(){
       ${o.status === 'rejected' && o.reject_reason ? `<p style="margin-top:14px"><b>Reason:</b> ${esc(o.reject_reason)}</p>${btn('Make a new design', { href: '#/design' })}` : ''}
       ${o.status === 'ready' ? `<div class="pt hi" style="margin-top:16px">
           <span class="k">${ic('search', 16)}At pickup</span>
-          <b>${o.group ? `Hand-off at ${esc(o.pickup)}` : `Look for ${esc(signal())} at ${esc(o.pickup)}`}</b>
+          <b>${o.group ? `Meet ${esc(o.person_name || 'your pickup person')} at ${esc(o.pickup)}` : `Look for ${esc(signal())} at ${esc(o.pickup)}`}</b>
           <span>${o.paid ? "You've already paid, so just grab your stickers. That's it." : `Bring <b class="num" style="font-size:inherit;font-family:inherit">${money(o.total - (o.amount_paid || 0))}</b>${o.amount_paid ? ` (you've paid ${money(o.amount_paid)} already)` : ''}, exact change if you can. Grab your order, and that's it.`}</span></div>
         ${o.group ? '' : `<div style="margin-top:14px">${o.arrived
           ? `<span class="tag ok" style="font-size:15px;padding:8px 12px">${ic('check', 16)}They know you're here. Look for ${esc(signal())}.</span>`
@@ -5081,17 +5185,29 @@ async function drawLatest(quiet){
   if (lf === 'feedback') api.feedbackList().then(l => { const el = $('#fbPanel'); if (el) el.innerHTML = feedbackPanelHTML(l) || '<p class="muted" style="padding:14px 4px">No feedback yet. Customers can rate their order after ordering and after pickup.</p>'; }).catch(e => { const el = $('#fbPanel'); if (el) el.innerHTML = `<div class="formerr">${esc(friendlyError(e))}</div>`; });
   const dot = $('#latestDot'); if (dot) dot.hidden = true;
 }
+/* Admin: one chip per pickup person (plus "At school"), so each person's orders are one tap away */
+const personAdminName = p => !p ? 'Pickup person' : p.first_name || (p.note ? `No name (${p.note})` : 'No name yet');
+function personChipsHTML(all, f, who){
+  const ppl = S.admin.peopleList || [], used = new Set(all.map(o => o.person_id || o.school_id).filter(Boolean));
+  const shown = ppl.filter(p => p.enabled || used.has(p.id)); if (!shown.length) return '';
+  const n = test => all.filter(o => inFilter(o, f) && test(o)).length;
+  const chip = (id, label, c) => `<button class="chip ${who === id ? 'on' : ''}" type="button" data-act="admPerson" data-p="${esc(id)}" aria-pressed="${who === id}">${label}${c ? `<span class="c num">${c}</span>` : ''}</button>`;
+  return `<div class="chips pchips" role="group" aria-label="Pickup"><span class="pchips-l">${ic('user', 16)}Pickup</span>${chip('', 'Everyone', 0)}${chip('school', 'At school', n(o => !(o.person_id || o.school_id)))}
+    ${shown.map(p => chip(p.id, esc(personAdminName(p)), n(o => (o.person_id || o.school_id) === p.id))).join('')}</div>`;
+}
 async function drawAdminBody(){
   { const ab = $('#admBody'); if (ab) ab.classList.remove('setgrid'); }   // the Settings sidebar layout only belongs to Settings
   checkLatestDot();
   if (S.admin.tab === 'latest') return drawLatest();
-  if (S.admin.schoolMap === undefined) { S.admin.schoolMap = {}; api.schools().then(l => { S.admin.schoolMap = Object.fromEntries(l.map(x => [x.id, x])); if (l.length && S.admin.tab === 'orders') drawAdminBody(); }).catch(() => {}); }
+  if (S.admin.peopleMap === undefined) { S.admin.peopleMap = {}; api.people().then(l => { S.admin.peopleList = l; S.admin.peopleMap = Object.fromEntries(l.map(x => [x.id, x])); if (l.length && S.admin.tab === 'orders') drawAdminBody(); }).catch(() => {}); }
   if (S.admin.tab === 'money') return drawLogbook();
   if (S.admin.tab === 'sellers') return drawSellers();
   if (S.admin.tab === 'posters') return drawPosters();
   if (S.admin.tab === 'settings') { const r = drawSettings(); setupSettingsNav(); return r; }
-  const all = S.admin.orders, f = S.admin.filter;
-  const list = all.filter(o => inFilter(o, f));
+  const all = S.admin.orders, f = S.admin.filter, who = S.admin.person || '';
+  // Pickup person filter: '' everyone, 'school' pickup at school, or one person's id
+  const whoOk = o => !who || (who === 'school' ? !(o.person_id || o.school_id) : (o.person_id || o.school_id) === who);
+  const list = all.filter(o => inFilter(o, f) && whoOk(o));
   if (f === 'ready') list.sort((a, b) => (b.arrived_at ? 1 : 0) - (a.arrived_at ? 1 : 0) || String(a.pickup_date).localeCompare(String(b.pickup_date)) || String(a.pickup_time).localeCompare(String(b.pickup_time)) || a.pickup.localeCompare(b.pickup));
   clearInterval(S.admin.poll);
   if (f === 'ready') S.admin.poll = setInterval(pollReady, S.admin.pickupMode ? 8000 : 15000);
@@ -5108,8 +5224,9 @@ async function drawAdminBody(){
 
   $('#admBody').innerHTML = `
     ${upcomingHTML(all)}
-    <div class="chips">${FILTERS.map(([k, l]) => { const c = all.filter(o => inFilter(o, k)).length;
+    <div class="chips">${FILTERS.map(([k, l]) => { const c = all.filter(o => inFilter(o, k) && whoOk(o)).length;
       return `<button class="chip ${f === k ? 'on' : ''}" type="button" data-act="admFilter" data-f="${k}">${l}${c && ACTIVE.includes(k) ? `<span class="c num">${c}</span>` : ''}</button>`; }).join('')}</div>
+    ${personChipsHTML(all, f, who)}
     ${f === 'approved' ? (() => { const days = [...new Set(all.filter(o => ['approved', 'printing'].includes(o.status) && o.confirmed && o.pickup_date).map(o => o.pickup_date))].sort();
       return days.length ? `<div class="batchbar">${ic('printer', 18)}<span>Print everything for a pickup day in one PDF:</span>${days.map(d => smallBtn(`${fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' })} (${all.filter(o => ['approved', 'printing'].includes(o.status) && o.confirmed && o.pickup_date === d).length})`, 'printer', 'aBatch', 'dark', `data-date="${d}"`)).join('')}</div>` : ''; })() : ''}
     ${f === 'approved' ? (() => { const po = all.filter(pinsWaiting);
@@ -5166,7 +5283,7 @@ async function drawAdminBody(){
           <div><div class="ocode">${esc(o.code)}</div><div class="muted small">Pickup ${o.pickup_date ? esc(fmtDate(o.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' })) + (o.pickup_time ? `, ${esc(o.pickup_time)}` : '') : 'date not set'}, ordered ${fmtTime(o.created_at)}</div></div>
           ${o.status === 'done' ? `<b class="oprice num">${peso(o.total)}</b>` : `<span class="tag st ${stCls[o.status] || ''}">${ic(STATUS[o.status][0], 16)}${esc(o.status)}</span>`}</div>
         <div class="ometa">
-          <div><span><b>${esc(o.nickname)}</b>, ${esc(o.grade_section)}</span>${o.school_id ? ` <span class="tag grp">${ic('school', 14)}${esc(((S.admin.schoolMap || {})[o.school_id] || {}).name || 'Other school')}</span>` : ''}${o.seller_code ? ` <span class="tag sell">${ic('sparkle', 14)}via ${esc(o.seller_code)}</span>` : ''}</div>
+          <div><span><b>${esc(o.nickname)}</b>, ${esc(o.grade_section)}</span>${o.person_id || o.school_id ? ` <span class="tag grp">${ic('user', 14)}${esc(personAdminName((S.admin.peopleMap || {})[o.person_id || o.school_id]))}</span>` : ''}${o.seller_code ? ` <span class="tag sell">${ic('sparkle', 14)}via ${esc(o.seller_code)}</span>` : ''}</div>
           <div>${ic('pin', 18)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span></div>
           <div>${ic('cash', 18)}<span class="num">${money(o.total)}${!o.paid && o.amount_paid ? ` (paid ${money(o.amount_paid)}, owes ${money(o.total - o.amount_paid)})` : ''}, ${o.payment === 'gcash' ? `GCash${o.gcash_ref ? ` (ref ${esc(o.gcash_ref)})` : ', no ref yet'}` : 'cash'}</span></div>
           <ul class="ilist">${orderItems(o).map(it => `<li>${ic(it.type === 'stickers' ? 'sticker' : it.type === 'pins' ? 'badge' : it.type === 'posters' ? 'image' : it.type === 'prints' ? 'doc' : 'keychain', 18)}<span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `, ${esc(itemDetails(it))}` : ''}</span></li>`).join('')}</ul>
@@ -5594,8 +5711,8 @@ function drawSettings(){
   S.admin.prodDraft = clone(S.settings.products); S.admin.prodOrder = productKeys(); drawProducts();
   $('#admBody').insertAdjacentHTML('beforeend', `<form class="panel" id="dealForm" style="max-width:820px;margin-top:20px"></form>
     <div class="panel" id="promoPanel" style="max-width:820px;margin-top:20px"></div>
-    <div class="panel" id="schoolPanel" style="max-width:820px;margin-top:20px"></div>`);
-  S.admin.dealDraft = clone(S.settings.deals || []); drawDeals(); drawPromos(); drawSchools();
+    <div class="panel" id="peoplePanel" style="max-width:820px;margin-top:20px"></div>`);
+  S.admin.dealDraft = clone(S.settings.deals || []); drawDeals(); drawPromos(); drawPeople();
   $('#admBody').insertAdjacentHTML('beforeend', `<form class="panel" id="tgForm" style="max-width:820px;margin-top:20px"></form><form class="panel" id="noticeForm" style="max-width:820px;margin-top:20px"></form><form class="panel" id="shopForm" style="max-width:820px;margin-top:20px"></form>`);
   drawNoticeForm(); loadTelegram();
   S.admin.cfg = {
@@ -6022,27 +6139,42 @@ function newDeal(type){
   if (type === 'tiers') return { id: 'd_' + uid(), type, product: 'pins', tiers: [{ min: 10, off: 3 }, { min: 20, off: 5 }, { min: 30, off: 8 }, { min: 40, off: 10 }], enabled: true };
   return { id: 'd_' + uid(), type: 'freebie', product: 'pins', buy: 5, free: 1, enabled: true };
 }
-/* Other schools: a private code lets another school order, with its own meetup spots and hand-off days */
-const DAYS3 = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+/* Pickup people: someone who hands orders over at their own spots and days (outside school, or another school).
+   Customers see the first name and the short label. The note is only for admins. */
 const groupLink = code => `${CONFIG.siteUrl || location.origin + '/'}?g=${code}`;
 const newGroupCode = () => Array.from({ length: 6 }, () => 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 31)]).join('');
-async function drawSchools(){
-  const box = $('#schoolPanel'); if (!box) return;
-  let list; try { list = await api.schools(); } catch (e) { box.innerHTML = `<h3>Other schools</h3><div class="formerr">${esc(friendlyError(e))} Run the latest schema.sql in Supabase.</div>`; return; }
-  S.admin.schoolList = list; S.admin.schoolMap = Object.fromEntries(list.map(x => [x.id, x]));
-  box.innerHTML = `<h3 style="margin-bottom:4px">${ic('school', 18)} Other schools</h3>
-    <p class="help">Lets people from another school order with a private code: their own meetup spots and hand-off days, no XU sign-in, earliest pickup 2 days after ordering. Customers only see "Group pickup", never the school's name. Their orders don't count toward your XU pickup limits.</p>
-    ${list.map(sc => `<div class="schoolcard ${sc.enabled ? '' : 'off'}" data-sid="${sc.id}">
-      <div class="sc-head"><input class="inp" data-sf="name" maxlength="60" value="${esc(sc.name)}" placeholder="School name (only you see this)" aria-label="School name">
-        <label class="switch"><input type="checkbox" data-sf="enabled" ${sc.enabled ? 'checked' : ''}><span>On</span></label></div>
-      <label class="lab" style="display:block;margin:10px 0 6px">Meetup spots, one per line</label>
-      <textarea class="inp" data-sf="spots" rows="3" placeholder="Like: Main gate">${esc((sc.spots || []).join('\n'))}</textarea>
-      <span class="lab" style="display:block;margin:10px 0 6px">Hand-off days</span>
-      <div class="daypick">${DAYS3.map((d, i) => `<label><input type="checkbox" data-sday="${i}" ${(sc.days || []).includes(i) ? 'checked' : ''}><span>${d}</span></label>`).join('')}</div>
-      <div class="grpcode"><span>Code <b>${esc(sc.code)}</b></span><span class="muted small">${esc(groupLink(sc.code).replace(/^https?:\/\//, ''))}</span></div>
-      ${!(sc.spots || []).length ? '<p class="ferr" style="margin:6px 0 0">Add at least one meetup spot. Until then, the code does nothing.</p>' : ''}
-      <div class="acts">${smallBtn('Save', 'check', 'schoolSave', 'dark', `data-sid="${sc.id}"`)}${smallBtn('Copy link', 'copy', 'schoolCopy', 'plain', `data-sid="${sc.id}"`)}${smallBtn('New code', 'refresh', 'schoolNewCode', 'plain', `data-sid="${sc.id}"`)}${smallBtn('', 'trash', 'schoolDel', 'plain', `data-sid="${sc.id}" aria-label="Delete ${esc(sc.name || 'school')}"`)}</div></div>`).join('')}
-    ${smallBtn('Add a school', 'plus', 'schoolAdd', 'plain')}`;
+async function drawPeople(){
+  const box = $('#peoplePanel'); if (!box) return;
+  let list; try { list = await api.people(); } catch (e) { box.innerHTML = `<h3>Pickup people</h3><div class="formerr">${esc(friendlyError(e))} Run the latest schema.sql in Supabase.</div>`; return; }
+  S.admin.peopleList = list; S.admin.peopleMap = Object.fromEntries(list.map(x => [x.id, x]));
+  const counts = {}; (S.admin.orders || []).forEach(o => { const k = o.person_id || o.school_id; if (k && ACTIVE.includes(o.status)) counts[k] = (counts[k] || 0) + 1; });
+  box.innerHTML = `<h3 style="margin-bottom:4px">${ic('user', 18)} Pickup people</h3>
+    <p class="help">People who hand orders over at their own spots and days. At checkout they show under <b>Where?</b> as "Pick up from a person". Orders need 2 days, skip XU sign-in, and don't count toward the school pickup limits.</p>
+    ${list.length ? '' : '<p class="pp-empty">No pickup people yet. Add one to offer pickups outside school.</p>'}
+    ${list.map(sc => `<div class="schoolcard pcard ${sc.enabled ? '' : 'off'}" data-sid="${sc.id}">
+      <div class="pc-top"><span class="pc-av" aria-hidden="true">${esc((sc.first_name || '?').slice(0, 1).toUpperCase())}</span>
+        <span class="pc-t"><b>${esc(sc.first_name || 'No name yet')}</b><small>${sc.enabled ? (sc.public ? 'Everyone can pick them' : 'Only people with their link') : 'Off'}${counts[sc.id] ? `, ${counts[sc.id]} open order${counts[sc.id] === 1 ? '' : 's'}` : ''}</small></span></div>
+      <div class="pc-sw">
+        <label class="switch"><input type="checkbox" data-pfsw="enabled" data-sid="${sc.id}" ${sc.enabled ? 'checked' : ''}><span>On</span></label>
+        <label class="switch"><input type="checkbox" data-pfsw="public" data-sid="${sc.id}" ${sc.public ? 'checked' : ''}><span>Show to everyone</span></label></div>
+      <div class="pc-grid">
+        <label class="pc-f"><span class="lab">First name</span><input class="inp" data-sf="first_name" maxlength="30" value="${esc(sc.first_name)}" placeholder="Like: Ana"></label>
+        <label class="pc-f"><span class="lab">Short label <span class="muted small">optional</span></span><input class="inp" data-sf="label" maxlength="40" value="${esc(sc.label)}" placeholder="Like: Lumbia side"></label></div>
+      ${!sc.first_name ? '<p class="ferr" style="margin:0 0 6px">Type a first name. Customers see "Pickup person" until you do.</p>' : ''}
+      <label class="pc-f"><span class="lab">Meetup spots, one per line</span><textarea class="inp" data-sf="spots" rows="3" placeholder="Like: Jollibee Limketkai">${esc((sc.spots || []).join('\n'))}</textarea></label>
+      ${!(sc.spots || []).length ? '<p class="ferr" style="margin:6px 0 0">Add at least one meetup spot. Until then, customers don\'t see this person.</p>' : ''}
+      <span class="lab" style="display:block;margin:12px 0 6px">Handover days</span>
+      <div class="daypick">${[1, 2, 3, 4, 5, 6, 0].map(i => `<label><input type="checkbox" data-sday="${i}" ${(sc.days || []).includes(i) ? 'checked' : ''}><span>${DAYS3[i]}</span></label>`).join('')}</div>
+      <label class="pc-f" style="margin-top:12px"><span class="lab">Private note <span class="muted small">only admins see this</span></span><input class="inp" data-sf="note" maxlength="80" value="${esc(sc.note)}" placeholder="Like: Ana's school, or her number"></label>
+      <div class="grpcode"><span>Link</span><span class="muted small">${esc(groupLink(sc.code).replace(/^https?:\/\//, ''))}</span></div>
+      <div class="acts">${smallBtn('Save', 'check', 'personSave', 'dark', `data-sid="${sc.id}"`)}${smallBtn('Copy link', 'copy', 'personCopy', 'plain', `data-sid="${sc.id}"`)}${smallBtn('Orders', 'box', 'personOrders', 'plain', `data-sid="${sc.id}"`)}${smallBtn('New link', 'refresh', 'personNewCode', 'plain', `data-sid="${sc.id}"`)}${smallBtn('', 'trash', 'personDel', 'plain', `data-sid="${sc.id}" aria-label="Delete ${esc(sc.first_name || 'this person')}"`)}</div></div>`).join('')}
+    ${smallBtn('Add a pickup person', 'plus', 'personAdd', 'plain')}`;
+  box.querySelectorAll('[data-pfsw]').forEach(x => x.addEventListener('change', async () => {
+    const sc = list.find(p => p.id === x.dataset.sid); if (!sc) return;
+    try { await api.savePerson({ id: sc.id, code: sc.code, [x.dataset.pfsw]: x.checked });
+      toast(x.dataset.pfsw === 'enabled' ? `${sc.first_name || 'This person'} is ${x.checked ? 'on' : 'off'}.` : x.checked ? `Everyone can pick ${sc.first_name || 'this person'} now.` : `Only people with the link see ${sc.first_name || 'this person'} now.`);
+      drawPeople(); } catch (e) { x.checked = !x.checked; toast(friendlyError(e)); }
+  }));
 }
 /* Settings: every section folds to its title; a sidebar (computer) or a "Jump to" menu (phone) and a search box get you anywhere fast */
 function setupSettingsNav(){
@@ -6185,7 +6317,7 @@ const topMonthly = () => { const t = sellerTiers().slice(-1)[0]; const sales = i
 const welcomeAmt = () => CONFIG.sellerWelcomeOn ? CONFIG.sellerWelcome : 0;
 const rewardOn = () => CONFIG.sellerRewardOn && CONFIG.sellerRewardEvery > 0;
 // the invitation after ordering (and on My order)
-const inviteOk = () => CONFIG.sellersOn && CONFIG.sellersApply && !S.group && !['active', 'pending', 'paused'].includes(S.isSeller)
+const inviteOk = () => CONFIG.sellersOn && CONFIG.sellersApply && !S.linkPerson && !['active', 'pending', 'paused'].includes(S.isSeller)
   && !(Date.now() - (+safeLS.get('sk_sellhide') || 0) < 30 * 864e5);
 function sellerInviteHTML(closable){
   return `<div class="sellinvitewrap">${closable ? `<button type="button" class="si-x" data-act="sellHide" aria-label="Hide this">${ic('x', 14)}</button>` : ''}<a class="sellinvite" href="#/sell"><span class="si-ic">${ic('sparkle', 22)}</span><span class="si-t"><b>Get paid to share ${esc(CONFIG.shopName)}</b>
@@ -6746,34 +6878,38 @@ const ACTIONS = {
     if (!v) { setErr('promo', 'e-promo', 'Type a promo code first.'); return; }
     try {
       const r = await api.checkPromo(v);
-      if (!r) {   // maybe a group code
-        const g = await api.groupCheck(v).catch(() => null);
-        if (g) { safeLS.set('sk_group', JSON.stringify({ c: g.code, t: Date.now() })); S.group = { code: g.code, spots: g.spots || [], days: g.days || [] }; $('#promo').value = '';
-          buzz([8, 30, 8]); toast('Group pickup is on. Your pickup choices are updated.'); S.coStep = Math.min(S.coStep || 1, 2); viewCheckoutKeep(); return; }
+      if (!r) {   // maybe a pickup person's code
+        const code = v.replace(/[^A-Z0-9]/g, ''), list = await api.pickupPeople(code).catch(() => null), hit = list && list.find(p => p.linked);
+        if (hit) { safeLS.set('sk_group', JSON.stringify({ c: code, t: Date.now() })); setPeople(list, code); $('#promo').value = '';
+          buzz([8, 30, 8]); toast(`${personName(hit)} is now your pickup. You can change it under Where?`); S.coStep = 2; viewCheckoutKeep();
+          const r2 = document.querySelector(`input[name="pickup"][value="@${CSS.escape(hit.id)}"]`); if (r2) { r2.checked = true; r2.dispatchEvent(new Event('change', { bubbles: true })); coRender(); }
+          return; }
         return setErr('promo', 'e-promo', "That code doesn't work. Check the spelling, or it may have ended.");
       }
       if (r.used_up) return setErr('promo', 'e-promo', 'That code has been used up.');
       S.promo = r; buzz([8, 30, 8]); toast(r.seller ? `${r.name}'s seller code: ${r.value}% off. Thanks for supporting a classmate!` : r.friend ? `Friend code added: ${money(r.value)} off your first order.` : `Code ${r.code} added.`); viewCheckoutKeep();
     } catch (e) { setErr('promo', 'e-promo', friendlyError(e)); }
   },
-  schoolAdd: async () => { try { await api.saveSchool({ name: '', code: newGroupCode(), spots: [], days: [0, 1, 2, 3, 4, 5, 6], enabled: true }); drawSchools(); } catch (e) { toast(friendlyError(e)); } },
-  schoolSave: async t => {
-    const card = document.querySelector(`.schoolcard[data-sid="${t.dataset.sid}"]`), sc = (S.admin.schoolList || []).find(x => x.id === t.dataset.sid); if (!card || !sc) return;
-    const spots = [...new Set(card.querySelector('[data-sf="spots"]').value.split('\n').map(x => x.trim()).filter(x => x.length >= 3))].slice(0, 12);
+  personAdd: async () => { try { await api.savePerson({ first_name: '', label: '', note: '', code: newGroupCode(), spots: [], days: [1, 2, 3, 4, 5], enabled: true, public: false, sort: (S.admin.peopleList || []).length }); drawPeople(); } catch (e) { toast(friendlyError(e)); } },
+  personSave: async t => {
+    const card = document.querySelector(`.pcard[data-sid="${t.dataset.sid}"]`), sc = (S.admin.peopleList || []).find(x => x.id === t.dataset.sid); if (!card || !sc) return;
+    const val = k => card.querySelector(`[data-sf="${k}"]`).value.trim();
+    const spots = [...new Set(val('spots').split('\n').map(x => x.trim()).filter(x => x.length >= 3))].slice(0, 12);
     const days = [...card.querySelectorAll('[data-sday]')].filter(x => x.checked).map(x => +x.dataset.sday);
-    if (!days.length) { toast('Pick at least one hand-off day.'); return; }
-    try { await api.saveSchool({ id: sc.id, name: card.querySelector('[data-sf="name"]').value.trim(), code: sc.code, spots, days, enabled: card.querySelector('[data-sf="enabled"]').checked }); toast('Saved.'); drawSchools(); } catch (e) { toast(friendlyError(e)); }
+    if (!val('first_name')) { toast('Type their first name.'); card.querySelector('[data-sf="first_name"]').focus(); return; }
+    if (!days.length) { toast('Pick at least one handover day.'); return; }
+    try { await api.savePerson({ id: sc.id, code: sc.code, first_name: val('first_name'), label: val('label'), note: val('note'), spots, days }); toast(`Saved ${val('first_name')}.`); drawPeople(); } catch (e) { toast(friendlyError(e)); }
   },
-  schoolCopy: async t => { const sc = (S.admin.schoolList || []).find(x => x.id === t.dataset.sid); if (!sc) return; try { await navigator.clipboard.writeText(groupLink(sc.code)); toast('Link copied. Send it to your contact there.'); } catch { toast(groupLink(sc.code)); } },
-  schoolNewCode: async t => {
-    const sc = (S.admin.schoolList || []).find(x => x.id === t.dataset.sid); if (!sc || !confirm('Make a new code? The old code and link stop working right away (orders already placed are fine).')) return;
-    try { await api.saveSchool({ ...sc, code: newGroupCode() }); toast('New code made. Send the new link to your contact.'); drawSchools(); } catch (e) { toast(friendlyError(e)); }
+  personCopy: async t => { const sc = (S.admin.peopleList || []).find(x => x.id === t.dataset.sid); if (!sc) return; try { await navigator.clipboard.writeText(groupLink(sc.code)); toast('Link copied. People who open it see this person at checkout.'); } catch { toast(groupLink(sc.code)); } },
+  personOrders: t => { S.admin.person = t.dataset.sid; S.admin.tab = 'orders'; S.admin.filter = 'all'; viewAdmin(); },
+  personNewCode: async t => {
+    const sc = (S.admin.peopleList || []).find(x => x.id === t.dataset.sid); if (!sc || !confirm('Make a new link? The old link stops working right away. Orders already placed are fine.')) return;
+    try { await api.savePerson({ id: sc.id, code: newGroupCode() }); toast('New link made. Copy it and send it again.'); drawPeople(); } catch (e) { toast(friendlyError(e)); }
   },
-  schoolDel: async t => {
-    const sc = (S.admin.schoolList || []).find(x => x.id === t.dataset.sid); if (!sc || !confirm(`Delete ${sc.name || 'this school'}? Its code stops working. Orders already placed stay.`)) return;
-    try { await api.deleteSchool(sc.id); drawSchools(); } catch (e) { toast(friendlyError(e)); }
+  personDel: async t => {
+    const sc = (S.admin.peopleList || []).find(x => x.id === t.dataset.sid); if (!sc || !confirm(`Delete ${sc.first_name || 'this person'}? Their link stops working. Orders already placed stay. To pause them instead, turn them off.`)) return;
+    try { await api.deletePerson(sc.id); drawPeople(); } catch (e) { toast(friendlyError(e)); }
   },
-  groupOff: () => { safeLS.del('sk_group'); S.group = null; toast('Group pickup is off.'); viewCheckoutKeep(); },
   promoRemove: () => { if (S.promo && S.promo.seller) safeLS.del('sk_seller'); S.promo = null; viewCheckoutKeep(); },
   fdBg: t => { const d = activeDesign(); if (d) { d.bg = t.dataset.c; drawFramed(); } },
   prAdjust: t => { S.prSel = S.prSel === t.dataset.id ? null : t.dataset.id; drawPrints(); },
@@ -6857,7 +6993,8 @@ const ACTIONS = {
   coNext: t => {
     const n = +t.dataset.s;
     validate(true); setErr(null, 'e-promise', '');
-    if (n === 1 && CONFIG.requireXu && !S.group && !S.me && !S.coAdmin) { const e = $('#e-xu'); if (e) e.textContent = 'Sign in with your XU account first.'; const b = document.querySelector('[data-act="xuIn"]'); if (b) b.focus(); return; }
+    if (n === 1 && xuNeeded() && !S.people.length) { const e = $('#e-xu'); if (e) e.textContent = 'Sign in with your XU account first.'; const b = document.querySelector('[data-act="xuIn"]'); if (b) b.focus(); return; }
+    if (n === 2 && xuNeeded()) { setErr(null, 'e-where', 'Pickup at school needs your XU account. Sign in in step 1, or pick up from a person.'); return; }
     const bad = n === 1 ? ['e-nick', 'e-sec'] : ['e-place'];
     if (bad.some(id => $('#' + id) && $('#' + id).textContent)) { const f = $('#orderForm [aria-invalid="true"]'); if (f) f.focus(); return; }
     S.coStep = n + 1 + (n === 1 && S.addTo ? 1 : 0); coRender(); buzz(6);   // an add-on skips Pickup
@@ -6972,6 +7109,7 @@ const ACTIONS = {
   logout: async () => { await api.logout(); S.admin.cleaned = false; viewAdmin(); },
   admTab: t => { const mainEl = document.querySelector('main'); if (mainEl) mainEl.classList.remove('wide'); S.admin.tab = t.dataset.tab; clearInterval(S.admin.poll); viewAdmin(); },
   admRefresh: () => { S.admin.urls = {}; adminLoad(); },
+  admPerson: t => { S.admin.person = t.dataset.p || ''; drawAdminBody(); },
   admFilter: t => { if (t.dataset.f !== 'ready' && S.admin.pickupMode) { S.admin.pickupMode = false; keepAwake(false); } S.admin.filter = t.dataset.f; S.admin.rejecting = null; clearInterval(S.admin.poll); drawAdminBody().then(() => { if (S.admin.filter === 'ready') pollReady(); }); },
   aApprove: t => setStatus(t.dataset.id, { status: 'approved' }, 'Approved.'),
   aReject: t => { S.admin.rejecting = t.dataset.id; drawAdminBody().then(() => $('#rejText') && $('#rejText').focus()); },
@@ -7297,7 +7435,7 @@ document.addEventListener('click', e => {
   try { const s = await api.settings(); S.settings.maxSheets = s.max_sheets; S.settings.productsRaw = s.products || {}; S.settings.configRaw = s.config || {}; applyShopConfig(s.config); CONFIG.maxNoShows = s.max_noshows || CONFIG.maxNoShows; S.settings.products = mergeProducts(s.products); S.settings.deals = Array.isArray(s.deals) ? s.deals : [];
     if (s.signal_verb) S.settings.signalVerb = s.signal_verb; if (s.signal_item) S.settings.signalItem = s.signal_item; }
   catch (e) { console.warn('Could not load settings, using CONFIG values', e); }
-  await loadGroup();
+  await loadPeople();
   await openTemplate();
   route();
 })();
