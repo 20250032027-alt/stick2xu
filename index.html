@@ -1648,7 +1648,7 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .impchoice button small{color:var(--muted);font-size:12.5px;line-height:1.3}.impchoice button.on{border-color:#283971;background:#EEF2FC;box-shadow:inset 0 0 0 1px #283971}
 .impcard .radio{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer}
 .impcard .radio input{width:18px;height:18px;accent-color:#283971}
-.impbar{display:flex;gap:10px;align-items:center;margin:4px 0 10px;padding:10px 12px;border-radius:14px;background:#EEF2FC;color:#283971}
+.impbar{display:flex;gap:8px;align-items:center;margin:4px 0 10px;padding:6px 8px 6px 12px;border-radius:14px;background:#EEF2FC;color:#283971}
 .impbar > span{flex:1;display:flex;flex-direction:column}.impbar small{color:var(--muted);font-size:13px}
 .page .impimg{position:absolute;background:center/100% 100% no-repeat;box-shadow:0 0 0 1px rgba(40,57,113,.12);pointer-events:none}   /* taps go through to the sheet */
 .sepview{position:relative;width:100%;max-height:52vh;margin:0 auto;background:#fff center/100% 100% no-repeat;border-radius:10px;box-shadow:0 0 0 1.5px var(--line)}
@@ -1669,6 +1669,15 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 .stk.badsize{outline:3px solid #E5484D;outline-offset:2px}
 .drop.snap{outline:2px solid #F2BC2E;outline-offset:1px}
 .selbar .sizer{display:inline-flex;align-items:center;gap:6px}.selbar .sizer b{min-width:52px;text-align:center;font-size:14px}
+.hint[hidden],.under[hidden]{display:none!important}
+/* phones: less clutter, more room */
+@media(max-width:600px){
+  .modeseg button small{display:none}.modeseg button{padding:9px 6px}
+  .importbtn small{display:none}.importbtn{padding:12px}
+  #ctrl section{padding-top:14px;padding-bottom:14px}
+  .modebar{margin:2px 0 8px}.selbar{gap:6px}
+  .tplbar{padding:10px;gap:6px}
+}
 .grpchip{display:flex;gap:8px;align-items:center;margin:0 0 12px;font-size:14px;font-weight:700;color:var(--muted)}.grpchip svg{color:#1E8E4A}.grpchip .linkbtn{font-size:13px;margin-left:auto}
 .schoolcard{border:1.5px solid var(--line);border-radius:18px;padding:14px;margin:12px 0}.schoolcard.off{opacity:.65}
 .sc-head{display:flex;gap:12px;align-items:center}.sc-head .inp{flex:1}
@@ -3399,8 +3408,8 @@ function drawSheet(){
   $('#sheetArea').innerHTML = `
     <div class="tabs" role="tablist">${S.sheets.map((s, i) => `<button class="tab ${i === S.cur ? 'on' : ''}" type="button" role="tab" aria-selected="${i === S.cur}" data-act="tab" data-i="${i}">Sheet ${i + 1}</button>`).join('')}
       ${S.sheets.length < S.settings.maxSheets ? `<button class="tab add" type="button" data-act="addSheet">${ic('plus', 16)}Add a sheet</button>` : `<span class="muted small" style="align-self:center">${S.settings.maxSheets} sheets max per order</span>`}</div>
-    <p class="hint mob">${ic('sparkle', 18)}<span>${imp ? 'This sheet prints exactly as you see it. Add another sheet for your own pictures.' : free ? (sel ? 'Drag it anywhere. Pull the corner dot to resize.' : S.selImage ? 'Tap anywhere on the sheet to stick your picture.' : 'Pick a picture, then tap anywhere on the sheet.') : sel ? 'Tap an empty spot to move it.' : S.selImage ? 'Tap the sheet to stick your picture. Drag a sticker to move it.' : 'Choose pictures to start, then tap the sheet to place them.'}</span></p>
-    ${imp ? `<div class="impbar">${ic('image', 18)}<span><b>Imported sheet</b><small>${sheet.imported.lines === 'yes' ? 'Has its own cut lines' : 'We cut around each design'} · printed exactly as is</small></span>${smallBtn('Add your own stickers', 'plus', 'impToFree', 'dark')}${smallBtn('Remove', 'trash', 'delSheet', 'plain')}</div>` : ''}
+    <p class="hint mob" ${imp ? 'hidden' : ''}>${ic('sparkle', 18)}<span>${imp ? '' : free ? (sel ? 'Drag it anywhere. Pull the corner dot to resize.' : S.selImage ? 'Tap anywhere on the sheet to stick your picture.' : 'Pick a picture, then tap anywhere on the sheet.') : sel ? 'Tap an empty spot to move it.' : S.selImage ? 'Tap the sheet to stick your picture. Drag a sticker to move it.' : 'Choose pictures to start, then tap the sheet to place them.'}</span></p>
+    ${imp ? `<div class="impbar">${ic('image', 18)}<span><b>Imported sheet</b></span>${smallBtn('Add stickers', 'plus', 'impToFree', 'plain')}${smallBtn('', 'trash', 'delSheet', 'plain', 'aria-label="Remove this sheet"')}</div>` : ''}
     ${CONFIG.freeOn && !imp ? `<div class="modebar"><div class="modeseg" role="group" aria-label="How stickers are placed">${[['', 'Grid', 'Neat squares'], ['1', 'Free', 'Any size, anywhere']].map(([v, l, h]) => `<button type="button" data-act="sheetMode" data-v="${v}" class="${(v === '1') === free ? 'on' : ''}"><b>${l}</b><small>${h}</small></button>`).join('')}</div>
       ${free && sheet.items.length > 1 ? smallBtn('Auto-arrange', 'sparkle', 'freeArrange', 'plain') : ''}</div>` : ''}
     <div class="page ${free ? 'free' : ''} ${imp ? 'imp' : ''}" id="page">${cells}${stickers}${!S.images.length ? `<label class="sheet-empty"><span class="ui">${ic('plus', 22)}</span><b>Choose pictures</b><small>Then tap the sheet to place them</small><input id="fileIn2" type="file" accept="image/*" multiple hidden></label>` : ''}</div>
@@ -3412,7 +3421,7 @@ function drawSheet(){
         ${smallBtn(sel.fit === 'fit' ? 'Fill the square' : 'Show whole picture', sel.fit === 'fit' ? 'fill' : 'fit', 'fitToggle', 'plain')}
         ${smallBtn('Remove', 'trash', 'removeItem', 'danger')}
         ${smallBtn('Done', 'check', 'deselect', 'dark')}</div>`
-      : `<div class="under"><span>${sheet.items.length ? `${sheet.items.length} sticker${sheet.items.length > 1 ? 's' : ''} on this sheet. Drag one to move it, or tap it to change it.` : 'This sheet is empty. The white borders show where each sticker gets cut.'}</span>
+      : `<div class="under" ${imp ? 'hidden' : ''}><span>${sheet.items.length ? `${sheet.items.length} sticker${sheet.items.length > 1 ? 's' : ''} on this sheet. Drag one to move it, or tap it to change it.` : 'This sheet is empty. The white borders show where each sticker gets cut.'}</span>
         ${S.sheets.length > 1 ? smallBtn('Remove this sheet', 'trash', 'delSheet', 'plain') : ''}</div>`}
     ${liveAddons('stickers').length ? `<div class="mob-only extras-mob"><div class="stephead"><i>${ic('plus', 14)}</i>Extras</div>${addonChecks('stickers', S.stickerAddons)}</div>` : ''}`;
   const f2 = $('#fileIn2'); if (f2) f2.addEventListener('change', onFiles);
