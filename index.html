@@ -189,6 +189,9 @@
  }
 ]</script>
 <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<link rel="preconnect" href="https://afyniszezhjtycwdxhgh.supabase.co" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1049,6 +1052,8 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 #pframe img{position:absolute;max-width:none;user-select:none;-webkit-user-drag:none}
 .pgctl{display:grid;gap:10px;justify-items:start;width:min(100%,420px)}
 
+/* smart tools progress line */
+.aiprog{margin:2px 0 0;padding:8px 12px;border-radius:12px;background:var(--accent-soft);font-size:14px;font-weight:600;text-align:center}
 /* sticker outlines, promo code help, pickup people summary */
 .outlbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:12px}
 .outl-l{font-weight:700;font-size:15px}
@@ -1854,8 +1859,6 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 /* =====================================================================
    SETTINGS — edit these
@@ -3159,15 +3162,16 @@ window.addEventListener('error', e => adminErr(e.message));
 window.addEventListener('unhandledrejection', e => adminErr(e.reason && e.reason.message || e.reason));
 function toTop(){ window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }
 const BASE_TITLE = document.title;
-function route(){
+function route(keep){
   if (S.halt) return;
   document.title = BASE_TITLE;
   const parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/'), page = parts[0];
   const views = { home: viewHome, shop: viewShop, design: viewDesign, make: () => viewMake(parts[1]), cart: viewCart, checkout: viewCheckout, done: viewDone, status: viewStatus, admin: viewAdmin, sell: viewSell };
   (views[page] || viewNotFound)();
+  if (keep === true) return;   // a quiet redraw (fresh settings arrived): stay where they are
   toTop(); requestAnimationFrame(toTop); setTimeout(toTop, 60);
 }
-window.addEventListener('hashchange', route);
+window.addEventListener('hashchange', () => route());
 setTimeout(loadMyOrder, 300); setInterval(() => { if (!document.hidden && !location.hash.startsWith('#/admin')) loadMyOrder(); }, 60000);
 window.addEventListener('scroll', () => { const t = $('.topwrap'); if (t) t.classList.toggle('scrolled', scrollY > 4); }, { passive: true });
 window.addEventListener('beforeunload', e => {
@@ -3879,13 +3883,14 @@ function stkErase(c, tx, ty){
   for (let i = 0; i < w * h; i++) if (reg[i]) p[i * 4 + 3] = 0; x.putImageData(d, 0, 0); return 'ok';
 }
 function fixHTML(){
-  const f = S.fixer, tip = f.mode === 'split' ? 'Draw a line between the stickers to cut them apart.' : f.brushOn ? (f.mode === 'keep' ? 'Brush over parts to bring them back.' : 'Brush over parts to remove them.') : (f.mode === 'keep' ? 'Tap an area to bring it back.' : 'Tap an area to remove it.');
+  const f = S.fixer, tip = f.mode === 'split' ? 'Draw a line between the stickers to cut them apart.' : f.smart ? (f.mode === 'keep' ? 'Tap what you want to keep. Everything else goes. Tap more things to add them.' : 'Tap a thing to remove it.') : f.brushOn ? (f.mode === 'keep' ? 'Brush over parts to bring them back.' : 'Brush over parts to remove them.') : (f.mode === 'keep' ? 'Tap an area to bring it back.' : 'Tap an area to remove it.');
   return `<div class="impcard"><div class="imphead"><b>${esc(f.title || 'Edit picture')}</b><button type="button" class="linkbtn" data-act="fixDone">${ic('check', 18)} Done</button></div>
     <div class="modeseg fixseg three">${[['keep', 'Keep', 'check'], ['remove', 'Remove', 'trash'], ...(f.onSheet ? [['split', 'Split', 'minus']] : [])].map(([v, l, icn]) => `<button type="button" data-act="fixMode" data-v="${v}" class="${f.mode === v ? 'on' : ''}">${ic(icn, 16)}<b>${l}</b></button>`).join('')}</div>
-    ${f.mode !== 'split' ? `<div class="brushes"><span class="tapbrush">${[['', 'Tap'], ['1', 'Brush']].map(([v, l]) => `<button type="button" data-act="fixBrushOn" data-v="${v}" class="${!!v === !!f.brushOn ? 'on' : ''}">${l}</button>`).join('')}</span>
-      ${f.brushOn ? [['s', 6], ['m', 14], ['l', 26]].map(([v, d]) => `<button type="button" data-act="fixBrush" data-v="${v}" class="${f.brush === v ? 'on' : ''}" aria-label="${{ s: 'Small', m: 'Medium', l: 'Large' }[v]} brush"><i style="width:${d}px;height:${d}px"></i></button>`).join('') : ''}</div>` : ''}
+    ${f.mode !== 'split' ? `<div class="brushes"><span class="tapbrush">${[['', 'Tap'], ['1', 'Brush'], ...(aiOk() ? [['ai', 'Smart']] : [])].map(([v, l]) => `<button type="button" data-act="fixBrushOn" data-v="${v}" class="${(v === 'ai' ? !!f.smart : !f.smart && !!v === !!f.brushOn) ? 'on' : ''}">${l}</button>`).join('')}</span>
+      ${f.brushOn && !f.smart ? [['s', 6], ['m', 14], ['l', 26]].map(([v, d]) => `<button type="button" data-act="fixBrush" data-v="${v}" class="${f.brush === v ? 'on' : ''}" aria-label="${{ s: 'Small', m: 'Medium', l: 'Large' }[v]} brush"><i style="width:${d}px;height:${d}px"></i></button>`).join('') : ''}</div>` : ''}
     <div class="fixview" id="fixView"></div>
     <div class="fixtools">${smallBtn('Remove background', 'sparkle', 'fixAutoBg', 'dark')}${smallBtn('', 'minus', 'fixZoom', 'plain', 'data-d="-1" aria-label="Zoom out"')}<b>${Math.round((f.zoom || 1) * 100)}%</b>${smallBtn('', 'plus', 'fixZoom', 'plain', 'data-d="1" aria-label="Zoom in"')}</div>
+    <p class="aiprog" id="aiProg" role="status" ${f.aiMsg ? '' : 'hidden'}>${esc(f.aiMsg || '')}</p>
     <div class="seprow">${smallBtn('Undo', 'refresh', 'fixUndo', 'plain', f.undo.length ? '' : 'disabled')}<span>${tip}</span></div>
     ${btn('Done', { act: 'fixDone', icon: 'check', cls: 'dark wide' })}</div>`;
 }
@@ -3901,6 +3906,7 @@ function drawFix(){ const box = $('#sheet .sheetbox'); if (!box) return; box.inn
   let stroke = null; if (f.ac) f.ac.abort(); f.ac = new AbortController(); const once = { signal: f.ac.signal };   // the canvas is reused: replace, never stack, its handlers
   c.addEventListener('pointerdown', e => { e.preventDefault(); try { c.setPointerCapture(e.pointerId); } catch {}
     const pt = at(e), before = c.getContext('2d').getImageData(0, 0, c.width, c.height);
+    if ((f.mode === 'keep' || f.mode === 'remove') && f.smart) { smartTap(Math.max(0, Math.min(c.width - 1, Math.round(pt.x))), Math.max(0, Math.min(c.height - 1, Math.round(pt.y)))); return; }
     if ((f.mode === 'keep' || f.mode === 'remove') && !f.brushOn) { const tx = Math.max(0, Math.min(c.width - 1, Math.round(pt.x))), ty = Math.max(0, Math.min(c.height - 1, Math.round(pt.y))), res = tapRegion(c, im.orig, tx, ty, f.mode === 'keep');
       if (res === 'ok') { f.undo.push(before); if (f.undo.length > 12) f.undo.shift(); f.changed = true; buzz(8); drawFix(); }
       else toast({ solid: 'That spot is already filled in. Tap a checkered spot, or use Draw.', open: 'That spot opens to the outside. Use Keep to brush it in instead.', clear: "That spot's already removed.", none: f.mode === 'keep' ? "That's already kept." : "That's already removed.", big: 'That would remove most of the picture. Tap a smaller patch, or use the Remove brush.' }[res]); return; }
@@ -3945,22 +3951,192 @@ async function combineStickers(a, b){
   sheet.items = sheet.items.filter(i => i.uid !== a.uid && i.uid !== b.uid).concat(item); if (!freeFits(sheet, item, item.uid)) autoArrange(sheet);
   S.selItem = item.uid; S.combineFrom = null; buzz([8, 30, 8]); toast('Combined into one sticker!'); drawDesigner();
 }
-// turn everything outside the stickers' white borders white (patterned sheet backgrounds use a lot of ink)
+/* Background remover (no download, works on any phone).
+   1. Look at the picture's outer edge and find its background colors (up to 4: a wall and a floor, a gradient...).
+   2. Grow the background in from the edge, through pixels that look like those colors or that change only gently
+      from their neighbor (so gradients and soft shadows go too), comparing colors the way eyes see them (Lab).
+   3. Soft edges instead of jagged ones, the old background's color taken out of those edges, tiny specks dropped.
+   Works on a smaller copy for speed, then applies the result to the full picture. Returns null if there's nothing to remove. */
+const LAB_LIN = (() => { const t = new Float32Array(256); for (let i = 0; i < 256; i++) { const v = i / 255; t[i] = v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; } return t; })();
+function labOf(p, n){   // RGBA bytes -> Lab floats
+  const out = new Float32Array(n * 3), f = t => t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116;
+  for (let i = 0; i < n; i++) { const r = LAB_LIN[p[i * 4]], g = LAB_LIN[p[i * 4 + 1]], b = LAB_LIN[p[i * 4 + 2]];
+    const X = f((r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047), Y = f(r * 0.2126 + g * 0.7152 + b * 0.0722), Z = f((r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883);
+    out[i * 3] = 116 * Y - 16; out[i * 3 + 1] = 500 * (X - Y); out[i * 3 + 2] = 200 * (Y - Z); }
+  return out;
+}
+function bgClusters(L, idx){   // a few background colors from the edge pixels (small k-means), ignoring rare ones (the subject touching the edge)
+  const n = idx.length, cs = [[L[idx[0] * 3], L[idx[0] * 3 + 1], L[idx[0] * 3 + 2]]], d2 = (q, c) => (L[q * 3] - c[0]) ** 2 + (L[q * 3 + 1] - c[1]) ** 2 + (L[q * 3 + 2] - c[2]) ** 2;
+  while (cs.length < 4) { let far = -1, fd = 0; for (const q of idx) { let m = Infinity; for (const c of cs) m = Math.min(m, d2(q, c)); if (m > fd) { fd = m; far = q; } }
+    if (fd < 100) break; cs.push([L[far * 3], L[far * 3 + 1], L[far * 3 + 2]]); }
+  let lab = new Uint8Array(n);
+  for (let it = 0; it < 8; it++) { const sum = cs.map(() => [0, 0, 0, 0]);
+    idx.forEach((q, k) => { let b = 0, bd = Infinity; cs.forEach((c, j) => { const v = d2(q, c); if (v < bd) { bd = v; b = j; } }); lab[k] = b; const s = sum[b]; s[0] += L[q * 3]; s[1] += L[q * 3 + 1]; s[2] += L[q * 3 + 2]; s[3]++; });
+    sum.forEach((s, j) => { if (s[3]) cs[j] = [s[0] / s[3], s[1] / s[3], s[2] / s[3]]; }); }
+  const cnt = cs.map((_, j) => lab.filter(v => v === j).length);
+  return cs.filter((_, j) => cnt[j] >= n * 0.08);
+}
 function removeBgCanvas(src){
-  const w = src.width, h = src.height, c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.drawImage(src, 0, 0);
-  const d = x.getImageData(0, 0, w, h), p = d.data, edge = []; for (let i = 0; i < w; i += 2) edge.push(i, (h - 1) * w + i); for (let j = 0; j < h; j += 2) edge.push(j * w, j * w + w - 1);
-  const bg = [0, 1, 2].map(ch => { const v = edge.map(q => p[q * 4 + ch]).sort((a, b) => a - b); return v[v.length >> 1]; });
-  const spread = edge.reduce((t, q) => t + Math.hypot(p[q * 4] - bg[0], p[q * 4 + 1] - bg[1], p[q * 4 + 2] - bg[2]), 0) / edge.length;
-  const T = 40 + spread * 0;   // one fixed rule for every photo, so results are consistent
-  const like = new Uint8Array(w * h); for (let i = 0; i < w * h; i++) like[i] = Math.hypot(p[i * 4] - bg[0], p[i * 4 + 1] - bg[1], p[i * 4 + 2] - bg[2]) < T ? 1 : 0;
-  const keep = sealedKeep(like, w, h, Math.max(2, Math.round(Math.max(w, h) / 160))); let n = 0;
-  for (let i = 0; i < w * h; i++) if (!keep[i]) { p[i * 4 + 3] = 0; n++; }
-  if (n < w * h * 0.02 || n > w * h * 0.97) return null; x.putImageData(d, 0, 0); return c;   // only skip when there's nothing to remove
+  const W = src.width, H = src.height, k = Math.min(1, 800 / Math.max(W, H)), w = Math.max(8, Math.round(W * k)), h = Math.max(8, Math.round(H * k)), n = w * h;
+  const sc = document.createElement('canvas'); sc.width = w; sc.height = h; const sx = sc.getContext('2d'); sx.drawImage(src, 0, 0, w, h);
+  const sp = sx.getImageData(0, 0, w, h).data, L = labOf(sp, n);
+  const edge = []; for (let x = 0; x < w; x++) for (const y of [0, 1, h - 2, h - 1]) edge.push(y * w + x); for (let y = 2; y < h - 2; y++) for (const x of [0, 1, w - 2, w - 1]) edge.push(y * w + x);
+  const cs = bgClusters(L, edge); if (!cs.length) return null;
+  const dist = new Float32Array(n); for (let i = 0; i < n; i++) { let m = Infinity; const l = L[i * 3], a = L[i * 3 + 1], b = L[i * 3 + 2];
+    for (const c of cs) { const v = (l - c[0]) ** 2 + (a - c[1]) ** 2 + (b - c[2]) ** 2; if (v < m) m = v; } dist[i] = Math.sqrt(m); }
+  const ed = edge.map(q => dist[q]).sort((a, b) => a - b), spread = ed[ed.length >> 1];   // how busy the edge is
+  if (spread > 13) return null;   // a busy background (a room, a crowd): leave it to the smart tools instead of guessing
+  // sure = a real plain background. Background colors that differ in hue (an orange shirt at the edge, a flag, a grey wall)
+  // mean it's a scene, so the smart tool should get first try; ones that only differ in brightness (a gradient, a shadow) are fine.
+  let hueGap = 0; for (const a of cs) for (const b of cs) hueGap = Math.max(hueGap, Math.hypot(a[1] - b[1], a[2] - b[2]));
+  const sure = hueGap < 25 && spread < 8;
+  const T = Math.max(9, Math.min(22, 8 + 1.6 * spread)), loose = T * 2.4;
+  // how fast the color changes around each pixel (on a lightly blurred copy): shadows and gradients change slowly,
+  // an object's edge changes fast even when it's faint, so the background may only creep through slow-changing spots
+  const S0 = new Float32Array(n * 3), S1 = new Float32Array(n * 3);
+  const blur = (a, o, horiz) => { for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const i = y * w + x, i0 = horiz ? y * w + Math.max(0, x - 1) : Math.max(0, y - 1) * w + x, i1 = horiz ? y * w + Math.min(w - 1, x + 1) : Math.min(h - 1, y + 1) * w + x;
+    for (let ch = 0; ch < 3; ch++) o[i * 3 + ch] = (a[i0 * 3 + ch] + 2 * a[i * 3 + ch] + a[i1 * 3 + ch]) / 4; } };
+  blur(L, S0, true); blur(S0, S1, false); blur(S1, S0, true); blur(S0, S1, false);
+  const G = new Float32Array(n); for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) { const i = y * w + x; let gx = 0, gy = 0;
+    for (let ch = 0; ch < 3; ch++) { gx += Math.abs(S1[(i + 1) * 3 + ch] - S1[(i - 1) * 3 + ch]); gy += Math.abs(S1[(i + w) * 3 + ch] - S1[(i - w) * 3 + ch]); } G[i] = Math.max(gx, gy) / 2; }
+  const slow = 1.1 + spread * 0.08;
+  // grow the background in from the edge
+  const bg = new Uint8Array(n), q = new Int32Array(n); let qh = 0, qt = 0;
+  for (const e of edge) if (!bg[e] && dist[e] < T) { bg[e] = 1; q[qt++] = e; }
+  const tryBg = (a, b) => { if (!bg[b] && (dist[b] < T || (dist[b] < loose && G[b] < slow && G[a] < slow * 2))) { bg[b] = 1; q[qt++] = b; } };
+  while (qh < qt) { const a = q[qh++], ax = a % w;
+    if (ax > 0) tryBg(a, a - 1); if (ax < w - 1) tryBg(a, a + 1); if (a >= w) tryBg(a, a - w); if (a + w < n) tryBg(a, a + w); }
+  // close thin gaps in outlines (the same idea as before), so the background can't leak into a shape through a crack
+  const keep = sealedKeep(bg, w, h, Math.max(1, Math.round(Math.max(w, h) / 220)));
+  // drop specks: kept bits much smaller than the main subject
+  const lab = new Int32Array(n), comps = []; for (let i = 0; i < n; i++) { if (!keep[i] || lab[i]) continue; const id = comps.length + 1; let c = 0; qh = qt = 0; q[qt++] = i; lab[i] = id;
+    while (qh < qt) { const a = q[qh++], ax = a % w; c++;
+      if (ax > 0 && keep[a - 1] && !lab[a - 1]) { lab[a - 1] = id; q[qt++] = a - 1; } if (ax < w - 1 && keep[a + 1] && !lab[a + 1]) { lab[a + 1] = id; q[qt++] = a + 1; }
+      if (a >= w && keep[a - w] && !lab[a - w]) { lab[a - w] = id; q[qt++] = a - w; } if (a + w < n && keep[a + w] && !lab[a + w]) { lab[a + w] = id; q[qt++] = a + w; } }
+    comps.push(c); }
+  const big = Math.max(0, ...comps), minKeep = Math.max(n * 0.0015, big * 0.01);
+  let removed = 0; const A = new Float32Array(n);
+  for (let i = 0; i < n; i++) { const on = keep[i] && comps[lab[i] - 1] >= minKeep; A[i] = on ? 1 : 0; if (!on) removed++; }
+  if (removed < n * 0.02 || removed > n * 0.97) return null;   // nothing to remove, or it would remove everything
+  // soft edge: kept pixels right next to the background fade by how background-like they are
+  for (let i = 0; i < n; i++) { if (!A[i]) continue; const x = i % w, y = (i / w) | 0; let near = false;
+    for (let dy = -1; dy <= 1 && !near; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < w && yy < h && !A[yy * w + xx] && !keep[yy * w + xx]) { near = true; break; } }
+    if (near) A[i] = Math.max(0.35, Math.min(1, (dist[i] - T * 0.5) / T)); }
+  // full size: smooth the edge up, take the old background's color out of see-through edge pixels
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); x.drawImage(src, 0, 0);
+  const d = x.getImageData(0, 0, W, H), p = d.data, bgRGB = cs.map(cc => { let best = 0, bd = Infinity; for (const e of edge) { const v = Math.hypot(L[e * 3] - cc[0], L[e * 3 + 1] - cc[1], L[e * 3 + 2] - cc[2]); if (v < bd) { bd = v; best = e; } } return [sp[best * 4], sp[best * 4 + 1], sp[best * 4 + 2]]; });
+  for (let Y = 0; Y < H; Y++) { const fy = Math.min(h - 1, Math.max(0, (Y + 0.5) * k - 0.5)), y0 = fy | 0, y1 = Math.min(h - 1, y0 + 1), ty = fy - y0;
+    for (let X = 0; X < W; X++) { const fx = Math.min(w - 1, Math.max(0, (X + 0.5) * k - 0.5)), x0 = fx | 0, x1 = Math.min(w - 1, x0 + 1), tx = fx - x0;
+      let a = (A[y0 * w + x0] * (1 - tx) + A[y0 * w + x1] * tx) * (1 - ty) + (A[y1 * w + x0] * (1 - tx) + A[y1 * w + x1] * tx) * ty;
+      a = Math.max(0, Math.min(1, (a - 0.2) / 0.6));   // a little crisper than plain stretching, still soft
+      const o = (Y * W + X) * 4;
+      if (a >= 0.999) continue;
+      if (a <= 0.01) { p[o + 3] = 0; continue; }
+      const B = bgRGB[0]; let bd = Infinity, bb = B; for (const cand of bgRGB) { const v = (p[o] - cand[0]) ** 2 + (p[o + 1] - cand[1]) ** 2 + (p[o + 2] - cand[2]) ** 2; if (v < bd) { bd = v; bb = cand; } }
+      for (let ch = 0; ch < 3; ch++) p[o + ch] = Math.max(0, Math.min(255, Math.round((p[o + ch] - (1 - a) * bb[ch]) / a)));
+      p[o + 3] = Math.round(p[o + 3] * a); } }
+  x.putImageData(d, 0, 0); c.sure = sure; return c;
+}
+/* Tools only some pages need (printing PDFs, QR codes) load the first time they're used, not for every visitor */
+const LIBS = { pdf: ['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', () => window.jspdf],
+               qr: ['https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js', () => window.QRCode] };
+const libLoads = {};
+function needLib(k){
+  const [url, ready] = LIBS[k]; if (ready()) return Promise.resolve(true);
+  return libLoads[k] || (libLoads[k] = new Promise(res => { const s = document.createElement('script'); s.src = url; s.async = true;
+    s.onload = () => res(!!ready()); s.onerror = () => { delete libLoads[k]; s.remove(); res(false); }; document.head.appendChild(s); }));
+}
+/* Smart tools: AI that runs on the phone itself, so pictures never leave it. Nothing loads until a smart tool is used,
+   then the browser keeps it, so it's a one-time download.
+   - Transformers.js (Hugging Face, Apache-2.0) runs the models.
+   - Cut out a person: MODNet (Apache-2.0), about 9 MB the first time.
+   - Smart tap: SlimSAM, a small "Segment Anything" (Apache-2.0): tap a thing and it finds its outline. */
+const AI_LIB = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.2/dist/transformers.min.js';
+const AI = { lib: null, people: null, sam: null };
+const aiOk = () => typeof WebAssembly === 'object' && typeof window.Worker === 'function';
+async function aiLib(){
+  if (!AI.lib) AI.lib = import(AI_LIB).then(m => { m.env.allowLocalModels = false;
+    // the standard engine (3.6 MB) instead of the bigger one the library picks (6.4 MB): same results for these tools
+    const w = m.env.backends && m.env.backends.onnx && m.env.backends.onnx.wasm, wp = w && w.wasmPaths;
+    if (wp && typeof wp === 'object' && wp.wasm && wp.wasm.includes('.asyncify')) w.wasmPaths = { mjs: wp.mjs.replace('.asyncify', ''), wasm: wp.wasm.replace('.asyncify', '') };
+    return m; });
+  try { return await AI.lib; } catch (e) { AI.lib = null; throw e; }
+}
+// progress: "Getting the smart tool ready: 3.1 of 9.0 MB"
+function aiProgress(){ const files = {};
+  return p => { if (!p || p.status !== 'progress' || !p.file) return; files[p.file] = { l: p.loaded || 0, t: p.total || 0 };
+    const l = Object.values(files).reduce((s, f) => s + f.l, 0), t = Object.values(files).reduce((s, f) => s + f.t, 0);
+    if (t > 1048576) aiNote(`Getting the smart tool ready: ${(l / 1048576).toFixed(1)} of ${(t / 1048576).toFixed(1)} MB (one time only)`); }; }
+function aiNote(text){ const f = S.fixer; if (f) f.aiMsg = text; const el = $('#aiProg'); if (el) { el.textContent = text; el.hidden = !text; } }
+const aiBreath = () => new Promise(r => setTimeout(r, 40));   // let the "Working..." message show before the AI runs
+async function aiLoad(key, id, Model, quiet){
+  if (!AI[key]) AI[key] = (async () => { const T = await aiLib(), o = { device: 'wasm', dtype: 'q8', ...(quiet ? {} : { progress_callback: aiProgress() }) };   // q8 = the small compressed model files
+    const [model, proc] = await Promise.all([T[Model].from_pretrained(id, o), T.AutoProcessor.from_pretrained(id, o)]);
+    safeLS.set('sk_ai_' + key, '1'); return { T, model, proc }; })().catch(e => { AI[key] = null; throw e; });
+  return AI[key];
+}
+const onWhite = src => { const c = document.createElement('canvas'); c.width = src.width; c.height = src.height; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(src, 0, 0); return c; };
+// Cut out the person in a photo. Returns a new picture, or null if it doesn't find one.
+async function aiPeopleCut(src){
+  const { T, model, proc } = await aiLoad('people', 'Xenova/modnet', 'AutoModel');
+  aiNote('Cutting out the person…'); await aiBreath();
+  const { pixel_values } = await proc(T.RawImage.fromCanvas(onWhite(src)));
+  const { output } = await model({ input: pixel_values });
+  const m = await T.RawImage.fromTensor(output[0].mul(255).to('uint8')).resize(src.width, src.height), md = m.data, ch = m.channels || 1;
+  const c = document.createElement('canvas'); c.width = src.width; c.height = src.height; const x = c.getContext('2d'); x.drawImage(src, 0, 0);
+  const d = x.getImageData(0, 0, c.width, c.height), p = d.data, n = c.width * c.height; let on = 0;
+  for (let i = 0; i < n; i++) { const a = md[i * ch]; p[i * 4 + 3] = Math.round(p[i * 4 + 3] * a / 255); if (a > 127) on++; }
+  if (on < n * 0.03 || on > n * 0.95) return null;   // no person in it (or the whole picture is the person)
+  x.putImageData(d, 0, 0); return c;
+}
+// Smart tap: work out the picture once, then each tap asks for the outline of what's under it.
+async function samPrepare(ref){
+  const { T, model, proc } = await aiLoad('sam', 'Xenova/slimsam-77-uniform', 'SamModel');
+  aiNote('Looking at your picture…'); await aiBreath();
+  const inputs = await proc(T.RawImage.fromCanvas(onWhite(ref)));
+  return { T, model, proc, inputs, emb: await model.get_image_embeddings(inputs), w: ref.width, h: ref.height };
+}
+async function samMask(prep, x0, y0){   // 0/1 per pixel, at the picture's size
+  const { T, model, proc, inputs, emb } = prep, rs = inputs.reshaped_input_sizes[0], os = inputs.original_sizes[0];
+  const input_points = new T.Tensor('float32', new Float32Array([x0 * rs[1] / os[1], y0 * rs[0] / os[0]]), [1, 1, 1, 2]);
+  const input_labels = new T.Tensor('int64', new BigInt64Array([1n]), [1, 1, 1]);
+  const out = await model({ ...emb, input_points, input_labels });
+  const masks = await proc.post_process_masks(out.pred_masks, inputs.original_sizes, inputs.reshaped_input_sizes);
+  const sc = out.iou_scores.data; let best = 0; for (let i = 1; i < sc.length; i++) if (sc[i] > sc[best]) best = i;
+  const mk = masks[0], H = mk.dims[mk.dims.length - 2], W = mk.dims[mk.dims.length - 1], all = mk.data, m = new Uint8Array(W * H), off = best * W * H;
+  for (let i = 0; i < W * H; i++) m[i] = all[off + i] ? 1 : 0;
+  return m;
+}
+async function smartTap(tx, ty){
+  const f = S.fixer, im = f && imgById(f.id); if (!im || f.busy) return; f.busy = true;
+  const c = im.canvas, ref = im.orig && im.orig.width === c.width && im.orig.height === c.height ? im.orig : c;
+  try {
+    if (!f.sam || f.sam.ref !== ref) { aiNote('Getting the smart tool ready…'); await aiBreath(); f.sam = { ref, prep: await samPrepare(ref), started: false }; }
+    aiNote('Finding it…'); await aiBreath();
+    const mask = await samMask(f.sam.prep, tx, ty), x = c.getContext('2d'), before = x.getImageData(0, 0, c.width, c.height);
+    before.samStarted = f.sam.started;
+    // soften the outline by about a pixel so it doesn't look cut with scissors
+    const mc = document.createElement('canvas'); mc.width = c.width; mc.height = c.height; const mx = mc.getContext('2d'), md = mx.createImageData(c.width, c.height);
+    for (let i = 0; i < mask.length; i++) md.data[i * 4 + 3] = mask[i] ? 255 : 0; mx.putImageData(md, 0, 0);
+    const sm = document.createElement('canvas'); sm.width = c.width; sm.height = c.height; const sx = sm.getContext('2d'); sx.filter = `blur(${Math.max(0.6, c.width / 1600)}px)`; sx.drawImage(mc, 0, 0);
+    const a = sx.getImageData(0, 0, c.width, c.height).data, d = x.getImageData(0, 0, c.width, c.height), p = d.data, r = ref.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+    let hit = 0; for (let i = 0; i < mask.length; i++) hit += mask[i];
+    if (hit < 20) { toast("Couldn't find anything there. Try tapping right in the middle of it."); return; }
+    if (f.mode === 'keep') {   // keep what was tapped; the first tap also clears everything else
+      for (let i = 0; i < mask.length; i++) { const k = a[i * 4 + 3], cur = f.sam.started ? p[i * 4 + 3] : 0, na = Math.max(cur, k);
+        if (k > cur) for (let ch = 0; ch < 3; ch++) p[i * 4 + ch] = r[i * 4 + ch]; p[i * 4 + 3] = na; }
+      f.sam.started = true;
+    } else for (let i = 0; i < mask.length; i++) p[i * 4 + 3] = Math.round(p[i * 4 + 3] * (1 - a[i * 4 + 3] / 255));   // remove what was tapped
+    x.putImageData(d, 0, 0); f.undo.push(before); if (f.undo.length > 12) f.undo.shift(); f.changed = true; buzz(8);
+  } catch (e) { console.warn('smart tap', e); f.sam = null; toast("The smart tool didn't load. Check your internet, then try again, or use Tap and Brush."); }
+  finally { f.busy = false; aiNote(''); drawFix(); }
 }
 /* After "Choose pictures": photos get their background removed, Instagram-sticker style. Tap one to keep it as it was. */
 function openPicEditor(ids){ if (!ids.length) return; S.editQueue = ids.slice(1); S.editTotal = S.editTotal && S.editQueue.length ? S.editTotal : ids.length; openEditFor(ids[0]); }
 function openEditFor(id){ const im = imgById(id); if (!im) return;
   if (!im.orig) { const o = document.createElement('canvas'); o.width = im.canvas.width; o.height = im.canvas.height; o.getContext('2d').drawImage(im.canvas, 0, 0); im.orig = o; }
+  if (aiOk() && safeLS.get('sk_ai_people') && !AI.people) {   // already on this phone: get it ready while they look, so Remove background is quick
+    const warm = () => aiLoad('people', 'Xenova/modnet', 'AutoModel', true).catch(() => {}); 'requestIdleCallback' in window ? requestIdleCallback(warm, { timeout: 2000 }) : setTimeout(warm, 800); }
   const n = S.editTotal || 1, k = n - (S.editQueue || []).length; S.fixer = { id, mode: 'remove', brush: 'm', undo: [], onSheet: false, title: n > 1 ? `Edit picture ${k} of ${n}` : 'Edit picture' }; showSheet(''); drawFix(); }
 async function offerBgRemoval(list){
   const cands = []; for (const im of list) { if (im.alpha) continue; const cut = removeBgCanvas(im.canvas); if (cut) cands.push({ im, cut, url: cut.toDataURL('image/png'), use: true }); }
@@ -5149,6 +5325,7 @@ async function viewAdmin(){
     return;
   }
   forgetPoster();   // an admin's own phone never tags orders with a poster
+  setTimeout(() => { needLib('pdf'); needLib('qr'); }, 1500);   // admins print and make QR codes: have those tools ready
   $('#app').innerHTML = `<header class="top"><a class="mark" href="#/" aria-label="Back to the shop">Stick<b>2</b>It</a>
       <button class="pilllink" type="button" data-act="logout">${ic('logout', 18)}Log out</button></header>
     <main id="main" class="wrap">
@@ -5502,7 +5679,7 @@ const pinsWaiting = o => o.status === 'approved' && o.confirmed && !o.images_del
 const pinsAgain = o => o.status === 'printing' && !o.images_deleted && orderItems(o).some(it => it.type === 'pins' && it.front);
 const kcAgain = o => o.status === 'printing' && !o.images_deleted && orderItems(o).some(it => it.type === 'keychains' && it.front);
 async function pinSheets(asPng, again){
-  if (!window.jspdf) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
+  if (!(await needLib('pdf'))) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
   const list = S.admin.orders.filter(again ? pinsAgain : pinsWaiting);
   if (!list.length) return toast(again ? 'No orders in Printing have pins.' : 'No confirmed pin orders waiting to print.');
   toast(`Packing the pins from ${list.length} order${list.length === 1 ? '' : 's'}. This can take a bit.`);
@@ -5555,7 +5732,7 @@ const kcCount = o => orderItems(o).filter(it => it.type === 'keychains' && it.fr
 const sheetsCoverOrder = o => { const l = o.layout || {}; return orderItems(o).every(it => (it.type === 'pins' && l.pins_on_sheet) || (it.type === 'keychains' && l.kc_on_sheet)); };
 /* Every confirmed keychain waiting to print, from all orders, on shared A4 sheets. Two-sided ones: front and back side by side. */
 async function kcSheets(asPng, again){
-  if (!window.jspdf) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
+  if (!(await needLib('pdf'))) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
   const list = S.admin.orders.filter(again ? kcAgain : kcWaiting);
   if (!list.length) return toast(again ? 'No orders in Printing have keychains.' : 'No confirmed keychain orders waiting to print.');
   toast(`Packing the keychains from ${list.length} order${list.length === 1 ? '' : 's'}. This can take a bit.`);
@@ -5617,7 +5794,7 @@ async function batchPrint(date){
   S.admin.filter = 'printing'; drawAdminBody();
 }
 async function makePdf(o, batch, asPng){
-  if (!window.jspdf) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
+  if (!(await needLib('pdf'))) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
   if (o.images_deleted) { if (!batch) toast('The pictures for this order were already cleaned up.'); return 'gone'; }
   const asIs = it => it.type === 'prints' || it.mode === 'pages';   // customer files we print exactly as they are
   if (orderItems(o).every(asIs)) { if (!batch) toast('This order is files to print as they are. Open them with the file buttons on the order.'); return 'files'; }
@@ -6466,7 +6643,7 @@ async function drawSellBody(){
 }
 // a seller's own QR card, to print or post: their code, the discount, and a QR code of their link
 async function sellerCard(code, first){
-  if (!window.QRCode) throw new Error("The QR tool didn't load. Refresh the page.");
+  if (!(await needLib('qr'))) throw new Error("The QR tool didn't load. Check your internet and refresh.");
   try { await document.fonts.load('800 80px "Cabinet Grotesk"'); } catch {}
   const W = 1080, H = 1350, c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
   const N = '#283971', G = '#F2BC2E', D = sz => `800 ${sz}px "Cabinet Grotesk", "Arial Black", sans-serif`, B = sz => `700 ${sz}px Satoshi, system-ui, sans-serif`;
@@ -6650,7 +6827,7 @@ function qrCanvas(text, px){
 function saveBlob(blob, name){ const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
 /* the promo sticker: the design as the product, its name, a big QR code and the price. Square, ready for a sticker sheet. */
 async function tplStickerCanvas(t){
-  if (!window.QRCode) throw new Error("The QR tool didn't load. Refresh the page.");
+  if (!(await needLib('qr'))) throw new Error("The QR tool didn't load. Check your internet and refresh.");
   try { await Promise.all([document.fonts.load('800 80px "Cabinet Grotesk"'), document.fonts.load('700 30px Satoshi')]); } catch {}
   const W = 1200, c = document.createElement('canvas'); c.width = c.height = W; const x = c.getContext('2d');
   const N = '#283971', DEEP = '#1C2A57', GOLD = '#F2BC2E', D = s => `800 ${s}px "Cabinet Grotesk", "Arial Black", sans-serif`, B = s => `700 ${s}px Satoshi, system-ui, sans-serif`;
@@ -6759,7 +6936,7 @@ function drawPosters(){
     const t = $('#qrOpens').value; S.admin.qr = { slug, t, url: `${base}?src=${slug}${t ? `&t=${t}` : ''}` }; drawPosters();
   });
   if (q) {
-    if (!window.QRCode) { $('#qrbox').textContent = "The QR tool didn't load. Refresh the page."; return; }
+    if (!window.QRCode) { $('#qrbox').textContent = 'Loading…'; needLib('qr').then(ok => { if (ok) drawPosters(); else if ($('#qrbox')) $('#qrbox').textContent = "The QR tool didn't load. Check your internet and refresh."; }); return; }
     new QRCode($('#qrbox'), { text: q.url, width: 480, height: 480, colorDark: '#283971', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
     setTimeout(() => { const c = $('#qrbox canvas'); if (c) $('#qrDl').href = c.toDataURL('image/png'); }, 150);
   }
@@ -6825,10 +7002,17 @@ const ACTIONS = {
   stkFixOpen: () => { const it = selected(); if (!it) return; const im0 = imgById(it.imageId); if (im0 && !im0.orig) { const o = document.createElement('canvas'); o.width = im0.canvas.width; o.height = im0.canvas.height; o.getContext('2d').drawImage(im0.canvas, 0, 0); im0.orig = o; }
     S.editQueue = []; S.fixer = { id: it.imageId, mode: 'remove', brush: 'm', undo: [], onSheet: isFree(it), title: 'Edit sticker' }; showSheet(''); drawFix(); },
   fixMode: t => { S.fixer.mode = t.dataset.v; drawFix(); },
-  fixAutoBg: () => { const f = S.fixer, im = imgById(f.id), src = im.orig || im.canvas, cut = removeBgCanvas(src);
-    if (!cut) return toast("Couldn't find a plain background. Use the Remove brush or Tap remove.");
+  fixAutoBg: async () => { const f = S.fixer, im = imgById(f.id), src = im.orig || im.canvas; if (f.busy) return;
+    let cut = removeBgCanvas(src), smart = false;
+    if ((!cut || !cut.sure) && aiOk()) {   // not a plain background: try cutting out the person first
+      f.busy = true; aiNote(safeLS.get('sk_ai_people') ? 'Cutting out the person…' : 'Busy background. Getting the smart tool ready (one time, about 9 MB)…');
+      let person = null; try { person = await aiPeopleCut(src); } catch (e) { console.warn('people', e); if (!cut) { f.busy = false; aiNote(''); return toast("The smart tool didn't load. Check your internet, or use Smart tap, Tap and Brush."); } }
+      f.busy = false; aiNote('');
+      if (person) { cut = person; smart = true; } else if (!cut) smart = true;   // no person: keep the quick result if there is one
+    }
+    if (!cut) { if (aiOk()) { f.smart = true; f.mode = 'keep'; drawFix(); } return toast(smart ? "No person found. Smart is on: tap what you want to keep." : "Couldn't find a plain background. Use the Remove brush or Tap remove."); }
     const c = im.canvas, x = c.getContext('2d'); f.undo.push(x.getImageData(0, 0, c.width, c.height)); x.clearRect(0, 0, c.width, c.height); x.drawImage(cut, 0, 0, c.width, c.height);
-    f.changed = true; f.mode = 'keep'; toast('Background removed. Tap anything to keep or remove it.'); drawFix(); },
+    f.changed = true; f.mode = 'keep'; f.sam = null; toast(smart ? 'Person cut out! Use Smart tap to keep anything else.' : 'Background removed. Tap anything to keep or remove it.'); drawFix(); },
   bgPick: t => { S.bgOffer[S.bgIdx || 0].use = !!t.dataset.v; buzz(6); drawBgOffer(); },
   bgNav: t => { const n = S.bgOffer.length; S.bgIdx = ((S.bgIdx || 0) + +t.dataset.d + n) % n; drawBgOffer(); },
   bgKeepAll: () => { S.bgOffer = null; closeSheet(); },
@@ -6839,9 +7023,12 @@ const ACTIONS = {
     if (n) { toast(`Background removed from ${n} picture${n === 1 ? '' : 's'}!`); drawCtrl(); drawSheet(); } },
   whiteBgToggle: () => { S.admin.whiteBg = S.admin.whiteBg === false; toast(S.admin.whiteBg ? 'Imported sheets print with a white background.' : 'Imported sheets print exactly as sent.'); drawAdminBody(); },
   fixZoom: t => { const f = S.fixer; f.zoom = Math.max(1, Math.min(4, (f.zoom || 1) * (+t.dataset.d > 0 ? 1.5 : 1 / 1.5))); drawFix(); },
-  fixBrushOn: t => { S.fixer.brushOn = !!t.dataset.v; drawFix(); },
+  fixBrushOn: t => { const v = t.dataset.v; S.fixer.smart = v === 'ai'; S.fixer.brushOn = v === '1';
+    if (v === 'ai' && S.fixer.mode === 'split') S.fixer.mode = 'keep';
+    if (v === 'ai' && !safeLS.get('sk_ai_sam')) toast('Smart tap downloads once (Wi-Fi is best), then it works right away.'); drawFix(); },
   fixBrush: t => { S.fixer.brush = t.dataset.v; drawFix(); },
-  fixUndo: () => { const f = S.fixer, im = imgById(f.id); if (!f.undo.length) return; im.canvas.getContext('2d').putImageData(f.undo.pop(), 0, 0); drawFix(); },
+  fixUndo: () => { const f = S.fixer, im = imgById(f.id); if (!f.undo.length || f.busy) return; const u = f.undo.pop(); im.canvas.getContext('2d').putImageData(u, 0, 0);
+    if (f.sam && typeof u.samStarted === 'boolean') f.sam.started = u.samStarted; drawFix(); },
   fixDone: async () => { const f = S.fixer; closeSheet(); if (f && f.ac) f.ac.abort();
     const next = () => { if (S.editQueue && S.editQueue.length) setTimeout(() => openEditFor(S.editQueue.shift()), 60); else S.editTotal = 0; };
     if (!f || !f.changed) return next();
@@ -7423,7 +7610,7 @@ const ACTIONS = {
     } catch (e) { toast(friendlyError(e)); if (b) b.disabled = false; }
   },
   tplSticker: el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (t) tplDownloadSticker(t); },
-  tplQr: el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t || !window.QRCode) return; qrCanvas(tplLink(t), 1000).toBlob(b => saveBlob(b, `qr-${t.slug}.png`), 'image/png'); },
+  tplQr: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t || !(await needLib('qr'))) return; qrCanvas(tplLink(t), 1000).toBlob(b => saveBlob(b, `qr-${t.slug}.png`), 'image/png'); },
   tplCopy: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t) return; try { await navigator.clipboard.writeText(tplLink(t)); toast('Link copied.'); } catch { toast(tplLink(t)); } },
   thumbSave: async t => { const ed = S.thumbEd; if (!ed) return; t.disabled = true;
     const c = document.createElement('canvas'); c.width = c.height = 320; thumbDraw(c, ed, 320);
@@ -7493,6 +7680,12 @@ document.addEventListener('click', e => {
   const fn = ACTIONS[t.dataset.act]; if (!fn) return;
   e.preventDefault(); fn(t, e);
 });
+// the shop's settings from the database -> the page (used at start, with saved or fresh settings)
+function applySettings(s){
+  S.settings.maxSheets = s.max_sheets; S.settings.productsRaw = s.products || {}; S.settings.configRaw = s.config || {}; applyShopConfig(s.config);
+  CONFIG.maxNoShows = s.max_noshows || CONFIG.maxNoShows; S.settings.products = mergeProducts(s.products); S.settings.deals = Array.isArray(s.deals) ? s.deals : [];
+  if (s.signal_verb) S.settings.signalVerb = s.signal_verb; if (s.signal_item) S.settings.signalItem = s.signal_item;
+}
 /* =====================================================================
    Start
    ===================================================================== */
@@ -7508,12 +7701,21 @@ document.addEventListener('click', e => {
   if (await finishSignIn()) return;   // this was the sign-in window: it closes itself
   refreshMe().then(refreshTopAcct);
   setTimeout(countScan, 1500);
-  try { const s = await api.settings(); S.settings.maxSheets = s.max_sheets; S.settings.productsRaw = s.products || {}; S.settings.configRaw = s.config || {}; applyShopConfig(s.config); CONFIG.maxNoShows = s.max_noshows || CONFIG.maxNoShows; S.settings.products = mergeProducts(s.products); S.settings.deals = Array.isArray(s.deals) ? s.deals : [];
-    if (s.signal_verb) S.settings.signalVerb = s.signal_verb; if (s.signal_item) S.settings.signalItem = s.signal_item; }
-  catch (e) { console.warn('Could not load settings, using CONFIG values', e); }
-  await loadPeople();
-  await openTemplate();
-  route();
+  const peopleReady = loadPeople(), settingsReady = api.settings();   // both at the same time
+  // Returning visitors: show the shop right away with the settings saved on this phone last time,
+  // then refresh them. (Not for first visits, admin pages, or ready-made design links.)
+  const saved = readJSON('sk_settings'), page0 = (location.hash.replace(/^#\/?/, '') || 'home').split('/')[0];
+  const instant = !!(saved && saved.s && !TPL && page0 !== 'admin' && Date.now() - (+saved.t || 0) < 30 * 864e5);
+  if (instant) { try { applySettings(saved.s); route(); } catch (e) { console.warn('saved settings', e); } }
+  let fresh = null;
+  try { fresh = await settingsReady; applySettings(fresh); safeLS.set('sk_settings', JSON.stringify({ s: fresh, t: Date.now() })); }
+  catch (e) { console.warn('Could not load settings, using ' + (instant ? 'the saved ones' : 'CONFIG values'), e); }
+  await peopleReady;
+  if (!instant) { await openTemplate(); route(); return; }
+  // shown from memory: redraw quietly if something changed (a price, a product), never mid-typing
+  const page = (location.hash.replace(/^#\/?/, '') || 'home').split('/')[0], changed = !!fresh && JSON.stringify(fresh) !== JSON.stringify(saved.s);
+  if (page === 'checkout') { if (changed || S.people.length) viewCheckoutKeep(); }
+  else if (changed && ['home', 'shop', 'design', 'make', 'cart'].includes(page)) route(true);
 })();
 </script>
 </body>
