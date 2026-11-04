@@ -1052,6 +1052,19 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 #pframe img{position:absolute;max-width:none;user-select:none;-webkit-user-drag:none}
 .pgctl{display:grid;gap:10px;justify-items:start;width:min(100%,420px)}
 
+/* lockdown */
+.lockpg{min-height:100svh;display:grid;place-items:center;padding:24px 20px}
+.lockbox{width:min(100%,380px);display:grid;justify-items:center;gap:14px;text-align:center;padding:32px 24px;border:2px solid var(--ink);border-radius:var(--r-lg);background:var(--paper);box-shadow:var(--shadow)}
+.lockbox .mark{font-size:30px}
+.lock-ic{width:64px;height:64px;border-radius:20px;background:var(--xu-gold);border:2px solid var(--ink);display:grid;place-items:center;box-shadow:var(--shadow-sm)}
+.lockbox h1{font-family:var(--display);font-size:26px;line-height:1.15;margin:4px 0 0}
+.lockbox .inp{width:100%;text-align:center;font-size:18px}
+.lockbox .ferr{min-height:1.2em;margin:-6px 0 0}
+.lockbox .btn{width:100%;justify-content:center}
+.lockbox.shake{animation:lockshake .35s}
+@keyframes lockshake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+@media (prefers-reduced-motion:reduce){.lockbox.shake{animation:none}}
+.lockpanel.on{border-color:var(--danger, #c0392b);background:#fff6f5}
 /* thermal printer card */
 .prn-on{display:flex;gap:8px;align-items:center;margin:4px 0 12px;font-size:15px}
 .prn-paper{display:flex;align-items:center;gap:12px;margin-top:14px}.prn-paper .lab{margin:0}
@@ -1924,6 +1937,7 @@ const CONFIG = {
   sheet: { widthMm: 210, heightMm: 297, cols: 4, rows: 6, marginMm: 4, gapMm: 1.5 },
   contactOn: false, contactEmail: '', contactPhone: '',   // "Questions?" line; off until ready
   showSignal: true,   // "At the gate, look for ..." (switch in Settings -> Pickup signal)
+  lockdown: false,    // Settings -> Lockdown: the whole site shows a locked page
   freeOn: true, freeMinMm: 20, freeMax: 30, freeGapMm: 2, smoothCut: true,   // Free sticker layout and cut lines
   pinGapMm: 7,             // space between pins on a pin sheet (room to cut around each circle)
   kcGapMm: 4,              // space between keychain inserts on a keychain sheet   // 4 mm edge: about as close as home printers print
@@ -2203,6 +2217,8 @@ function armed(t, prompt){
 }
 function friendlyError(e){
   const m = String((e && (e.message || e.error_description)) || e || '');
+  if (m.includes('LOCKED')) return 'The shop is closed right now.';
+  if (m.includes('LOCK_SLOW')) return 'Too many tries. Wait 10 minutes, then try again.';
   if (m.includes('ACTIVE_ORDER')) return 'You already have 5 orders in progress. Pick some up first, then you can order again.';
   if (m.includes('BLOCKED')) return 'Orders are paused for this name because of missed pickups. Talk to the seller to sort it out.';
   if (m.includes('TOO_MANY_SHEETS')) return `You can order up to ${S.settings.maxSheets} sheets at a time.`;
@@ -2460,6 +2476,7 @@ function applyShopConfig(c){
   CONFIG.pinGapMm = Math.max(2, Math.min(20, numOr(c.pin_gap_mm, D.pinGapMm)));
   CONFIG.contactOn = c.contact_on === true; CONFIG.contactEmail = String(c.contact_email || '').slice(0, 80); CONFIG.contactPhone = String(c.contact_phone || '').slice(0, 30);
   CONFIG.showSignal = c.show_signal !== false;
+  CONFIG.lockdown = c.lockdown === true;
   CONFIG.freeOn = c.free_on !== false; CONFIG.smoothCut = c.smooth_cut !== false;
   CONFIG.freeMinMm = Math.max(10, Math.min(100, numOr(c.free_min_mm, D.freeMinMm))); CONFIG.freeMax = Math.max(1, Math.min(200, numOr(c.free_max, D.freeMax))); CONFIG.freeGapMm = Math.max(1, Math.min(10, numOr(c.free_gap_mm, D.freeGapMm)));
   CONFIG.kcGapMm = Math.max(1, Math.min(20, numOr(c.kc_gap_mm, D.kcGapMm)));
@@ -2741,6 +2758,7 @@ function SupaBackend(){
     async logAddMany(rows){ const { error } = await sb.from('logbook').insert(rows); if (error) throw error; },
     async logUpdate(id, row){ const { error } = await sb.from('logbook').update({ ...row, updated_at: new Date().toISOString() }).eq('id', id); if (error) throw error; },
     async logDelete(id){ const { error } = await sb.from('logbook').delete().eq('id', id); if (error) throw error; },
+    async lockOpen(words){ return !!(await rpc('lock_open', { p_code: words })); },
     async pickupPeople(code){ return (await rpc('pickup_people_list', { p_code: code || null })) || []; },
     async people(){ const { data, error } = await sb.from('pickup_people').select('*').order('sort').order('created_at'); if (error) throw error; return data || []; },
     async savePerson(row){ const { error } = await sb.from('pickup_people').upsert(row); if (error) throw error; },
@@ -3003,14 +3021,14 @@ function actionStripHTML(){
   return `<div class="actstrip ok"><div class="in">${ic('check', 20)}<span><b>They know you're here.</b> ${CONFIG.showSignal ? `Look for ${esc(signal())} at ${esc(o.pickup)}.` : `Head to ${esc(o.pickup)}.`}</span></div></div>`;
 }
 async function loadMyOrder(){
-  if (S.halt) return;
+  if (S.halt || S.locked) return;
   const last = readJSON('sk_last'); if (!last || !last.code || !last.nickname) { S.myOrder = null; return; }
   try { S.myOrder = await api.getOrder(last.code, last.nickname); S.myOrder.pickup = S.myOrder.pickup || last.pickup; }
   catch { S.myOrder = null; }
   refreshActionStrip();
 }
 function refreshActionStrip(){
-  document.querySelectorAll('.actstrip').forEach(e => e.remove());
+  document.querySelectorAll('.actstrip').forEach(e => e.remove()); if (S.locked) return;
   const tw = document.querySelector('.topwrap'); if (tw) tw.insertAdjacentHTML('afterend', actionStripHTML());
   const btn = document.querySelector('a.pilllink[href="#/status"]'); if (btn) btn.classList.toggle('needs', !!myAction(S.myOrder) && myAction(S.myOrder) !== 'arrived');
 }
@@ -3167,10 +3185,39 @@ window.addEventListener('error', e => adminErr(e.message));
 window.addEventListener('unhandledrejection', e => adminErr(e.reason && e.reason.message || e.reason));
 function toTop(){ window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }
 const BASE_TITLE = document.title;
+/* Lockdown: one locked page, no way around it. The words are checked by the database (lock_open), never here. */
+const lockPassed = () => { try { return sessionStorage.getItem('sk_unlock') === '1'; } catch { return !!S.unlockedMem; } };
+const lockPass = () => { try { sessionStorage.setItem('sk_unlock', '1'); } catch {} S.unlockedMem = true; };
+function viewLocked(){
+  document.title = 'Stick2It';
+  document.querySelectorAll('.actstrip').forEach(e => e.remove());
+  $('#app').innerHTML = `<main id="main" class="lockpg"><form class="lockbox" id="lockForm" autocomplete="off" novalidate>
+    <span class="mark">Stick<b>2</b>It</span>
+    <span class="lock-ic" aria-hidden="true">${ic('lock', 30)}</span>
+    <h1>What's the magic word?</h1>
+    <input class="inp" id="lockIn" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="80" aria-label="The magic word" aria-describedby="lockErr">
+    <p class="ferr" id="lockErr" role="alert"></p>
+    <button class="btn dark" type="submit" id="lockGo">${ic('key', 18)}<span>Open</span></button>
+  </form></main>`;
+  const f = $('#lockForm'), inp = $('#lockIn'), err = $('#lockErr'), go = $('#lockGo');
+  f.addEventListener('submit', async e => {
+    e.preventDefault(); const v = inp.value.trim(); if (!v || go.disabled) return;
+    go.disabled = true; err.textContent = '';
+    try {
+      if (await api.lockOpen(v)) { lockPass(); buzz([8, 30, 8]); if (location.hash.startsWith('#/admin')) route(); else location.hash = '#/admin'; return; }
+      err.textContent = "That's not it."; inp.value = ''; f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake'); buzz(20);
+    } catch (ex) { err.textContent = /LOCK_SLOW/.test(String(ex && ex.message)) ? friendlyError(ex) : "Couldn't check right now. Check your internet and try again."; }
+    finally { go.disabled = false; inp.focus(); }
+  });
+  setTimeout(() => { try { inp.focus({ preventScroll: true }); } catch {} }, 60);
+}
 function route(keep){
   if (S.halt) return;
   document.title = BASE_TITLE;
   const parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/'), page = parts[0];
+  // Lockdown: every page is the locked page, except admin after the magic words (this tab only)
+  if (CONFIG.lockdown && !(page === 'admin' && lockPassed())) { S.locked = true; viewLocked(); return; }
+  S.locked = false;
   const views = { home: viewHome, shop: viewShop, design: viewDesign, make: () => viewMake(parts[1]), cart: viewCart, checkout: viewCheckout, done: viewDone, status: viewStatus, admin: viewAdmin, sell: viewSell };
   (views[page] || viewNotFound)();
   if (keep === true) return;   // a quiet redraw (fresh settings arrived): stay where they are
@@ -4050,18 +4097,30 @@ const PRN_BT = ['000018f0-0000-1000-8000-00805f9b34fb', 'e7810a71-73ae-499d-8c15
   '0000ff00-0000-1000-8000-00805f9b34fb', '0000ffe0-0000-1000-8000-00805f9b34fb', '0000fee7-0000-1000-8000-00805f9b34fb'];   // what cheap receipt printers use
 const prnWidth = () => (+safeLS.get('sk_prn_w') === 576 ? 576 : 384);   // dots across: 58 mm paper = 384, 80 mm = 576
 const pause = ms => new Promise(r => setTimeout(r, ms));
+async function prnFindWritable(gatt, uuid){
+  for (const sv of await gatt.getPrimaryServices().catch(() => []))
+    for (const c of await sv.getCharacteristics().catch(() => [])) if ((!uuid || c.uuid === uuid) && (c.properties.write || c.properties.writeWithoutResponse)) return c;
+  return null;
+}
+/* Cheap Bluetooth printer chips reset if data comes faster than they can take it (text is fine, pictures aren't).
+   So: pieces of 100 bytes with a pause after each; if the printer struggles, tiny pieces with longer pauses
+   (remembered on this phone); if it drops the connection, reconnect by itself and carry on. */
 async function prnConnectBt(){
   const dev = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: PRN_BT });
-  const gatt = await dev.gatt.connect(); let ch = null;
-  for (const sv of await gatt.getPrimaryServices().catch(() => [])) {
-    for (const c of await sv.getCharacteristics().catch(() => [])) if (c.properties.write || c.properties.writeWithoutResponse) { ch = c; break; }
-    if (ch) break; }
-  if (!ch) { try { gatt.disconnect(); } catch {} throw new Error('NO_WRITE'); }
-  let size = ch.properties.write ? 180 : 100;
-  const put = async part => ch.properties.write ? ch.writeValueWithResponse(part) : (await ch.writeValueWithoutResponse(part), pause(part.length > 20 ? 15 : 6));   // a short breather so the printer keeps up
-  PRN.send = async bytes => { for (let i = 0; i < bytes.length;) { const part = bytes.slice(i, i + size);
-    try { await put(part); i += part.length; } catch (e) { if (size > 20) { size = 20; continue; } throw e; } } };   // some printers only take small pieces
-  dev.addEventListener('gattserverdisconnected', () => { if (PRN.dev === dev) { PRN.send = null; PRN.dev = null; drawPrinterCard(); } });
+  let ch = await prnFindWritable(await dev.gatt.connect());
+  if (!ch) { try { dev.gatt.disconnect(); } catch {} throw new Error('NO_WRITE'); }
+  const uuid = ch.uuid, level = () => Math.min(2, +safeLS.get('sk_prn_slow') || 0), PACE = [[100, 18], [40, 25], [20, 35]];   // bytes per piece, pause after it
+  const put = part => ch.properties.write ? ch.writeValueWithResponse(part) : ch.writeValueWithoutResponse(part);
+  const again = async () => { if (!dev.gatt.connected) { await pause(400); await dev.gatt.connect(); } ch = (await prnFindWritable(dev.gatt, uuid)) || ch; };
+  PRN.send = async (bytes, onStep) => {
+    let fails = 0;
+    for (let i = 0; i < bytes.length;) {
+      const [size, gap] = PACE[level()], part = bytes.slice(i, i + size);
+      try { await put(part); i += part.length; fails = 0; await pause(gap); if (onStep) onStep(i, bytes.length); }
+      catch (e) { console.warn('printer write', e); if (++fails > 3) throw e; safeLS.set('sk_prn_slow', String(Math.min(2, level() + 1))); await again(); }   // gentler, remembered
+    }
+  };
+  dev.addEventListener('gattserverdisconnected', () => { if (PRN.dev === dev && !PRN.busy) { PRN.send = null; PRN.dev = null; drawPrinterCard(); } });
   Object.assign(PRN, { dev, name: dev.name || 'Bluetooth printer', kind: 'bt' });
 }
 async function prnConnectUsb(){
@@ -4082,8 +4141,23 @@ const ESCPOS = { init: [0x1b, 0x40], center: [0x1b, 0x61, 1], left: [0x1b, 0x61,
    2 = ESC *, 8 dots tall per strip: for very old or very basic printers
    3 = GS v 0: the newer command; faster, but many clones ignore it
    Each returns a list of strips, sent one at a time with a short pause so the printer's small memory keeps up. */
-const PRN_MODES = { 1: 'Picture 1 (works on most printers)', 2: 'Picture 2 (very basic printers)', 3: 'Picture 3 (newer printers)' };
-const prnMode = () => ({ 2: 2, 3: 3 })[safeLS.get('sk_prn_mode')] || 1;
+const PRN_MODES = { 1: 'Picture 1 (works on most printers)', 2: 'Picture 2 (very basic printers)', 3: 'Picture 3 (newer printers)', 4: "Picture 4 (the printer's own QR)" };
+const prnMode = () => ({ 2: 2, 3: 3, 4: 4 })[safeLS.get('sk_prn_mode')] || 1;
+// the printer draws the QR itself from the link (about 50 bytes); not every printer can
+function escNativeQr(text, dot){
+  const d = ESCPOS.text(text), n = d.length + 3, k = (fn, ...a) => [0x1d, 0x28, 0x6b, ...a];
+  return [[0x1d, 0x28, 0x6b, 4, 0, 0x31, 0x41, 0x32, 0], [0x1d, 0x28, 0x6b, 3, 0, 0x31, 0x43, dot], [0x1d, 0x28, 0x6b, 3, 0, 0x31, 0x45, 0x33],
+    [0x1d, 0x28, 0x6b, n & 255, n >> 8, 0x31, 0x50, 0x30, ...d], [0x1d, 0x28, 0x6b, 3, 0, 0x31, 0x51, 0x30]];
+}
+// just the QR's squares, about 80% of the paper wide (the white border comes from blank paper): far less data than the full picture
+function qrSquares(paperDots){
+  const qo = S.admin.qrObj && S.admin.qrObj._oQRCode; if (!qo) return null;
+  const n = qo.getModuleCount(), m = Math.max(3, Math.floor(paperDots * 0.8 / n)), c = document.createElement('canvas'); c.width = c.height = n * m;
+  const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#000';
+  for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (qo.isDark(r, k)) x.fillRect(k * m, r * m, m, m);
+  return c;
+}
+const qrCaption = url => url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/?\?.*$/, '');
 function prnDots(canvas){ const w = canvas.width, h = canvas.height, d = canvas.getContext('2d').getImageData(0, 0, w, h).data;
   return { w, h, dark: (x, y) => { const i = (y * w + x) * 4; return d[i + 3] > 127 && d[i] * 0.3 + d[i + 1] * 0.59 + d[i + 2] * 0.11 < 128; } }; }
 function escPicture(canvas, mode){
@@ -4105,9 +4179,13 @@ function escPicture(canvas, mode){
 }
 async function prnSend(parts, done){
   if (!PRN.send) { toast('Connect the printer first.'); return false; }
-  try { for (const part of parts) { await PRN.send(new Uint8Array(part)); if (part.length > 64) await pause(PRN.kind === 'bt' ? 30 : 4); }
-    if (done) toast(done); return true; }
-  catch (e) { console.warn('printer', e); PRN.send = null; drawPrinterCard(); toast("The printer stopped answering. Check it's on and close by, then connect again."); return false; }
+  if (PRN.busy) { toast('Still printing. One moment.'); return false; }
+  const all = new Uint8Array([].concat(...parts)), note = t => { const el = $('#prnStatus'); if (el) { el.textContent = t; el.hidden = !t; } };
+  PRN.busy = true; note('Printing… 0%');
+  try { await PRN.send(all, (n, of) => note(`Printing… ${Math.round(n / of * 100)}%`)); note(''); if (done) toast(done); return true; }
+  catch (e) { console.warn('printer', e); note(''); if (PRN.dev && PRN.kind === 'bt' && !PRN.dev.gatt.connected) PRN.send = null;
+    toast("The printer stopped answering. Turn it off and on, connect again, and try once more."); return false; }
+  finally { PRN.busy = false; drawPrinterCard(); }
 }
 function prnFail(e){
   const m = String((e && (e.name + ' ' + e.message)) || '');
@@ -4122,9 +4200,10 @@ function drawPrinterCard(){
   box.innerHTML = `<h3 style="margin-bottom:6px">${ic('printer', 18)} Thermal printer</h3>
     ${!can.bt && !can.usb ? `<p class="help">This browser can't connect to printers. On Android, open the site in <b>Chrome</b>. iPhones can't connect to printers from a website.</p>`
     : PRN.send ? `<p class="prn-on">${ic('check', 16)}<span>Connected to <b>${esc(PRN.name)}</b></span></p>
+      <p class="aiprog" id="prnStatus" role="status" ${PRN.busy ? '' : 'hidden'}>Printing…</p>
       <div class="acts">${smallBtn('Test print', 'printer', 'prnTest', 'dark')}${smallBtn('Find picture mode', 'sparkle', 'prnFindMode', 'plain')}${smallBtn('Disconnect', 'x', 'prnOff', 'plain')}</div>
-      ${S.admin.prnPick ? `<div class="prn-pick"><span class="lab">Which test picture printed clearly?</span><div class="seg">${[1, 2, 3].map(m => `<button type="button" class="${prnMode() === m ? 'on' : ''}" data-act="prnMode" data-m="${m}">${m}</button>`).join('')}</div>
-        <p class="help" style="margin:6px 0 0">If none did, turn the printer off and on, connect again, and send them once more.</p></div>`
+      ${S.admin.prnPick ? `<div class="prn-pick"><span class="lab">Which test picture printed clearly?</span><div class="seg">${[1, 2, 3, 4].map(m => `<button type="button" class="${prnMode() === m ? 'on' : ''}" data-act="prnMode" data-m="${m}">${m}</button>`).join('')}</div>
+        <p class="help" style="margin:6px 0 0">Picture 4 is a small QR code, if your printer can draw them itself. If none printed, turn the printer off and on, connect again, and try once more.</p></div>`
         : `<p class="help" style="margin-top:8px">Pictures: <b>${PRN_MODES[prnMode()]}</b>. If QR codes don't print right, tap Find picture mode.</p>`}`
     : `<p class="help">Print QR codes straight to a receipt printer like the POS-5890. Turn the printer on first.</p>
       <div class="acts">${can.bt ? smallBtn('Connect by Bluetooth', 'printer', 'prnBt', 'dark') : ''}${can.usb ? smallBtn('Connect by USB cable', 'printer', 'prnUsb', 'plain') : ''}</div>
@@ -6029,7 +6108,12 @@ async function makePdf(o, batch, asPng){
 
 function drawSettings(){
   const st = S.settings;
-  $('#admBody').innerHTML = `<form class="panel" id="setForm" style="max-width:640px">
+  $('#admBody').innerHTML = `<div class="panel lockpanel ${CONFIG.lockdown ? 'on' : ''}" style="max-width:640px;margin-bottom:20px">
+    <h3 style="margin-bottom:6px">${ic('lock', 18)} Lockdown</h3>
+    <p class="help" style="margin-bottom:12px">Locks the whole site. Everyone sees one locked page asking "What's the magic word?", and nothing else. The right words lead to the admin login. New orders and pickup changes are blocked while it's on.</p>
+    <label class="switch"><input type="checkbox" id="lockOn" ${CONFIG.lockdown ? 'checked' : ''}><span>${CONFIG.lockdown ? '<b>The site is locked</b>' : 'Lock the site'}</span></label>
+  </div>
+  <form class="panel" id="setForm" style="max-width:640px">
     <h3 style="margin-bottom:6px">Pickup signal</h3>
     <p class="help" style="margin-bottom:12px">What will the seller hold or wear at the gate? Customers see this on their order and when it's ready. Change it anytime.</p>
     <label class="switch" style="margin-bottom:16px"><input type="checkbox" id="sigOn" ${CONFIG.showSignal ? 'checked' : ''}><span>Show the pickup signal to customers ("At the gate, look for ...")</span></label>
@@ -6057,7 +6141,7 @@ function drawSettings(){
     seller_mode: CONFIG.sellerMode, seller_flat_rate: CONFIG.sellerFlatRate, seller_welcome_on: CONFIG.sellerWelcomeOn, seller_reward_on: CONFIG.sellerRewardOn,
     seller_reward_every: CONFIG.sellerRewardEvery, seller_reward_item: CONFIG.sellerRewardItem, seller_goal_by: CONFIG.sellerGoalBy, seller_goal_orders: CONFIG.sellerGoalOrders, seller_pro_orders: CONFIG.sellerProOrders, seller_min_order: CONFIG.sellerMinOrder, seller_pro_goal: CONFIG.sellerProGoal, seller_pro_rate: CONFIG.sellerProRate, seller_buyer_off: CONFIG.sellerBuyerOff, seller_welcome: CONFIG.sellerWelcome, sellers_max: CONFIG.sellersMax, seller_min_payout: CONFIG.sellerMinPayout, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
-    print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, pin_gap_mm: CONFIG.pinGapMm, kc_gap_mm: CONFIG.kcGapMm, contact_on: CONFIG.contactOn, contact_email: CONFIG.contactEmail, contact_phone: CONFIG.contactPhone, free_on: CONFIG.freeOn, smooth_cut: CONFIG.smoothCut, show_signal: CONFIG.showSignal, free_min_mm: CONFIG.freeMinMm, free_max: CONFIG.freeMax, free_gap_mm: CONFIG.freeGapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
+    print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, pin_gap_mm: CONFIG.pinGapMm, kc_gap_mm: CONFIG.kcGapMm, contact_on: CONFIG.contactOn, contact_email: CONFIG.contactEmail, contact_phone: CONFIG.contactPhone, free_on: CONFIG.freeOn, smooth_cut: CONFIG.smoothCut, show_signal: CONFIG.showSignal, lockdown: CONFIG.lockdown, free_min_mm: CONFIG.freeMinMm, free_max: CONFIG.freeMax, free_gap_mm: CONFIG.freeGapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
     allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, feedback_on: CONFIG.feedbackOn, rush_on: CONFIG.rushOn, rush_make: CONFIG.rushMake, rush_cutoff_hour: CONFIG.rushCutoff, max_rush_per_day: CONFIG.maxRushPerDay, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
     grades: CONFIG.grades.slice(), gcash: { ...CONFIG.gcash }, cleanup_days: CONFIG.cleanupDays, max_pictures: CONFIG.maxPictures, max_noshows: CONFIG.maxNoShows,
     max_qty: Object.fromEntries(['pins', 'posters', 'keychains'].map(k => [k, maxQtyFor(k)])),
@@ -6065,6 +6149,15 @@ function drawSettings(){
              keychains: Object.fromEntries(CONFIG.products.keychains.sizes.map(z => [z.id, { wMm: z.wMm, hMm: z.hMm }])) }
   };
   drawShopForm();
+  $('#lockOn').addEventListener('change', async e => {
+    const on = e.target.checked;
+    if (on && !confirm('Lock the whole site now? Everyone will only see the locked page.')) { e.target.checked = false; return; }
+    const cfg = { ...(S.settings.configRaw || {}), lockdown: on };
+    try { await api.saveSettings({ config: cfg }); S.settings.configRaw = cfg; CONFIG.lockdown = on; if (S.admin.cfg) S.admin.cfg.lockdown = on;
+      if (on) lockPass();   // you're already in admin: keep this tab open for you
+      toast(on ? 'The site is locked.' : 'The site is open again.'); drawSettings(); }
+    catch (ex) { e.target.checked = !on; toast(friendlyError(ex)); }
+  });
   $('#sigOn').addEventListener('change', async e => {
     const on = e.target.checked, cfg = { ...(S.settings.configRaw || {}), show_signal: on };
     try { await api.saveSettings({ config: cfg }); S.settings.configRaw = cfg; CONFIG.showSignal = on; if (S.admin.cfg) S.admin.cfg.show_signal = on;
@@ -7733,16 +7826,20 @@ const ACTIONS = {
     const W = +t.dataset.w, q = S.admin.qr, c = thermalQr(W); if (!c) return toast('Make the QR code first.');
     c.toBlob(b => { saveBlob(b, `qr-${q.slug}-thermal-${W === 384 ? 58 : 80}mm.png`); toast('Saved. Print it at 100% (no scaling) for the sharpest result.'); }, 'image/png');
   },
-  qrPrint: async () => { const c = thermalQr(prnWidth()); if (!c) return toast('Make the QR code first.'); toast('Printing…');
-    await prnSend([ESCPOS.init, ESCPOS.center, ...escPicture(c, prnMode()), ESCPOS.feed(4)], 'Printed!'); },
+  qrPrint: async () => {
+    const q = S.admin.qr, c = qrSquares(prnWidth()), mode = prnMode(); if (!q || !c) return toast('Make the QR code first.');
+    const qr = mode === 4 ? escNativeQr(q.url, prnWidth() === 576 ? 10 : 7) : escPicture(c, mode);
+    await prnSend([ESCPOS.init, ESCPOS.center, ESCPOS.feed(2), ...qr, ESCPOS.init, ESCPOS.center, ESCPOS.feed(1), ESCPOS.bold(true), ESCPOS.text(qrCaption(q.url) + '\n'), ESCPOS.bold(false), ESCPOS.feed(4)], 'Printed!');
+  },
   prnFindMode: async () => {   // three small test pictures, one per method; they tap the one that came out clearly
-    const c = document.createElement('canvas'); c.width = 240; c.height = 72; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, 240, 72); x.fillStyle = '#000';
-    x.fillRect(0, 0, 240, 6); x.fillRect(0, 66, 240, 6); x.fillRect(0, 0, 6, 72); x.fillRect(234, 0, 6, 72);
-    for (let r = 0; r < 4; r++) for (let k = 0; k < 15; k++) if ((r + k) % 2) x.fillRect(12 + k * 14.4, 12 + r * 12, 14, 12);
+    const c = document.createElement('canvas'); c.width = 192; c.height = 48; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, 240, 72); x.fillStyle = '#000';
+    x.fillRect(0, 0, 192, 4); x.fillRect(0, 44, 192, 4); x.fillRect(0, 0, 4, 48); x.fillRect(188, 0, 4, 48);
+    for (let r = 0; r < 3; r++) for (let k = 0; k < 15; k++) if ((r + k) % 2) x.fillRect(8 + k * 11.7, 8 + r * 11, 11, 11);
     const parts = [ESCPOS.init, ESCPOS.center, ESCPOS.text('Which picture printed clearly?\n\n')];
-    for (const mode of [1, 2, 3]) parts.push(ESCPOS.init, ESCPOS.center, ESCPOS.bold(true), ESCPOS.text(`Picture ${mode}\n`), ESCPOS.bold(false), ...escPicture(c, mode), ESCPOS.feed(2));
+    for (const mode of [1, 2, 3, 4]) parts.push(ESCPOS.init, ESCPOS.center, ESCPOS.bold(true), ESCPOS.text(`Picture ${mode}\n`), ESCPOS.bold(false),
+      ...(mode === 4 ? escNativeQr('https://stick2it.me', 4) : escPicture(c, mode)), ESCPOS.init, ESCPOS.feed(2));
     parts.push(ESCPOS.init, ESCPOS.feed(3));
-    if (await prnSend(parts, 'Sent 3 test pictures. Tap the number that printed clearly.')) { S.admin.prnPick = true; drawPrinterCard(); } },
+    S.admin.prnPick = true; await prnSend(parts, 'Sent the test pictures. Tap the number that printed clearly.'); drawPrinterCard(); },
   prnMode: t => { safeLS.set('sk_prn_mode', t.dataset.m); S.admin.prnPick = false; toast(`Using ${PRN_MODES[+t.dataset.m]}.`); drawPrinterCard(); },
   prnBt: async () => { try { await prnConnectBt(); toast(`Connected to ${PRN.name}.`); } catch (e) { prnFail(e); } drawPrinterCard(); },
   prnUsb: async () => { try { await prnConnectUsb(); toast(`Connected to ${PRN.name}.`); } catch (e) { prnFail(e); } drawPrinterCard(); },
@@ -7854,7 +7951,8 @@ function applySettings(s){
   try { fresh = await settingsReady; applySettings(fresh); safeLS.set('sk_settings', JSON.stringify({ s: fresh, t: Date.now() })); }
   catch (e) { console.warn('Could not load settings, using ' + (instant ? 'the saved ones' : 'CONFIG values'), e); }
   await peopleReady;
-  if (!instant) { await openTemplate(); route(); return; }
+  if (!instant) { if (!CONFIG.lockdown) await openTemplate(); route(); return; }
+  if (CONFIG.lockdown || S.locked) { route(true); return; }   // locked (or unlocked) since their last visit
   // shown from memory: redraw quietly if something changed (a price, a product), never mid-typing
   const page = (location.hash.replace(/^#\/?/, '') || 'home').split('/')[0], changed = !!fresh && JSON.stringify(fresh) !== JSON.stringify(saved.s);
   if (page === 'checkout') { if (changed || S.people.length) viewCheckoutKeep(); }

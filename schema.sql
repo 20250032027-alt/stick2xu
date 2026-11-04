@@ -334,6 +334,7 @@ declare
   v_parent public.orders;                 -- "add more to my order": the order this one goes with
 begin
   select * into s from public.shop_settings where id = 1;
+  if coalesce((s.config->>'lockdown')::boolean, false) and not v_admin then raise exception 'LOCKED'; end if;   -- lockdown: no new orders
 
   -- Adding to an existing order: same person, same pickup (date, time, place) as that order
   if nullif(trim(coalesce(p_add_to, '')), '') is not null then
@@ -641,6 +642,7 @@ language plpgsql security definer set search_path = public as $$
 declare s public.shop_settings; v_days jsonb; v_max int; v_pick text;
 begin
   select * into s from public.shop_settings where id = 1;
+  if coalesce((s.config->>'lockdown')::boolean, false) then raise exception 'LOCKED'; end if;
   v_days := coalesce(s.config->'pickup_weekdays', '[2,5]'::jsonb) || coalesce(s.config->'print_weekdays', '[1,2,3,4,5]'::jsonb);
   v_max := coalesce((s.config->>'max_reschedules')::int, 2);
   if p_date is null or p_date < current_date or p_date > current_date + 45
@@ -1674,3 +1676,28 @@ alter table public.templates add constraint templates_layout_size check (layout 
 alter table public.templates add column if not exists starter boolean not null default false;   -- shown on the design page
 alter table public.templates add column if not exists sort int not null default 0;              -- order on the design page
 alter table public.templates add column if not exists thumb text check (thumb is null or (thumb like 'data:image/%' and char_length(thumb) < 400000));   -- optional small picture for the design page
+
+-- =====================================================================
+-- Lockdown: a switch in Settings locks the whole site. Everyone sees a locked page ("What's the magic word?");
+-- the right words lead to the admin login. New orders and pickup changes are refused while it's on.
+-- The words are fixed (not changeable in Settings) and kept here only scrambled (bcrypt), so nobody can read them,
+-- not even from the website's code. Capitals, commas, "!" and extra spaces don't matter.
+-- Wrong guesses are limited: after 30 in 10 minutes, everyone waits a bit.
+-- Stuck? Turn it off in the Table Editor: shop_settings -> config -> "lockdown": false.
+-- =====================================================================
+create table if not exists public.lock_attempts (at timestamptz not null default now());
+alter table public.lock_attempts enable row level security;   -- no policies: only lock_open touches it
+
+create or replace function public.lock_open(p_code text) returns boolean
+language plpgsql security definer set search_path = public, extensions as $$
+declare
+  h constant text := '$2a$08$gg6xRJd6/985wIpmeQz.7.eMuyyDbDUAAvTgE9XruEiXyyHhiEyd2';
+  v text := trim(regexp_replace(lower(regexp_replace(coalesce(p_code, ''), '[^A-Za-z ]', '', 'g')), '\s+', ' ', 'g'));
+begin
+  if (select count(*) from public.lock_attempts where at > now() - interval '10 minutes') >= 30 then raise exception 'LOCK_SLOW'; end if;
+  if crypt(v, h) = h then return true; end if;
+  insert into public.lock_attempts default values;
+  delete from public.lock_attempts where at < now() - interval '1 day';
+  return false;
+end $$;
+grant execute on function public.lock_open(text) to anon, authenticated;
