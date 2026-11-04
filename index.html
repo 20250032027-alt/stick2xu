@@ -5051,7 +5051,9 @@ function validateFields(form, which){
     if (grade && sec.length >= 2) $('#sec').setAttribute('aria-invalid', 'false');
   }
   if (other && which.place) ok = setErr('otherPlace', 'e-place', $('#otherPlace').value.trim().length < 3 ? 'Tell us where in school to meet.' : '') && ok;
-  if (all) ok = setErr(null, 'e-promise', !S.addTo && (S.coPerson ? !radio(form, 'pday') || !radio(form, 'pspot') : !radio(form, 'pdate')) ? 'Pick a pickup day and place.' : $('#promise').checked ? '' : 'Tick the box to promise you will pick it up.') && ok;
+  const noTime = !S.addTo && !S.coPerson && !!radio(form, 'pdate') && !radio(form, 'ptime');
+  if (all) ok = setErr(null, 'e-promise', !S.addTo && (S.coPerson ? !radio(form, 'pday') || !radio(form, 'pspot') : !radio(form, 'pdate')) ? 'Pick a pickup day and place.' :
+    noTime ? 'Every pickup time on that day is full. Go back to Pickup and choose another day.' : $('#promise').checked ? '' : 'Tick the box to promise you will pick it up.') && ok;
   return ok;
 }
 async function submitOrder(e){
@@ -7255,6 +7257,8 @@ const ACTIONS = {
     const n = +t.dataset.s;
     validate(true); setErr(null, 'e-promise', '');
     if (n === 1 && xuNeeded() && !S.people.length) { const e = $('#e-xu'); if (e) e.textContent = 'Sign in with your XU account first.'; const b = document.querySelector('[data-act="xuIn"]'); if (b) b.focus(); return; }
+    const form = $('#orderForm');
+    if (n === 2 && form && !S.addTo && !S.coPerson && radio(form, 'pdate') && !radio(form, 'ptime')) { setErr(null, 'e-where', 'Every pickup time on that day is full. Pick another day.'); return; }
     if (n === 2 && xuNeeded()) { setErr(null, 'e-where', 'Pickup at school needs your XU account. Sign in in step 1, or pick up from a person.'); return; }
     const bad = n === 1 ? ['e-nick', 'e-sec'] : ['e-place'];
     if (bad.some(id => $('#' + id) && $('#' + id).textContent)) { const f = $('#orderForm [aria-invalid="true"]'); if (f) f.focus(); return; }
