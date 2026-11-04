@@ -1055,6 +1055,7 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 /* thermal printer card */
 .prn-on{display:flex;gap:8px;align-items:center;margin:4px 0 12px;font-size:15px}
 .prn-paper{display:flex;align-items:center;gap:12px;margin-top:14px}.prn-paper .lab{margin:0}
+.prn-pick{margin-top:12px;padding:12px;border-radius:14px;background:var(--gold-soft)}.prn-pick .lab{display:block;margin:0 0 8px}.prn-pick .seg button{min-width:56px}
 .prncard .acts{display:flex;flex-wrap:wrap;gap:10px}
 /* smart tools progress line */
 .aiprog{margin:2px 0 0;padding:8px 12px;border-radius:12px;background:var(--accent-soft);font-size:14px;font-weight:600;text-align:center}
@@ -4076,17 +4077,36 @@ async function prnConnectUsb(){
 }
 const ESCPOS = { init: [0x1b, 0x40], center: [0x1b, 0x61, 1], left: [0x1b, 0x61, 0], bold: on => [0x1b, 0x45, on ? 1 : 0],
   big: on => [0x1d, 0x21, on ? 0x11 : 0], feed: n => [0x1b, 0x64, n], text: s => [...s].map(c => c.charCodeAt(0) < 128 ? c.charCodeAt(0) : 0x3f) };
-function escRaster(canvas){   // a picture as printer dots, in bands so small printers keep up
-  const w = canvas.width, h = canvas.height, bw = Math.ceil(w / 8), d = canvas.getContext('2d').getImageData(0, 0, w, h).data, out = [];
-  for (let y0 = 0; y0 < h; y0 += 96) { const hh = Math.min(96, h - y0); out.push(0x1d, 0x76, 0x30, 0, bw & 255, bw >> 8, hh & 255, hh >> 8);
-    for (let y = y0; y < y0 + hh; y++) for (let bx = 0; bx < bw; bx++) { let v = 0;
-      for (let b = 0; b < 8; b++) { const x = bx * 8 + b; if (x < w) { const i = (y * w + x) * 4; if (d[i + 3] > 127 && d[i] * 0.3 + d[i + 1] * 0.59 + d[i + 2] * 0.11 < 128) v |= 0x80 >> b; } }
-      out.push(v); } }
+/* Pictures, three ways (printers differ; the test text works on all of them, pictures don't):
+   1 = ESC *, 24 dots tall per strip: the older picture command nearly every cheap printer understands (default)
+   2 = ESC *, 8 dots tall per strip: for very old or very basic printers
+   3 = GS v 0: the newer command; faster, but many clones ignore it
+   Each returns a list of strips, sent one at a time with a short pause so the printer's small memory keeps up. */
+const PRN_MODES = { 1: 'Picture 1 (works on most printers)', 2: 'Picture 2 (very basic printers)', 3: 'Picture 3 (newer printers)' };
+const prnMode = () => ({ 2: 2, 3: 3 })[safeLS.get('sk_prn_mode')] || 1;
+function prnDots(canvas){ const w = canvas.width, h = canvas.height, d = canvas.getContext('2d').getImageData(0, 0, w, h).data;
+  return { w, h, dark: (x, y) => { const i = (y * w + x) * 4; return d[i + 3] > 127 && d[i] * 0.3 + d[i + 1] * 0.59 + d[i + 2] * 0.11 < 128; } }; }
+function escPicture(canvas, mode){
+  const { w, h, dark } = prnDots(canvas), out = [];
+  if (mode === 3) {   // GS v 0, in strips of 64 lines
+    const bw = Math.ceil(w / 8);
+    for (let y0 = 0; y0 < h; y0 += 64) { const hh = Math.min(64, h - y0), s = [0x1d, 0x76, 0x30, 0, bw & 255, bw >> 8, hh & 255, hh >> 8];
+      for (let y = y0; y < y0 + hh; y++) for (let bx = 0; bx < bw; bx++) { let v = 0; for (let b = 0; b < 8; b++) { const x = bx * 8 + b; if (x < w && dark(x, y)) v |= 0x80 >> b; } s.push(v); }
+      out.push(s); }
+    return out;
+  }
+  const tall = mode === 2 ? 8 : 24, m = mode === 2 ? 1 : 33, per = tall / 8;
+  out.push([0x1b, 0x33, tall]);   // line spacing = strip height, so the strips touch with no white gaps
+  for (let y0 = 0; y0 < h; y0 += tall) { const s = [0x1b, 0x2a, m, w & 255, w >> 8];
+    for (let x = 0; x < w; x++) for (let k = 0; k < per; k++) { let v = 0; for (let b = 0; b < 8; b++) { const y = y0 + k * 8 + b; if (y < h && dark(x, y)) v |= 0x80 >> b; } s.push(v); }
+    s.push(0x0a); out.push(s); }
+  out.push([0x1b, 0x32]);   // back to normal line spacing
   return out;
 }
 async function prnSend(parts, done){
   if (!PRN.send) { toast('Connect the printer first.'); return false; }
-  try { await PRN.send(new Uint8Array([].concat(...parts))); if (done) toast(done); return true; }
+  try { for (const part of parts) { await PRN.send(new Uint8Array(part)); if (part.length > 64) await pause(PRN.kind === 'bt' ? 30 : 4); }
+    if (done) toast(done); return true; }
   catch (e) { console.warn('printer', e); PRN.send = null; drawPrinterCard(); toast("The printer stopped answering. Check it's on and close by, then connect again."); return false; }
 }
 function prnFail(e){
@@ -4102,7 +4122,10 @@ function drawPrinterCard(){
   box.innerHTML = `<h3 style="margin-bottom:6px">${ic('printer', 18)} Thermal printer</h3>
     ${!can.bt && !can.usb ? `<p class="help">This browser can't connect to printers. On Android, open the site in <b>Chrome</b>. iPhones can't connect to printers from a website.</p>`
     : PRN.send ? `<p class="prn-on">${ic('check', 16)}<span>Connected to <b>${esc(PRN.name)}</b></span></p>
-      <div class="acts">${smallBtn('Test print', 'printer', 'prnTest', 'dark')}${smallBtn('Disconnect', 'x', 'prnOff', 'plain')}</div>`
+      <div class="acts">${smallBtn('Test print', 'printer', 'prnTest', 'dark')}${smallBtn('Find picture mode', 'sparkle', 'prnFindMode', 'plain')}${smallBtn('Disconnect', 'x', 'prnOff', 'plain')}</div>
+      ${S.admin.prnPick ? `<div class="prn-pick"><span class="lab">Which test picture printed clearly?</span><div class="seg">${[1, 2, 3].map(m => `<button type="button" class="${prnMode() === m ? 'on' : ''}" data-act="prnMode" data-m="${m}">${m}</button>`).join('')}</div>
+        <p class="help" style="margin:6px 0 0">If none did, turn the printer off and on, connect again, and send them once more.</p></div>`
+        : `<p class="help" style="margin-top:8px">Pictures: <b>${PRN_MODES[prnMode()]}</b>. If QR codes don't print right, tap Find picture mode.</p>`}`
     : `<p class="help">Print QR codes straight to a receipt printer like the POS-5890. Turn the printer on first.</p>
       <div class="acts">${can.bt ? smallBtn('Connect by Bluetooth', 'printer', 'prnBt', 'dark') : ''}${can.usb ? smallBtn('Connect by USB cable', 'printer', 'prnUsb', 'plain') : ''}</div>
       <p class="help" style="margin-top:8px">Not in the Bluetooth list? Some printers only use older Bluetooth that websites can't reach. Use the USB cable (with a phone adapter) instead.</p>`}
@@ -7711,7 +7734,16 @@ const ACTIONS = {
     c.toBlob(b => { saveBlob(b, `qr-${q.slug}-thermal-${W === 384 ? 58 : 80}mm.png`); toast('Saved. Print it at 100% (no scaling) for the sharpest result.'); }, 'image/png');
   },
   qrPrint: async () => { const c = thermalQr(prnWidth()); if (!c) return toast('Make the QR code first.'); toast('Printing…');
-    await prnSend([ESCPOS.init, ESCPOS.center, escRaster(c), ESCPOS.feed(4)], 'Printed!'); },
+    await prnSend([ESCPOS.init, ESCPOS.center, ...escPicture(c, prnMode()), ESCPOS.feed(4)], 'Printed!'); },
+  prnFindMode: async () => {   // three small test pictures, one per method; they tap the one that came out clearly
+    const c = document.createElement('canvas'); c.width = 240; c.height = 72; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, 240, 72); x.fillStyle = '#000';
+    x.fillRect(0, 0, 240, 6); x.fillRect(0, 66, 240, 6); x.fillRect(0, 0, 6, 72); x.fillRect(234, 0, 6, 72);
+    for (let r = 0; r < 4; r++) for (let k = 0; k < 15; k++) if ((r + k) % 2) x.fillRect(12 + k * 14.4, 12 + r * 12, 14, 12);
+    const parts = [ESCPOS.init, ESCPOS.center, ESCPOS.text('Which picture printed clearly?\n\n')];
+    for (const mode of [1, 2, 3]) parts.push(ESCPOS.init, ESCPOS.center, ESCPOS.bold(true), ESCPOS.text(`Picture ${mode}\n`), ESCPOS.bold(false), ...escPicture(c, mode), ESCPOS.feed(2));
+    parts.push(ESCPOS.init, ESCPOS.feed(3));
+    if (await prnSend(parts, 'Sent 3 test pictures. Tap the number that printed clearly.')) { S.admin.prnPick = true; drawPrinterCard(); } },
+  prnMode: t => { safeLS.set('sk_prn_mode', t.dataset.m); S.admin.prnPick = false; toast(`Using ${PRN_MODES[+t.dataset.m]}.`); drawPrinterCard(); },
   prnBt: async () => { try { await prnConnectBt(); toast(`Connected to ${PRN.name}.`); } catch (e) { prnFail(e); } drawPrinterCard(); },
   prnUsb: async () => { try { await prnConnectUsb(); toast(`Connected to ${PRN.name}.`); } catch (e) { prnFail(e); } drawPrinterCard(); },
   prnOff: async () => { const d = PRN.dev; PRN.send = null; PRN.dev = null; try { if (PRN.kind === 'bt') d.gatt.disconnect(); else await d.close(); } catch {} toast('Printer disconnected.'); drawPrinterCard(); },
