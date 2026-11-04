@@ -1052,6 +1052,10 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 #pframe img{position:absolute;max-width:none;user-select:none;-webkit-user-drag:none}
 .pgctl{display:grid;gap:10px;justify-items:start;width:min(100%,420px)}
 
+/* thermal printer card */
+.prn-on{display:flex;gap:8px;align-items:center;margin:4px 0 12px;font-size:15px}
+.prn-paper{display:flex;align-items:center;gap:12px;margin-top:14px}.prn-paper .lab{margin:0}
+.prncard .acts{display:flex;flex-wrap:wrap;gap:10px}
 /* smart tools progress line */
 .aiprog{margin:2px 0 0;padding:8px 12px;border-radius:12px;background:var(--accent-soft);font-size:14px;font-weight:600;text-align:center}
 /* sticker outlines, promo code help, pickup people summary */
@@ -4037,6 +4041,74 @@ function removeBgCanvas(src){
       p[o + 3] = Math.round(p[o + 3] * a); } }
   x.putImageData(d, 0, 0); c.sure = sure; return c;
 }
+/* Thermal (receipt) printer, like the POS-5890: connect over Bluetooth or a USB cable and print straight from the site.
+   Works in Chrome on Android and on computers. iPhones can't: Safari doesn't let websites talk to printers.
+   The printer speaks ESC/POS (the usual receipt printer language); pictures are sent as black-and-white dots. */
+const PRN = { send: null, name: '', kind: '', dev: null };
+const PRN_BT = ['000018f0-0000-1000-8000-00805f9b34fb', 'e7810a71-73ae-499d-8c15-faa9aef0c3f2', '49535343-fe7d-4ae5-8fa9-9fafd205e455',
+  '0000ff00-0000-1000-8000-00805f9b34fb', '0000ffe0-0000-1000-8000-00805f9b34fb', '0000fee7-0000-1000-8000-00805f9b34fb'];   // what cheap receipt printers use
+const prnWidth = () => (+safeLS.get('sk_prn_w') === 576 ? 576 : 384);   // dots across: 58 mm paper = 384, 80 mm = 576
+const pause = ms => new Promise(r => setTimeout(r, ms));
+async function prnConnectBt(){
+  const dev = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: PRN_BT });
+  const gatt = await dev.gatt.connect(); let ch = null;
+  for (const sv of await gatt.getPrimaryServices().catch(() => [])) {
+    for (const c of await sv.getCharacteristics().catch(() => [])) if (c.properties.write || c.properties.writeWithoutResponse) { ch = c; break; }
+    if (ch) break; }
+  if (!ch) { try { gatt.disconnect(); } catch {} throw new Error('NO_WRITE'); }
+  let size = ch.properties.write ? 180 : 100;
+  const put = async part => ch.properties.write ? ch.writeValueWithResponse(part) : (await ch.writeValueWithoutResponse(part), pause(part.length > 20 ? 15 : 6));   // a short breather so the printer keeps up
+  PRN.send = async bytes => { for (let i = 0; i < bytes.length;) { const part = bytes.slice(i, i + size);
+    try { await put(part); i += part.length; } catch (e) { if (size > 20) { size = 20; continue; } throw e; } } };   // some printers only take small pieces
+  dev.addEventListener('gattserverdisconnected', () => { if (PRN.dev === dev) { PRN.send = null; PRN.dev = null; drawPrinterCard(); } });
+  Object.assign(PRN, { dev, name: dev.name || 'Bluetooth printer', kind: 'bt' });
+}
+async function prnConnectUsb(){
+  const dev = await navigator.usb.requestDevice({ filters: [] });
+  await dev.open(); if (dev.configuration === null) await dev.selectConfiguration(1);
+  let ifc = null, ep = null;
+  for (const i of dev.configuration.interfaces) for (const alt of i.alternates) {
+    const o = alt.endpoints.find(e => e.direction === 'out' && e.type === 'bulk'); if (o && (!ep || alt.interfaceClass === 7)) { ifc = i; ep = o; } }
+  if (!ep) { try { await dev.close(); } catch {} throw new Error('NO_WRITE'); }
+  await dev.claimInterface(ifc.interfaceNumber);
+  PRN.send = async bytes => { for (let i = 0; i < bytes.length; i += 4096) await dev.transferOut(ep.endpointNumber, bytes.slice(i, i + 4096)); };
+  Object.assign(PRN, { dev, name: dev.productName || 'USB printer', kind: 'usb' });
+}
+const ESCPOS = { init: [0x1b, 0x40], center: [0x1b, 0x61, 1], left: [0x1b, 0x61, 0], bold: on => [0x1b, 0x45, on ? 1 : 0],
+  big: on => [0x1d, 0x21, on ? 0x11 : 0], feed: n => [0x1b, 0x64, n], text: s => [...s].map(c => c.charCodeAt(0) < 128 ? c.charCodeAt(0) : 0x3f) };
+function escRaster(canvas){   // a picture as printer dots, in bands so small printers keep up
+  const w = canvas.width, h = canvas.height, bw = Math.ceil(w / 8), d = canvas.getContext('2d').getImageData(0, 0, w, h).data, out = [];
+  for (let y0 = 0; y0 < h; y0 += 96) { const hh = Math.min(96, h - y0); out.push(0x1d, 0x76, 0x30, 0, bw & 255, bw >> 8, hh & 255, hh >> 8);
+    for (let y = y0; y < y0 + hh; y++) for (let bx = 0; bx < bw; bx++) { let v = 0;
+      for (let b = 0; b < 8; b++) { const x = bx * 8 + b; if (x < w) { const i = (y * w + x) * 4; if (d[i + 3] > 127 && d[i] * 0.3 + d[i + 1] * 0.59 + d[i + 2] * 0.11 < 128) v |= 0x80 >> b; } }
+      out.push(v); } }
+  return out;
+}
+async function prnSend(parts, done){
+  if (!PRN.send) { toast('Connect the printer first.'); return false; }
+  try { await PRN.send(new Uint8Array([].concat(...parts))); if (done) toast(done); return true; }
+  catch (e) { console.warn('printer', e); PRN.send = null; drawPrinterCard(); toast("The printer stopped answering. Check it's on and close by, then connect again."); return false; }
+}
+function prnFail(e){
+  const m = String((e && (e.name + ' ' + e.message)) || '');
+  if (/NotFoundError|cancel/i.test(m)) return;   // they closed the list without picking
+  toast(m.includes('NO_WRITE') ? "That device doesn't take print jobs. Pick the printer itself (often POS-5890, Printer or BlueTooth Printer)."
+    : /Security|NotAllowed/i.test(m) ? 'The browser blocked it. Use Chrome, and allow Bluetooth or USB when it asks.'
+    : "Couldn't connect. Turn the printer off and on, keep it close, and try again.");
+}
+function drawPrinterCard(){
+  const box = $('#prnCard'); if (!box) return;
+  const can = { bt: !!navigator.bluetooth, usb: !!navigator.usb }, w = prnWidth();
+  box.innerHTML = `<h3 style="margin-bottom:6px">${ic('printer', 18)} Thermal printer</h3>
+    ${!can.bt && !can.usb ? `<p class="help">This browser can't connect to printers. On Android, open the site in <b>Chrome</b>. iPhones can't connect to printers from a website.</p>`
+    : PRN.send ? `<p class="prn-on">${ic('check', 16)}<span>Connected to <b>${esc(PRN.name)}</b></span></p>
+      <div class="acts">${smallBtn('Test print', 'printer', 'prnTest', 'dark')}${smallBtn('Disconnect', 'x', 'prnOff', 'plain')}</div>`
+    : `<p class="help">Print QR codes straight to a receipt printer like the POS-5890. Turn the printer on first.</p>
+      <div class="acts">${can.bt ? smallBtn('Connect by Bluetooth', 'printer', 'prnBt', 'dark') : ''}${can.usb ? smallBtn('Connect by USB cable', 'printer', 'prnUsb', 'plain') : ''}</div>
+      <p class="help" style="margin-top:8px">Not in the Bluetooth list? Some printers only use older Bluetooth that websites can't reach. Use the USB cable (with a phone adapter) instead.</p>`}
+    ${can.bt || can.usb ? `<div class="prn-paper"><span class="lab">Paper</span><div class="seg">${[[384, '58 mm'], [576, '80 mm']].map(([v, l]) => `<button type="button" class="${w === v ? 'on' : ''}" data-act="prnPaper" data-w="${v}" aria-pressed="${w === v}">${l}</button>`).join('')}</div></div>` : ''}`;
+  const pb = $('#qrPrintNow'); if (pb) pb.hidden = !PRN.send;
+}
 /* Tools only some pages need (printing PDFs, QR codes) load the first time they're used, not for every visitor */
 const LIBS = { pdf: ['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', () => window.jspdf],
                qr: ['https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js', () => window.QRCode] };
@@ -6826,6 +6898,22 @@ function qrCanvas(text, px){
   new QRCode(d, { text, width: px, height: px, colorDark: '#283971', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
   const c = d.querySelector('canvas'); d.remove(); return c;
 }
+// QR for a thermal (receipt) printer: pure black and white, the white border scanners need, whole-pixel squares,
+// exactly the printer's width in dots (58 mm paper = 384, 80 mm = 576), plus the address underneath
+function thermalQr(W){
+  const qo = S.admin.qrObj && S.admin.qrObj._oQRCode, q = S.admin.qr; if (!qo || !q) return null;
+  const n = qo.getModuleCount(), cells = n + 8, m = Math.floor(W / cells), size = m * cells, cap = Math.round(W / 14);
+    const c = document.createElement('canvas'); c.width = W; c.height = size + cap * 2; const x = c.getContext('2d');
+    x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#000';
+    const ox = Math.floor((W - size) / 2) + 4 * m, oy = 4 * m;
+    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (qo.isDark(r, k)) x.fillRect(ox + k * m, oy + r * m, m, m);
+    x.font = `700 ${Math.round(cap * 0.62)}px system-ui, sans-serif`; x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText(q.url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/?\?.*$/, ''), W / 2, size + cap * 0.7);
+    const d = x.getImageData(0, 0, c.width, c.height), p = d.data;   // only pure black or white: thermal printers can't do grey
+    for (let i = 0; i < p.length; i += 4) { const v = p[i] * 0.3 + p[i + 1] * 0.59 + p[i + 2] * 0.11 < 150 ? 0 : 255; p[i] = p[i + 1] = p[i + 2] = v; p[i + 3] = 255; }
+    x.putImageData(d, 0, 0);
+  return c;
+}
 function saveBlob(blob, name){ const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
 /* the promo sticker: the design as the product, its name, a big QR code and the price. Square, ready for a sticker sheet. */
 async function tplStickerCanvas(t){
@@ -6911,6 +6999,7 @@ function drawPosters(){
       ${btn('New design', { act: 'tplNew', icon: 'plus', cls: 'dark' })}</div>
     <div id="tplList"><p class="help">Loading…</p></div>
   </div>
+  <div class="panel prncard" id="prnCard" style="margin-top:16px"></div>
   <div class="panel" style="margin-top:16px">
     <h3 style="margin-bottom:6px">Make a QR code for a poster</h3>
     <p class="help">Give each poster spot its own name. Each spot's scans and orders show below.</p>
@@ -6927,7 +7016,7 @@ function drawPosters(){
         <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn sm noi" id="qrDl" download="qr-${esc(q.slug)}.png" href="#">${ic('download', 18)}<span>Download PNG</span></a>
         ${smallBtn('Copy link', 'copy', 'copyLink', 'plain')}</div>
         <p class="lab" style="margin:14px 0 8px">For a thermal printer</p>
-        <div style="display:flex;flex-wrap:wrap;gap:10px">${smallBtn('58 mm paper', 'printer', 'qrThermal', 'plain', 'data-w="384"')}${smallBtn('80 mm paper', 'printer', 'qrThermal', 'plain', 'data-w="576"')}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px"><span id="qrPrintNow" ${PRN.send ? '' : 'hidden'}>${smallBtn('Print now', 'printer', 'qrPrint', 'dark')}</span>${smallBtn('Save for 58 mm', 'download', 'qrThermal', 'plain', 'data-w="384"')}${smallBtn('Save for 80 mm', 'download', 'qrThermal', 'plain', 'data-w="576"')}</div>
         <p class="help">Print it at least 4 cm wide, and scan it with a phone before putting the poster up. Thermal printers: pick your paper width. It's pure black with a white border, sized to print sharp.</p></div></div>` : ''}
     <div id="spotList">${spotsHTML(srcs, S.admin.scans || {})}</div>
   </div>`;
@@ -6939,6 +7028,7 @@ function drawPosters(){
     if (!slug) { toast('Type a name for this poster spot.'); return; }
     const t = $('#qrOpens').value; S.admin.qr = { slug, t, url: `${base}?src=${slug}${t ? `&t=${t}` : ''}` }; drawPosters();
   });
+  drawPrinterCard();
   if (q) {
     if (!window.QRCode) { $('#qrbox').textContent = 'Loading…'; needLib('qr').then(ok => { if (ok) drawPosters(); else if ($('#qrbox')) $('#qrbox').textContent = "The QR tool didn't load. Check your internet and refresh."; }); return; }
     S.admin.qrObj = new QRCode($('#qrbox'), { text: q.url, width: 480, height: 480, colorDark: '#283971', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
@@ -7616,21 +7706,20 @@ const ACTIONS = {
     } catch (e) { toast(friendlyError(e)); if (b) b.disabled = false; }
   },
   tplSticker: el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (t) tplDownloadSticker(t); },
-  // QR for a thermal (receipt) printer: pure black and white, the white border scanners need, whole-pixel squares,
-  // exactly the printer's width in dots (58 mm paper = 384, 80 mm = 576), plus the address underneath
-  qrThermal: t => {
-    const qo = S.admin.qrObj && S.admin.qrObj._oQRCode, q = S.admin.qr; if (!qo || !q) return toast('Make the QR code first.');
-    const W = +t.dataset.w, n = qo.getModuleCount(), cells = n + 8, m = Math.floor(W / cells), size = m * cells, cap = Math.round(W / 14);
-    const c = document.createElement('canvas'); c.width = W; c.height = size + cap * 2; const x = c.getContext('2d');
-    x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#000';
-    const ox = Math.floor((W - size) / 2) + 4 * m, oy = 4 * m;
-    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (qo.isDark(r, k)) x.fillRect(ox + k * m, oy + r * m, m, m);
-    x.font = `700 ${Math.round(cap * 0.62)}px system-ui, sans-serif`; x.textAlign = 'center'; x.textBaseline = 'middle';
-    x.fillText(q.url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/?\?.*$/, ''), W / 2, size + cap * 0.7);
-    const d = x.getImageData(0, 0, c.width, c.height), p = d.data;   // only pure black or white: thermal printers can't do grey
-    for (let i = 0; i < p.length; i += 4) { const v = p[i] * 0.3 + p[i + 1] * 0.59 + p[i + 2] * 0.11 < 150 ? 0 : 255; p[i] = p[i + 1] = p[i + 2] = v; p[i + 3] = 255; }
-    x.putImageData(d, 0, 0);
+    qrThermal: t => {
+    const W = +t.dataset.w, q = S.admin.qr, c = thermalQr(W); if (!c) return toast('Make the QR code first.');
     c.toBlob(b => { saveBlob(b, `qr-${q.slug}-thermal-${W === 384 ? 58 : 80}mm.png`); toast('Saved. Print it at 100% (no scaling) for the sharpest result.'); }, 'image/png');
+  },
+  qrPrint: async () => { const c = thermalQr(prnWidth()); if (!c) return toast('Make the QR code first.'); toast('Printing…');
+    await prnSend([ESCPOS.init, ESCPOS.center, escRaster(c), ESCPOS.feed(4)], 'Printed!'); },
+  prnBt: async () => { try { await prnConnectBt(); toast(`Connected to ${PRN.name}.`); } catch (e) { prnFail(e); } drawPrinterCard(); },
+  prnUsb: async () => { try { await prnConnectUsb(); toast(`Connected to ${PRN.name}.`); } catch (e) { prnFail(e); } drawPrinterCard(); },
+  prnOff: async () => { const d = PRN.dev; PRN.send = null; PRN.dev = null; try { if (PRN.kind === 'bt') d.gatt.disconnect(); else await d.close(); } catch {} toast('Printer disconnected.'); drawPrinterCard(); },
+  prnPaper: t => { safeLS.set('sk_prn_w', t.dataset.w); drawPrinterCard(); },
+  prnTest: async () => {
+    const now = new Date().toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' }), line = '-'.repeat(prnWidth() === 576 ? 48 : 32);
+    await prnSend([ESCPOS.init, ESCPOS.center, ESCPOS.bold(true), ESCPOS.big(true), ESCPOS.text('Stick2It\n'), ESCPOS.big(false), ESCPOS.bold(false),
+      ESCPOS.text(`${line}\nTest print\nIf you can read this,\nthe printer works!\n${line}\n${PRN.name}\n${now}\n`), ESCPOS.feed(4)], 'Test print sent.');
   },
   tplQr: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t || !(await needLib('qr'))) return; qrCanvas(tplLink(t), 1000).toBlob(b => saveBlob(b, `qr-${t.slug}.png`), 'image/png'); },
   tplCopy: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t) return; try { await navigator.clipboard.writeText(tplLink(t)); toast('Link copied.'); } catch { toast(tplLink(t)); } },
