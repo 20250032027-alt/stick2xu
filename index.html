@@ -6926,7 +6926,9 @@ function drawPosters(){
       <div><p class="lab">This poster links to</p><div class="url">${esc(q.url)}</div>
         <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn sm noi" id="qrDl" download="qr-${esc(q.slug)}.png" href="#">${ic('download', 18)}<span>Download PNG</span></a>
         ${smallBtn('Copy link', 'copy', 'copyLink', 'plain')}</div>
-        <p class="help">Print it at least 4 cm wide, and scan it with a phone before putting the poster up.</p></div></div>` : ''}
+        <p class="lab" style="margin:14px 0 8px">For a thermal printer</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">${smallBtn('58 mm paper', 'printer', 'qrThermal', 'plain', 'data-w="384"')}${smallBtn('80 mm paper', 'printer', 'qrThermal', 'plain', 'data-w="576"')}</div>
+        <p class="help">Print it at least 4 cm wide, and scan it with a phone before putting the poster up. Thermal printers: pick your paper width. It's pure black with a white border, sized to print sharp.</p></div></div>` : ''}
     <div id="spotList">${spotsHTML(srcs, S.admin.scans || {})}</div>
   </div>`;
   drawTemplates(base);
@@ -6939,7 +6941,7 @@ function drawPosters(){
   });
   if (q) {
     if (!window.QRCode) { $('#qrbox').textContent = 'Loading…'; needLib('qr').then(ok => { if (ok) drawPosters(); else if ($('#qrbox')) $('#qrbox').textContent = "The QR tool didn't load. Check your internet and refresh."; }); return; }
-    new QRCode($('#qrbox'), { text: q.url, width: 480, height: 480, colorDark: '#283971', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+    S.admin.qrObj = new QRCode($('#qrbox'), { text: q.url, width: 480, height: 480, colorDark: '#283971', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
     setTimeout(() => { const c = $('#qrbox canvas'); if (c) $('#qrDl').href = c.toDataURL('image/png'); }, 150);
   }
 }
@@ -7614,6 +7616,22 @@ const ACTIONS = {
     } catch (e) { toast(friendlyError(e)); if (b) b.disabled = false; }
   },
   tplSticker: el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (t) tplDownloadSticker(t); },
+  // QR for a thermal (receipt) printer: pure black and white, the white border scanners need, whole-pixel squares,
+  // exactly the printer's width in dots (58 mm paper = 384, 80 mm = 576), plus the address underneath
+  qrThermal: t => {
+    const qo = S.admin.qrObj && S.admin.qrObj._oQRCode, q = S.admin.qr; if (!qo || !q) return toast('Make the QR code first.');
+    const W = +t.dataset.w, n = qo.getModuleCount(), cells = n + 8, m = Math.floor(W / cells), size = m * cells, cap = Math.round(W / 14);
+    const c = document.createElement('canvas'); c.width = W; c.height = size + cap * 2; const x = c.getContext('2d');
+    x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#000';
+    const ox = Math.floor((W - size) / 2) + 4 * m, oy = 4 * m;
+    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (qo.isDark(r, k)) x.fillRect(ox + k * m, oy + r * m, m, m);
+    x.font = `700 ${Math.round(cap * 0.62)}px system-ui, sans-serif`; x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText(q.url.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/?\?.*$/, ''), W / 2, size + cap * 0.7);
+    const d = x.getImageData(0, 0, c.width, c.height), p = d.data;   // only pure black or white: thermal printers can't do grey
+    for (let i = 0; i < p.length; i += 4) { const v = p[i] * 0.3 + p[i + 1] * 0.59 + p[i + 2] * 0.11 < 150 ? 0 : 255; p[i] = p[i + 1] = p[i + 2] = v; p[i + 3] = 255; }
+    x.putImageData(d, 0, 0);
+    c.toBlob(b => { saveBlob(b, `qr-${q.slug}-thermal-${W === 384 ? 58 : 80}mm.png`); toast('Saved. Print it at 100% (no scaling) for the sharpest result.'); }, 'image/png');
+  },
   tplQr: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t || !(await needLib('qr'))) return; qrCanvas(tplLink(t), 1000).toBlob(b => saveBlob(b, `qr-${t.slug}.png`), 'image/png'); },
   tplCopy: async el => { const t = (S.admin.tpls || []).find(x => x.slug === el.dataset.slug); if (!t) return; try { await navigator.clipboard.writeText(tplLink(t)); toast('Link copied.'); } catch { toast(tplLink(t)); } },
   thumbSave: async t => { const ed = S.thumbEd; if (!ed) return; t.disabled = true;
