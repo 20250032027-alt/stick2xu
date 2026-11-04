@@ -1052,19 +1052,58 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 #pframe img{position:absolute;max-width:none;user-select:none;-webkit-user-drag:none}
 .pgctl{display:grid;gap:10px;justify-items:start;width:min(100%,420px)}
 
-/* lockdown */
-.lockpg{min-height:100svh;display:grid;place-items:center;padding:24px 20px}
-.lockbox{width:min(100%,380px);display:grid;justify-items:center;gap:14px;text-align:center;padding:32px 24px;border:2px solid var(--ink);border-radius:var(--r-lg);background:var(--paper);box-shadow:var(--shadow)}
-.lockbox .mark{font-size:30px}
-.lock-ic{width:64px;height:64px;border-radius:20px;background:var(--xu-gold);border:2px solid var(--ink);display:grid;place-items:center;box-shadow:var(--shadow-sm)}
-.lockbox h1{font-family:var(--display);font-size:26px;line-height:1.15;margin:4px 0 0}
-.lockbox .inp{width:100%;text-align:center;font-size:18px}
-.lockbox .ferr{min-height:1.2em;margin:-6px 0 0}
-.lockbox .btn{width:100%;justify-content:center}
-.lockbox.shake{animation:lockshake .35s}
+/* lockdown: a sticker board. Dotted cutting mat, brand stickers drifting at the edges,
+   the big picture as a taped-on sticker, the face as a round sticker with a speech bubble. */
+.lockpg{position:relative;min-height:100svh;display:grid;place-items:center;padding:28px 18px 40px;overflow:hidden;
+  background:radial-gradient(circle at 1px 1px, rgba(40,57,113,.13) 1.2px, transparent 0) 0 0/22px 22px, var(--bg)}
+.lk-bits{position:absolute;inset:0;pointer-events:none}
+.lk-bits svg{position:absolute;transform:translate(-50%,-50%) rotate(var(--r));overflow:visible;animation:lkfloat 7s ease-in-out var(--d) infinite alternate}
+.lk-bits path{stroke:#fff;stroke-width:3;stroke-linejoin:round;paint-order:stroke;filter:drop-shadow(1.5px 1.5px 0 var(--ink))}
+@keyframes lkfloat{to{transform:translate(-50%,calc(-50% - 10px)) rotate(calc(var(--r) * -1))}}
+.lk-wrap{position:relative;z-index:1;width:min(100%,400px);display:grid;justify-items:center;gap:30px}
+.lk-mark{font-size:34px;margin-bottom:-6px}
+.lk-hero{position:relative;margin:0;width:min(74vw,290px);padding:10px;background:#fff;border-radius:32px;transform:rotate(-4deg);
+  box-shadow:0 0 0 2px var(--ink),5px 6px 0 var(--ink);animation:lkpop .6s var(--ease) both}
+.lk-hero img{display:block;width:100%;height:auto;aspect-ratio:473/498;object-fit:cover;border-radius:23px;background:var(--accent-soft)}
+.lk-hero.lk-nopic{display:none}
+.lk-tape{position:absolute;top:-15px;left:50%;width:112px;height:30px;transform:translateX(-50%) rotate(4deg);border-radius:3px;z-index:1;
+  background:repeating-linear-gradient(-45deg,rgba(242,188,46,.92) 0 9px,rgba(255,243,209,.92) 9px 18px);box-shadow:0 1px 2px rgba(40,57,113,.25)}
+.lk-pill{position:absolute;right:-12px;bottom:-16px;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;transform:rotate(6deg);
+  background:var(--ink);color:#fff;font-weight:800;font-size:14px;box-shadow:0 0 0 3px #fff,3px 4px 0 var(--xu-gold)}
+.lk-card{width:100%;display:grid;gap:14px;padding:22px 20px 20px;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-lg);
+  box-shadow:4px 5px 0 var(--ink);animation:lkup .6s var(--ease) .12s both}
+.lk-say{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:16px;margin-bottom:4px}
+.lk-face{width:76px;height:76px;border-radius:50%;padding:4px;background:#fff;box-shadow:0 0 0 2px var(--ink),3px 3px 0 var(--ink);transform:rotate(-8deg)}
+.lk-face img{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover}
+.lk-face.lk-nopic{display:none}.lk-face.lk-nopic + .lk-bubble{grid-column:1/-1}.lk-face.lk-nopic + .lk-bubble::before,.lk-face.lk-nopic + .lk-bubble::after{display:none}
+.lk-bubble{position:relative;margin:0;padding:12px 16px;background:var(--gold-soft);border:2px solid var(--ink);border-radius:18px;
+  font-family:var(--display);font-weight:800;font-size:21px;line-height:1.15;text-wrap:balance}
+.lk-bubble::before,.lk-bubble::after{content:"";position:absolute;top:50%;border-style:solid;transform:translateY(-50%)}
+.lk-bubble::before{left:-12px;border-width:9px 12px 9px 0;border-color:transparent var(--ink) transparent transparent}
+.lk-bubble::after{left:-8px;border-width:7px 9px 7px 0;border-color:transparent var(--gold-soft) transparent transparent}
+.lk-bubble.pop{animation:lkbubble .35s var(--ease)}
+.lk-card .inp{width:100%;text-align:center;font-size:18px;min-height:52px}
+.lk-card .ferr{min-height:0;margin:-6px 0 0;text-align:center}.lk-card .ferr:empty{display:none}
+.lk-card .btn{width:100%;justify-content:center;min-height:52px}
+.lk-card.lk-yes .lk-bubble{background:var(--ok-soft)}.lk-card.lk-yes .lk-bubble::after{border-right-color:var(--ok-soft)}
+.lk-card.shake{animation:lockshake .35s}
 @keyframes lockshake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
-@media (prefers-reduced-motion:reduce){.lockbox.shake{animation:none}}
-.lockpanel.on{border-color:var(--danger, #c0392b);background:#fff6f5}
+@keyframes lkpop{from{opacity:0;transform:rotate(-10deg) scale(.85)}to{opacity:1;transform:rotate(-4deg) scale(1)}}
+@keyframes lkup{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes lkbubble{from{transform:scale(.92)}to{transform:none}}
+@media (min-width:760px){
+  .lk-wrap{width:min(100%,860px);grid-template-columns:minmax(0,1fr) 420px;align-items:center;column-gap:56px;row-gap:26px}
+  .lk-mark{grid-column:1/-1}
+  .lk-hero{width:min(100%,350px);justify-self:end}
+  .lk-card{padding:28px 26px 26px;gap:16px;transform:rotate(1.2deg)}
+  .lk-face{width:96px;height:96px}
+  .lk-bubble{font-size:24px;padding:14px 18px}
+}
+@media (max-width:380px){.lk-bubble{font-size:18px}.lk-face{width:64px;height:64px}}
+@media (prefers-reduced-motion:reduce){.lk-bits svg,.lk-hero,.lk-card,.lk-bubble.pop,.lk-card.shake{animation:none}}
+.lockpanel.on{border-color:var(--bad);background:#fff6f5}
+.lk-ask{margin-top:14px;padding:14px;border-radius:14px;background:var(--gold-soft);display:grid;gap:10px}
+.lk-ask .row{display:flex;flex-wrap:wrap;gap:10px}.lk-ask .inp{flex:1;min-width:160px;letter-spacing:.2em}
 /* thermal printer card */
 .prn-on{display:flex;gap:8px;align-items:center;margin:4px 0 12px;font-size:15px}
 .prn-paper{display:flex;align-items:center;gap:12px;margin-top:14px}.prn-paper .lab{margin:0}
@@ -2217,6 +2256,8 @@ function armed(t, prompt){
 }
 function friendlyError(e){
   const m = String((e && (e.message || e.error_description)) || e || '');
+  if (m.includes('BAD_LOCK_CODE')) return "That code isn't right.";
+  if (m.includes('LOCK_NEEDS_CODE')) return 'Lockdown was switched somewhere else. Refresh the page, then save again.';
   if (m.includes('LOCKED')) return 'The shop is closed right now.';
   if (m.includes('LOCK_SLOW')) return 'Too many tries. Wait 10 minutes, then try again.';
   if (m.includes('ACTIVE_ORDER')) return 'You already have 5 orders in progress. Pick some up first, then you can order again.';
@@ -2759,6 +2800,7 @@ function SupaBackend(){
     async logUpdate(id, row){ const { error } = await sb.from('logbook').update({ ...row, updated_at: new Date().toISOString() }).eq('id', id); if (error) throw error; },
     async logDelete(id){ const { error } = await sb.from('logbook').delete().eq('id', id); if (error) throw error; },
     async lockOpen(words){ return !!(await rpc('lock_open', { p_code: words })); },
+    async setLockdown(on, code){ return !!(await rpc('set_lockdown', { p_on: !!on, p_code: code })); },
     async pickupPeople(code){ return (await rpc('pickup_people_list', { p_code: code || null })) || []; },
     async people(){ const { data, error } = await sb.from('pickup_people').select('*').order('sort').order('created_at'); if (error) throw error; return data || []; },
     async savePerson(row){ const { error } = await sb.from('pickup_people').upsert(row); if (error) throw error; },
@@ -3188,28 +3230,48 @@ const BASE_TITLE = document.title;
 /* Lockdown: one locked page, no way around it. The words are checked by the database (lock_open), never here. */
 const lockPassed = () => { try { return sessionStorage.getItem('sk_unlock') === '1'; } catch { return !!S.unlockedMem; } };
 const lockPass = () => { try { sessionStorage.setItem('sk_unlock', '1'); } catch {} S.unlockedMem = true; };
+// little brand stickers drifting around the edges (decoration only)
+const LK_SHAPES = { star: 'M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z',
+  heart: 'M12 21s-7.5-4.6-9.6-9.2C1 8.6 3 5 6.6 5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6C19 5 21 8.6 19.6 11.8 17.5 16.4 12 21 12 21z',
+  bolt: 'M13 2L4 14h6l-1 8 9-12h-6z', moon: 'M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z' };
+const LK_BITS = [['star', '#F2BC2E', 5, 9, 44, -14], ['heart', '#ec282a', 88, 7, 38, 12], ['bolt', '#F2BC2E', 91, 46, 34, -8], ['moon', '#3a52a3', 4, 52, 34, 16],
+  ['star', '#3a52a3', 10, 88, 30, 8], ['heart', '#F2BC2E', 84, 86, 32, -12], ['star', '#ec282a', 50, 4, 24, 20], ['bolt', '#3a52a3', 52, 95, 26, 10]];
 function viewLocked(){
   document.title = 'Stick2It';
   document.querySelectorAll('.actstrip').forEach(e => e.remove());
-  $('#app').innerHTML = `<main id="main" class="lockpg"><form class="lockbox" id="lockForm" autocomplete="off" novalidate>
-    <span class="mark">Stick<b>2</b>It</span>
-    <span class="lock-ic" aria-hidden="true">${ic('lock', 30)}</span>
-    <h1>What's the magic word?</h1>
-    <input class="inp" id="lockIn" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="80" aria-label="The magic word" aria-describedby="lockErr">
-    <p class="ferr" id="lockErr" role="alert"></p>
-    <button class="btn dark" type="submit" id="lockGo">${ic('key', 18)}<span>Open</span></button>
-  </form></main>`;
-  const f = $('#lockForm'), inp = $('#lockIn'), err = $('#lockErr'), go = $('#lockGo');
+  $('#app').innerHTML = `<main id="main" class="lockpg">
+    <div class="lk-bits" aria-hidden="true">${LK_BITS.map(([s, c, x, y, w, r], k) => `<svg viewBox="0 0 24 24" style="left:${x}%;top:${y}%;width:${w}px;--r:${r}deg;--d:${(k % 4) * 0.7}s"><path d="${LK_SHAPES[s]}" fill="${c}"/></svg>`).join('')}</div>
+    <div class="lk-wrap">
+      <span class="mark lk-mark">Stick<b>2</b>It</span>
+      <figure class="lk-hero">
+        <span class="lk-tape" aria-hidden="true"></span>
+        <picture><source srcset="/lock-sparkle-still.webp" media="(prefers-reduced-motion: reduce)"><img src="/lock-sparkle.webp" alt="" width="473" height="498" decoding="async" onerror="this.closest('figure').classList.add('lk-nopic')"></picture>
+        <span class="lk-pill">${ic('lock', 14)}<span>Closed for now</span></span>
+      </figure>
+      <form class="lk-card" id="lockForm" autocomplete="off" novalidate>
+        <div class="lk-say">
+          <span class="lk-face"><img src="/lock-smirk.webp" alt="" width="182" height="182" decoding="async" onerror="this.parentNode.classList.add('lk-nopic')"></span>
+          <p class="lk-bubble" id="lockQ" aria-live="polite">What's the magic word?</p>
+        </div>
+        <input class="inp" id="lockIn" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="80" placeholder="Type it here" aria-label="The magic word" aria-describedby="lockErr">
+        <p class="ferr" id="lockErr" role="alert"></p>
+        <button class="btn dark" type="submit" id="lockGo">${ic('key', 18)}<span>Open</span></button>
+      </form>
+    </div></main>`;
+  const f = $('#lockForm'), inp = $('#lockIn'), err = $('#lockErr'), go = $('#lockGo'), q = $('#lockQ');
+  const say = t => { q.textContent = t; q.classList.remove('pop'); void q.offsetWidth; q.classList.add('pop'); };
   f.addEventListener('submit', async e => {
-    e.preventDefault(); const v = inp.value.trim(); if (!v || go.disabled) return;
+    e.preventDefault(); const v = inp.value.trim(); if (!v || go.disabled) { inp.focus(); return; }
     go.disabled = true; err.textContent = '';
     try {
-      if (await api.lockOpen(v)) { lockPass(); buzz([8, 30, 8]); if (location.hash.startsWith('#/admin')) route(); else location.hash = '#/admin'; return; }
-      err.textContent = "That's not it."; inp.value = ''; f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake'); buzz(20);
+      if (await api.lockOpen(v)) { lockPass(); buzz([8, 30, 8]); say('Thank you! Come in.'); f.classList.add('lk-yes');
+        setTimeout(() => { if (location.hash.startsWith('#/admin')) route(); else location.hash = '#/admin'; }, 700); return; }
+      say('Nope, not quite.'); inp.value = ''; f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake'); buzz(20);
+      setTimeout(() => { if (q.isConnected && q.textContent === 'Nope, not quite.') say("What's the magic word?"); }, 2200);
     } catch (ex) { err.textContent = /LOCK_SLOW/.test(String(ex && ex.message)) ? friendlyError(ex) : "Couldn't check right now. Check your internet and try again."; }
-    finally { go.disabled = false; inp.focus(); }
+    finally { go.disabled = false; if (!f.classList.contains('lk-yes')) inp.focus(); }
   });
-  setTimeout(() => { try { inp.focus({ preventScroll: true }); } catch {} }, 60);
+  setTimeout(() => { try { if (matchMedia('(hover: hover)').matches) inp.focus({ preventScroll: true }); } catch {} }, 60);
 }
 function route(keep){
   if (S.halt) return;
@@ -6112,6 +6174,12 @@ function drawSettings(){
     <h3 style="margin-bottom:6px">${ic('lock', 18)} Lockdown</h3>
     <p class="help" style="margin-bottom:12px">Locks the whole site. Everyone sees one locked page asking "What's the magic word?", and nothing else. The right words lead to the admin login. New orders and pickup changes are blocked while it's on.</p>
     <label class="switch"><input type="checkbox" id="lockOn" ${CONFIG.lockdown ? 'checked' : ''}><span>${CONFIG.lockdown ? '<b>The site is locked</b>' : 'Lock the site'}</span></label>
+    <div class="lk-ask" id="lockAsk" hidden>
+      <span class="lab" id="lockAskL" style="margin:0"></span>
+      <div class="row"><input class="inp" id="lockCode" type="password" inputmode="numeric" autocomplete="off" maxlength="40" aria-labelledby="lockAskL">
+        ${smallBtn('Confirm', 'check', 'lockConfirm', 'dark')}${smallBtn('Cancel', 'x', 'lockCancel', 'plain')}</div>
+      <p class="ferr" id="lockCodeErr" role="alert" style="margin:0"></p>
+    </div>
   </div>
   <form class="panel" id="setForm" style="max-width:640px">
     <h3 style="margin-bottom:6px">Pickup signal</h3>
@@ -6149,15 +6217,13 @@ function drawSettings(){
              keychains: Object.fromEntries(CONFIG.products.keychains.sizes.map(z => [z.id, { wMm: z.wMm, hMm: z.hMm }])) }
   };
   drawShopForm();
-  $('#lockOn').addEventListener('change', async e => {
-    const on = e.target.checked;
-    if (on && !confirm('Lock the whole site now? Everyone will only see the locked page.')) { e.target.checked = false; return; }
-    const cfg = { ...(S.settings.configRaw || {}), lockdown: on };
-    try { await api.saveSettings({ config: cfg }); S.settings.configRaw = cfg; CONFIG.lockdown = on; if (S.admin.cfg) S.admin.cfg.lockdown = on;
-      if (on) lockPass();   // you're already in admin: keep this tab open for you
-      toast(on ? 'The site is locked.' : 'The site is open again.'); drawSettings(); }
-    catch (ex) { e.target.checked = !on; toast(friendlyError(ex)); }
+  // the switch only moves after the lockdown code (checked by the database, never here)
+  $('#lockOn').addEventListener('change', e => {
+    const want = e.target.checked; e.target.checked = !want; S.admin.lockWant = want;
+    $('#lockAskL').textContent = want ? 'Enter the lockdown code to lock the site' : 'Enter the lockdown code to open the site';
+    $('#lockAsk').hidden = false; $('#lockCodeErr').textContent = ''; $('#lockCode').value = ''; $('#lockCode').focus();
   });
+  $('#lockCode').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ACTIONS.lockConfirm(); } });
   $('#sigOn').addEventListener('change', async e => {
     const on = e.target.checked, cfg = { ...(S.settings.configRaw || {}), show_signal: on };
     try { await api.saveSettings({ config: cfg }); S.settings.configRaw = cfg; CONFIG.showSignal = on; if (S.admin.cfg) S.admin.cfg.show_signal = on;
@@ -7582,6 +7648,16 @@ const ACTIONS = {
   logout: async () => { await api.logout(); S.admin.cleaned = false; viewAdmin(); },
   admTab: t => { const mainEl = document.querySelector('main'); if (mainEl) mainEl.classList.remove('wide'); S.admin.tab = t.dataset.tab; clearInterval(S.admin.poll); viewAdmin(); },
   admRefresh: () => { S.admin.urls = {}; adminLoad(); },
+  lockCancel: () => { const a = $('#lockAsk'); if (a) a.hidden = true; },
+  lockConfirm: async () => {
+    const code = ($('#lockCode') || {}).value || '', on = !!S.admin.lockWant, err = $('#lockCodeErr');
+    if (!code.trim()) { err.textContent = 'Type the code.'; return; }
+    try { await api.setLockdown(on, code);
+      const cfg = { ...(S.settings.configRaw || {}), lockdown: on }; S.settings.configRaw = cfg; CONFIG.lockdown = on; if (S.admin.cfg) S.admin.cfg.lockdown = on;
+      if (on) lockPass();   // you're already in admin: keep this tab open for you
+      toast(on ? 'The site is locked.' : 'The site is open again.'); drawSettings(); }
+    catch (ex) { err.textContent = friendlyError(ex); $('#lockCode').value = ''; $('#lockCode').focus(); }
+  },
   admPerson: t => { S.admin.person = t.dataset.p || ''; drawAdminBody(); },
   admFilter: t => { if (t.dataset.f !== 'ready' && S.admin.pickupMode) { S.admin.pickupMode = false; keepAwake(false); } S.admin.filter = t.dataset.f; S.admin.rejecting = null; clearInterval(S.admin.poll); drawAdminBody().then(() => { if (S.admin.filter === 'ready') pollReady(); }); },
   aApprove: t => setStatus(t.dataset.id, { status: 'approved' }, 'Approved.'),

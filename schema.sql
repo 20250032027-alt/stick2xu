@@ -1701,3 +1701,29 @@ begin
   return false;
 end $$;
 grant execute on function public.lock_open(text) to anon, authenticated;
+
+-- Turning lockdown on or off: admins only, and only with the lockdown code (fixed, kept here only scrambled).
+create or replace function public.set_lockdown(p_on boolean, p_code text) returns boolean
+language plpgsql security definer set search_path = public, extensions as $$
+declare h constant text := '$2a$08$oBFoXu8HwxWYde5y4sD3RO5n8OOrsX6rCrNY37LdkwpTMglkU5TWC';
+begin
+  if not public.is_admin() then raise exception 'NOT_ADMIN'; end if;
+  if crypt(trim(coalesce(p_code, '')), h) <> h then raise exception 'BAD_LOCK_CODE'; end if;
+  update public.shop_settings set config = coalesce(config, '{}'::jsonb) || jsonb_build_object('lockdown', coalesce(p_on, false)) where id = 1;
+  insert into public.activity (actor, kind, text) values (public.log_actor(), 'settings', case when p_on then 'Turned lockdown on' else 'Turned lockdown off' end);
+  return coalesce(p_on, false);
+end $$;
+grant execute on function public.set_lockdown(boolean, text) to authenticated;
+
+-- Guard: from the website, the lockdown switch only changes through set_lockdown (which checks the code).
+-- Supabase's own Table Editor and SQL Editor still can, as the way out if you're ever stuck.
+create or replace function public.guard_lockdown() returns trigger language plpgsql as $$
+begin
+  if current_user in ('anon', 'authenticated')
+     and coalesce((new.config->>'lockdown')::boolean, false) is distinct from coalesce((old.config->>'lockdown')::boolean, false) then
+    raise exception 'LOCK_NEEDS_CODE';
+  end if;
+  return new;
+end $$;
+drop trigger if exists guard_lockdown on public.shop_settings;
+create trigger guard_lockdown before update on public.shop_settings for each row execute function public.guard_lockdown();
