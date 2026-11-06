@@ -1126,11 +1126,44 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .bt-q{position:absolute;right:-6px;top:-6px;min-width:24px;height:22px;padding:0 5px;border-radius:999px;background:var(--ink);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;box-shadow:0 0 0 2px #fff}
 .bt-add{border-style:dashed;border-color:var(--ink);background:var(--gold-soft);gap:0;align-content:center}
 .bt-add small{font-weight:800;font-size:12px;line-height:1}
-.bt-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin-top:4px}
-.bt-acts{display:flex;gap:8px;flex-wrap:wrap}
-.bt-change{display:inline-flex;align-items:center;gap:6px;margin-top:12px;min-height:40px;padding:4px 14px;border:2px solid var(--ink);border-radius:999px;background:var(--paper);font-weight:700;font-size:14px;cursor:pointer}
+.bt-change{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:4px 14px;border:2px solid var(--ink);border-radius:999px;background:var(--paper);font-weight:700;font-size:14px;cursor:pointer}
 .bt-change:hover{background:var(--accent-soft)}
 .was{font-size:.55em;color:var(--muted);font-weight:700;margin-left:4px}
+/* pins and keychains: two columns that share the work (phones: one list, in the order you work) */
+.designer.split{grid-template-columns:340px minmax(0,1fr)}
+.dcol{display:grid;gap:20px;align-content:start;min-width:0}
+.split .tools{position:static;min-width:0;max-width:100%;box-sizing:border-box}
+.split .panel[hidden]{display:none}
+.split .stage2{padding-top:0}
+.split .pinwrap .frame{width:min(100%,320px)}
+.adjsec .hint{display:none}
+.split .adjsec{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 22px;align-items:center}
+.split .adjsec .stephead{grid-column:1/-1;margin-bottom:0}
+.split .adjsec .zoomrow{margin:0}
+.bgrow .flab{margin:16px 0 8px}
+.split .bgrow{display:flex;align-items:center;gap:10px}.split .bgrow .flab{margin:0;white-space:nowrap}.split .bgrow .flab .muted,.split .bgrow .swatches .muted{display:none}
+.bt-note{margin:2px 0 8px}
+.bt-acts{display:flex;flex-wrap:wrap;gap:8px}
+.fx-body{display:grid;gap:14px}
+.fxg .flab{margin:0 0 8px}
+@media(min-width:901px){.split #ctrlO .fx-body{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 22px}.split #ctrlO .fxg.wide{grid-column:1/-1}}
+@media(max-width:900px){
+  .designer.split{display:flex;flex-direction:column;gap:18px}
+  .split .dcol{display:contents}
+  .split #fstage{order:1}.split #ctrl{order:2}.split #ctrlO{order:3}.split #ctrlQ{order:4}
+}
+@media(max-width:420px){.split .adjsec{grid-template-columns:1fr}}
+@media(max-width:900px){
+  .split #ctrl .phead{display:none}                       /* the product name is already clear on phones */
+  .split #ctrl .phead + section{margin-top:0;padding-top:0;border-top:0}
+  .split .bt{width:54px;height:54px}.split .bt .fthumb{width:46px!important}
+  .split .btray{gap:8px}
+  .split .bt-acts{gap:5px;flex-wrap:wrap}
+  .split .bt-acts > *{min-height:38px;padding:5px 7px;gap:4px;font-size:13px;white-space:nowrap}.split .bt-acts svg{width:15px;height:15px}
+  .split .fx-body{gap:10px}.split .fxg .flab{margin-bottom:6px}
+  .split .fx-tabs + .fx-body{margin-top:12px}
+  .split .tools section+section{margin-top:16px;padding-top:14px}
+}
 /* Make it yours */
 .fxc{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
 .fx-tabs{display:flex;width:100%}.fx-tabs button{flex:1;position:relative;min-height:44px}
@@ -4608,8 +4641,12 @@ function viewMake(key){
   S.view = 'framed';
   if (!S.fd || S.fd.type !== key) { S.fd = newFd(key); if (S.editing !== null && (!S.cart[S.editing] || S.cart[S.editing].type !== key)) S.editing = null; }
   if (!liveSizes(key).some(z => z.id === S.fd.size)) S.fd.size = liveSizes(key)[0].id;
+  const split = ['pins', 'keychains'].includes(key);   // left: your pins and how many; right: the preview and the options
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap">${progress(1)}${backBar()}
-    <div class="designer"><aside class="panel tools" id="ctrl"></aside><section class="stage2" id="fstage" aria-label="Preview"></section></div></main>
+    ${split ? `<div class="designer split">
+      <div class="dcol dcol-l"><aside class="panel tools" id="ctrl"></aside><aside class="panel tools" id="ctrlQ"></aside></div>
+      <div class="dcol dcol-r"><section class="stage2" id="fstage" aria-label="Preview"></section><aside class="panel tools" id="ctrlO" aria-label="Options"></aside></div></div>`
+    : `<div class="designer"><aside class="panel tools" id="ctrl"></aside><section class="stage2" id="fstage" aria-label="Preview"></section></div>`}</main>
     <div class="bottombar"><div class="in" id="bottom"></div></div>`;
   drawFramed();
 }
@@ -4646,8 +4683,8 @@ function batchTrayHTML(){
       return `<button type="button" role="listitem" class="bt ${i === (f.cur || 0) ? 'on' : ''} ${f.type === 'pins' ? 'round' : ''}" data-act="fdPick" data-i="${i}" aria-label="${unit} ${i + 1}${e.qty > 1 ? `, ${e.qty} of them` : ''}" aria-current="${i === (f.cur || 0)}">
         ${im ? framedThumb(e.front, im.url, mm, 54) : `<span class="bt-empty">${ic('image', 18)}</span>`}${e.qty > 1 ? `<span class="bt-q num">×${e.qty}</span>` : ''}</button>`; }).join('')}
       <label class="bt bt-add ${f.type === 'pins' ? 'round' : ''}" title="Add more pictures"><span>${ic('plus', 20)}</span><small>Add</small><input type="file" accept="image/*" multiple hidden data-more="1" class="fileMore"></label></div>
-    <div class="bt-bar"><span class="muted small">${n > 1 ? `${unit[0].toUpperCase() + unit.slice(1)} ${k} of ${n}. Tap one to change it.` : `Tip: choose several pictures at once to make several ${unit}s.`}</span>
-      <span class="bt-acts">${smallBtn('Duplicate', 'copy', 'fdDup', 'plain')}${n > 1 ? smallBtn('Remove', 'trash', 'fdRemove', 'plain') : ''}</span></div>`;
+    <p class="bt-note muted small">${n > 1 ? `${unit[0].toUpperCase() + unit.slice(1)} ${k} of ${n}. Tap one to change it.` : `Tip: choose several pictures at once to make several ${unit}s.`}</p>
+    <div class="bt-acts">${f.front.imageId ? `<label class="bt-change" aria-label="Change this picture">${ic('image', 16)}Change<input id="fileIn" type="file" accept="image/*" hidden></label>` : ''}${smallBtn('Duplicate', 'copy', 'fdDup', 'plain')}${n > 1 ? smallBtn('Remove', 'trash', 'fdRemove', 'plain') : ''}</div>`;
 }
 function batchSectionHTML(step){
   const f = S.fd, unit = P(f.type).unit, has = !!f.front.imageId || batchList().some(e => e.front.imageId);
@@ -4655,10 +4692,9 @@ function batchSectionHTML(step){
       <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose pictures<small>Pick one, or several at once: each picture becomes its own ${unit}.</small></span>
         <input id="fileIn" type="file" accept="image/*" multiple hidden></label></section>`;
   return `<section>${step(`Your ${unit}s`)}<div id="btrayWrap">${batchTrayHTML()}</div>
-      ${f.front.imageId ? `<label class="pf-ch bt-change">${ic('image', 16)}Change this picture<input id="fileIn" type="file" accept="image/*" hidden></label>`
-        : `<label class="upload" style="margin-top:12px"><span class="ui">${ic('plus', 22)}</span><span>Choose a picture for this ${unit}</span><input id="fileIn" type="file" accept="image/*" hidden></label>`}</section>`;
+      ${f.front.imageId ? '' : `<label class="upload" style="margin-top:12px"><span class="ui">${ic('plus', 22)}</span><span>Choose a picture for this ${unit}</span><input id="fileIn" type="file" accept="image/*" hidden></label>`}</section>`;
 }
-function batchTrayRefresh(){ const w = $('#btrayWrap'); if (!w || !batchOn(S.fd)) return; w.innerHTML = batchTrayHTML(); w.querySelectorAll('.fileMore').forEach(i => i.addEventListener('change', onFiles)); }
+function batchTrayRefresh(){ const w = $('#btrayWrap'); if (!w || !batchOn(S.fd)) return; w.innerHTML = batchTrayHTML(); w.querySelectorAll('.fileMore').forEach(i => i.addEventListener('change', onFiles)); const fi = w.querySelector('#fileIn'); if (fi) fi.addEventListener('change', onFiles); }
 function saveManyToCart(items){
   buzz([10, 30, 10]); items.forEach(it => S.cart.push(it)); S.editing = null; S.justAdded = D('cart_bounce'); location.hash = '#/cart';
   if (items.length > 1) toast(`Added ${items.length} ${P(items[0].type).unit}s to your order.`);
@@ -4795,22 +4831,21 @@ function fxSectionHTML(step, d){
   const seg = (act, cur, opts) => `<div class="seg">${opts.map(([v, l]) => `<button type="button" class="${cur === v ? 'on' : ''}" data-act="${act}" data-v="${v}" aria-pressed="${cur === v}">${l}</button>`).join('')}</div>`;
   const places = pin ? [['bottom', 'Bottom'], ['top', 'Top'], ['across', 'Across']] : [['bottom', 'Bottom'], ['top', 'Top']];
   if (!places.some(([v]) => v === fx.text.place)) fx.text.place = 'bottom';
-  const body = tab === 'text' ? `
-      <label class="lab flab" for="fxWords" style="margin-top:0">Words <span class="muted small" style="font-weight:500">optional</span></label>
-      <div class="fx-words"><input class="inp" id="fxWords" maxlength="28" value="${esc(fx.text.value || '')}" placeholder="A name or a date" autocomplete="off">
-        ${fx.text.value ? `<button type="button" class="fx-clear" data-act="fxTextClear" aria-label="Remove the words">${ic('x', 16)}</button>` : ''}</div>
-      <p class="lab flab">Where</p>${seg('fxPlace', fx.text.place, places)}
-      <p class="lab flab">Letters</p>${seg('fxFont', fx.text.font, Object.entries(FX_FONTS).map(([k, v]) => [k, `<span style="font-family:${v[1].replace(/"/g, '&quot;')};font-weight:${v[0]}">${v[2]}</span>`]))}
-      <p class="lab flab">Color</p>${sw('fxTextColor', fx.text.color || '#ffffff')}`
-    : tab === 'ring' ? `
-      <p class="lab flab" style="margin-top:0">Style</p>
+  const g = (label, body, wide) => `<div class="fxg ${wide ? 'wide' : ''}">${label}${body}</div>`, L = t => `<p class="lab flab">${t}</p>`;
+  const body = tab === 'text' ? g(`<label class="lab flab" for="fxWords">Words <span class="muted small" style="font-weight:500">optional</span></label>`,
+        `<div class="fx-words"><input class="inp" id="fxWords" maxlength="28" value="${esc(fx.text.value || '')}" placeholder="A name or a date" autocomplete="off">
+        ${fx.text.value ? `<button type="button" class="fx-clear" data-act="fxTextClear" aria-label="Remove the words">${ic('x', 16)}</button>` : ''}</div>`, true)
+      + g(L('Where'), seg('fxPlace', fx.text.place, places))
+      + g(L('Letters'), seg('fxFont', fx.text.font, Object.entries(FX_FONTS).map(([k, v]) => [k, `<span style="font-family:${v[1].replace(/"/g, '&quot;')};font-weight:${v[0]}">${v[2]}</span>`])))
+      + g(L('Color'), sw('fxTextColor', fx.text.color || '#ffffff'), true)
+    : tab === 'ring' ? `<div class="fxg wide">${L('Style')}
       <div class="fx-rings">${[['none', 'None'], ['solid', 'Solid'], ['dots', 'Dots'], ['stripes', 'Stripes'], ['double', 'Double']].map(([v, l]) => `<button type="button" class="fx-ring ${fx.ring.style === v ? 'on' : ''}" data-act="fxRing" data-v="${v}" aria-pressed="${fx.ring.style === v}">
-        <span class="fx-rprev ${pin ? 'round' : ''} r-${v}" style="--c:${fx.ring.color}"></span><small>${l}</small></button>`).join('')}</div>
-      ${fx.ring.style !== 'none' ? `<p class="lab flab">Thickness</p>${seg('fxRingSize', fx.ring.size || 'thin', [['thin', 'Thin'], ['thick', 'Thick']])}<p class="lab flab">Color</p>${sw('fxRingColor', fx.ring.color || '#283971')}` : ''}`
-    : `<div class="fx-filters">${FX_FILTER_NAMES.map(([v, l]) => `<button type="button" class="fx-filter ${(fx.filter || 'none') === v ? 'on' : ''}" data-act="fxFilter" data-v="${v}" aria-pressed="${(fx.filter || 'none') === v}">
-        <span class="fx-fprev ${pin ? 'round' : ''}" style="background-image:url('${im.url}');filter:${FX_FILTERS[v] || 'none'}"></span><small>${l}</small></button>`).join('')}</div>`;
+        <span class="fx-rprev ${pin ? 'round' : ''} r-${v}" style="--c:${fx.ring.color}"></span><small>${l}</small></button>`).join('')}</div></div>
+      ${fx.ring.style !== 'none' ? g(L('Thickness'), seg('fxRingSize', fx.ring.size || 'thin', [['thin', 'Thin'], ['thick', 'Thick']])) + g(L('Color'), sw('fxRingColor', fx.ring.color || '#283971')) : ''}`
+    : `<div class="fxg wide"><div class="fx-filters">${FX_FILTER_NAMES.map(([v, l]) => `<button type="button" class="fx-filter ${(fx.filter || 'none') === v ? 'on' : ''}" data-act="fxFilter" data-v="${v}" aria-pressed="${(fx.filter || 'none') === v}">
+        <span class="fx-fprev ${pin ? 'round' : ''}" style="background-image:url('${im.url}');filter:${FX_FILTERS[v] || 'none'}"></span><small>${l}</small></button>`).join('')}</div></div>`;
   const badge = k => (k === 'text' && (fx.text.value || '').trim()) || (k === 'ring' && fx.ring.style !== 'none') || (k === 'filter' && fx.filter && fx.filter !== 'none') ? '<i class="fx-dot" aria-label="(on)"></i>' : '';
-  return `<section class="fxsec">${step('Make it yours')}
+  return `<section class="fxsec" data-zone="opts">${step('Make it yours')}
     <div class="seg fx-tabs" role="tablist">${[['text', 'Words'], ['ring', ringName], ['filter', 'Filter']].map(([k, l]) => `<button type="button" role="tab" aria-selected="${tab === k}" class="${tab === k ? 'on' : ''}" data-act="fxTab" data-v="${k}">${l}${badge(k)}</button>`).join('')}</div>
     <div class="fx-body">${body}</div></section>`;
 }
@@ -4819,7 +4854,7 @@ function fxBind(){
   const d = activeDesign(), w = $('#fxWords');
   if (w && d) { w.addEventListener('input', () => { fxEnsure(d).text.value = w.value; fxPaintStage(); });
     w.addEventListener('change', () => batchTrayRefresh()); }
-  document.querySelectorAll('#ctrl [data-fxpick]').forEach(inp => {
+  document.querySelectorAll('[data-fxpick]').forEach(inp => {
     const apply = () => { const dd = activeDesign(); if (!dd) return; const fx = fxEnsure(dd); if (inp.dataset.fxpick === 'fxTextColor') fx.text.color = inp.value; else fx.ring.color = inp.value; fxPaintStage(); };
     inp.addEventListener('input', apply); inp.addEventListener('change', () => { apply(); drawFramedCtrl(); });
   });
@@ -4830,7 +4865,8 @@ function drawFramedCtrl(){
   if (S.fd.type === 'posters' && S.fd.mode === 'pages' && S.fd.pdf) return drawPosterPagesCtrl();
   const f = S.fd, p = P(f.type), d = activeDesign(), sizes = liveSizes(f.type);
   const kc = f.type === 'keychains', backSide = kc && f.side === 'back';
-  let n = 0; const step = t => `<div class="stephead"><i>${++n}</i>${t}</div>`;
+  const split = !!$('#ctrlO');
+  let n = 0; const step = t => split ? `<div class="stephead">${t}</div>` : `<div class="stephead"><i>${++n}</i>${t}</div>`;
   $('#ctrl').innerHTML = `${tplBarHTML(f.type)}
     <section class="phead">
       <h2>${esc(p.name)}</h2>
@@ -4869,19 +4905,19 @@ function drawFramedCtrl(){
           : "Uses every sheet edge to edge. A little of the picture's edges may be cut off. Drag the picture to choose what stays."}${t > 1 ? ' We tape the sheets together for you.' : ''}</p>`; })() : ''}
 
     </section>` : ''}
-    ${d && d.imageId ? `<section>${step('Adjust')}
+    ${d && d.imageId ? `<section data-zone="opts" class="adjsec">${step('Adjust')}
       <div class="zoomrow">${ic('search', 18)}<input type="range" id="zoom" min="0.4" max="3" step="0.01" value="${d.zoom}" aria-label="Zoom">
         ${smallBtn('Reset', '', 'fdReset', 'plain')}</div>
       <p class="hint" style="margin-top:10px">${ic('move', 18)}<span>Drag the picture to move it. Pinch with two fingers, or use the slider, to zoom in and out.</span></p>
-      <p class="lab flab">Background <span class="muted small" style="font-weight:500">shows when you zoom out</span></p>
+      <div class="bgrow"><p class="lab flab">Background <span class="muted small" style="font-weight:500">shows when you zoom out</span></p>
       ${(() => { const bg = (d.bg || '#ffffff').toLowerCase(), custom = bg !== '#ffffff'; return `<div class="swatches">
         <button type="button" class="sw ${custom ? '' : 'on'}" style="background:#fff" data-act="fdBg" data-c="#ffffff" aria-label="White background" aria-pressed="${!custom}"></button>
         <label class="sw rainbow ${custom ? 'on' : ''}" title="Pick any color"><input type="color" id="bgPick" value="${custom ? bg : '#3a52a3'}" aria-label="Pick any background color">
           ${custom ? `<span style="background:${bg}"></span>` : ''}</label>
-        <span class="muted small">${custom ? 'Your color. Tap the rainbow to change it.' : 'White. Tap the rainbow to pick any color.'}</span></div>`; })()}
+        <span class="muted small">${custom ? 'Your color. Tap the rainbow to change it.' : 'White. Tap the rainbow to pick any color.'}</span></div>`; })()}</div>
     </section>` : ''}
     ${fxSectionHTML(step, d)}
-    ${!backSide ? `<section>${step(batchOn(f) && batchList().length > 1 ? `How many of this ${esc(p.unit)}?` : 'How many?')}
+    ${!backSide ? `<section data-zone="qty">${step(batchOn(f) && batchList().length > 1 ? `How many of this ${esc(p.unit)}?` : 'How many?')}
       <div class="qty"><button type="button" data-act="fdQty" data-d="-1" aria-label="One less">−</button><input id="qtyIn" class="num" type="number" inputmode="numeric" min="1" max="${maxQtyFor(f.type)}" value="${f.qty}" aria-label="How many"><button type="button" data-act="fdQty" data-d="1" aria-label="One more">+</button></div>
       ${(() => { const d = liveDeals().find(x => x.type === 'tiers' && x.product === f.type); if (!d) return '';
         const tiers = (d.tiers || []).slice().sort((a, b) => a.min - b.min), base = unitPrice(f), tot = framedTotalUnits(f), cur = tiers.filter(t => t.min <= tot).pop();
@@ -4893,6 +4929,12 @@ function drawFramedCtrl(){
           ${batchOn(f) && batchList().length > 1 ? `<p class="help" style="margin:8px 0 0">Counts every ${esc(p.unit)} in your order: ${tot} so far.</p>` : ''}</div>`; })()}
       ${liveAddons(f.type).length ? `<div style="margin-top:14px">${addonChecks(f.type, f.addons)}</div>` : ''}
     </section>` : ''}`;
+  if (split) {
+    const O = $('#ctrlO'), Q = $('#ctrlQ'); O.innerHTML = ''; Q.innerHTML = '';
+    $('#ctrl').querySelectorAll('[data-zone="opts"]').forEach(s => O.appendChild(s));
+    $('#ctrl').querySelectorAll('[data-zone="qty"]').forEach(s => Q.appendChild(s));
+    O.hidden = !O.children.length; Q.hidden = !Q.children.length;
+  }
   const fi = $('#fileIn'); if (fi) fi.addEventListener('change', onFiles);
   $('#ctrl').querySelectorAll('.fileMore').forEach(i => i.addEventListener('change', onFiles));
   fxBind();
@@ -4931,7 +4973,7 @@ function drawFramedStage(){
             ${im ? `<img id="fimg2" src="${im.url}" alt="" draggable="false">` : ''}<canvas class="fxc" aria-hidden="true"></canvas></div><span class="pp-gloss"></span></div></div>
           <span class="cap">How it looks</span></div>
       </div>
-      <p class="under" style="max-width:460px">This circle is exactly what gets printed (${Math.round(mm.w)} mm). Keep faces and words a little in from the edge.</p>`;
+      <p class="under" style="max-width:460px">Prints exactly like this, ${Math.round(mm.w)} mm across. Keep faces and words a little in from the edge.</p>`;
   } else if (f.type === 'posters' && f.mode === 'pages' && f.pdf) {
     html = posterPagesStage(f);
   } else if (f.type === 'posters') {
