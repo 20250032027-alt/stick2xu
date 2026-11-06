@@ -269,7 +269,6 @@ button{font:inherit;color:inherit}
 .hero{flex:1;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding:24px 0 48px}
 .hero h1{font-size:clamp(44px,6vw,70px)}
 .hero .lead{font-size:19px;max-width:38ch;margin:20px 0 30px;color:#2E3B57}
-.hero .cd-lbl{margin-top:30px}
 .facts{display:flex;flex-wrap:wrap;gap:10px 22px;margin:28px 0 0;padding:16px 0 0;border-top:1px solid var(--line);list-style:none;font-size:15px;color:var(--muted);font-weight:500}
 .facts li{display:flex;align-items:flex-start;gap:8px;line-height:1.35}
 .facts li svg{flex:none;margin-top:1px}
@@ -517,8 +516,8 @@ th{color:var(--muted);font-weight:700}
 .pcard .illo{height:170px;border-radius:16px;display:grid;place-items:center;overflow:hidden;position:relative;margin-bottom:8px;
   background:radial-gradient(120% 90% at 50% 20%,#F3F5FB 0%,#DCE1EE 70%,#D2D8E8 100%)}
 .pcard .illo::after{content:"";position:absolute;inset:auto 0 0 0;height:30%;background:linear-gradient(transparent,rgba(40,57,113,.06))}
-.pcard .illo svg{width:100%;height:100%;transition:transform .35s var(--ease)}
-.pcard:hover .illo svg{transform:translateY(-4px) rotate(-1.5deg) scale(1.03)}
+.pcard .illo > svg{width:100%;height:100%;transition:transform .35s var(--ease)}
+.pcard:hover .illo > svg{transform:translateY(-4px) rotate(-1.5deg) scale(1.03)}
 .pfoot{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:auto;padding-top:14px;border-top:1px dashed var(--line)}
 .pfoot .price{display:grid;line-height:1.1}
 .pfoot .price small{font-size:13px;font-weight:700;color:var(--muted)}
@@ -1168,6 +1167,108 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
   .split .fx-tabs + .fx-body{margin-top:12px}
   .split .tools section+section{margin-top:16px;padding-top:14px}
 }
+/* homepage: one family of actions */
+.heroacts{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.printhint{display:flex;align-items:center;gap:8px;margin:18px 0 0;font-size:15.5px;color:var(--muted)}
+.printhint svg{flex:none;color:var(--ink)}
+.printhint a{color:var(--ink);font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;text-decoration-color:var(--xu-gold)}
+.printhint a:hover{text-decoration-color:var(--ink)}
+/* Coming up: the label above, every chip alike (the next one only gets its little icon) */
+.hero .cdrow2{display:grid;gap:8px;justify-items:start;margin-top:30px}
+.hero .cd-lbl{font-size:14px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--muted)}
+.hero .cdc.next{border-color:var(--line)}.hero .cdc.next:hover{border-color:#B9C3DD}.hero .cdc.next .cdc-n{color:var(--ink)}.hero .cdtw{display:none}
+/* suggestion box */
+.sbox{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px 20px;margin:8px 0 28px;padding:20px 22px;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-lg);box-shadow:var(--shadow)}
+.sb-ic{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:var(--gold-soft);border:2px solid var(--ink);color:var(--ink);transform:rotate(-4deg)}
+.sb-t h2{font-size:24px;margin:0}.sb-t > p{margin:4px 0 0;color:var(--muted)}
+.sbox.open{grid-template-columns:auto minmax(0,1fr);align-items:start}
+.sb-kinds{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sb-k{font:inherit;font-weight:700;font-size:14.5px;padding:8px 14px;min-height:40px;border-radius:999px;border:2px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.sb-k:hover{border-color:var(--ink)}
+.sb-k.on{border-color:var(--ink);background:var(--gold-soft);box-shadow:var(--shadow-sm)}
+.sbox textarea{width:100%;resize:vertical;min-height:84px;font-size:16px;line-height:1.4}
+.sbox .flab{margin:14px 0 6px}
+.sb-acts{display:flex;align-items:center;gap:16px;margin-top:14px}
+.sbox.sent .sb-ic{background:var(--ok-soft, #E3F4E8)}
+@media(max-width:640px){.sbox{grid-template-columns:auto minmax(0,1fr);padding:18px}.sbox > .pilllink{grid-column:1/-1;justify-self:start}.sbox.open{grid-template-columns:1fr}.sbox.open .sb-ic{display:none}}
+.idealine{display:flex;align-items:center;justify-content:center;gap:8px;margin:22px auto 6px;font-size:15px;color:var(--muted);text-align:center}
+.idealine svg{flex:none;color:#C9951A}
+.idealine a{color:var(--ink);font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;text-decoration-color:var(--xu-gold)}
+.ideaspg .sbox{margin-top:0}
+.tag.spotq{background:var(--gold-soft);color:#7A5300;border:1px solid #E9C766}
+/* store: bento */
+.bento{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin:20px 0 26px}
+.bento .pcard{min-width:0}
+.bento .illo{height:auto;position:relative}
+.bento .bc-t{display:grid;gap:4px}
+.bento .bc-t h3{margin:0}
+.bento .bc-sz{display:flex;align-items:center;gap:6px;margin:4px 0 0;font-size:14px;font-weight:600;color:var(--ink)}.bento .bc-sz svg{flex:none;color:#C9951A}
+.bento .pfoot{margin-top:auto!important;padding-top:14px}
+.bc-deal{position:absolute;left:10px;right:10px;top:10px;z-index:2;display:flex;justify-content:flex-start;transform:rotate(-3deg);transform-origin:left center}
+.bc-deal .gold{max-width:100%}
+.bc-deal .star.s1{right:-6px;top:-6px}.bc-deal .star.s2{right:auto;left:22px;top:-9px}.bc-deal .star.s3{left:-5px;bottom:-5px}   /* twinkles on the edges, never on the words */
+.bc-deal .gold-in{box-shadow:inset 0 1px 0 rgba(255,255,255,.75),2px 2px 0 var(--ink);border-color:#C9951A}
+.bc.small .illo,.bc.half .illo{aspect-ratio:16/10}
+.bc.big{grid-column:1/3;grid-row:1/3}.bc.big .illo{flex:1;min-height:260px}
+.bc.big h3{font-size:34px}.bc.big .bc-t p:not(.bc-sz){font-size:17px}
+.bc.tall{grid-column:3;grid-row:1/3}.bc.tall .illo{flex:1;min-height:200px}
+.bc.big .illo > svg,.bc.tall .illo > svg{position:absolute;inset:6%;width:88%;height:88%}
+.bc.wide{grid-column:1/-1;display:grid!important;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);grid-template-rows:auto 1fr;column-gap:20px;align-items:start}
+.bc.wide .illo{grid-row:1/3;aspect-ratio:16/10;margin:0}.bc.wide .pfoot{align-self:end}
+.bc-cta{display:inline-flex;align-items:center;gap:10px;padding:6px 6px 6px 18px;border-radius:999px;background:var(--accent);color:#fff;border:2px solid var(--ink);font-weight:700;box-shadow:var(--shadow-sm)}
+.bc-cta .go{background:var(--xu-gold);color:var(--ink);border:0;width:34px;height:34px}
+.pcard.big:hover .bc-cta .go{transform:translateX(3px)}
+.bento.n2{grid-template-columns:1fr 1fr}
+.bento.n3 .bc:nth-child(2){grid-column:3;grid-row:1}.bento.n3 .bc:nth-child(3){grid-column:3;grid-row:2}
+.bento.n4 .bc:nth-child(2){grid-column:3;grid-row:1}.bento.n4 .bc:nth-child(3){grid-column:3;grid-row:2}
+.bento.n6 .bc:nth-child(2){grid-column:3;grid-row:1}.bento.n6 .bc:nth-child(3){grid-column:3;grid-row:2}
+@media(max-width:820px){
+  .bento{grid-template-columns:1fr 1fr!important;gap:14px}
+  .bento .bc{grid-column:auto!important;grid-row:auto!important}
+  .bento .bc.big{grid-column:1/-1!important}.bento .bc.big .illo{min-height:200px}.bento .bc.big h3{font-size:28px}
+  .bento .bc.tall .illo{min-height:0;aspect-ratio:16/10;flex:none}.bento .bc.tall .illo > svg{position:static;width:100%;height:100%}
+  .bento.n2 .bc:last-child,.bento.n4 .bc:last-child,.bento.n6 .bc:last-child{grid-column:1/-1!important}
+  .bento .bc.small p:not(.bc-sz),.bento .bc.tall p:not(.bc-sz),.bento .bc.half p:not(.bc-sz){display:none}
+  .bento .bc.small,.bento .bc.tall,.bento .bc.half{padding:10px;border-radius:22px}
+  .bento .bc h3{font-size:21px}
+  .bento .bc-sz{display:none!important}.bento .bc.big .bc-sz{display:flex!important}
+  .bc-deal{left:6px;right:6px;top:6px}.bc-deal .gold-in{height:26px;font-size:11px;padding:0 10px;gap:4px}.bc-deal .gold-in > svg{display:none}   /* small tiles: the words need the room; the stars still twinkle */
+  .bc.big .bc-cta{padding:5px 5px 5px 14px;font-size:15px}
+}
+@media(max-width:370px){.bento .bc-deal .gold-in{font-size:10px;padding:0 8px}}
+@media(max-width:340px){.bento .bc-deal .gold-in{height:auto;padding:4px 8px;border-radius:12px}.bento .bc-deal .gt{white-space:normal;line-height:1.15}}
+/* loading screen: a little Stick2It printer printing a sticker sheet */
+#boot{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:radial-gradient(circle at 1px 1px,rgba(40,57,113,.12) 1.2px,transparent 0) 0 0/22px 22px,var(--bg);
+  transition:opacity .45s var(--ease),visibility .45s;animation:btSafety 0s 12s forwards}
+#boot.out{opacity:0;visibility:hidden}
+@keyframes btSafety{to{opacity:0;visibility:hidden}}
+.bt-in{display:grid;justify-items:center;gap:6px;animation:btIn .4s var(--ease) .25s both}
+@keyframes btIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.bt-mark{font-family:var(--display);font-weight:800;font-size:32px;letter-spacing:-.02em;color:var(--ink);transform:rotate(-3deg);margin-bottom:6px;
+  text-shadow:2px 0 #fff,-2px 0 #fff,0 2px #fff,0 -2px #fff,2px 2px #fff,-2px 2px #fff,2px -2px #fff,-2px -2px #fff}
+.bt-mark b{color:var(--xu-gold)}
+.bt-pr{width:200px;height:190px;overflow:visible;filter:drop-shadow(3px 4px 0 rgba(40,57,113,.18))}
+.bt-paper{animation:btFeed 3.2s cubic-bezier(.45,0,.3,1) infinite}
+@keyframes btFeed{0%{transform:translateY(-100px)}62%,82%{transform:translateY(30px)}100%{transform:translateY(150px)}}
+.bt-s{transform-box:fill-box;transform-origin:center;animation:btPop 3.2s var(--ease) infinite}
+.bt-s.s1{animation-delay:-2.6s}.bt-s.s2{animation-delay:-2.4s}.bt-s.s3{animation-delay:-2.2s}.bt-s.s4{animation-delay:-2s}
+@keyframes btPop{0%,8%{transform:scale(0) rotate(-20deg)}16%{transform:scale(1.15) rotate(6deg)}22%,100%{transform:scale(1) rotate(0)}}
+.bt-led{animation:btLed 1s steps(2) infinite}
+@keyframes btLed{50%{fill:#FFF3D1}}
+.bt-cap{position:relative;height:24px;width:260px;margin:4px 0 0;text-align:center;font-weight:700;color:var(--muted);font-size:16px}
+.bt-cap span{position:absolute;inset:0;opacity:0;animation:btCap 6.4s infinite}
+.bt-cap span:nth-child(2){animation-delay:1.6s}.bt-cap span:nth-child(3){animation-delay:3.2s}.bt-cap span:nth-child(4){animation-delay:4.8s}
+@keyframes btCap{0%{opacity:0;transform:translateY(6px)}4%,22%{opacity:1;transform:none}26%,100%{opacity:0;transform:translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){.bt-paper,.bt-s,.bt-led,.bt-cap span{animation:none}.bt-paper{transform:translateY(20px)}.bt-cap span:first-child{opacity:1}}
+/* admin: suggestions */
+.sglist{display:grid;gap:12px}
+.sg{padding:14px 16px;border:1.5px solid var(--line);border-radius:16px;background:#fff}
+.sg.new{border-color:var(--ink);box-shadow:var(--shadow-sm)}.sg.done{opacity:.65}
+.sg-h{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.sg-k{font-weight:800;font-size:13px;padding:3px 10px;border-radius:999px;background:var(--accent-soft)}
+.sg-k.k-product{background:var(--gold-soft)}.sg-k.k-fix{background:#FDE3E3}.sg-k.k-pickup{background:#E3F4E8}
+.sg-b{margin:8px 0 10px;white-space:pre-wrap}
+.sg-a{display:flex;align-items:center;gap:8px}
 /* stickers: the tapped sticker's card, and word stickers */
 .stkcard{margin-top:16px;padding:18px}
 .stkcard .stephead{margin-bottom:12px}
@@ -1228,7 +1329,7 @@ fieldset > .pgroup-h:first-of-type{margin-top:4px}
 .pbox [role=radiogroup] + .pbox-l{margin-top:10px}
 .pchips{margin-top:-6px;align-items:center}
 .pchips-l{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:14px;color:var(--muted);margin-right:2px}
-.pcard .pc-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.ppcard .pc-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
 .pc-av{flex:none;width:40px;height:40px;border-radius:50%;background:var(--xu-gold);border:2px solid var(--ink);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:18px}
 .pc-t{display:grid;min-width:0}.pc-t small{color:var(--muted);font-size:14px}
 .pc-sw{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:12px}
@@ -2006,6 +2107,27 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
   <h2>Questions</h2><h3>What is Stick2It?</h3><p>Stick2It is a student-run shop for XU uptown students (grade school, junior high, and senior high at the Pueblo de Oro campus in Cagayan de Oro). You design custom stickers, pins, keychains, posters, and prints from your own pictures on the website, and pick them up at school.</p><h3>How do I order?</h3><p>Go to stick2it.me, design your item, then pick a pickup day, time, and gate. You'll get an order code. Confirm in My order by the day before, then pick it up and pay at school.</p><h3>How much does it cost?</h3><p>Sticker sheets are ₱45, 44 mm pins are ₱30 (buy 5, get 1 free), keychains are ₱45, A4 posters are ₱45, and prints are ₱5 a page in black and white or ₱10 in color.</p><h3>Who can order?</h3><p>Students of the XU uptown campus (Pueblo de Oro): grade school, junior high, and senior high.</p><h3>Where do I pick up my order?</h3><p>Inside campus, any school day from Monday to Friday. Need it tomorrow? That's a rush pickup for a small fee. Your exact gate and time are shown on your pickup pass after you order.</p><h3>How do I pay?</h3><p>Cash when you pick up, or GCash.</p><h3>Can I print documents?</h3><p>Yes. Upload PDFs or pictures for plain-paper prints. Same-day pickup is possible if you order at least 2 hours before the pickup time, for a small rush fee.</p><h3>Is Stick2It an official school service?</h3><p>No. Stick2It is run by students and isn't an official school service.</p>
   <p><a href="https://www.stick2it.me/#/shop">Start designing</a> · <a href="https://www.facebook.com/profile.php?id=61594155363888">Facebook</a> · <a href="https://www.instagram.com/stick2it.me">Instagram</a> · <a href="https://www.tiktok.com/@stick2it.me">TikTok</a></p>
 </main></div>
+<div id="boot" aria-hidden="true"><div class="bt-in">
+  <span class="bt-mark">Stick<b>2</b>It</span>
+  <svg class="bt-pr" viewBox="0 0 200 190" width="200" height="190">
+    <defs><clipPath id="btclip"><rect x="0" y="66" width="200" height="124"/></clipPath></defs>
+    <g clip-path="url(#btclip)"><g class="bt-paper">
+      <rect x="46" y="10" width="108" height="140" rx="6" fill="#fff" stroke="#283971" stroke-width="2.5"/>
+      <path d="M46 38h108M46 66h108M46 94h108M46 122h108M73 10v140M100 10v140M127 10v140" stroke="#E3E7F2" stroke-width="1.5"/>
+      <g class="bt-s s1"><path d="M73 40l4.6 9.4 10.4 1.5-7.5 7.3 1.8 10.3-9.3-4.9-9.3 4.9 1.8-10.3-7.5-7.3 10.4-1.5z" fill="#F2BC2E" stroke="#fff" stroke-width="3" paint-order="stroke"/></g>
+      <g class="bt-s s2"><path d="M127 72s-14-8.6-14-17.6c0-4.6 3.6-7.6 7.4-7.6 3 0 5.4 1.8 6.6 4 1.2-2.2 3.6-4 6.6-4 3.8 0 7.4 3 7.4 7.6 0 9-14 17.6-14 17.6z" fill="#ec282a" stroke="#fff" stroke-width="3" paint-order="stroke"/></g>
+      <g class="bt-s s3"><circle cx="73" cy="106" r="12" fill="#3a52a3" stroke="#fff" stroke-width="3"/><path d="M68 104h0M78 104h0" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M67 110q6 5 12 0" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/></g>
+      <g class="bt-s s4"><rect x="111" y="96" width="32" height="24" rx="5" fill="#283971" stroke="#fff" stroke-width="3" paint-order="stroke" transform="rotate(-6 127 108)"/><text x="127" y="113" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="12" fill="#fff" transform="rotate(-6 127 108)">HI!</text></g>
+    </g></g>
+    <rect x="20" y="30" width="160" height="40" rx="12" fill="#283971"/>
+    <rect x="34" y="22" width="132" height="14" rx="6" fill="#3a52a3" stroke="#283971" stroke-width="2.5"/>
+    <rect x="40" y="62" width="120" height="6" rx="3" fill="#1b2752"/>
+    <circle class="bt-led" cx="160" cy="46" r="5" fill="#F2BC2E"/>
+    <rect x="34" y="42" width="40" height="7" rx="3.5" fill="#4a5d9e"/>
+  </svg>
+  <p class="bt-cap"><span>Warming up the printer…</span><span>Peeling the stickers…</span><span>Pressing the pins…</span><span>Polishing the gold stars…</span></p>
+</div></div>
+<noscript><style>#boot{display:none}</style></noscript>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
@@ -2902,6 +3024,11 @@ function SupaBackend(){
     async logDelete(id){ const { error } = await sb.from('logbook').delete().eq('id', id); if (error) throw error; },
     async lockOpen(words){ return !!(await rpc('lock_open', { p_code: words })); },
     async setLockdown(on, code){ return !!(await rpc('set_lockdown', { p_on: !!on, p_code: code })); },
+    async sendSuggestion(kind, body, name){ return !!(await rpc('send_suggestion', { p_kind: kind, p_body: body, p_name: name || null })); },
+    async newSuggestions(){ const { data, error } = await sb.from('suggestions').select('id').eq('status', 'new').limit(100); if (error) throw error; return (data || []).length; },
+    async suggestions(){ const { data, error } = await sb.from('suggestions').select('*').order('created_at', { ascending: false }).limit(200); if (error) throw error; return data || []; },
+    async setSuggestion(id, status){ const { error } = await sb.from('suggestions').update({ status }).eq('id', id); if (error) throw error; },
+    async delSuggestion(id){ const { error } = await sb.from('suggestions').delete().eq('id', id); if (error) throw error; },
     async pickupPeople(code){ return (await rpc('pickup_people_list', { p_code: code || null })) || []; },
     async people(){ const { data, error } = await sb.from('pickup_people').select('*').order('sort').order('created_at'); if (error) throw error; return data || []; },
     async savePerson(row){ const { error } = await sb.from('pickup_people').upsert(row); if (error) throw error; },
@@ -3375,14 +3502,16 @@ function viewLocked(){
   });
   setTimeout(() => { try { if (matchMedia('(hover: hover)').matches) inp.focus({ preventScroll: true }); } catch {} }, 60);
 }
+function bootDone(){ const b = document.getElementById('boot'); if (!b || b.dataset.out) return; b.dataset.out = '1'; b.classList.add('out'); setTimeout(() => b.remove(), 500); }
 function route(keep){
+  bootDone();
   if (S.halt) return;
   document.title = BASE_TITLE;
   const parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/'), page = parts[0];
   // Lockdown: every page is the locked page, except admin after the magic words (this tab only)
   if (CONFIG.lockdown && !(page === 'admin' && lockPassed())) { S.locked = true; viewLocked(); return; }
   S.locked = false;
-  const views = { home: viewHome, shop: viewShop, design: viewDesign, make: () => viewMake(parts[1]), cart: viewCart, checkout: viewCheckout, done: viewDone, status: viewStatus, admin: viewAdmin, sell: viewSell };
+  const views = { home: viewHome, shop: viewShop, design: viewDesign, make: () => viewMake(parts[1]), cart: viewCart, checkout: viewCheckout, done: viewDone, status: viewStatus, admin: viewAdmin, sell: viewSell, ideas: () => viewIdeas(parts[1]) };
   (views[page] || viewNotFound)();
   if (keep === true) return;   // a quiet redraw (fresh settings arrived): stay where they are
   toTop(); requestAnimationFrame(toTop); setTimeout(toTop, 60);
@@ -3445,6 +3574,42 @@ function countdownHTML(){
       ${x.days === 0 ? `${th ? '' : `<b class="cdc-n">${ic('sparkle', 18)}</b>`}<span><small>today!</small>${esc(x.name)}</span>`
         : `<b class="cdc-n num">${x.days}</b><span><small>day${x.days === 1 ? '' : 's'} to</small>${esc(x.name)}</span>`}</a>`; }).join('')}</div></section>`;
 }
+/* Suggestion box: ideas for new products, designs, pickup spots, or things to fix. Sent to the admins (and Telegram). */
+const SB_KINDS = [['product', 'A new product', 'Like: phone case inserts, or bigger pins'], ['design', 'A design or template', 'Like: a ready-made sheet for our org, or Christmas designs'],
+  ['pickup', 'A pickup spot', 'Like: near the canteen, or a gate that fits after class'], ['fix', 'Something to fix', 'What happened, and where? Like: the pin page was hard to use on my phone'],
+  ['other', 'Something else', 'Anything you want to tell us']];
+function suggestBoxHTML(){
+  const s = S.sbox || { open: false };
+  if (s.sent) return `<section class="sbox sent" aria-live="polite"><span class="sb-ic">${ic('check', 24)}</span>
+    <div class="sb-t"><h2>Thanks! Your idea is in the box.</h2><p>We read every one. Good ideas turn into new things on this site.</p></div>
+    <button type="button" class="pilllink" data-act="sbAgain">${ic('plus', 18)}Share another</button></section>`;
+  if (!s.open) return `<section class="sbox" aria-labelledby="sbH"><span class="sb-ic">${sbIcon()}</span>
+    <div class="sb-t"><h2 id="sbH">Suggestion box</h2><p>Want something we don't make yet, a design idea, a better pickup spot, or something fixed? Tell us.</p></div>
+    <button type="button" class="pilllink" data-act="sbOpen">${ic('edit', 18)}Share an idea</button></section>`;
+  const k = SB_KINDS.find(x => x[0] === s.kind) || null;
+  return `<section class="sbox open" aria-labelledby="sbH"><span class="sb-ic">${sbIcon()}</span>
+    <div class="sb-t"><h2 id="sbH">Suggestion box</h2><p>What's it about?</p>
+      <div class="sb-kinds" role="radiogroup" aria-label="What it's about">${SB_KINDS.map(([v, l]) => `<button type="button" role="radio" aria-checked="${s.kind === v}" class="sb-k ${s.kind === v ? 'on' : ''}" data-act="sbKind" data-v="${v}">${l}</button>`).join('')}</div>
+      ${k ? '' : '<div class="sb-acts"><button type="button" class="linkbtn" data-act="sbClose">Cancel</button></div>'}
+      ${k ? `<label class="lab flab" for="sbText">Your idea</label>
+      <textarea class="inp" id="sbText" rows="3" maxlength="600" placeholder="${esc(k[2])}">${esc(s.text || '')}</textarea>
+      <label class="lab flab" for="sbName">Your name or IG <span class="muted small" style="font-weight:500">optional, so we can thank you</span></label>
+      <input class="inp" id="sbName" maxlength="60" autocomplete="nickname" value="${esc(s.name || '')}">
+      <p class="ferr" id="sbErr" role="alert"></p>
+      <div class="sb-acts">${btn('Send it', { act: 'sbSend', icon: 'arrow' })}<button type="button" class="linkbtn" data-act="sbClose">Cancel</button></div>` : ''}</div></section>`;
+}
+const sbIcon = () => `<svg viewBox="0 0 40 40" width="30" height="30" aria-hidden="true"><path d="M8 17a12 12 0 0 1 24 0v15H8z" fill="#fff" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M8 32h24" stroke="currentColor" stroke-width="2.5"/><rect x="14" y="19" width="12" height="3.5" rx="1.75" fill="currentColor"/><path d="M28 6v11" stroke="#ec282a" stroke-width="2.5" stroke-linecap="round"/><path d="M28 6h6v4h-6" fill="#ec282a"/></svg>`;
+function sbRedraw(focus){ const el = document.querySelector('.sbox'); if (!el) return; el.outerHTML = suggestBoxHTML(); sbBind(); if (focus) { const f = $(focus); if (f) f.focus(); } }
+function sbBind(){ const s = S.sbox; if (!s) return; const t = $('#sbText'), n = $('#sbName');
+  if (t) t.addEventListener('input', () => { s.text = t.value; const e = $('#sbErr'); if (e && t.value.trim().length >= 3) e.textContent = ''; }); if (n) n.addEventListener('input', () => { s.name = n.value; }); }
+function viewIdeas(kind){   // the suggestion box on its own page (#/ideas, or #/ideas/product to start on a topic)
+  if (!S.sbox || S.sbox.sent || !S.sbox.open) S.sbox = { open: true, kind: SB_KINDS.some(([k]) => k === kind) ? kind : null, text: '', name: (S.sbox && S.sbox.name) || '' };
+  $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow ideaspg">
+    <a class="pilllink" href="#/shop" style="margin:4px 0 18px">${ic('back', 18)}Back to the shop</a>
+    ${suggestBoxHTML()}</main>`;
+  sbBind(); const f = $(S.sbox.kind ? '#sbText' : '.sb-k'); if (f) setTimeout(() => f.focus({ preventScroll: true }), 50);
+}
+const ideaLine = (text, kind) => `<p class="idealine">${ic('sparkle', 16)}<span>${text} <a href="#/ideas${kind ? '/' + kind : ''}">Tell us in the suggestion box</a>.</span></p>`;
 function viewHome(){
   const g = geom(), live = liveProducts(), others = live.filter(p => p.key !== 'stickers').map(p => p.name.toLowerCase());
   const list = others.length ? `stickers, ${others.slice(0, -1).join(', ')}${others.length > 1 ? ',' : ''} and ${others[others.length - 1]}` : '';
@@ -3454,17 +3619,19 @@ function viewHome(){
         <h1>${others.length ? 'Turn your pictures into stickers and more.' : 'Turn your pictures into a sticker sheet.'}</h1>
         <p class="lead">${others.length ? `Make ${esc(list)} from your own pictures. We print them, and you pick them up at school.`
           : 'Pick your pics, make them tiny or huge, and we print the whole sheet for you. You pick it up at school.'}</p>
-        <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+        <div class="heroacts">
           ${btn('Start designing', { href: '#/shop' })}
           <a class="pilllink" href="#/status">${ic('search', 18)}Check my order</a>
-          ${P('prints') && P('prints').enabled ? `<a class="printchip" href="${designRoute('prints')}">${ic('printer', 16)}Print a file<small>from ${money(Math.min(...P('prints').sizes.filter(z => z.enabled !== false).map(z => z.price)))}/page</small></a>` : ''}
         </div>
+        ${P('prints') && P('prints').enabled ? `<p class="printhint">${ic('printer', 17)}<span>Just need to print a document? <a href="${designRoute('prints')}">Print a file</a>, from ${money(Math.min(...P('prints').sizes.filter(z => z.enabled !== false).map(z => z.price)))} a page.</span></p>` : ''}
         ${countdownHTML()}
       </div>
       ${heroArt()}
     </section>
+    ${suggestBoxHTML()}
     <footer><span>${CONFIG.contactOn && (CONFIG.contactEmail || CONFIG.contactPhone) ? `<span class="contactline">${ic('bell', 14)}<b>Questions?</b> ${[CONFIG.contactEmail ? `<a href="mailto:${esc(CONFIG.contactEmail)}">Email us</a>` : '', CONFIG.contactPhone ? `<a href="sms:${esc(CONFIG.contactPhone.replace(/\s+/g, ''))}">text ${esc(CONFIG.contactPhone)}</a>` : ''].filter(Boolean).join(' or ')}</span>` : ''}${esc(CONFIG.shopName)} is run by students. It isn't an official school service.${CONFIG.sellersOn && !S.linkPerson ? ` <a href="#/sell" class="earnlink">${ic('sparkle', 14)}Earn with ${esc(CONFIG.shopName)}</a>` : ''}</span>${socialHTML()}</footer>
   </main>`;
+  sbBind();
 }
 
 function viewNotFound(){
@@ -3580,6 +3747,19 @@ function illoPrints(){
 function productIllo(key){
   return { stickers: illoStickers, pins: illoPins, posters: illoPosters, keychains: illoKeychains, prints: illoPrints }[key]();
 }
+/* The store as a bento: tiles that always fill a clean rectangle, whatever products are switched on.
+   The first product (Settings order) gets the big tile. 5 products: big + tall + three; 3: big + two; 4: big + two + a wide one;
+   6: big + two + three. Phones: the big one on top, the rest two by two (a wide one if one is left over). */
+function bentoRole(i, n){ if (n === 1) return 'wide'; if (n === 2) return 'half'; if (i === 0) return 'big'; if (n === 5 && i === 1) return 'tall'; if (n === 4 && i === 3) return 'wide'; return 'small'; }
+function sizesLine(key){ const l = liveSizes(key).map(z => z.label || z.id); return l.length > 1 ? `Comes in ${l.slice(0, -1).join(', ')} or ${l[l.length - 1]}` : l[0] || ''; }
+function bentoCard(p, i, n){
+  const role = bentoRole(i, n), deal = cardDeal(p.key), many = liveSizes(p.key).length > 1, roomy = role !== 'small' && role !== 'half';
+  return `<a class="pcard bc ${role}" href="${designRoute(p.key)}" style="--i:${i}">
+    <div class="illo">${productIllo(p.key)}${deal ? `<span class="bc-deal">${deal}</span>` : ''}</div>
+    <div class="bc-t"><h3>${esc(p.name)}</h3><p>${esc(p.blurb)}</p>${roomy && sizesLine(p.key) ? `<p class="bc-sz">${ic('layers', 15)}<span>${esc(sizesLine(p.key))}</span></p>` : ''}</div>
+    <div class="pfoot"><span class="price"><small>${many ? 'from' : '&nbsp;'}</small><b class="num">${money(fromPrice(p.key))}</b><small>per ${esc(p.unit)}</small></span>
+      ${role === 'big' ? `<span class="bc-cta">Start designing<span class="go">${ic('arrow', 18)}</span></span>` : `<span class="go">${ic('arrow', 18)}</span>`}</div></a>`;
+}
 function viewShop(){
   S.editing = null;
   const live = liveProducts();
@@ -3587,12 +3767,9 @@ function viewShop(){
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap">${progress(1)}
     <h2>What do you want to make?</h2>
     <p class="muted" style="margin:8px 0 0">Pick one to start. You can add more to the same order after.</p>
-    ${live.length ? `<div class="pcards">${live.map(p => `<a class="pcard" href="${designRoute(p.key)}">
-        <div class="illo">${productIllo(p.key)}</div>
-        <h3>${esc(p.name)}</h3><p>${esc(p.blurb)}</p><div class="dealslot">${cardDeal(p.key)}</div>
-        <div class="pfoot"><span class="price"><small>${liveSizes(p.key).length > 1 ? 'from' : '&nbsp;'}</small><b class="num">${money(fromPrice(p.key))}</b><small>per ${esc(p.unit)}</small></span>
-          <span class="go">${ic('arrow', 18)}</span></div></a>`).join('')}</div>`
+    ${live.length ? `<div class="bento n${Math.min(live.length, 7)}">${live.map((p, i) => bentoCard(p, i, live.length)).join('')}</div>`
       : `<div class="empty" style="margin-top:20px">${ic('box', 36)}<b>Nothing is available right now.</b><span>Check back soon.</span></div>`}
+    ${live.length ? ideaLine("Don't see what you want?", 'product') : ''}
     ${S.cart.length ? `<a class="pilllink" href="#/cart">${ic('box', 18)}Back to my order (${S.cart.length} item${S.cart.length > 1 ? 's' : ''})</a>` : ''}
   </main>`;
 }
@@ -5644,7 +5821,13 @@ function personBoxHTML(p, keep){
   const dates = personDates(p), spot = keep && keep.spot, day = keep && keep.day;
   return `<div class="pbox" id="personBox" data-pid="${esc(p.id)}">
     <span class="pbox-l" id="l-pspot">Meet ${esc(personName(p))} where?</span>
-    <div role="radiogroup" aria-labelledby="l-pspot">${(p.spots || []).map((s, i) => `<label class="choice"><input type="radio" name="pspot" value="${esc(s)}" ${(spot ? spot === s : i === 0) ? 'checked' : ''}>${ic('pin', 20)}<span>${esc(s)}</span></label>`).join('')}</div>
+    <div role="radiogroup" aria-labelledby="l-pspot">${(p.spots || []).map((s, i) => `<label class="choice"><input type="radio" name="pspot" value="${esc(s)}" ${(spot ? spot === s : i === 0) ? 'checked' : ''}>${ic('pin', 20)}<span>${esc(s)}</span></label>`).join('')}
+      ${p.custom ? `<label class="choice"><input type="radio" name="pspot" value="__other" ${spot === '__other' ? 'checked' : ''}>${ic('edit', 20)}<span>Somewhere else</span></label>
+      <div id="pOtherBox" ${spot === '__other' ? '' : 'hidden'}>
+        <label class="lab" for="pOther" style="display:block;margin:6px 0">Where should you meet ${esc(personName(p))}?</label>
+        <input class="inp" id="pOther" maxlength="52" value="${esc((keep && keep.other) || '')}" placeholder="Like: SM Uptown, by the fountain" aria-describedby="e-pother">
+        <p class="help" style="margin:6px 0 0">Pick a place that's easy to find. If it doesn't work for ${esc(personName(p))}, we'll get in touch.</p>
+        <p class="ferr" id="e-pother" role="alert"></p></div>` : ''}</div>
     <span class="pbox-l" id="l-pday">Which day?</span>
     <div role="radiogroup" aria-labelledby="l-pday">${dates.map((d, i) => `<label class="choice"><input type="radio" name="pday" value="${d}" ${(day ? day === d : i === 0) ? 'checked' : ''}>${ic('calendar', 20)}<span><b>${esc(fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' }))}</b></span></label>`).join('')}</div>
     <p class="help" style="margin:4px 0 0">Ready 2 days after you order. No rush fee.</p></div>`;
@@ -5653,7 +5836,8 @@ const chosenPerson = form => { const v = radio(form, 'pickup'); return v && v.st
 function syncPerson(form){
   const p = chosenPerson(form), box = $('#personBox');
   S.coPerson = p;
-  if (p && box && box.dataset.pid === p.id) (S.coPicks = S.coPicks || {})[p.id] = { spot: radio(form, 'pspot'), day: radio(form, 'pday') };
+  if (p && box && box.dataset.pid === p.id) (S.coPicks = S.coPicks || {})[p.id] = { spot: radio(form, 'pspot'), day: radio(form, 'pday'), other: ($('#pOther') || {}).value || '' };
+  const pob = $('#pOtherBox'); if (pob) pob.hidden = radio(form, 'pspot') !== '__other';
   ['whenSet', 'timeSet'].forEach(id => { const el = $('#' + id); if (el) el.hidden = !!p; });
   const nudge = $('#gateNudge'); if (nudge) nudge.hidden = !!p;
   if (!p) { if (box) box.remove(); return; }
@@ -5797,6 +5981,7 @@ function validateFields(form, which){
     if (grade && sec.length >= 2) $('#sec').setAttribute('aria-invalid', 'false');
   }
   if (other && which.place) ok = setErr('otherPlace', 'e-place', $('#otherPlace').value.trim().length < 3 ? 'Tell us where in school to meet.' : '') && ok;
+  if (S.coPerson && radio(form, 'pspot') === '__other' && (which.place || all)) ok = setErr('pOther', 'e-pother', $('#pOther').value.trim().length < 3 ? `Tell ${personName(S.coPerson)} where to meet.` : '') && ok;
   const noTime = !S.addTo && !S.coPerson && !!radio(form, 'pdate') && !radio(form, 'ptime');
   if (all) ok = setErr(null, 'e-promise', !S.addTo && (S.coPerson ? !radio(form, 'pday') || !radio(form, 'pspot') : !radio(form, 'pdate')) ? 'Pick a pickup day and place.' :
     noTime ? 'Every pickup time on that day is full. Go back to Pickup and choose another day.' : $('#promise').checked ? '' : 'Tick the box to promise you will pick it up.') && ok;
@@ -5811,7 +5996,7 @@ async function submitOrder(e){
   const person = S.addTo ? null : chosenPerson(form);
   let pickup = radio(form, 'pickup'); if (pickup === '__other') pickup = 'Other: ' + $('#otherPlace').value.trim();
   let pickupDate = radio(form, 'pdate'), pickupTime = radio(form, 'ptime');
-  if (person) { pickup = radio(form, 'pspot'); pickupDate = radio(form, 'pday'); pickupTime = 'Any time'; }
+  if (person) { pickup = radio(form, 'pspot'); if (pickup === '__other') pickup = 'Other: ' + $('#pOther').value.trim(); pickupDate = radio(form, 'pday'); pickupTime = 'Any time'; }
   if (S.addTo) { pickup = S.addTo.pickup; pickupDate = S.addTo.pickup_date; pickupTime = S.addTo.pickup_time; }   // same pickup as the order it adds to
   const payment = radio(form, 'pay'), gcashRef = $('#gref') ? $('#gref').value.trim() : '';
   const b = $('#placeBtn'); b.disabled = true; b.innerHTML = '<span>Sending your order</span><span class="bi"><span class="spin"></span></span>';
@@ -5912,12 +6097,15 @@ function viewDone(){
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px">${btn('Check my order', { act: 'leaveDone', cls: 'dark', attrs: 'data-href="#/status"' })}
         ${o.pickup_date ? `<button type="button" class="pilllink" data-act="calAdd">${ic('calendar', 18)}Add to calendar</button>` : ''}</div>
       <details class="gtk" style="margin-top:14px"><summary>Good to know</summary><ul>
-        <li>${ic('school', 16)}<span>Pickup is inside campus only. Never meet anyone outside school for your order.</span></li>
-        <li>${ic('calendar', 16)}<span>Can't make it? Change your pickup day in My order (up to ${CONFIG.maxReschedules} times), or cancel before it's printed.</span></li>
+        ${o.group ? `<li>${ic('user', 16)}<span>Meet ${esc(o.person_name || 'your pickup person')} only at the place and on the day on your pickup pass, and bring the pass.</span></li>
+        <li>${ic('calendar', 16)}<span>Can't make it? Cancel in My order before it's printed, then order again for another day.</span></li>`
+        : `<li>${ic('school', 16)}<span>Pickup is inside campus only. Never meet anyone outside school for your order.</span></li>
+        <li>${ic('calendar', 16)}<span>Can't make it? Change your pickup day in My order (up to ${CONFIG.maxReschedules} times), or cancel before it's printed.</span></li>`}
         <li>${ic('lock', 16)}<span>Only the sellers see your name and section. Your pictures are deleted ${CONFIG.cleanupDays} days after your order is done.</span></li></ul></details>
     </section>
     ${o.for_someone ? '' : feedbackHTML('ordering', o.code, o.nickname)}
     <div id="friendCard" style="margin-top:18px"></div>
+    ${ideaLine('Got an idea for Stick2It?')}
     <p style="text-align:center;margin:8px 0 0"><button type="button" class="linkbtn" data-act="leaveDone" data-href="#/">Back to start</button></p>
   </main>`;
 }
@@ -5940,7 +6128,8 @@ function viewStatus(){
       ${btn('Find my order', { type: 'submit', cls: 'wide dark', icon: 'search' })}
       <div class="formerr" id="lookErr" role="alert"></div>
     </form>
-    <div id="statusOut" style="margin-top:24px" aria-live="polite"></div></main>`;
+    <div id="statusOut" style="margin-top:24px" aria-live="polite"></div>
+    ${ideaLine('Something we could do better?', 'fix')}</main>`;
   $('#lookForm').addEventListener('submit', e => { e.preventDefault(); lookup(); });
   if (last.code && last.nickname) lookup();
 }
@@ -6134,8 +6323,9 @@ const REJECT_REASONS = ["This picture isn't allowed", 'Picture is too blurry to 
 const LATEST_ICON = { feedback: 'sparkle', new: 'box', status: 'printer', confirm: 'thumb', arrive: 'pin', move: 'calendar', pay: 'cash', note: 'edit', settings: 'sliders', promo: 'badge', business: 'chart', telegram: 'bell' };
 async function latestSeenKey(){ const m = await api.me().catch(() => null); return { key: 's2i_latest_seen_' + ((m && m.email) || 'admin'), email: (m && m.email) || '' }; }
 async function checkLatestDot(){
-  try { const { key } = await latestSeenKey(); const rows = await api.latest(1); const seen = +(localStorage.getItem(key) || 0);
-    const d = $('#latestDot'); if (d) d.hidden = !(rows[0] && rows[0].id > seen) || S.admin.tab === 'latest'; } catch {}
+  try { const { key } = await latestSeenKey(); const [rows, ideas] = await Promise.all([api.latest(1), api.newSuggestions().catch(() => 0)]); const seen = +(localStorage.getItem(key) || 0);
+    S.admin.newIdeas = ideas;
+    const d = $('#latestDot'); if (d) d.hidden = !((rows[0] && rows[0].id > seen) || ideas) || S.admin.tab === 'latest'; } catch {}
 }
 function whoLabel(actor, myEmail){
   if (!actor || actor === 'customer') return 'Customer';
@@ -6148,18 +6338,18 @@ async function drawLatest(quiet){
   const body = $('#admBody'); if (!quiet) body.innerHTML = `<p class="muted" style="padding:20px 0">Loading…</p>`;
   let rows = [];
   clearInterval(S.admin.latestPoll); S.admin.latestPoll = setInterval(() => { if (location.hash.includes('admin') && S.admin.tab === 'latest' && !document.hidden) drawLatest(true); else clearInterval(S.admin.latestPoll); }, 45000);
-  try { rows = await api.latest(150); }
+  try { [rows, S.admin.newIdeas] = await Promise.all([api.latest(150), api.newSuggestions().catch(() => 0)]); }
   catch (e) { body.innerHTML = `<div class="empty">${ic('warn', 36)}<b>Couldn't load the feed.</b><span>Run the newest schema.sql in Supabase, then refresh. (${esc(friendlyError(e))})</span></div>`; return; }
   const { key, email } = await latestSeenKey(); const seen = +(localStorage.getItem(key) || 0);
-  if (!rows.length && (S.admin.latestFilter || 'all') !== 'feedback') { body.innerHTML = `<div class="empty">${ic('bell', 36)}<b>Nothing yet.</b><span>New orders and changes by any admin show up here.</span></div>`; return; }
+
   const dayOf = r => ymd(new Date(r.at)), today = ymd(new Date()), yest = ymd(new Date(Date.now() - 864e5));
   let lastDay = '';
   const lf = S.admin.latestFilter || 'all', ORDER_KINDS = ['new', 'status', 'confirm', 'arrive', 'move', 'pay', 'note', 'feedback'];
   const shown = rows.filter(r => lf === 'all' || (lf === 'orders' ? ORDER_KINDS.includes(r.kind) : !ORDER_KINDS.includes(r.kind)));
   const newCount = rows.filter(r => r.id > seen).length;
   body.innerHTML = `<p class="hint" style="margin-bottom:12px">${ic('bell', 18)}<span>Everything that happens, newest first. ${newCount ? `<b>${newCount} new</b> since you last looked (gold dots).` : 'You’re up to date.'}</span></p>
-    <div class="chips" style="margin-bottom:6px">${[['all', 'Everything'], ['orders', 'Orders'], ['feedback', 'Feedback'], ['changes', 'Admin changes']].map(([k, l]) => `<button type="button" class="chip ${lf === k ? 'on' : ''}" data-act="latestFilter" data-f="${k}">${l}</button>`).join('')}</div>
-    ${lf === 'feedback' ? '<div id="fbPanel"><p class="muted" style="padding:14px 4px">Loading…</p></div>' : ''}<div class="feed" ${lf === 'feedback' ? 'hidden' : ''}>${shown.length ? '' : `<p class="muted" style="padding:14px 4px">Nothing here yet.</p>`}${shown.map(r => {
+    <div class="chips" style="margin-bottom:6px">${[['all', 'Everything'], ['orders', 'Orders'], ['feedback', 'Feedback'], ['ideas', `Suggestions${S.admin.newIdeas && lf !== 'ideas' ? `<span class="c num">${S.admin.newIdeas}</span>` : ''}`], ['changes', 'Admin changes']].map(([k, l]) => `<button type="button" class="chip ${lf === k ? 'on' : ''}" data-act="latestFilter" data-f="${k}">${l}</button>`).join('')}</div>
+    ${lf === 'feedback' ? '<div id="fbPanel"><p class="muted" style="padding:14px 4px">Loading…</p></div>' : ''}${lf === 'ideas' ? '<div id="sgPanel"><p class="muted" style="padding:14px 4px">Loading…</p></div>' : ''}<div class="feed" ${lf === 'feedback' || lf === 'ideas' ? 'hidden' : ''}>${shown.length ? '' : `<p class="muted" style="padding:14px 4px">${rows.length ? 'Nothing here yet.' : 'Nothing yet. New orders and changes by any admin show up here.'}</p>`}${shown.map(r => {
       const d = dayOf(r); let head = '';
       if (d !== lastDay) { lastDay = d; head = `<div class="feed-day">${d === today ? 'Today' : d === yest ? 'Yesterday' : esc(fmtDate(d, { weekday: 'long', month: 'short', day: 'numeric' }))}</div>`; }
       const mins = Math.round((Date.now() - new Date(r.at)) / 60000);
@@ -6169,7 +6359,21 @@ async function drawLatest(quiet){
         <span class="feed-m"><b>${esc(whoLabel(r.actor, email))}</b> · ${esc(t)}</span></div>`; }).join('')}</div>`;
   if (rows[0]) localStorage.setItem(key, String(rows[0].id));
   if (lf === 'feedback') api.feedbackList().then(l => { const el = $('#fbPanel'); if (el) el.innerHTML = feedbackPanelHTML(l) || '<p class="muted" style="padding:14px 4px">No feedback yet. Customers can rate their order after ordering and after pickup.</p>'; }).catch(e => { const el = $('#fbPanel'); if (el) el.innerHTML = `<div class="formerr">${esc(friendlyError(e))}</div>`; });
+  if (lf === 'ideas') drawSuggestions();
   const dot = $('#latestDot'); if (dot) dot.hidden = true;
+}
+async function drawSuggestions(){
+  const el = $('#sgPanel'); if (!el) return;
+  let list; try { list = await api.suggestions(); } catch (e) { el.innerHTML = `<div class="formerr">${esc(friendlyError(e))} Run the latest schema.sql in Supabase.</div>`; return; }
+  if (!list.length) { el.innerHTML = '<p class="muted" style="padding:14px 4px">No suggestions yet. Customers can send them from the Suggestion box on the homepage.</p>'; return; }
+  const kind = Object.fromEntries(SB_KINDS.map(([k, l]) => [k, l]));
+  const open = list.filter(x => x.status !== 'done');
+  el.innerHTML = `<p class="hint" style="margin:6px 0 12px">${ic('sparkle', 18)}<span>${open.length} to look at. Mark one done once you've acted on it (or decided not to).</span></p>
+    <div class="sglist">${list.map(x => `<article class="sg ${x.status}">
+      <div class="sg-h"><span class="sg-k k-${esc(x.kind)}">${esc(kind[x.kind] || 'Something else')}</span><span class="muted small">${esc(new Date(x.created_at).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }))}${x.name ? `, from <b>${esc(x.name)}</b>` : ''}</span></div>
+      <p class="sg-b">${esc(x.body)}</p>
+      <div class="sg-a">${x.status === 'done' ? `<span class="muted small">${ic('check', 14)} Done</span>${smallBtn('Reopen', 'refresh', 'sgSet', 'plain', `data-id="${x.id}" data-s="read"`)}` : smallBtn('Mark done', 'check', 'sgSet', 'plain', `data-id="${x.id}" data-s="done"`)}${smallBtn('', 'trash', 'sgDel', 'plain', `data-id="${x.id}" aria-label="Delete this suggestion"`)}</div></article>`).join('')}</div>`;
+  const fresh = list.filter(x => x.status === 'new').map(x => x.id); for (const id of fresh) api.setSuggestion(id, 'read').catch(() => {});
 }
 /* Admin: one chip per pickup person (plus "At school"), so each person's orders are one tap away */
 const personAdminName = p => !p ? 'Pickup person' : p.first_name || (p.note ? `No name (${p.note})` : 'No name yet');
@@ -6270,7 +6474,7 @@ async function drawAdminBody(){
           ${o.status === 'done' ? `<b class="oprice num">${peso(o.total)}</b>` : `<span class="tag st ${stCls[o.status] || ''}">${ic(STATUS[o.status][0], 16)}${esc(o.status)}</span>`}</div>
         <div class="ometa">
           <div><span><b>${esc(o.nickname)}</b>, ${esc(o.grade_section)}</span>${o.person_id || o.school_id ? ` <span class="tag grp">${ic('user', 14)}${esc(personAdminName((S.admin.peopleMap || {})[o.person_id || o.school_id]))}</span>` : ''}${o.seller_code ? ` <span class="tag sell">${ic('sparkle', 14)}via ${esc(o.seller_code)}</span>` : ''}</div>
-          <div>${ic('pin', 18)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span></div>
+          <div>${ic('pin', 18)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span>${/^Other: /.test(o.pickup || '') ? ` <span class="tag spotq" title="The customer typed this place. Check it works.">${ic('edit', 13)}Typed by the customer${o.person_id ? `, check with ${esc(personAdminName((S.admin.peopleMap || {})[o.person_id]))}` : ''}</span>` : ''}</div>
           <div>${ic('cash', 18)}<span class="num">${money(o.total)}${!o.paid && o.amount_paid ? ` (paid ${money(o.amount_paid)}, owes ${money(o.total - o.amount_paid)})` : ''}, ${o.payment === 'gcash' ? `GCash${o.gcash_ref ? ` (ref ${esc(o.gcash_ref)})` : ', no ref yet'}` : 'cash'}</span></div>
           <ul class="ilist">${orderItems(o).map(it => `<li>${ic(it.type === 'stickers' ? 'sticker' : it.type === 'pins' ? 'badge' : it.type === 'posters' ? 'image' : it.type === 'prints' ? 'doc' : 'keychain', 18)}<span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `, ${esc(itemDetails(it))}` : ''}</span></li>`).join('')}</ul>
           <div class="tags">
@@ -7169,12 +7373,13 @@ async function drawPeople(){
     ${list.length ? (() => { const ready = p => p.enabled && (p.spots || []).length && (p.days || []).length, pub = list.filter(p => ready(p) && p.public);
       return pub.length ? `<p class="pp-sum">${ic('check', 16)}<span>At checkout, everyone sees: <b>${pub.map(p => esc(p.first_name || 'Pickup person')).join(', ')}</b>.</span></p>`
         : `<p class="pp-sum warn">${ic('warn', 16)}<span>Nobody shows at checkout for everyone yet. Switch on <b>Show to everyone</b> for each person customers should be able to pick. People without it only show for customers who open their link.</span></p>`; })() : ''}
-    ${list.map(sc => `<div class="schoolcard pcard ${sc.enabled ? '' : 'off'}" data-sid="${sc.id}">
+    ${list.map(sc => `<div class="schoolcard ppcard ${sc.enabled ? '' : 'off'}" data-sid="${sc.id}">
       <div class="pc-top"><span class="pc-av" aria-hidden="true">${esc((sc.first_name || '?').slice(0, 1).toUpperCase())}</span>
         <span class="pc-t"><b>${esc(sc.first_name || 'No name yet')}</b><small>${sc.enabled ? (sc.public ? 'Everyone can pick them' : 'Only people with their link') : 'Off'}${counts[sc.id] ? `, ${counts[sc.id]} open order${counts[sc.id] === 1 ? '' : 's'}` : ''}</small></span></div>
       <div class="pc-sw">
         <label class="switch"><input type="checkbox" data-pfsw="enabled" data-sid="${sc.id}" ${sc.enabled ? 'checked' : ''}><span>On</span></label>
-        <label class="switch"><input type="checkbox" data-pfsw="public" data-sid="${sc.id}" ${sc.public ? 'checked' : ''}><span>Show to everyone</span></label></div>
+        <label class="switch"><input type="checkbox" data-pfsw="public" data-sid="${sc.id}" ${sc.public ? 'checked' : ''}><span>Show to everyone</span></label>
+        <label class="switch"><input type="checkbox" data-pfsw="allow_custom" data-sid="${sc.id}" ${sc.allow_custom ? 'checked' : ''}><span>Customers can suggest a spot</span></label></div>
       <div class="pc-grid">
         <label class="pc-f"><span class="lab">First name</span><input class="inp" data-sf="first_name" maxlength="30" value="${esc(sc.first_name)}" placeholder="Like: Ana"></label>
         <label class="pc-f"><span class="lab">Short label <span class="muted small">optional</span></span><input class="inp" data-sf="label" maxlength="40" value="${esc(sc.label)}" placeholder="Like: Lumbia side"></label></div>
@@ -7190,7 +7395,9 @@ async function drawPeople(){
   box.querySelectorAll('[data-pfsw]').forEach(x => x.addEventListener('change', async () => {
     const sc = list.find(p => p.id === x.dataset.sid); if (!sc) return;
     try { await api.savePerson({ id: sc.id, code: sc.code, [x.dataset.pfsw]: x.checked });
-      toast(x.dataset.pfsw === 'enabled' ? `${sc.first_name || 'This person'} is ${x.checked ? 'on' : 'off'}.` : x.checked ? `Everyone can pick ${sc.first_name || 'this person'} now.` : `Only people with the link see ${sc.first_name || 'this person'} now.`);
+      const who = sc.first_name || 'this person';
+      toast(x.dataset.pfsw === 'enabled' ? `${sc.first_name || 'This person'} is ${x.checked ? 'on' : 'off'}.` : x.dataset.pfsw === 'allow_custom' ? (x.checked ? `Customers can type their own spot for ${who}.` : `Customers pick one of ${who}'s spots.`)
+        : x.checked ? `Everyone can pick ${who} now.` : `Only people with the link see ${who} now.`);
       drawPeople(); } catch (e) { x.checked = !x.checked; toast(friendlyError(e)); }
   }));
 }
@@ -7979,7 +8186,7 @@ const ACTIONS = {
   },
   personAdd: async () => { try { await api.savePerson({ first_name: '', label: '', note: '', code: newGroupCode(), spots: [], days: [1, 2, 3, 4, 5], enabled: true, public: false, sort: (S.admin.peopleList || []).length }); drawPeople(); } catch (e) { toast(friendlyError(e)); } },
   personSave: async t => {
-    const card = document.querySelector(`.pcard[data-sid="${t.dataset.sid}"]`), sc = (S.admin.peopleList || []).find(x => x.id === t.dataset.sid); if (!card || !sc) return;
+    const card = document.querySelector(`.ppcard[data-sid="${t.dataset.sid}"]`), sc = (S.admin.peopleList || []).find(x => x.id === t.dataset.sid); if (!card || !sc) return;
     const val = k => card.querySelector(`[data-sf="${k}"]`).value.trim();
     const spots = [...new Set(val('spots').split('\n').map(x => x.trim()).filter(x => x.length >= 3))].slice(0, 12);
     const days = [...card.querySelectorAll('[data-sday]')].filter(x => x.checked).map(x => +x.dataset.sday);
@@ -8090,7 +8297,7 @@ const ACTIONS = {
     const form = $('#orderForm');
     if (n === 2 && form && !S.addTo && !S.coPerson && radio(form, 'pdate') && !radio(form, 'ptime')) { setErr(null, 'e-where', 'Every pickup time on that day is full. Pick another day.'); return; }
     if (n === 2 && xuNeeded()) { setErr(null, 'e-where', 'Pickup at school needs your XU account. Sign in in step 1, or pick up from a person.'); return; }
-    const bad = n === 1 ? ['e-nick', 'e-sec'] : ['e-place'];
+    const bad = n === 1 ? ['e-nick', 'e-sec'] : ['e-place', 'e-pother'];
     if (bad.some(id => $('#' + id) && $('#' + id).textContent)) { const f = $('#orderForm [aria-invalid="true"]'); if (f) f.focus(); return; }
     S.coStep = n + 1 + (n === 1 && S.addTo ? 1 : 0); coRender(); buzz(6);   // an add-on skips Pickup
     const nx = document.querySelector(`.cstep[data-step="${n + 1}"]`); if (nx) nx.scrollIntoView({ block: 'start' });
@@ -8214,6 +8421,19 @@ const ACTIONS = {
       toast(on ? 'The site is locked.' : 'The site is open again.'); drawSettings(); }
     catch (ex) { err.textContent = friendlyError(ex); $('#lockCode').value = ''; $('#lockCode').focus(); }
   },
+  sbOpen: () => { S.sbox = { open: true, kind: null, text: '', name: '' }; sbRedraw('.sb-k'); },
+  sbClose: () => { S.sbox = { open: false }; if (location.hash.startsWith('#/ideas')) { location.hash = '#/shop'; return; } sbRedraw(); },   // on its own page, Cancel goes back to the shop
+  sbAgain: () => { S.sbox = { open: true, kind: null, text: '', name: S.sbox && S.sbox.name || '' }; sbRedraw('.sb-k'); },
+  sbKind: t => { S.sbox.kind = t.dataset.v; sbRedraw('#sbText'); },
+  sbSend: async t => {
+    const s = S.sbox, text = (($('#sbText') || {}).value || '').trim(), name = (($('#sbName') || {}).value || '').trim(), err = $('#sbErr');
+    if (text.length < 3) { err.textContent = 'Tell us a little more first.'; $('#sbText').focus(); return; }
+    t.disabled = true;
+    try { await api.sendSuggestion(s.kind, text, name); S.sbox = { sent: true, name }; buzz([8, 30, 8]); sbRedraw(); }
+    catch (e) { t.disabled = false; err.textContent = /SLOW_DOWN/.test(String(e && e.message)) ? 'Lots of ideas right now! Try again in a few minutes.' : "Couldn't send it. Check your internet and try again."; }
+  },
+  sgSet: async t => { try { await api.setSuggestion(+t.dataset.id, t.dataset.s); drawSuggestions(); } catch (e) { toast(friendlyError(e)); } },
+  sgDel: async t => { if (!armed(t, 'Tap again to delete')) return; try { await api.delSuggestion(+t.dataset.id); drawSuggestions(); } catch (e) { toast(friendlyError(e)); } },
   admPerson: t => { S.admin.person = t.dataset.p || ''; drawAdminBody(); },
   admFilter: t => { if (t.dataset.f !== 'ready' && S.admin.pickupMode) { S.admin.pickupMode = false; keepAwake(false); } S.admin.filter = t.dataset.f; S.admin.rejecting = null; clearInterval(S.admin.poll); drawAdminBody().then(() => { if (S.admin.filter === 'ready') pollReady(); }); },
   aApprove: t => setStatus(t.dataset.id, { status: 'approved' }, 'Approved.'),

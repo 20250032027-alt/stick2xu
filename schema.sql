@@ -216,6 +216,7 @@ create table if not exists public.pickup_people (
   created_at timestamptz not null default now()
 );
 alter table public.orders add column if not exists person_id uuid;   -- the pickup person this order goes through (null = pickup at school)
+alter table public.pickup_people add column if not exists allow_custom boolean not null default false;   -- customers may type their own meetup spot
 create index if not exists orders_person_id_idx on public.orders (person_id) where person_id is not null;
 
 -- Carry the old "Other schools" codes over as pickup people, once. Same id and same code, so old links and orders keep working.
@@ -371,7 +372,8 @@ begin
       select * into v_person from public.pickup_people where code = v_link and enabled;
     end if;
     if v_person.id is null or (not v_person.public and v_person.code is distinct from v_link) then raise exception 'GROUP_OFF'; end if;
-    if not (v_person.spots @> to_jsonb(trim(p_pickup))) then raise exception 'BAD_PLACE'; end if;
+    if not (v_person.spots @> to_jsonb(trim(p_pickup)))
+       and not (v_person.allow_custom and trim(p_pickup) ~* '^Other: .{3,60}$') then raise exception 'BAD_PLACE'; end if;   -- one of their spots, or a spot the customer typed (if allowed)
     if p_pickup_date < v_today + 2 or not (extract(dow from p_pickup_date)::int = any (v_person.days)) then raise exception 'BAD_DATE'; end if;
     v_school_id := v_person.id;
   end if;
@@ -1613,7 +1615,7 @@ grant select, insert, update, delete on public.pickup_people to authenticated;
 create or replace function public.pickup_people_list(p_code text default null) returns json
 language sql stable security definer set search_path = public as $$
   with c as (select nullif(upper(regexp_replace(coalesce(p_code, ''), '[^A-Za-z0-9]', '', 'g')), '') as code)
-  select coalesce(json_agg(json_build_object('id', p.id, 'name', p.first_name, 'label', p.label, 'spots', p.spots, 'days', p.days,
+  select coalesce(json_agg(json_build_object('id', p.id, 'name', p.first_name, 'label', p.label, 'spots', p.spots, 'days', p.days, 'custom', p.allow_custom,
                                              'linked', p.code = c.code) order by (p.code = c.code) desc, p.sort, p.created_at), '[]'::json)
   from public.pickup_people p, c
   where p.enabled and jsonb_array_length(p.spots) > 0 and cardinality(p.days) > 0 and (p.public or p.code = c.code);
@@ -1727,3 +1729,41 @@ begin
 end $$;
 drop trigger if exists guard_lockdown on public.shop_settings;
 create trigger guard_lockdown before update on public.shop_settings for each row execute function public.guard_lockdown();
+
+-- =====================================================================
+-- Suggestion box: anyone can send an idea (a product, a design, a pickup spot, something to fix).
+-- Only admins can read them. Sends are limited so nobody can flood the box.
+-- =====================================================================
+create table if not exists public.suggestions (
+  id bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  kind text not null check (kind in ('product', 'design', 'pickup', 'fix', 'other')),
+  body text not null check (char_length(body) between 3 and 600),
+  name text check (name is null or char_length(name) <= 60),
+  status text not null default 'new' check (status in ('new', 'read', 'done'))
+);
+create index if not exists suggestions_created_idx on public.suggestions (created_at desc);
+alter table public.suggestions enable row level security;
+drop policy if exists "admins manage suggestions" on public.suggestions;
+create policy "admins manage suggestions" on public.suggestions for all to authenticated using (public.is_admin()) with check (public.is_admin());
+grant select, update, delete on public.suggestions to authenticated;
+
+create or replace function public.send_suggestion(p_kind text, p_body text, p_name text default null) returns boolean
+language plpgsql security definer set search_path = public as $$
+declare
+  v_body text := trim(coalesce(p_body, ''));
+  v_name text := nullif(trim(coalesce(p_name, '')), '');
+  v_kind text := coalesce(nullif(trim(p_kind), ''), 'other');
+begin
+  if v_kind not in ('product', 'design', 'pickup', 'fix', 'other') then v_kind := 'other'; end if;
+  if char_length(v_body) < 3 or char_length(v_body) > 600 or char_length(coalesce(v_name, '')) > 60 then raise exception 'BAD_INPUT'; end if;
+  if (select count(*) from public.suggestions where created_at > now() - interval '10 minutes') >= 30 then raise exception 'SLOW_DOWN'; end if;
+  insert into public.suggestions (kind, body, name) values (v_kind, v_body, v_name);
+  begin
+    perform public.tg_send('<b>New suggestion</b> (' || case v_kind when 'product' then 'a product' when 'design' then 'a design' when 'pickup' then 'a pickup spot' when 'fix' then 'something to fix' else 'other' end || ')'
+      || E'\n' || public.tg_esc(left(v_body, 300)) || coalesce(E'\n' || 'From: ' || public.tg_esc(v_name), ''));
+  exception when others then null;   -- an alert that fails never loses the suggestion
+  end;
+  return true;
+end $$;
+grant execute on function public.send_suggestion(text, text, text) to anon, authenticated;
