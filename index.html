@@ -1171,16 +1171,38 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .heroacts{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
 .printhint{display:flex;align-items:center;gap:8px;margin:18px 0 0;font-size:15.5px;color:var(--muted)}
 .printhint svg{flex:none;color:var(--ink)}
-.printhint a{color:var(--ink);font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;text-decoration-color:var(--xu-gold)}
+.printhint a{white-space:nowrap;color:var(--ink);font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;text-decoration-color:var(--xu-gold)}
 .printhint a:hover{text-decoration-color:var(--ink)}
 /* Coming up: the label above, every chip alike (the next one only gets its little icon) */
-.hero .cdrow2{display:grid;gap:8px;justify-items:start;margin-top:30px}
+/* Coming up: little date stickers, slightly tilted like they're stuck on. The next one wears its own color and twinkles. */
+.hero .cdrow2{display:grid;gap:10px;justify-items:start;margin-top:30px}
 .hero .cd-lbl{font-size:14px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--muted)}
-.hero .cdc.next{border-color:var(--line)}.hero .cdc.next:hover{border-color:#B9C3DD}.hero .cdc.next .cdc-n{color:var(--ink)}.hero .cdtw{display:none}
-/* suggestion box */
-.sbox{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px 20px;margin:8px 0 28px;padding:20px 22px;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-lg);box-shadow:var(--shadow)}
-.sb-ic{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:var(--gold-soft);border:2px solid var(--ink);color:var(--ink);transform:rotate(-4deg)}
-.sb-t h2{font-size:24px;margin:0}.sb-t > p{margin:4px 0 0;color:var(--muted)}
+.hero .cdchips{gap:12px;padding:2px 0 4px}
+.hero .cdc{border:2px solid var(--ink);border-radius:14px;padding:6px 13px 6px 10px;box-shadow:2px 2px 0 var(--ink);rotate:-1.5deg;transition:rotate .25s var(--ease),translate .25s var(--ease),box-shadow .25s var(--ease)}
+.hero .cdc:nth-child(2){rotate:1.2deg}.hero .cdc:nth-child(3){rotate:-.7deg}
+.hero .cdc:hover{rotate:0deg;translate:0 -2px;box-shadow:3px 4px 0 var(--ink);border-color:var(--ink)}
+.hero .cdc .cdc-n{font-size:22px}
+.hero .cdc small{font-size:12px}
+.hero .cdc.next{background:color-mix(in srgb,var(--cdc) 11%,#fff);border-color:var(--ink)}
+.hero .cdc.next .cdc-n{color:var(--cdc)}
+.hero .cdtw.t1{right:-5px;top:-6px;width:12px;height:12px}.hero .cdtw.t2{left:-4px;bottom:-5px;width:8px;height:8px}
+@media (prefers-reduced-motion:reduce){.hero .cdc{rotate:0deg}}
+/* a quiet nudge (suggestion box, "Don't see what you want?"): one small pill, the same everywhere */
+.nudgewrap{margin:4px 0 24px}.nudgewrap.center{display:flex;justify-content:center;margin:22px 0 6px}
+.nudge{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:6px 14px 6px 6px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);color:var(--muted);font:inherit;font-size:15px;text-decoration:none;cursor:pointer;text-align:left;transition:border-color .2s var(--ease)}
+.nudge b{color:var(--ink);font-weight:700}
+.nudge > svg:last-child{flex:none;color:var(--ink);opacity:.5;transition:transform .2s var(--ease),opacity .2s}
+.nudge:hover{border-color:var(--ink)}.nudge:hover > svg:last-child{transform:translateX(3px);opacity:1}
+.nd-ic{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--gold-soft);color:var(--ink)}
+.nd-ic svg{color:#B07D10}
+.nudge.done{cursor:default;border-style:dashed}.nudge.done .nd-ic{background:#E3F4E8}.nudge.done .nd-ic svg{color:#1F7A44}
+.nudge.done .linkbtn{margin-left:4px;min-height:auto}
+.sbox.quiet{margin:6px 0 26px;padding:0;border:0;background:none;box-shadow:none;display:block}
+/* the suggestion box, once opened: a calm card */
+.sbox{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:14px 18px;margin:6px 0 26px;padding:20px 22px;background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-md)}
+.sb-ic{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--gold-soft);color:var(--ink)}
+.sb-ic svg{width:26px;height:26px}
+.sb-t h2{font-size:21px;margin:0}.sb-t > p{margin:2px 0 0;color:var(--muted)}
 .sbox.open{grid-template-columns:auto minmax(0,1fr);align-items:start}
 .sb-kinds{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .sb-k{font:inherit;font-weight:700;font-size:14.5px;padding:8px 14px;min-height:40px;border-radius:999px;border:2px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
@@ -1191,13 +1213,23 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .sb-acts{display:flex;align-items:center;gap:16px;margin-top:14px}
 .sbox.sent .sb-ic{background:var(--ok-soft, #E3F4E8)}
 @media(max-width:640px){.sbox{grid-template-columns:auto minmax(0,1fr);padding:18px}.sbox > .pilllink{grid-column:1/-1;justify-self:start}.sbox.open{grid-template-columns:1fr}.sbox.open .sb-ic{display:none}}
-.idealine{display:flex;align-items:center;justify-content:center;gap:8px;margin:22px auto 6px;font-size:15px;color:var(--muted);text-align:center}
-.idealine svg{flex:none;color:#C9951A}
-.idealine a{color:var(--ink);font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;text-decoration-color:var(--xu-gold)}
 .ideaspg .sbox{margin-top:0}
 .tag.spotq{background:var(--gold-soft);color:#7A5300;border:1px solid #E9C766}
+@media(max-width:900px){
+  .swatches .sw,.fx-sw .sw{width:40px;height:40px}
+  .social a{min-height:42px}
+  .modeseg button{min-height:44px}
+  .bt-acts .btn.sm{min-height:42px}
+  .sb-acts .linkbtn,.ideaspg .linkbtn{min-height:44px;display:inline-flex;align-items:center}
+  .price small,.bento .pcard .price small{font-size:12px}
+  .cdc small{font-size:12px}
+  .importbtn .newtag.newtag{font-size:11.5px}
+  #ctrl .swatches .sw,#ctrlO .swatches .sw,.stkcard .swatches .sw,.wordsbox .swatches .sw{width:40px;height:40px}
+  .cuttag.cuttag{font-size:12px}
+}
+.printhint a{display:inline-block;padding:11px 0;margin:-11px 0}   /* a taller tap area, same look */
 /* store: bento */
-.bento{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin:20px 0 26px}
+.bento{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin:20px 0 16px}
 .bento .pcard{min-width:0}
 .bento .illo{height:auto;position:relative}
 .bento .bc-t{display:grid;gap:4px}
@@ -1457,7 +1489,7 @@ fieldset > .pgroup-h:first-of-type{margin-top:4px}
   .pcard .gold-in > svg{width:12px;height:12px}
   .pcard .pfoot{padding-top:8px;margin-top:8px!important}
   .pcard .pfoot .price b{font-size:20px}
-  .pcard .pfoot .price small{font-size:11px}
+  .pcard .pfoot .price small{font-size:12px}
   .pcard .pfoot .go{width:32px;height:32px}
   /* an odd last card spans the row, picture on the left */
   .pcards > .pcard:last-child:nth-child(odd){grid-column:1/-1;display:grid;grid-template-columns:110px 1fr;column-gap:12px;align-items:center}
@@ -2276,7 +2308,6 @@ const safeLS = {
 };
 const readJSON = k => { try { return JSON.parse(safeLS.get(k) || 'null'); } catch { return null; } };
 const ACTIVE = ['pending','approved','printing','ready'];
-const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 const fmtTime = iso => new Date(iso).toLocaleString([], { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
 const radio = (form, name) => { const r = form.querySelector(`input[name="${name}"]:checked`); return r ? r.value : ''; };
 const revoke = u => { try { URL.revokeObjectURL(u); } catch {} };
@@ -2541,7 +2572,6 @@ function fits(sheet, col, row, size, ignore){
   if (col < 0 || row < 0 || col + size > g.cols || row + size > g.rows) return false;
   return !sheet.items.some(it => it.uid !== ignore && col < it.col + it.size && col + size > it.col && row < it.row + it.size && row + size > it.row);
 }
-function lowRes(img, size){ return lowResMm(img, rectMm(0, 0, size).w); }
 function lowResMm(img, mm){ return !!img && Math.min(img.w, img.h) < mm / 25.4 * 150; }
 // a sticker is blurry when its picture has under 150 dpi across the space it actually fills
 function lowResItem(it){ const img = imgById(it.imageId); if (!img) return false; const mm = itemRect(it).w;
@@ -2556,7 +2586,6 @@ function sheetQuality(im){ const dpi = Math.round(im.w / (importRect(im).w / 25.
   return dpi >= 200 ? { dpi, cls: 'ok', icon: 'check', t: 'Sharp', d: 'This will print nice and clear.' }
     : dpi >= 120 ? { dpi, cls: 'mid', icon: 'warn', t: 'Okay', d: 'It may look a little soft up close. A bigger version would be sharper.' }
     : { dpi, cls: 'bad', icon: 'warn', t: 'Small picture', d: "Pinterest's download is a small copy. Print it smaller (below) so it stays sharp, or find the original: on the pin, tap Visit site." }; }
-const RIGHTS = { permission: 'I have permission to use these designs', own: 'These are my own designs' };
 function sheetBox(){ const s = CONFIG.sheet; return { x0: s.marginMm, y0: s.marginMm, x1: s.widthMm - s.marginMm, y1: s.heightMm - s.marginMm }; }
 function freeFits(sheet, r, ignore){
   const b = sheetBox(), gap = CONFIG.freeGapMm, e = 0.01;
@@ -3580,12 +3609,9 @@ const SB_KINDS = [['product', 'A new product', 'Like: phone case inserts, or big
   ['other', 'Something else', 'Anything you want to tell us']];
 function suggestBoxHTML(){
   const s = S.sbox || { open: false };
-  if (s.sent) return `<section class="sbox sent" aria-live="polite"><span class="sb-ic">${ic('check', 24)}</span>
-    <div class="sb-t"><h2>Thanks! Your idea is in the box.</h2><p>We read every one. Good ideas turn into new things on this site.</p></div>
-    <button type="button" class="pilllink" data-act="sbAgain">${ic('plus', 18)}Share another</button></section>`;
-  if (!s.open) return `<section class="sbox" aria-labelledby="sbH"><span class="sb-ic">${sbIcon()}</span>
-    <div class="sb-t"><h2 id="sbH">Suggestion box</h2><p>Want something we don't make yet, a design idea, a better pickup spot, or something fixed? Tell us.</p></div>
-    <button type="button" class="pilllink" data-act="sbOpen">${ic('edit', 18)}Share an idea</button></section>`;
+  if (s.sent) return `<section class="sbox quiet" aria-live="polite"><p class="nudge done"><span class="nd-ic">${ic('check', 16)}</span><span>Thanks, it's in the box. We read every one.</span>
+    <button type="button" class="linkbtn" data-act="sbAgain">Share another</button></p></section>`;
+  if (!s.open) return `<section class="sbox quiet"><button type="button" class="nudge" data-act="sbOpen"><span class="nd-ic">${sbIcon()}</span><span>Got an idea for Stick2It? <b>Tell us</b></span>${ic('arrow', 16)}</button></section>`;
   const k = SB_KINDS.find(x => x[0] === s.kind) || null;
   return `<section class="sbox open" aria-labelledby="sbH"><span class="sb-ic">${sbIcon()}</span>
     <div class="sb-t"><h2 id="sbH">Suggestion box</h2><p>What's it about?</p>
@@ -3598,7 +3624,7 @@ function suggestBoxHTML(){
       <p class="ferr" id="sbErr" role="alert"></p>
       <div class="sb-acts">${btn('Send it', { act: 'sbSend', icon: 'arrow' })}<button type="button" class="linkbtn" data-act="sbClose">Cancel</button></div>` : ''}</div></section>`;
 }
-const sbIcon = () => `<svg viewBox="0 0 40 40" width="30" height="30" aria-hidden="true"><path d="M8 17a12 12 0 0 1 24 0v15H8z" fill="#fff" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M8 32h24" stroke="currentColor" stroke-width="2.5"/><rect x="14" y="19" width="12" height="3.5" rx="1.75" fill="currentColor"/><path d="M28 6v11" stroke="#ec282a" stroke-width="2.5" stroke-linecap="round"/><path d="M28 6h6v4h-6" fill="#ec282a"/></svg>`;
+const sbIcon = () => `<svg viewBox="0 0 40 40" width="20" height="20" aria-hidden="true"><path d="M8 17a12 12 0 0 1 24 0v15H8z" fill="#fff" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M8 32h24" stroke="currentColor" stroke-width="2.5"/><rect x="14" y="19" width="12" height="3.5" rx="1.75" fill="currentColor"/><path d="M28 6v11" stroke="#ec282a" stroke-width="2.5" stroke-linecap="round"/><path d="M28 6h6v4h-6" fill="#ec282a"/></svg>`;
 function sbRedraw(focus){ const el = document.querySelector('.sbox'); if (!el) return; el.outerHTML = suggestBoxHTML(); sbBind(); if (focus) { const f = $(focus); if (f) f.focus(); } }
 function sbBind(){ const s = S.sbox; if (!s) return; const t = $('#sbText'), n = $('#sbName');
   if (t) t.addEventListener('input', () => { s.text = t.value; const e = $('#sbErr'); if (e && t.value.trim().length >= 3) e.textContent = ''; }); if (n) n.addEventListener('input', () => { s.name = n.value; }); }
@@ -3609,7 +3635,7 @@ function viewIdeas(kind){   // the suggestion box on its own page (#/ideas, or #
     ${suggestBoxHTML()}</main>`;
   sbBind(); const f = $(S.sbox.kind ? '#sbText' : '.sb-k'); if (f) setTimeout(() => f.focus({ preventScroll: true }), 50);
 }
-const ideaLine = (text, kind) => `<p class="idealine">${ic('sparkle', 16)}<span>${text} <a href="#/ideas${kind ? '/' + kind : ''}">Tell us in the suggestion box</a>.</span></p>`;
+const ideaLine = (text, kind, center) => `<p class="nudgewrap ${center ? 'center' : ''}"><a class="nudge" href="#/ideas${kind ? '/' + kind : ''}"><span class="nd-ic">${ic('sparkle', 16)}</span><span>${text} <b>Tell us</b></span>${ic('arrow', 16)}</a></p>`;
 function viewHome(){
   const g = geom(), live = liveProducts(), others = live.filter(p => p.key !== 'stickers').map(p => p.name.toLowerCase());
   const list = others.length ? `stickers, ${others.slice(0, -1).join(', ')}${others.length > 1 ? ',' : ''} and ${others[others.length - 1]}` : '';
@@ -4326,22 +4352,6 @@ function drawSep(){ const box = $('#sheet .sheetbox'); if (!box) return; box.inn
   const fx = box.querySelector('.sepfix'); if (fx) fx.addEventListener('toggle', () => { S.importDraft.fixOpen = fx.open; }); }
 /* "Fix this sticker": tap a see-through spot to fill it back in (the picture's colours are still there, just hidden),
    or tap a leftover patch to erase it. Works on one sticker, with undo. */
-function stkFill(c, tx, ty, orig){
-  const w = c.width, h = c.height, x = c.getContext('2d'), d = x.getImageData(0, 0, w, h), p = d.data, start = ty * w + tx;
-  const o = orig && orig.width === w && orig.height === h ? orig.getContext('2d').getImageData(0, 0, w, h).data : null;   // the sticker's real colours
-  if (p[start * 4 + 3] >= 128) return 'solid';
-  const opaque = new Uint8Array(w * h); for (let i = 0; i < w * h; i++) opaque[i] = p[i * 4 + 3] >= 128 ? 1 : 0;
-  for (const div of [90, 45, 22, 12]) {   // seal bigger and bigger gaps until the spot is closed off from the outside
-    const r = Math.max(1, Math.round(Math.max(w, h) / div)), bar = grow(opaque, w, h, r); if (bar[start]) continue;
-    const reg = new Uint8Array(w * h), st = [start]; reg[start] = 1; let edge = false;
-    while (st.length) { const q = st.pop(), qx = q % w, qy = (q / w) | 0; if (qx === 0 || qy === 0 || qx === w - 1 || qy === h - 1) { edge = true; break; }
-      for (const n of [q - 1, q + 1, q - w, q + w]) if (!reg[n] && !bar[n] && !opaque[n]) { reg[n] = 1; st.push(n); } }
-    if (edge) continue;
-    const g = grow(reg, w, h, r); let n = 0; for (let i = 0; i < w * h; i++) if (g[i] && !opaque[i]) { for (let k = 0; k < 3; k++) p[i * 4 + k] = o ? o[i * 4 + k] : 255; p[i * 4 + 3] = 255; n++; }
-    x.putImageData(d, 0, 0); return n ? 'ok' : 'solid';
-  }
-  return 'open';
-}
 function tapRegion(c, orig, tx, ty, keep){
   const w = c.width, h = c.height, x = c.getContext('2d'), d = x.getImageData(0, 0, w, h), p = d.data;
   const src = orig && orig.width === w && orig.height === h ? orig.getContext('2d').getImageData(0, 0, w, h).data : p, s0 = (ty * w + tx) * 4, seed = [src[s0], src[s0 + 1], src[s0 + 2]];
@@ -4352,17 +4362,6 @@ function tapRegion(c, orig, tx, ty, keep){
     for (const m of [qx > 0 ? q - 1 : -1, qx < w - 1 ? q + 1 : -1, q - w, q + w]) { if (m < 0 || m >= w * h || reg[m]) continue;
       if (Math.hypot(src[m * 4] - seed[0], src[m * 4 + 1] - seed[1], src[m * 4 + 2] - seed[2]) < 38) { reg[m] = 1; st.push(m); } } }
   if (!n) return 'none'; x.putImageData(d, 0, 0); return 'ok';
-}
-function stkErase(c, tx, ty){
-  const w = c.width, h = c.height, x = c.getContext('2d'), d = x.getImageData(0, 0, w, h), p = d.data, start = ty * w + tx;
-  if (p[start * 4 + 3] < 128) return 'clear';
-  const [r0, g0, b0] = [p[start * 4], p[start * 4 + 1], p[start * 4 + 2]], reg = new Uint8Array(w * h), st = [start]; reg[start] = 1; let n = 0, total = 0;
-  for (let i = 0; i < w * h; i++) if (p[i * 4 + 3] >= 128) total++;
-  while (st.length) { const q = st.pop(), qx = q % w; n++;
-    for (const m of [qx > 0 ? q - 1 : -1, qx < w - 1 ? q + 1 : -1, q - w, q + w]) { if (m < 0 || m >= w * h || reg[m] || p[m * 4 + 3] < 128) continue;
-      if (Math.hypot(p[m * 4] - r0, p[m * 4 + 1] - g0, p[m * 4 + 2] - b0) < 34) { reg[m] = 1; st.push(m); } } }
-  if (n > total * 0.6) return 'big';
-  for (let i = 0; i < w * h; i++) if (reg[i]) p[i * 4 + 3] = 0; x.putImageData(d, 0, 0); return 'ok';
 }
 function fixHTML(){
   const f = S.fixer, tip = f.mode === 'split' ? 'Draw a line between the stickers to cut them apart.' : f.smart ? (f.mode === 'keep' ? 'Tap what you want to keep. Everything else goes. Tap more things to add them.' : 'Tap a thing to remove it.') : f.brushOn ? (f.mode === 'keep' ? 'Brush over parts to bring them back.' : 'Brush over parts to remove them.') : (f.mode === 'keep' ? 'Tap an area to bring it back.' : 'Tap an area to remove it.');
@@ -4821,10 +4820,6 @@ function openEditFor(id){ const im = imgById(id); if (!im) return;
   if (aiOk() && safeLS.get('sk_ai_people') && !AI.people) {   // already on this phone: get it ready while they look, so Remove background is quick
     const warm = () => aiLoad('people', 'Xenova/modnet', 'AutoModel', true).catch(() => {}); 'requestIdleCallback' in window ? requestIdleCallback(warm, { timeout: 2000 }) : setTimeout(warm, 800); }
   const n = S.editTotal || 1, k = n - (S.editQueue || []).length; S.fixer = { id, mode: 'remove', brush: 'm', undo: [], onSheet: false, title: n > 1 ? `Edit picture ${k} of ${n}` : 'Edit picture' }; showSheet(''); drawFix(); }
-async function offerBgRemoval(list){
-  const cands = []; for (const im of list) { if (im.alpha) continue; const cut = removeBgCanvas(im.canvas); if (cut) cands.push({ im, cut, url: cut.toDataURL('image/png'), use: true }); }
-  if (!cands.length) return; S.bgOffer = cands; S.bgIdx = 0; showSheet(''); drawBgOffer();
-}
 function drawBgOffer(){ const box = $('#sheet .sheetbox'); if (!box) return; const L = S.bgOffer, k = S.bgIdx = Math.min(S.bgIdx || 0, L.length - 1), c = L[k];
   if (!c.stk) { c.stk = drawSticker(c.cut, 360, 40, 'fit', false).toDataURL('image/png'); }
   box.innerHTML = `<div class="impcard bgmaker"><div class="imphead"><button type="button" class="linkbtn" data-act="bgKeepAll" aria-label="Close">${ic('x', 20)}</button>
@@ -6105,7 +6100,7 @@ function viewDone(){
     </section>
     ${o.for_someone ? '' : feedbackHTML('ordering', o.code, o.nickname)}
     <div id="friendCard" style="margin-top:18px"></div>
-    ${ideaLine('Got an idea for Stick2It?')}
+    ${ideaLine('Got an idea for Stick2It?', '', true)}
     <p style="text-align:center;margin:8px 0 0"><button type="button" class="linkbtn" data-act="leaveDone" data-href="#/">Back to start</button></p>
   </main>`;
 }
@@ -6129,7 +6124,7 @@ function viewStatus(){
       <div class="formerr" id="lookErr" role="alert"></div>
     </form>
     <div id="statusOut" style="margin-top:24px" aria-live="polite"></div>
-    ${ideaLine('Something we could do better?', 'fix')}</main>`;
+    ${ideaLine('Could we do better?', 'fix', true)}</main>`;
   $('#lookForm').addEventListener('submit', e => { e.preventDefault(); lookup(); });
   if (last.code && last.nickname) lookup();
 }
@@ -7538,7 +7533,6 @@ const topRate = () => Math.max(...sellerTiers().map(t => t.rate));
 // unit = orders that count (counting orders) or pesos (counting money)
 function sellerEarn(sales, counted){ const u = byOrders() ? counted : sales, t = sellerTiers().filter(x => u >= x.at).pop(); return { rate: t.rate, tier: t.name, amount: Math.round(sales * t.rate) / 100 }; }
 function nextTier(sales, counted){ const u = byOrders() ? counted : sales; return sellerTiers().find(x => x.at > u) || null; }
-const topMonthly = () => { const t = sellerTiers().slice(-1)[0]; const sales = isFlat() ? 15 * AVG_ORDER : byOrders() ? t.at * AVG_ORDER : t.at; return Math.round(sales * t.rate / 100 * 4.3 / 10) * 10; };
 const welcomeAmt = () => CONFIG.sellerWelcomeOn ? CONFIG.sellerWelcome : 0;
 const rewardOn = () => CONFIG.sellerRewardOn && CONFIG.sellerRewardEvery > 0;
 // the invitation after ordering (and on My order)
