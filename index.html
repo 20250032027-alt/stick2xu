@@ -269,6 +269,7 @@ button{font:inherit;color:inherit}
 .hero{flex:1;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding:24px 0 48px}
 .hero h1{font-size:clamp(44px,6vw,70px)}
 .hero .lead{font-size:19px;max-width:38ch;margin:20px 0 30px;color:#2E3B57}
+.hero .cd-lbl{margin-top:30px}
 .facts{display:flex;flex-wrap:wrap;gap:10px 22px;margin:28px 0 0;padding:16px 0 0;border-top:1px solid var(--line);list-style:none;font-size:15px;color:var(--muted);font-weight:500}
 .facts li{display:flex;align-items:flex-start;gap:8px;line-height:1.35}
 .facts li svg{flex:none;margin-top:1px}
@@ -1131,6 +1132,8 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .was{font-size:.55em;color:var(--muted);font-weight:700;margin-left:4px}
 /* pins and keychains: two columns that share the work (phones: one list, in the order you work) */
 .designer.split{grid-template-columns:340px minmax(0,1fr)}
+.split .dcol-r{width:100%;max-width:640px;justify-self:start}           /* preview and options share one width and one center */
+@media(min-width:901px){.split .dcol-l{position:sticky;top:84px}}        /* your pins and how many stay in view */
 .dcol{display:grid;gap:20px;align-content:start;min-width:0}
 .split .tools{position:static;min-width:0;max-width:100%;box-sizing:border-box}
 .split .panel[hidden]{display:none}
@@ -1143,7 +1146,8 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .bgrow .flab{margin:16px 0 8px}
 .split .bgrow{display:flex;align-items:center;gap:10px}.split .bgrow .flab{margin:0;white-space:nowrap}.split .bgrow .flab .muted,.split .bgrow .swatches .muted{display:none}
 .bt-note{margin:2px 0 8px}
-.bt-acts{display:flex;flex-wrap:wrap;gap:8px}
+.bt-acts{display:flex;flex-wrap:wrap;gap:5px}
+.bt-acts .btn.sm{min-height:38px;padding:5px 7px;gap:4px;font-size:13px;white-space:nowrap}.bt-acts .btn.sm svg{width:15px;height:15px}
 .fx-body{display:grid;gap:14px}
 .fxg .flab{margin:0 0 8px}
 @media(min-width:901px){.split #ctrlO .fx-body{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 22px}.split #ctrlO .fxg.wide{grid-column:1/-1}}
@@ -1159,11 +1163,23 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
   .split .bt{width:54px;height:54px}.split .bt .fthumb{width:46px!important}
   .split .btray{gap:8px}
   .split .bt-acts{gap:5px;flex-wrap:wrap}
-  .split .bt-acts > *{min-height:38px;padding:5px 7px;gap:4px;font-size:13px;white-space:nowrap}.split .bt-acts svg{width:15px;height:15px}
+  .split .bt-acts .btn.sm{padding:5px 7px}
   .split .fx-body{gap:10px}.split .fxg .flab{margin-bottom:6px}
   .split .fx-tabs + .fx-body{margin-top:12px}
   .split .tools section+section{margin-top:16px;padding-top:14px}
 }
+/* stickers: the tapped sticker's card, and word stickers */
+.stkcard{margin-top:16px;padding:18px}
+.stkcard .stephead{margin-bottom:12px}
+@media(min-width:901px){.stkcard .fx-body{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 22px}.stkcard .fxg.wide{grid-column:1/-1}}
+.wordsbtn{display:flex;align-items:center;gap:12px;width:100%;margin-top:12px;padding:14px;border:2px dashed var(--ink);border-radius:var(--r-md);background:var(--gold-soft);cursor:pointer;text-align:left;font:inherit;color:inherit}
+.wordsbtn .ui{width:40px;height:40px;border-radius:12px;background:var(--xu-gold);border:2px solid var(--ink);display:grid;place-items:center;flex:none}
+.wordsbtn b{display:block}.wordsbtn small{display:block;color:var(--muted);font-size:14px}
+.wordsbox{margin-top:12px;padding:14px;border:2px solid var(--ink);border-radius:var(--r-md);background:#fff}
+.wordsbox textarea,.stkcard textarea{width:100%;resize:none;font-size:17px;line-height:1.3}
+.wordsbox .seg{display:flex;width:100%}.wordsbox .seg button{flex:1}
+.wd-prev{margin-top:14px;min-height:110px;display:grid;place-items:center;border-radius:14px;background:repeating-conic-gradient(#eef0f6 0 25%,#fff 0 50%) 0 0/18px 18px}
+.wd-stk{max-width:100%;height:auto;max-height:150px}
 /* Make it yours */
 .fxc{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
 .fx-tabs{display:flex;width:100%}.fx-tabs button{flex:1;position:relative;min-height:44px}
@@ -2473,7 +2489,12 @@ function drawSticker(src, px, mm, fit, cut, opts){
   const s = fit === 'fit' ? Math.min(inner / iw, inner / ih) : Math.max(inner / iw, inner / ih);
   const dw = iw * s, dh = ih * s;
   a.save(); a.beginPath(); a.rect(pad, pad, inner, inner); a.clip();
-  a.drawImage(src, pad + (inner - dw) / 2, pad + (inner - dh) / 2, dw, dh); a.restore();
+  const flt = opts && opts.filter && opts.filter !== 'none' ? opts.filter : null;   // a photo filter changes the colors, never the shape
+  if (flt) { const t = document.createElement('canvas'); t.width = Math.max(1, Math.round(dw)); t.height = Math.max(1, Math.round(dh)); const tx = t.getContext('2d');
+    if ('filter' in tx) { tx.filter = FX_FILTERS[flt] || 'none'; tx.drawImage(src, 0, 0, t.width, t.height); } else { tx.drawImage(src, 0, 0, t.width, t.height); fxFilterPixels(t, flt); }
+    a.drawImage(t, pad + (inner - dw) / 2, pad + (inner - dh) / 2, dw, dh); }
+  else a.drawImage(src, pad + (inner - dw) / 2, pad + (inner - dh) / 2, dw, dh);
+  a.restore();
   // smoother cut lines: round off the outline's little nooks so it's quick to cut with scissors.
   // (Cut at the halfway point of the blur, so corners round off without the shape getting bigger.)
   let shape = art;
@@ -2490,19 +2511,20 @@ function drawSticker(src, px, mm, fit, cut, opts){
     stamp(sil('#C3C6CF'), b + cl);
     stamp(sil('#FFFFFF'), b + cl - lt);
   }
-  stamp(sil('#FFFFFF'), b);
+  stamp(sil((opts && opts.color) || '#FFFFFF'), b);   // the border: white, or the color they picked
   o.drawImage(art, 0, 0);
   return out;
 }
 const stickerCache = new Map();
 const itemSmooth = it => typeof it.smooth === 'boolean' ? it.smooth : CONFIG.smoothCut;   // the customer's choice, or the shop default
+const stkOpts = it => ({ border: it.border, smooth: itemSmooth(it), ...(it.borderColor ? { color: it.borderColor } : {}), ...(it.filter && it.filter !== 'none' ? { filter: it.filter } : {}) });
 function stickerURL(it){
   const im = S.images.find(i => i.id === it.imageId); if (!im) return '';
   if (it.h) return im.url;   // an imported sheet shows exactly as it is
-  const mm = itemRect(it).w, key = `${it.imageId}|${Math.round(mm)}|${it.fit}|${it.border || 'white'}|${itemSmooth(it) ? 's' : ''}`;
+  const mm = itemRect(it).w, key = `${it.imageId}|${im.v || 0}|${Math.round(mm)}|${it.fit}|${it.border || 'white'}|${itemSmooth(it) ? 's' : ''}|${it.borderColor || ''}|${it.filter || ''}`;
   if (!stickerCache.has(key)) {
     const px = Math.min(640, Math.round(170 * mm / geom().cell));
-    stickerCache.set(key, drawSticker(im.canvas, px, mm, it.fit, false, { border: it.border, smooth: itemSmooth(it) }).toDataURL('image/png'));
+    stickerCache.set(key, drawSticker(im.canvas, px, mm, it.fit, false, stkOpts(it)).toDataURL('image/png'));
   }
   return stickerCache.get(key);
 }
@@ -2811,7 +2833,7 @@ function serializeItems(items, pathFor){
       addon_labels: (it.addons || []).map(id => (p.addons.find(a => a.id === id) || {}).label).filter(Boolean), unit_price: unitPrice(it) };
     if (it.type === 'prints') return { ...base, qty: it.qty, pages: it.pages, duplex: !!it.duplex,
       files: (it.files || []).map(f => ({ path: pathFor[f.id], name: f.name, pages: f.pages, kind: f.kind, orient: f.orient || null })) };
-    if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ ...(sh.free ? { free: true } : {}), ...(sh.imported ? { imported: sh.imported } : {}), ...(sh.fromImport ? { fromImport: sh.fromImport } : {}), ...(sh.template ? { template: sh.template.slug } : {}), items: sh.items.map(x => ({ path: pathFor[x.imageId], ...(isFree(x) ? { x: x.x, y: x.y, w: x.w, ...(x.h ? { h: x.h } : {}) } : { col: x.col, row: x.row, size: x.size }), fit: x.fit, ...(x.border === 'none' ? { border: 'none' } : {}), ...(typeof x.smooth === 'boolean' ? { smooth: x.smooth } : {}) })) })) };
+    if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ ...(sh.free ? { free: true } : {}), ...(sh.imported ? { imported: sh.imported } : {}), ...(sh.fromImport ? { fromImport: sh.fromImport } : {}), ...(sh.template ? { template: sh.template.slug } : {}), items: sh.items.map(x => ({ path: pathFor[x.imageId], ...(isFree(x) ? { x: x.x, y: x.y, w: x.w, ...(x.h ? { h: x.h } : {}) } : { col: x.col, row: x.row, size: x.size }), fit: x.fit, ...(x.border === 'none' ? { border: 'none' } : {}), ...(typeof x.smooth === 'boolean' ? { smooth: x.smooth } : {}), ...(x.borderColor ? { borderColor: x.borderColor } : {}), ...(x.filter && x.filter !== 'none' ? { filter: x.filter } : {}) })) })) };
     const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy, bg: x.bg || '#ffffff', ...(fxOn(x.fx) ? { fx: clone(x.fx) } : {}) } : null;
     if (it.type === 'posters' && it.mode === 'pages') return { ...base, qty: it.qty, mode: 'pages', pages: it.pages, across: it.across, tiles: it.pages,
       pdf: { path: pathFor[it.pdf.id], name: it.pdf.name, pages: it.pages } };
@@ -3036,7 +3058,7 @@ async function tplModeImage(type){
     const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
     for (const it of sheet.items) { const im = imgById(it.imageId); if (!im) continue; const r = itemRect(it);
       if (it.h) x.drawImage(im.canvas, r.x * k, r.y * k, r.w * k, r.h * k);
-      else x.drawImage(drawSticker(im.canvas, Math.round(r.w * k), r.w, it.fit, true, { border: it.border, smooth: itemSmooth(it) }), r.x * k, r.y * k, r.w * k, r.w * k); }
+      else x.drawImage(drawSticker(im.canvas, Math.round(r.w * k), r.w, it.fit, true, stkOpts(it)), r.x * k, r.y * k, r.w * k, r.w * k); }
     return c.toDataURL('image/jpeg', 0.88);
   }
   const f = S.fd, im = f && f.front.imageId && imgById(f.front.imageId); if (!im) return null;
@@ -3437,13 +3459,6 @@ function viewHome(){
           <a class="pilllink" href="#/status">${ic('search', 18)}Check my order</a>
           ${P('prints') && P('prints').enabled ? `<a class="printchip" href="${designRoute('prints')}">${ic('printer', 16)}Print a file<small>from ${money(Math.min(...P('prints').sizes.filter(z => z.enabled !== false).map(z => z.price)))}/page</small></a>` : ''}
         </div>
-        <ul class="facts">
-          ${(() => { const others = liveProducts().filter(x => x.key !== 'stickers').map(x => x.name.toLowerCase());
-            const txt = others.length > 2 ? `${others[0]}, ${others[1]}, and more` : others.length === 2 ? `${others[0]} and ${others[1]} too` : `${others[0]} too`;
-            return others.length ? `<li>${ic('sparkle', 18)}<span>${esc(txt.replace(/^./, c => c.toUpperCase()))}</span></li>` : ''; })()}
-          ${isLive('stickers') ? `<li>${ic('layers', 18)}<span>Up to ${g.cols * g.rows} stickers a sheet</span></li>` : ''}
-          <li>${ic('school', 18)}<span>Pickup inside campus</span></li>
-        </ul>
         ${countdownHTML()}
       </div>
       ${heroArt()}
@@ -3684,6 +3699,7 @@ function drawCtrl(){
       <div class="ordiv"><span>or</span></div>
       <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose pictures<small>From your phone, tablet, or computer. PNG with a see-through background works best</small></span>
         <input id="fileIn" type="file" accept="image/*" multiple hidden></label>
+      ${S.wordsDraft ? wordsComposerHTML() : `<button type="button" class="wordsbtn" data-act="wdOpen"><span class="ui">${ic('edit', 20)}</span><span><b>Add words</b><small>Turn a name or a phrase into a sticker</small></span></button>`}
       ${S.images.some(im => !im.sheet) ? `<div class="tray">${S.images.filter(im => !im.sheet).map(im => `
         <button class="thumb ${S.selImage === im.id && !sel ? 'on' : ''}" type="button" data-act="pickImg" data-id="${im.id}" style="background-image:url('${im.url}')" aria-label="Use this picture" aria-pressed="${S.selImage === im.id && !sel}">
           <span class="x" data-act="delImg" data-id="${im.id}" role="button" aria-label="Remove picture">${ic('x', 14)}</span></button>`).join('')}</div>` : ''}
@@ -3703,8 +3719,104 @@ function drawCtrl(){
       <div class="stephead"><i>${ic('plus', 14)}</i>Extras</div>${addonChecks('stickers', S.stickerAddons)}
     </section>` : ''}`;
   $('#fileIn').addEventListener('change', onFiles);
+  wordsBind();
 }
 
+/* The tapped sticker's own "Make it yours" card, under the sheet (like the pin's options under its preview).
+   Words (word stickers only) / Border (white, a color, or none; smooth or exact outline) / Filter. */
+function stkCardHTML(sel){
+  if (!sel || sel.bg || sel.h) return '';
+  const im = imgById(sel.imageId); if (!im) return '';
+  const tabs = [...(im.words ? [['words', 'Words']] : []), ['border', 'Border'], ['filter', 'Filter']];
+  if (S.stkTabFor !== sel.uid) { S.stkTab = null; S.stkTabFor = sel.uid; }   // each sticker opens on its own first tab
+  let tab = S.stkTab || (im.words ? 'words' : 'border'); if (!tabs.some(([k]) => k === tab)) tab = tabs[0][0];
+  const seg = (act, cur, opts) => `<div class="seg">${opts.map(([v, l]) => `<button type="button" class="${cur === v ? 'on' : ''}" data-act="${act}" data-v="${v}" aria-pressed="${cur === v}">${l}</button>`).join('')}</div>`;
+  const g = (label, body, wide) => `<div class="fxg ${wide ? 'wide' : ''}"><p class="lab flab">${label}</p>${body}</div>`;
+  const sw = (act, cur, list) => `<div class="swatches fx-sw">${list.map(c => `<button type="button" class="sw ${(cur || '').toLowerCase() === c.toLowerCase() ? 'on' : ''}" style="background:${c}" data-act="${act}" data-c="${c}" aria-label="Color ${c}" aria-pressed="${(cur || '').toLowerCase() === c.toLowerCase()}"></button>`).join('')}
+    <label class="sw rainbow ${cur && !list.some(c => c.toLowerCase() === cur.toLowerCase()) ? 'on' : ''}" title="Pick any color"><input type="color" data-stkpick="${act}" value="${cur || '#283971'}" aria-label="Pick any color">${cur && !list.some(c => c.toLowerCase() === cur.toLowerCase()) ? `<span style="background:${cur}"></span>` : ''}</label></div>`;
+  const bmode = sel.border === 'none' ? 'none' : sel.borderColor ? 'color' : 'white';
+  const body = tab === 'words' ? g('Words', `<textarea class="inp" id="stkWords" rows="2" maxlength="40" placeholder="Type your words">${esc(im.words.value)}</textarea>`, true)
+      + g('Letters', seg('wordsFont', im.words.font, Object.entries(FX_FONTS).map(([k, v]) => [k, `<span style="font-family:${v[1].replace(/"/g, '&quot;')};font-weight:${v[0]}">${v[2]}</span>`])))
+      + g('Color', sw('wordsColor', im.words.color, FX_COLORS.filter(c => c !== '#ffffff').concat(['#ffffff'])), true)
+    : tab === 'border' ? g('Border', seg('stkBorder', bmode, [['white', 'White'], ['color', 'Color'], ['none', 'None']]))
+      + (bmode !== 'none' ? g('Outline', seg('stkOutline', itemSmooth(sel) ? '1' : '0', [['1', 'Smooth'], ['0', 'Exact']])) : '')
+      + (bmode === 'color' ? g('Border color', sw('stkBorderColor', sel.borderColor, FX_COLORS.filter(c => c !== '#ffffff')), true) : '')
+      + `<p class="help fxg wide" style="margin:0">${bmode === 'none' ? 'Cut right at the edge of your picture.' : itemSmooth(sel) ? 'Smooth: rounded and simple, easy to cut.' : 'Exact: the border follows every corner.'}</p>`
+    : `<div class="fxg wide"><div class="fx-filters">${FX_FILTER_NAMES.map(([v, l]) => `<button type="button" class="fx-filter ${(sel.filter || 'none') === v ? 'on' : ''}" data-act="stkFilter" data-v="${v}" aria-pressed="${(sel.filter || 'none') === v}">
+        <span class="fx-fprev" style="background-image:url('${im.url}');filter:${FX_FILTERS[v] || 'none'}"></span><small>${l}</small></button>`).join('')}</div></div>`;
+  const dot = k => (k === 'border' && (sel.borderColor || sel.border === 'none')) || (k === 'filter' && sel.filter && sel.filter !== 'none') ? '<i class="fx-dot" aria-label="(on)"></i>' : '';
+  return `<div class="panel stkcard"><div class="stephead">Make it yours <span class="muted small" style="font-weight:600">this sticker</span></div>
+    <div class="seg fx-tabs" role="tablist">${tabs.map(([k, l]) => `<button type="button" role="tab" aria-selected="${tab === k}" class="${tab === k ? 'on' : ''}" data-act="stkTab" data-v="${k}">${l}${dot(k)}</button>`).join('')}</div>
+    <div class="fx-body">${body}</div></div>`;
+}
+/* Word stickers: words become a see-through picture, so they get a die-cut border, resize and print like any sticker. */
+function wordsCanvas(w){
+  const [wt, fam] = FX_FONTS[w.font] || FX_FONTS.bold, lines = String(w.value || '').split('\n').map(s => s.trim()).filter(Boolean).slice(0, 2);
+  if (!lines.length) return null;
+  const fs = 220, c = document.createElement('canvas'), x = c.getContext('2d'); x.font = `${wt} ${fs}px ${fam}`;
+  const wmax = Math.max(...lines.map(l => x.measureText(l).width)), pad = Math.round(fs * 0.18);
+  c.width = Math.ceil(wmax + pad * 2); c.height = Math.ceil(lines.length * fs * 1.05 + pad * 2);
+  x.font = `${wt} ${fs}px ${fam}`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = w.color || '#283971'; x.lineJoin = 'round';
+  lines.forEach((l, i) => x.fillText(l, c.width / 2, pad + fs * 0.55 + i * fs * 1.05));
+  // trim to the letters
+  const d = x.getImageData(0, 0, c.width, c.height).data; let x0 = c.width, y0 = c.height, x1 = 0, y1 = 0;
+  for (let y = 0; y < c.height; y++) for (let xx = 0; xx < c.width; xx++) if (d[(y * c.width + xx) * 4 + 3] > 8) { if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  if (x1 < x0) return null;
+  const m = Math.round(fs * 0.06), t = document.createElement('canvas'); t.width = x1 - x0 + 1 + 2 * m; t.height = y1 - y0 + 1 + 2 * m;
+  t.getContext('2d').drawImage(c, x0, y0, x1 - x0 + 1, y1 - y0 + 1, m, m, x1 - x0 + 1, y1 - y0 + 1);
+  return t;
+}
+async function wordsImage(w, existing){
+  await fxFontsReady();
+  const c = wordsCanvas(w); if (!c) return null;
+  const blob = await new Promise(r => c.toBlob(r, 'image/png')); if (!blob) return null;
+  if (existing) { revoke(existing.url); Object.assign(existing, { blob, url: URL.createObjectURL(blob), canvas: c, w: c.width, h: c.height, words: { ...w }, v: (existing.v || 0) + 1 }); return existing; }
+  return { id: uid(), blob, ext: 'png', url: URL.createObjectURL(blob), canvas: c, w: c.width, h: c.height, alpha: true, words: { ...w } };
+}
+function stkCardBind(){
+  const sel = selected(), im = sel && imgById(sel.imageId);
+  document.querySelectorAll('[data-stkpick]').forEach(inp => inp.addEventListener('change', () => {
+    const s = selected(); if (!s) return;
+    if (inp.dataset.stkpick === 'stkBorderColor') { s.borderColor = inp.value; s.border = 'white'; drawSheet(); }
+    else if (inp.dataset.stkpick === 'wordsColor') wordsRedo({ color: inp.value });
+  }));
+  const t = $('#stkWords'); if (t && im && im.words) { let tm;
+    t.addEventListener('input', () => { clearTimeout(tm); tm = setTimeout(() => { const v = t.value.split('\n').slice(0, 2).join('\n'); if (v.trim()) wordsRedo({ value: v }, true); }, 350); }); }
+}
+// change a word sticker's words, letters or color everywhere it's used (same picture, redrawn)
+async function wordsRedo(change, keepFocus){
+  const s = selected(), im = s && imgById(s.imageId); if (!im || !im.words) return;
+  const done = await wordsImage({ ...im.words, ...change }, im); if (!done) return;
+  for (const k of [...stickerCache.keys()]) if (k.startsWith(im.id + '|')) stickerCache.delete(k);
+  if (keepFocus) { const pos = ($('#stkWords') || {}).selectionStart; drawSheet(); const t = $('#stkWords'); if (t) { t.focus(); try { t.setSelectionRange(pos, pos); } catch {} } }
+  else drawSheet();
+  drawCtrl();
+}
+function wordsComposerHTML(){
+  const w = S.wordsDraft; if (!w) return '';
+  const seg = (act, cur, opts) => `<div class="seg">${opts.map(([v, l]) => `<button type="button" class="${cur === v ? 'on' : ''}" data-act="${act}" data-v="${v}" aria-pressed="${cur === v}">${l}</button>`).join('')}</div>`;
+  return `<div class="wordsbox">
+    <label class="lab flab" for="wdIn" style="margin-top:0">Your words</label>
+    <textarea class="inp" id="wdIn" rows="2" maxlength="40" placeholder="Like: Class of 2026">${esc(w.value)}</textarea>
+    <p class="help" style="margin:4px 0 0">Up to two lines. Press Enter for a new line.</p>
+    <p class="lab flab">Letters</p>${seg('wdFont', w.font, Object.entries(FX_FONTS).map(([k, v]) => [k, `<span style="font-family:${v[1].replace(/"/g, '&quot;')};font-weight:${v[0]}">${v[2]}</span>`]))}
+    <p class="lab flab">Color</p><div class="swatches fx-sw">${FX_COLORS.filter(c => c !== '#ffffff').concat(['#ffffff']).map(c => `<button type="button" class="sw ${w.color === c ? 'on' : ''}" style="background:${c}" data-act="wdColor" data-c="${c}" aria-label="Color ${c}" aria-pressed="${w.color === c}"></button>`).join('')}
+      <label class="sw rainbow" title="Pick any color"><input type="color" id="wdPick" value="${w.color}" aria-label="Pick any color"></label></div>
+    <div class="wd-prev" id="wdPrev" aria-label="Preview"></div>
+    <div class="acts" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">${smallBtn('Make the sticker', 'check', 'wdMake', 'dark')}${smallBtn('Cancel', 'x', 'wdCancel', 'plain')}</div></div>`;
+}
+function wordsPreview(){
+  const box = $('#wdPrev'), w = S.wordsDraft; if (!box || !w) return;
+  const c = wordsCanvas(w); box.innerHTML = '';
+  if (!c) { box.innerHTML = '<span class="muted small">Your sticker shows here</span>'; return; }
+  const k = Math.min(1, 520 / c.width), px = Math.round(Math.max(c.width, c.height) * k * 0.5);
+  const s = drawSticker(c, Math.max(120, Math.min(360, px)), 50, 'fit', false, { border: 'white', smooth: CONFIG.smoothCut }); s.className = 'wd-stk'; box.appendChild(s);
+}
+function wordsBind(){
+  const t = $('#wdIn'); if (t) { t.addEventListener('input', () => { S.wordsDraft.value = t.value.split('\n').slice(0, 2).join('\n'); wordsPreview(); }); }
+  const p = $('#wdPick'); if (p) p.addEventListener('input', () => { S.wordsDraft.color = p.value; wordsPreview(); });
+  if (S.wordsDraft) fxFontsReady().then(wordsPreview);
+}
 /* One switch for the whole sheet's outlines (each sticker can still be changed on its own) */
 function outlineBarHTML(sheet, imp){
   const list = imp ? [] : sheet.items.filter(it => !it.bg && !it.h && it.border !== 'none'); if (!list.length) return '';
@@ -3734,15 +3846,14 @@ function drawSheet(){
         ${free ? `<span class="sizer">${smallBtn('', 'minus', 'freeSize', 'plain', 'data-d="-5" aria-label="Smaller"')}<b>${(itemRect(sel).w / 10).toFixed(1)} cm</b>${smallBtn('', 'plus', 'freeSize', 'plain', 'data-d="5" aria-label="Bigger"')}</span>` : ''}
         ${smallBtn('Edit', 'edit', 'stkFixOpen', 'plain')}
         ${free ? smallBtn(S.combineFrom === sel.uid ? 'Now tap another…' : 'Combine', 'plus', 'stkCombine', S.combineFrom === sel.uid ? 'dark' : 'plain') : ''}
-        ${smallBtn(sel.border === 'none' ? 'Add white border' : 'No border', sel.border === 'none' ? 'fit' : 'fill', 'borderToggle', 'plain')}
-        ${sel.border !== 'none' ? smallBtn(itemSmooth(sel) ? 'Exact outline' : 'Smooth outline', 'sparkle', 'smoothToggle', 'plain') : ''}
         ${smallBtn(sel.fit === 'fit' ? 'Fill the square' : 'Show whole picture', sel.fit === 'fit' ? 'fill' : 'fit', 'fitToggle', 'plain')}
         ${smallBtn('Remove', 'trash', 'removeItem', 'danger')}
-        ${smallBtn('Done', 'check', 'deselect', 'dark')}</div>`
+        ${smallBtn('Done', 'check', 'deselect', 'dark')}</div>${stkCardHTML(sel)}`
       : `<div class="under" ${imp ? 'hidden' : ''}><span>${sheet.items.length ? `${sheet.items.length} sticker${sheet.items.length > 1 ? 's' : ''} on this sheet. Drag one to move it, or tap it to change it.` : 'This sheet is empty. The white borders show where each sticker gets cut.'}</span>
         ${S.sheets.length > 1 ? smallBtn('Remove this sheet', 'trash', 'delSheet', 'plain') : ''}</div>${outlineBarHTML(sheet, imp)}`}
     ${liveAddons('stickers').length ? `<div class="mob-only extras-mob"><div class="stephead"><i>${ic('plus', 14)}</i>Extras</div>${addonChecks('stickers', S.stickerAddons)}</div>` : ''}`;
   const f2 = $('#fileIn2'); if (f2) f2.addEventListener('change', onFiles);
+  stkCardBind();
   $('#page').querySelectorAll('.stk').forEach(el => el.addEventListener('pointerdown', e => { if (e.target.closest('.rsz')) return startResize(e, el); startStickerDrag(e, el); }));
 }
 
@@ -4128,7 +4239,7 @@ async function splitSticker(){
     px.putImageData(d, 0, 0); const blob = await new Promise(rs => pc.toBlob(rs, 'image/png'));
     const nim = { id: uid(), blob, ext: 'png', url: URL.createObjectURL(blob), canvas: pc, w: bw, h: bh, alpha: true, sheet: true }; S.images.push(nim);
     const nw = Math.max(CONFIG.freeMinMm, Math.max(bw, bh) * s + extra), cx = r.x + r.w / 2 + ((cp.x0 + cp.x1) / 2 - w / 2) * s, cy = r.y + r.w / 2 + ((cp.y0 + cp.y1) / 2 - h / 2) * s;
-    news.push({ uid: uid(), imageId: nim.id, x: +(cx - nw / 2).toFixed(2), y: +(cy - nw / 2).toFixed(2), w: +nw.toFixed(2), fit: 'fit', border: it.border, smooth: it.smooth }); }
+    news.push({ uid: uid(), imageId: nim.id, x: +(cx - nw / 2).toFixed(2), y: +(cy - nw / 2).toFixed(2), w: +nw.toFixed(2), fit: 'fit', border: it.border, smooth: it.smooth, borderColor: it.borderColor, filter: it.filter }); }
   sheet.items = sheet.items.filter(x => x.uid !== it.uid).concat(news);
   if (news.some(x => !freeFits(sheet, x, x.uid))) autoArrange(sheet);
   S.selItem = null; if (S.fixer && S.fixer.ac) S.fixer.ac.abort(); S.fixer = null; closeSheet(); buzz([8, 30, 8]); toast(`Split into ${news.length} stickers!`); drawDesigner(); return news.length;
@@ -4141,7 +4252,7 @@ async function combineStickers(a, b){
   const k = 1 / Math.min(...parts.map(q => q.s)), c = document.createElement('canvas'); c.width = Math.round((x1 - x0) * k); c.height = Math.round((y1 - y0) * k);
   const x = c.getContext('2d'); parts.forEach(q => x.drawImage(q.im.canvas, (q.x - x0) * k, (q.y - y0) * k, q.w * k, q.h * k));
   const blob = await new Promise(rs => c.toBlob(rs, 'image/png')), nim = { id: uid(), blob, ext: 'png', url: URL.createObjectURL(blob), canvas: c, w: c.width, h: c.height, alpha: true, sheet: true }; S.images.push(nim);
-  const nw = Math.max(x1 - x0, y1 - y0) + extra, item = { uid: uid(), imageId: nim.id, x: +((x0 + x1) / 2 - nw / 2).toFixed(2), y: +((y0 + y1) / 2 - nw / 2).toFixed(2), w: +nw.toFixed(2), fit: 'fit', border: a.border, smooth: a.smooth };
+  const nw = Math.max(x1 - x0, y1 - y0) + extra, item = { uid: uid(), imageId: nim.id, x: +((x0 + x1) / 2 - nw / 2).toFixed(2), y: +((y0 + y1) / 2 - nw / 2).toFixed(2), w: +nw.toFixed(2), fit: 'fit', border: a.border, smooth: a.smooth, borderColor: a.borderColor, filter: a.filter };
   sheet.items = sheet.items.filter(i => i.uid !== a.uid && i.uid !== b.uid).concat(item); if (!freeFits(sheet, item, item.uid)) autoArrange(sheet);
   S.selItem = item.uid; S.combineFrom = null; buzz([8, 30, 8]); toast('Combined into one sticker!'); drawDesigner();
 }
@@ -4684,7 +4795,7 @@ function batchTrayHTML(){
         ${im ? framedThumb(e.front, im.url, mm, 54) : `<span class="bt-empty">${ic('image', 18)}</span>`}${e.qty > 1 ? `<span class="bt-q num">×${e.qty}</span>` : ''}</button>`; }).join('')}
       <label class="bt bt-add ${f.type === 'pins' ? 'round' : ''}" title="Add more pictures"><span>${ic('plus', 20)}</span><small>Add</small><input type="file" accept="image/*" multiple hidden data-more="1" class="fileMore"></label></div>
     <p class="bt-note muted small">${n > 1 ? `${unit[0].toUpperCase() + unit.slice(1)} ${k} of ${n}. Tap one to change it.` : `Tip: choose several pictures at once to make several ${unit}s.`}</p>
-    <div class="bt-acts">${f.front.imageId ? `<label class="bt-change" aria-label="Change this picture">${ic('image', 16)}Change<input id="fileIn" type="file" accept="image/*" hidden></label>` : ''}${smallBtn('Duplicate', 'copy', 'fdDup', 'plain')}${n > 1 ? smallBtn('Remove', 'trash', 'fdRemove', 'plain') : ''}</div>`;
+    <div class="bt-acts">${f.front.imageId ? `<label class="btn sm noi plain bt-change" aria-label="Change this picture">${ic('image', 18)}<span>Change</span><input id="fileIn" type="file" accept="image/*" hidden></label>` : ''}${smallBtn('Copy', 'copy', 'fdDup', 'plain', `aria-label="Make a copy of this ${unit}"`)}${n > 1 ? smallBtn('Remove', 'trash', 'fdRemove', 'plain') : ''}</div>`;
 }
 function batchSectionHTML(step){
   const f = S.fd, unit = P(f.type).unit, has = !!f.front.imageId || batchList().some(e => e.front.imageId);
@@ -4765,7 +4876,7 @@ function paintFx(x, d, W, H, opt){
       }
     }
   } else {
-    const m = Math.min(W, H), t = m * (ring && ring.size === 'thick' ? 0.1 : 0.065);
+    const m = Math.min(W, H), t = m * (opt.thin ? (ring && ring.size === 'thick' ? 0.06 : 0.035) : (ring && ring.size === 'thick' ? 0.1 : 0.065));   // posters: a slimmer frame
     if (ring) {
       const col = ring.color || '#283971', con = fxContrast(col), frame = (o, i) => { x.beginPath(); x.rect(o, o, W - 2 * o, H - 2 * o); x.rect(i, i, W - 2 * i, H - 2 * i); };
       if (ring.style === 'double') { x.fillStyle = col; frame(0, t * 0.45); x.fill('evenodd'); frame(t * 0.72, t); x.fill('evenodd'); }
@@ -4817,14 +4928,14 @@ function fxPaintCanvas(cv, d, opt){
   const want = fxFontsWanted(d && d.fx); if (want.length && !want.every(f => document.fonts.check(f))) Promise.all(want.map(f => document.fonts.load(f))).then(paint).catch(() => {});
 }
 function fxPaintStage(){
-  const f = S.fd; if (!f || !['pins', 'keychains'].includes(f.type)) return;
-  const d = shownDesign(), mm = frameMm(f), opt = { round: f.type === 'pins', face: mm.vis ? mm.vis / mm.w : 1 };
+  const f = S.fd; if (!f || !['pins', 'keychains', 'posters'].includes(f.type)) return;
+  const d = shownDesign(), mm = frameMm(f), opt = { round: f.type === 'pins', face: mm.vis ? mm.vis / mm.w : 1, thin: f.type === 'posters' };
   document.querySelectorAll('#fstage canvas.fxc').forEach(cv => fxPaintCanvas(cv, d, opt));
   ['#fimg', '#fimg2'].forEach(q => { const el = $(q); if (el) el.style.filter = fxFilterCss(d); });
 }
 // the "Make it yours" section: Words / Ring (Border) / Filter
 function fxSectionHTML(step, d){
-  const f = S.fd; if (!d || !d.imageId || !['pins', 'keychains'].includes(f.type)) return '';
+  const f = S.fd; if (!d || !d.imageId || !['pins', 'keychains', 'posters'].includes(f.type) || (f.type === 'posters' && f.mode === 'pages')) return '';
   const fx = fxEnsure(d), tab = f.fxTab || 'text', pin = f.type === 'pins', ringName = pin ? 'Ring' : 'Border', im = imgById(d.imageId);
   const sw = (act, cur, extra = '') => `<div class="swatches fx-sw">${FX_COLORS.map(c => `<button type="button" class="sw ${cur.toLowerCase() === c.toLowerCase() ? 'on' : ''}" style="background:${c}" data-act="${act}" data-c="${c}" aria-label="Color ${c}" aria-pressed="${cur.toLowerCase() === c.toLowerCase()}"></button>`).join('')}
     <label class="sw rainbow ${FX_COLORS.some(c => c.toLowerCase() === cur.toLowerCase()) ? '' : 'on'}" title="Pick any color"><input type="color" data-fxpick="${act}" value="${cur}" aria-label="Pick any color">${FX_COLORS.some(c => c.toLowerCase() === cur.toLowerCase()) ? '' : `<span style="background:${cur}"></span>`}</label>${extra}</div>`;
@@ -4832,6 +4943,7 @@ function fxSectionHTML(step, d){
   const places = pin ? [['bottom', 'Bottom'], ['top', 'Top'], ['across', 'Across']] : [['bottom', 'Bottom'], ['top', 'Top']];
   if (!places.some(([v]) => v === fx.text.place)) fx.text.place = 'bottom';
   const g = (label, body, wide) => `<div class="fxg ${wide ? 'wide' : ''}">${label}${body}</div>`, L = t => `<p class="lab flab">${t}</p>`;
+  if (f.type === 'posters' && tab === 'text' && !places.some(([v]) => v === fx.text.place)) fx.text.place = 'bottom';
   const body = tab === 'text' ? g(`<label class="lab flab" for="fxWords">Words <span class="muted small" style="font-weight:500">optional</span></label>`,
         `<div class="fx-words"><input class="inp" id="fxWords" maxlength="28" value="${esc(fx.text.value || '')}" placeholder="A name or a date" autocomplete="off">
         ${fx.text.value ? `<button type="button" class="fx-clear" data-act="fxTextClear" aria-label="Remove the words">${ic('x', 16)}</button>` : ''}</div>`, true)
@@ -5006,12 +5118,12 @@ function drawFramedStage(){
           <p class="help">We do all of this for you: you pick up the finished poster.</p></div>`;
     } else if (multi) {
       html = `${toggle}<div class="postwrap"><div class="hang" style="width:min(100%, ${mm.w > mm.h ? 560 : 400}px, calc(50svh * ${(mm.w / mm.h).toFixed(4)}));padding:1.2%">
-          <div class="frame" id="frame" style="aspect-ratio:${mm.w}/${mm.h};background:${bg}">${frameInner(f.front, 'Choose a picture')}${lines}</div></div></div>
+          <div class="frame" id="frame" style="aspect-ratio:${mm.w}/${mm.h};background:${bg}">${frameInner(f.front, 'Choose a picture')}<canvas class="fxc" aria-hidden="true"></canvas>${lines}</div></div></div>
         <p class="under">${mm.cols} × ${mm.rows} sheets, about ${Math.round(mm.w / 10)} × ${Math.round(mm.h / 10)} cm once trimmed and glued together. The lines show where the sheets join. Tap "As printed" to see each sheet.</p>`;
     } else {
       // one sheet: the page with its white border, the picture centered inside
       html = `<div class="postwrap"><div class="hang single" style="width:min(100%, ${mm.pageW > mm.pageH ? 560 : 400}px, calc(50svh * ${(mm.pageW / mm.pageH).toFixed(4)}));aspect-ratio:${mm.pageW}/${mm.pageH};padding:${mm.margin / mm.pageW * 100}%">
-          <div class="pinner"><div class="cutwrap" style="aspect-ratio:${mm.w}/${mm.h};width:${Math.min(100, mm.w / iw * 100)}%"><div class="frame" id="frame" style="background:${bg}">${frameInner(f.front, 'Choose a picture')}</div>
+          <div class="pinner"><div class="cutwrap" style="aspect-ratio:${mm.w}/${mm.h};width:${Math.min(100, mm.w / iw * 100)}%"><div class="frame" id="frame" style="background:${bg}">${frameInner(f.front, 'Choose a picture')}<canvas class="fxc" aria-hidden="true"></canvas></div>
             ${f.front.imageId ? '<span class="cutline" aria-hidden="true"></span><span class="cuttag">Cut line</span>' : ''}</div></div></div></div>
         <p class="under">${f.front.imageId ? `Printed on one ${esc((P('posters').sizes.find(z => z.id === f.size) || {}).label || '')} sheet, then cut along the black dashed line. The shaded paper is trimmed off. Finished size: ${(mm.w / 10).toFixed(1)} × ${(mm.h / 10).toFixed(1)} cm.`
           : `${esc((P('posters').sizes.find(z => z.id === f.size) || {}).label || '')} ${f.orient === 'landscape' ? 'wide' : 'tall'} sheet.`}</p>`;
@@ -6470,7 +6582,7 @@ async function makePdf(o, batch, asPng){
               doc.addImage(c.toDataURL('image/jpeg', 0.92), 'JPEG', r.x, r.y, r.w, r.h); } catch (e) { console.warn('image failed', x.path, e); }
             continue;
           }
-          try { const img = await getImg(x.path); doc.addImage(drawSticker(img, Math.min(1800, Math.round(r.w / 25.4 * 300)), r.w, x.fit, printLabels(), { border: x.border, smooth: x.smooth }).toDataURL('image/png'), 'PNG', r.x, r.y, r.w, r.w); }
+          try { const img = await getImg(x.path); doc.addImage(drawSticker(img, Math.min(1800, Math.round(r.w / 25.4 * 300)), r.w, x.fit, printLabels(), { border: x.border, smooth: x.smooth, ...(x.borderColor ? { color: x.borderColor } : {}), ...(x.filter ? { filter: x.filter } : {}) }).toDataURL('image/png'), 'PNG', r.x, r.y, r.w, r.w); }
           catch (e) { console.warn('image failed', x.path, e); }
         }
         if (printLabels()) {   // the stickers fill the sheet top to bottom, so the order line runs up the left margin
@@ -6488,7 +6600,8 @@ async function makePdf(o, batch, asPng){
       const dpi = Math.min(200, 7000 / (Math.max(pm.w, pm.h) / 25.4));
       const full = document.createElement('canvas'); full.width = Math.round(pm.w / 25.4 * dpi); full.height = Math.round(pm.h / 25.4 * dpi);
       const fx = full.getContext('2d'); fx.fillStyle = it.front.bg || '#ffffff'; fx.fillRect(0, 0, full.width, full.height);
-      if (img) { const L = layoutFrac({ w: img.naturalWidth, h: img.naturalHeight }, { ...it.front }, pm.w, pm.h); fx.drawImage(img, L.left * full.width, L.top * full.height, L.dw * full.width, L.dh * full.height); }
+      if (img) { const L = layoutFrac({ w: img.naturalWidth, h: img.naturalHeight }, { ...it.front }, pm.w, pm.h); fxDrawImage(fx, img, it.front, L.left * full.width, L.top * full.height, L.dw * full.width, L.dh * full.height); }
+      if (fxOn(it.front.fx)) paintFx(fx, it.front, full.width, full.height, { round: false, thin: true });   // words and border, like the preview
       const pxmm = full.width / pm.w, pieces = [];
       for (let r0 = 0; r0 < rows; r0++) for (let c0 = 0; c0 < cols; c0++) {
         // sheets overlap by ov: each one repeats the strip the next sheet is glued onto. The last row/column can be shorter.
@@ -7771,6 +7884,25 @@ const ACTIONS = {
     if (freeFits(sheet, { x: it.x, y: it.y, w: nw }, it.uid)) { it.w = +nw.toFixed(2); drawSheet(); drawBottom(); }
     else { const spot = +t.dataset.d > 0 ? freeSpot(sheet, nw, { x: it.x + nw / 2, y: it.y + nw / 2 }, it.uid) : null;
       if (spot) { it.x = +spot.x.toFixed(2); it.y = +spot.y.toFixed(2); it.w = +nw.toFixed(2); drawSheet(); drawBottom(); } else toast('No room to make it bigger here. Try Auto-arrange.'); } },
+  stkTab: t => { S.stkTab = t.dataset.v; drawSheet(); },
+  stkBorder: t => { const s = selected(); if (!s) return; const v = t.dataset.v;
+    if (v === 'none') s.border = 'none'; else { s.border = 'white'; s.borderColor = v === 'color' ? (s.borderColor || '#283971') : undefined; } buzz(4); drawSheet(); },
+  stkBorderColor: t => { const s = selected(); if (!s) return; s.border = 'white'; s.borderColor = t.dataset.c; buzz(4); drawSheet(); },
+  stkOutline: t => { const s = selected(); if (!s) return; s.smooth = t.dataset.v === '1'; buzz(4); drawSheet(); },
+  stkFilter: t => { const s = selected(); if (!s) return; s.filter = t.dataset.v === 'none' ? undefined : t.dataset.v; buzz(4); drawSheet(); },
+  wordsFont: t => wordsRedo({ font: t.dataset.v }),
+  wordsColor: t => wordsRedo({ color: t.dataset.c }),
+  wdOpen: () => { S.wordsDraft = { value: '', font: 'bold', color: '#283971' }; drawCtrl(); const t = $('#wdIn'); if (t) t.focus(); },
+  wdCancel: () => { S.wordsDraft = null; drawCtrl(); },
+  wdFont: t => { S.wordsDraft.font = t.dataset.v; drawCtrl(); },
+  wdColor: t => { S.wordsDraft.color = t.dataset.c; drawCtrl(); },
+  wdMake: async () => {
+    const w = S.wordsDraft; if (!w || !w.value.trim()) { toast('Type some words first.'); const t = $('#wdIn'); if (t) t.focus(); return; }
+    if (S.images.length >= CONFIG.maxPictures) return toast(`You can add up to ${CONFIG.maxPictures} pictures.`);
+    const im = await wordsImage(w); if (!im) return toast("Couldn't make that sticker. Try other words.");
+    S.images.push(im); S.selImage = im.id; S.selItem = null; S.wordsDraft = null; buzz([8, 30, 8]);
+    toast('Your words sticker is ready. Tap the sheet to place it.'); drawCtrl(); drawSheet();
+  },
   smoothToggle: () => { const it = selected(); if (!it) return; it.smooth = !itemSmooth(it);
     toast(it.smooth ? 'Smooth outline: rounded and simple.' : 'Exact outline: the white border follows every corner.'); drawSheet(); },
   sheetSmooth: t => { const v = t.dataset.v === '1'; S.sheets[S.cur].items.forEach(it => { if (!it.bg && !it.h) it.smooth = v; });
