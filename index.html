@@ -1187,16 +1187,15 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .hero .cdc.next .cdc-n{color:var(--cdc)}
 .hero .cdtw.t1{right:-5px;top:-6px;width:12px;height:12px}.hero .cdtw.t2{left:-4px;bottom:-5px;width:8px;height:8px}
 @media (prefers-reduced-motion:reduce){.hero .cdc{rotate:0deg}}
-/* a quiet nudge (suggestion box, "Don't see what you want?"): one small pill, the same everywhere */
-.nudgewrap{margin:4px 0 24px}.nudgewrap.center{display:flex;justify-content:center;margin:22px 0 6px}
-.nudge{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:6px 14px 6px 6px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);color:var(--muted);font:inherit;font-size:15px;text-decoration:none;cursor:pointer;text-align:left;transition:border-color .2s var(--ease)}
-.nudge b{color:var(--ink);font-weight:700}
-.nudge > svg:last-child{flex:none;color:var(--ink);opacity:.5;transition:transform .2s var(--ease),opacity .2s}
-.nudge:hover{border-color:var(--ink)}.nudge:hover > svg:last-child{transform:translateX(3px);opacity:1}
-.nd-ic{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--gold-soft);color:var(--ink)}
-.nd-ic svg{color:#B07D10}
-.nudge.done{cursor:default;border-style:dashed}.nudge.done .nd-ic{background:#E3F4E8}.nudge.done .nd-ic svg{color:#1F7A44}
-.nudge.done .linkbtn{margin-left:4px;min-height:auto}
+/* quiet extras ("Got an idea? Tell us", "Don't see what you want? Tell us"): plain text and an underlined link, like "Print a file" */
+.softlink{margin:18px 0 26px;font-size:15.5px;color:var(--muted)}
+.softlink.center{text-align:center;margin:24px 0 8px}
+.bento + .softlink{margin-top:2px}
+.txtlink{display:inline-block;padding:11px 0;margin:-11px 0;border:0;background:none;font:inherit;font-weight:700;color:var(--ink);cursor:pointer;white-space:nowrap;
+  text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;text-decoration-color:var(--xu-gold)}
+.txtlink:hover{text-decoration-color:var(--ink)}
+.sbox.quiet .softlink{margin:0}
+.sbox.open{grid-template-columns:minmax(0,1fr)}
 .sbox.quiet{margin:6px 0 26px;padding:0;border:0;background:none;box-shadow:none;display:block}
 /* the suggestion box, once opened: a calm card */
 .sbox{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:14px 18px;margin:6px 0 26px;padding:20px 22px;background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-md)}
@@ -3609,11 +3608,10 @@ const SB_KINDS = [['product', 'A new product', 'Like: phone case inserts, or big
   ['other', 'Something else', 'Anything you want to tell us']];
 function suggestBoxHTML(){
   const s = S.sbox || { open: false };
-  if (s.sent) return `<section class="sbox quiet" aria-live="polite"><p class="nudge done"><span class="nd-ic">${ic('check', 16)}</span><span>Thanks, it's in the box. We read every one.</span>
-    <button type="button" class="linkbtn" data-act="sbAgain">Share another</button></p></section>`;
-  if (!s.open) return `<section class="sbox quiet"><button type="button" class="nudge" data-act="sbOpen"><span class="nd-ic">${sbIcon()}</span><span>Got an idea for Stick2It? <b>Tell us</b></span>${ic('arrow', 16)}</button></section>`;
+  if (s.sent) return `<section class="sbox quiet" aria-live="polite"><p class="softlink">Thanks, it's in the box. We read every one. <button type="button" class="txtlink" data-act="sbAgain">Share another</button></p></section>`;
+  if (!s.open) return `<section class="sbox quiet"><p class="softlink">Got an idea for Stick2It? <button type="button" class="txtlink" data-act="sbOpen">Tell us</button></p></section>`;
   const k = SB_KINDS.find(x => x[0] === s.kind) || null;
-  return `<section class="sbox open" aria-labelledby="sbH"><span class="sb-ic">${sbIcon()}</span>
+  return `<section class="sbox open" aria-labelledby="sbH">
     <div class="sb-t"><h2 id="sbH">Suggestion box</h2><p>What's it about?</p>
       <div class="sb-kinds" role="radiogroup" aria-label="What it's about">${SB_KINDS.map(([v, l]) => `<button type="button" role="radio" aria-checked="${s.kind === v}" class="sb-k ${s.kind === v ? 'on' : ''}" data-act="sbKind" data-v="${v}">${l}</button>`).join('')}</div>
       ${k ? '' : '<div class="sb-acts"><button type="button" class="linkbtn" data-act="sbClose">Cancel</button></div>'}
@@ -3624,7 +3622,6 @@ function suggestBoxHTML(){
       <p class="ferr" id="sbErr" role="alert"></p>
       <div class="sb-acts">${btn('Send it', { act: 'sbSend', icon: 'arrow' })}<button type="button" class="linkbtn" data-act="sbClose">Cancel</button></div>` : ''}</div></section>`;
 }
-const sbIcon = () => `<svg viewBox="0 0 40 40" width="20" height="20" aria-hidden="true"><path d="M8 17a12 12 0 0 1 24 0v15H8z" fill="#fff" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M8 32h24" stroke="currentColor" stroke-width="2.5"/><rect x="14" y="19" width="12" height="3.5" rx="1.75" fill="currentColor"/><path d="M28 6v11" stroke="#ec282a" stroke-width="2.5" stroke-linecap="round"/><path d="M28 6h6v4h-6" fill="#ec282a"/></svg>`;
 function sbRedraw(focus){ const el = document.querySelector('.sbox'); if (!el) return; el.outerHTML = suggestBoxHTML(); sbBind(); if (focus) { const f = $(focus); if (f) f.focus(); } }
 function sbBind(){ const s = S.sbox; if (!s) return; const t = $('#sbText'), n = $('#sbName');
   if (t) t.addEventListener('input', () => { s.text = t.value; const e = $('#sbErr'); if (e && t.value.trim().length >= 3) e.textContent = ''; }); if (n) n.addEventListener('input', () => { s.name = n.value; }); }
@@ -3635,7 +3632,7 @@ function viewIdeas(kind){   // the suggestion box on its own page (#/ideas, or #
     ${suggestBoxHTML()}</main>`;
   sbBind(); const f = $(S.sbox.kind ? '#sbText' : '.sb-k'); if (f) setTimeout(() => f.focus({ preventScroll: true }), 50);
 }
-const ideaLine = (text, kind, center) => `<p class="nudgewrap ${center ? 'center' : ''}"><a class="nudge" href="#/ideas${kind ? '/' + kind : ''}"><span class="nd-ic">${ic('sparkle', 16)}</span><span>${text} <b>Tell us</b></span>${ic('arrow', 16)}</a></p>`;
+const ideaLine = (text, kind, center) => `<p class="softlink ${center ? 'center' : ''}">${text} <a class="txtlink" href="#/ideas${kind ? '/' + kind : ''}">Tell us</a></p>`;
 function viewHome(){
   const g = geom(), live = liveProducts(), others = live.filter(p => p.key !== 'stickers').map(p => p.name.toLowerCase());
   const list = others.length ? `stickers, ${others.slice(0, -1).join(', ')}${others.length > 1 ? ',' : ''} and ${others[others.length - 1]}` : '';
