@@ -1107,8 +1107,52 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 /* thermal printer card */
 .prn-on{display:flex;gap:8px;align-items:center;margin:4px 0 12px;font-size:15px}
 .prn-paper{display:flex;align-items:center;gap:12px;margin-top:14px}.prn-paper .lab{margin:0}
+.prn-lab{margin-top:14px;padding:14px;border-radius:14px;background:var(--accent-soft);display:grid;gap:10px}
+.prn-log{margin:0;padding:10px 12px 10px 30px;max-height:220px;overflow:auto;background:#fff;border:1.5px solid var(--line);border-radius:10px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
+.prn-log:empty{display:none}
+.prn-res{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.prn-res div{padding:8px 10px;background:#fff;border-radius:10px}.prn-res dt{font-size:13px;color:var(--muted)}.prn-res dd{margin:0;font-weight:800}
+.prn-lab .acts{display:flex;flex-wrap:wrap;gap:10px}
 .prn-pick{margin-top:12px;padding:12px;border-radius:14px;background:var(--gold-soft)}.prn-pick .lab{display:block;margin:0 0 8px}.prn-pick .seg button{min-width:56px}
 .prncard .acts{display:flex;flex-wrap:wrap;gap:10px}
+/* many pins at once: the row of pins */
+.btray{display:flex;flex-wrap:wrap;gap:10px;padding:6px 2px 8px}
+.bt{position:relative;flex:none;width:62px;height:62px;padding:0;border:2px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;display:grid;place-items:center;scroll-snap-align:start;transition:transform .15s var(--ease),border-color .15s}
+.bt.round{border-radius:50%}
+.bt:active{transform:scale(.95)}
+.bt.on{border-color:var(--ink);box-shadow:0 0 0 3px var(--xu-gold)}
+.bt .fthumb{border:0;width:54px!important}
+.bt-empty{color:var(--muted)}
+.bt-q{position:absolute;right:-6px;top:-6px;min-width:24px;height:22px;padding:0 5px;border-radius:999px;background:var(--ink);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;box-shadow:0 0 0 2px #fff}
+.bt-add{border-style:dashed;border-color:var(--ink);background:var(--gold-soft);gap:0;align-content:center}
+.bt-add small{font-weight:800;font-size:12px;line-height:1}
+.bt-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin-top:4px}
+.bt-acts{display:flex;gap:8px;flex-wrap:wrap}
+.bt-change{display:inline-flex;align-items:center;gap:6px;margin-top:12px;min-height:40px;padding:4px 14px;border:2px solid var(--ink);border-radius:999px;background:var(--paper);font-weight:700;font-size:14px;cursor:pointer}
+.bt-change:hover{background:var(--accent-soft)}
+.was{font-size:.55em;color:var(--muted);font-weight:700;margin-left:4px}
+/* Make it yours */
+.fxc{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.fx-tabs{display:flex;width:100%}.fx-tabs button{flex:1;position:relative;min-height:44px}
+.fx-dot{position:absolute;top:6px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--xu-gold);box-shadow:0 0 0 1.5px var(--ink)}
+.fx-body{margin-top:16px}
+.fx-body .seg{display:flex;width:100%}.fx-body .seg button{flex:1;min-width:0;white-space:nowrap;padding:8px 10px}
+.fx-words{position:relative}.fx-words .inp{width:100%;padding-right:44px}
+.fx-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;border-radius:50%;background:var(--accent-soft);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.fx-rings,.fx-filters{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:10px}
+.fx-ring,.fx-filter{display:grid;justify-items:center;gap:6px;padding:8px 4px;border:2px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;font:inherit;color:inherit}
+.fx-ring.on,.fx-filter.on{border-color:var(--ink);background:var(--gold-soft);box-shadow:var(--shadow-sm)}
+.fx-ring small,.fx-filter small{font-size:12.5px;font-weight:700;line-height:1.15;text-align:center}
+.fx-rprev{width:38px;height:38px;border-radius:8px;background:#e8ebf5;box-shadow:inset 0 0 0 1px var(--line)}
+.fx-rprev.round{border-radius:50%}
+.fx-rprev.r-solid{box-shadow:inset 0 0 0 6px var(--c)}
+.fx-rprev.r-dots{box-shadow:inset 0 0 0 6px var(--c);background:radial-gradient(circle,#fff 1.4px,transparent 1.6px) 0 0/6px 6px,#e8ebf5}
+.fx-rprev.r-stripes{box-shadow:inset 0 0 0 6px var(--c);background:repeating-linear-gradient(45deg,transparent 0 3px,rgba(255,255,255,.7) 3px 5px),#e8ebf5}
+.fx-rprev.r-double{box-shadow:inset 0 0 0 3px var(--c),inset 0 0 0 5px #e8ebf5,inset 0 0 0 7px var(--c)}
+.fx-fprev{width:52px;height:52px;border-radius:10px;background:#ddd center/cover no-repeat;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.fx-fprev.round{border-radius:50%}
+.fx-sw .sw{width:34px;height:34px}
+.fx-sw .sw[style*="#ffffff"]{border-color:var(--line)}
 /* smart tools progress line */
 .aiprog{margin:2px 0 0;padding:8px 12px;border-radius:12px;background:var(--accent-soft);font-size:14px;font-weight:600;text-align:center}
 /* sticker outlines, promo code help, pickup people summary */
@@ -2679,7 +2723,7 @@ const tileLabel = t => ({ 1: '1', 2: '2', 4: '2 × 2', 9: '3 × 3' })[t] || Stri
 function frameMm(it){
   if (it.mm && it.type !== 'pins' && it.type !== 'keychains') return it.mm;   // pins and keychains always use today's size, so older orders print to fit the real parts
   const z = P(it.type).sizes.find(s => s.id === it.size) || P(it.type).sizes[0];
-  if (it.type === 'pins') return { w: z.cutMm, h: z.cutMm, face: z.cutMm, round: true };   // the whole printed circle is the pin
+  if (it.type === 'pins') return { w: z.cutMm, h: z.cutMm, face: z.cutMm, vis: z.faceMm || z.cutMm, round: true };   // the whole printed circle is the pin; vis = the front you see
   if (it.type === 'posters' && +it.cols > 0 && +it.rows > 0) {
     // Like Rasterbator: sheets across x sheets down. orient is the direction of each sheet.
     const m = CONFIG.posterMarginMm; let sw = z.wMm, sh = z.hMm; if (it.orient === 'landscape') [sw, sh] = [sh, sw];
@@ -2706,12 +2750,14 @@ const fracStyle = L => `width:${L.dw * 100}%;height:${L.dh * 100}%;left:${L.left
 function fitThumb(img){
   try {
     const d = JSON.parse(img.dataset.d), L = layoutFrac({ w: img.naturalWidth, h: img.naturalHeight }, d, +img.dataset.w, +img.dataset.h);
-    img.setAttribute('style', fracStyle(L));
+    img.setAttribute('style', fracStyle(L) + (fxFilterCss(d) ? `;filter:${fxFilterCss(d)}` : ''));
+    const cv = img.parentNode.querySelector('canvas.fxc'); if (cv) fxPaintCanvas(cv, d, { round: img.parentNode.classList.contains('round'), face: +img.dataset.face || 1 });
   } catch {}
 }
 function framedThumb(d, url, mm, width = 80){
+  const fx = fxOn(d.fx) ? d.fx : null;
   return `<div class="fthumb ${mm.round ? 'round' : ''}" style="width:${width}px;aspect-ratio:${mm.w}/${mm.h};background:${d.bg || '#fff'}">${url
-    ? `<img src="${url}" alt="" data-d='${esc(JSON.stringify({ zoom: d.zoom, ox: d.ox, oy: d.oy }))}' data-w="${mm.w}" data-h="${mm.h}" onload="fitThumb(this)">` : ''}</div>`;
+    ? `<img src="${url}" alt="" data-d='${esc(JSON.stringify({ zoom: d.zoom, ox: d.ox, oy: d.oy, ...(fx ? { fx } : {}) }))}' data-w="${mm.w}" data-h="${mm.h}" data-face="${mm.vis ? mm.vis / mm.w : 1}" onload="fitThumb(this)">${fx ? '<canvas class="fxc" aria-hidden="true"></canvas>' : ''}` : ''}</div>`;
 }
 function itemThumb(it, urlFor){
   if (it.type === 'posters' && it.mode === 'pages') return `<div class="docthumb">${ic('doc', 26)}<b class="num">${it.pages}</b><small>PDF pages</small></div>`;
@@ -2733,7 +2779,7 @@ function serializeItems(items, pathFor){
     if (it.type === 'prints') return { ...base, qty: it.qty, pages: it.pages, duplex: !!it.duplex,
       files: (it.files || []).map(f => ({ path: pathFor[f.id], name: f.name, pages: f.pages, kind: f.kind, orient: f.orient || null })) };
     if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ ...(sh.free ? { free: true } : {}), ...(sh.imported ? { imported: sh.imported } : {}), ...(sh.fromImport ? { fromImport: sh.fromImport } : {}), ...(sh.template ? { template: sh.template.slug } : {}), items: sh.items.map(x => ({ path: pathFor[x.imageId], ...(isFree(x) ? { x: x.x, y: x.y, w: x.w, ...(x.h ? { h: x.h } : {}) } : { col: x.col, row: x.row, size: x.size }), fit: x.fit, ...(x.border === 'none' ? { border: 'none' } : {}), ...(typeof x.smooth === 'boolean' ? { smooth: x.smooth } : {}) })) })) };
-    const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy, bg: x.bg || '#ffffff' } : null;
+    const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy, bg: x.bg || '#ffffff', ...(fxOn(x.fx) ? { fx: clone(x.fx) } : {}) } : null;
     if (it.type === 'posters' && it.mode === 'pages') return { ...base, qty: it.qty, mode: 'pages', pages: it.pages, across: it.across, tiles: it.pages,
       pdf: { path: pathFor[it.pdf.id], name: it.pdf.name, pages: it.pages } };
     const out = { ...base, qty: it.qty, mm: frameMm(it), front: d(it.front) };
@@ -2950,6 +2996,7 @@ function drawThumbEd(){ const box = $('#sheet .sheetbox'); if (!box) return; con
     cv.addEventListener('pointermove', mv); cv.addEventListener('pointerup', up); });
 }
 async function tplModeImage(type){
+  await fxFontsReady();
   if (type === 'stickers') {   // the whole sheet, drawn like the print (cut lines included)
     const sheet = S.sheets[S.cur]; if (!sheet || !sheet.items.length) return null;
     const g = geom(), dpi = 170, k = dpi / 25.4, c = document.createElement('canvas'); c.width = Math.round(g.widthMm * k); c.height = Math.round(g.heightMm * k);
@@ -3011,7 +3058,7 @@ async function useTemplate(t){
     const im = await processFile(new File([blob], `${t.slug}.png`, { type: blob.type || 'image/png' }), t.type === 'posters' ? 6000 : 2400);
     S.images.push(im); S.editing = null;
     S.fd = newFd(t.type); if (t.size && liveSizes(t.type).some(z => z.id === t.size)) S.fd.size = t.size;
-    Object.assign(S.fd.front, { imageId: im.id, zoom: 1, ox: 0, oy: 0 }); S.fd.template = { slug: t.slug, name: t.name };
+    Object.assign(S.fd.front, { imageId: im.id, zoom: 1, ox: 0, oy: 0, tpl: { slug: t.slug, name: t.name } }); S.fd.template = { slug: t.slug, name: t.name };
     if (t.type === 'posters') posterRegrid(S.fd);
     toast(`${t.name} is in!`);   // same quiet message as sticker sheets, no box on the page
     if (location.hash === designRoute(t.type)) drawFramed(); else location.hash = designRoute(t.type);
@@ -4171,18 +4218,20 @@ async function prnConnectBt(){
   const dev = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: PRN_BT });
   let ch = await prnFindWritable(await dev.gatt.connect());
   if (!ch) { try { dev.gatt.disconnect(); } catch {} throw new Error('NO_WRITE'); }
-  const uuid = ch.uuid, level = () => Math.min(2, +safeLS.get('sk_prn_slow') || 0), PACE = [[100, 18], [40, 25], [20, 35]];   // bytes per piece, pause after it
+  const uuid = ch.uuid, level = () => Math.min(2, +safeLS.get('sk_prn_slow') || 0);
+  const PACE = () => { const t = readJSON('sk_prn_pace'); return [t && t.size > 0 ? [t.size, t.gap] : [100, 18], [40, 25], [20, 35]]; };   // bytes per piece, pause after it (first one from the speed test)
   const put = part => ch.properties.write ? ch.writeValueWithResponse(part) : ch.writeValueWithoutResponse(part);
   const again = async () => { if (!dev.gatt.connected) { await pause(400); await dev.gatt.connect(); } ch = (await prnFindWritable(dev.gatt, uuid)) || ch; };
   PRN.send = async (bytes, onStep) => {
     let fails = 0;
     for (let i = 0; i < bytes.length;) {
-      const [size, gap] = PACE[level()], part = bytes.slice(i, i + size);
+      const [size, gap] = PACE()[level()], part = bytes.slice(i, i + size);
       try { await put(part); i += part.length; fails = 0; await pause(gap); if (onStep) onStep(i, bytes.length); }
       catch (e) { console.warn('printer write', e); if (++fails > 3) throw e; safeLS.set('sk_prn_slow', String(Math.min(2, level() + 1))); await again(); }   // gentler, remembered
     }
   };
   dev.addEventListener('gattserverdisconnected', () => { if (PRN.dev === dev && !PRN.busy) { PRN.send = null; PRN.dev = null; drawPrinterCard(); } });
+  PRN.raw = { put: part => put(part), again, connected: () => dev.gatt.connected };   // for the speed test
   Object.assign(PRN, { dev, name: dev.name || 'Bluetooth printer', kind: 'bt' });
 }
 async function prnConnectUsb(){
@@ -4249,6 +4298,82 @@ async function prnSend(parts, done){
     toast("The printer stopped answering. Turn it off and on, connect again, and try once more."); return false; }
   finally { PRN.busy = false; drawPrinterCard(); }
 }
+/* Printer speed test: finds how much data this printer can take, so printing can go as fast as it safely can.
+   1 Biggest piece: one send of blank data (prints nothing), bigger each time, until one fails.
+   2 Biggest burst: striped bands of 1 to 16 KB sent with no pauses. Each band has a label before and an "end" label after,
+     so if the printer quietly drops data, the paper shows it (a garbled band or a missing "end").
+   3 Safe steady speed (only if bursts fail): an 8 KB band with longer and longer pauses between pieces. */
+function prnStripes(bytes, mode){   // a striped band that takes about this many bytes to print
+  const perRow = mode === 3 ? 48 : (384 * 3 + 6) / 24, h = Math.max(24, Math.round(bytes / perRow / 24) * 24);
+  const c = document.createElement('canvas'); c.width = 384; c.height = h; const x = c.getContext('2d');
+  x.fillStyle = '#fff'; x.fillRect(0, 0, 384, h); x.strokeStyle = '#000'; x.lineWidth = 5;
+  for (let k = -h; k < 384 + h; k += 18) { x.beginPath(); x.moveTo(k, 0); x.lineTo(k + h, h); x.stroke(); }
+  x.lineWidth = 3; x.strokeRect(1.5, 1.5, 381, h - 3);
+  return escPicture(c, mode);
+}
+async function prnLab(){
+  const L = S.admin.prnLab = { running: true, log: [], res: null }, R = PRN.raw, mode = prnMode() === 4 ? 1 : prnMode();
+  const log = t => { L.log.push(t); const el = $('#prnLabLog'); if (el) { el.insertAdjacentHTML('beforeend', `<li>${esc(t)}</li>`); el.scrollTop = el.scrollHeight; } };
+  const short = e => String((e && e.message) || e).replace(/^\w*Error:\s*/, '').slice(0, 60);
+  const recover = async () => { try { await R.again(); log('  (reconnected)'); return true; } catch { log('  (could not reconnect)'); return false; } };
+  const txt = s => new Uint8Array([...ESCPOS.init, ...ESCPOS.center, ...ESCPOS.text(s + '\n')]);
+  const sendAll = async (bytes, size, gap) => { const t = performance.now(); for (let i = 0; i < bytes.length; i += size) { await R.put(bytes.slice(i, i + size)); if (gap) await pause(gap); } return (performance.now() - t) / 1000; };
+  PRN.busy = true; drawPrinterCard();
+  try {
+    log(`Printer: ${PRN.name}. Picture method ${mode}.`);
+    // 1 biggest piece
+    let piece = 0;
+    for (const n of [20, 50, 100, 150, 180, 244, 360, 512]) {
+      try { const t = performance.now(); await R.put(new Uint8Array(n)); piece = n; log(`Piece of ${n} bytes: OK (${Math.round(performance.now() - t)} ms)`); await pause(120); }
+      catch (e) { log(`Piece of ${n} bytes: failed (${short(e)})`); await recover(); break; }
+    }
+    if (!piece) throw new Error('Even 20 bytes failed');
+    const use = Math.min(piece, 180);
+    await sendAll(txt('Speed test'), 20, 30); await pause(300);
+    // 2 biggest burst, no pauses
+    let burst = 0, rate = 0;
+    for (const kb of [1, 2, 4, 8, 16]) {
+      try {
+        await sendAll(txt(`Burst ${kb} KB:`), 20, 30);
+        const band = new Uint8Array([].concat(...prnStripes(kb * 1024, mode))), s = await sendAll(band, use, 0);
+        if (!R.connected()) throw new Error('disconnected');
+        await sendAll(txt(`end ${kb} KB`), 20, 30);
+        burst = kb; rate = band.length / 1024 / s; log(`Burst of ${kb} KB, no pauses: sent in ${s.toFixed(1)} s (${rate.toFixed(1)} KB/s)`);
+        await pause(1500 + kb * 150);   // let the printer finish printing it
+      } catch (e) { log(`Burst of ${kb} KB, no pauses: failed (${short(e)})`); await recover(); await pause(800); break; }
+    }
+    // 3 safe steady speed (only needed if a full-speed 16 KB burst didn't get through)
+    let gap = burst >= 16 ? 0 : null, size = burst >= 16 ? use : Math.min(use, 100), steady = burst >= 16 ? rate : 0;
+    if (gap === null) for (const g of [10, 20, 35, 50, 80]) {
+      try {
+        await sendAll(txt(`Steady, ${g} ms pauses:`), 20, 30);
+        const band = new Uint8Array([].concat(...prnStripes(8 * 1024, mode))), s = await sendAll(band, size, g);
+        if (!R.connected()) throw new Error('disconnected');
+        await sendAll(txt(`end ${g} ms`), 20, 30);
+        gap = g; steady = band.length / 1024 / s; log(`8 KB with ${g} ms pauses: OK (${steady.toFixed(1)} KB/s)`); await pause(2000); break;
+      } catch (e) { log(`8 KB with ${g} ms pauses: failed (${short(e)})`); await recover(); await pause(800); }
+    }
+    await sendAll(new Uint8Array([...ESCPOS.init, ...ESCPOS.feed(4)]), 20, 30);
+    L.res = { piece, burst, size, gap, steady };
+    log(gap === null ? 'Result: no safe speed found. Try the USB cable.' : `Result: ${size}-byte pieces, ${gap} ms pauses, about ${steady.toFixed(1)} KB/s. A QR code (about 12 KB) takes about ${Math.max(1, Math.round(12 / steady))} s.`);
+  } catch (e) { log(`Stopped: ${short(e)}`); }
+  finally { L.running = false; PRN.busy = false; drawPrinterCard(); }
+}
+function prnLabHTML(){
+  const L = S.admin.prnLab; if (!L) return '';
+  const r = L.res, rows = r ? [['Biggest piece', `${r.piece} bytes`], ['Biggest burst at full speed', r.burst ? `${r.burst} KB` : 'under 1 KB'],
+    ['Safe pace', r.gap === null ? 'none found' : `${r.size} bytes, then ${r.gap} ms pause`], ['Safe speed', r.gap === null ? '–' : `about ${r.steady.toFixed(1)} KB/s`]] : [];
+  return `<div class="prn-lab">
+    <p class="help" style="margin:0">Finds how much data your printer can take. Uses about 20 cm of paper. Keep the phone close to the printer.</p>
+    ${L.running ? '<p class="aiprog" role="status">Testing… watch the paper too.</p>' : ''}
+    <ol class="prn-log" id="prnLabLog">${L.log.map(t => `<li>${esc(t)}</li>`).join('')}</ol>
+    ${r ? `<dl class="prn-res">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+      <p class="help" style="margin:0">Check the paper: every striped band should be clean, with its "end" line printed after it. If a band is garbled or an "end" is missing, the printer lost data there even though the phone thought it was sent.</p>` : ''}
+    <div class="acts">${L.running ? '' : smallBtn(L.log.length ? 'Run again' : 'Start the test', 'printer', 'prnLabGo', 'dark')}
+      ${r && r.gap !== null && !L.running ? smallBtn('Use these settings', 'check', 'prnLabUse', 'plain') : ''}
+      ${L.log.length && !L.running ? smallBtn('Copy results', 'copy', 'prnLabCopy', 'plain') : ''}${L.running ? '' : smallBtn('Close', 'x', 'prnLabClose', 'plain')}</div>
+  </div>`;
+}
 function prnFail(e){
   const m = String((e && (e.name + ' ' + e.message)) || '');
   if (/NotFoundError|cancel/i.test(m)) return;   // they closed the list without picking
@@ -4263,7 +4388,8 @@ function drawPrinterCard(){
     ${!can.bt && !can.usb ? `<p class="help">This browser can't connect to printers. On Android, open the site in <b>Chrome</b>. iPhones can't connect to printers from a website.</p>`
     : PRN.send ? `<p class="prn-on">${ic('check', 16)}<span>Connected to <b>${esc(PRN.name)}</b></span></p>
       <p class="aiprog" id="prnStatus" role="status" ${PRN.busy ? '' : 'hidden'}>Printing…</p>
-      <div class="acts">${smallBtn('Test print', 'printer', 'prnTest', 'dark')}${smallBtn('Find picture mode', 'sparkle', 'prnFindMode', 'plain')}${smallBtn('Disconnect', 'x', 'prnOff', 'plain')}</div>
+      <div class="acts">${smallBtn('Test print', 'printer', 'prnTest', 'dark')}${smallBtn('Find picture mode', 'sparkle', 'prnFindMode', 'plain')}${PRN.kind === 'bt' && !S.admin.prnLab ? smallBtn('Speed test', 'chart', 'prnLabOpen', 'plain') : ''}${smallBtn('Disconnect', 'x', 'prnOff', 'plain')}</div>
+      ${PRN.kind === 'bt' ? prnLabHTML() : ''}
       ${S.admin.prnPick ? `<div class="prn-pick"><span class="lab">Which test picture printed clearly?</span><div class="seg">${[1, 2, 3, 4].map(m => `<button type="button" class="${prnMode() === m ? 'on' : ''}" data-act="prnMode" data-m="${m}">${m}</button>`).join('')}</div>
         <p class="help" style="margin:6px 0 0">Picture 4 is a small QR code, if your printer can draw them itself. If none printed, turn the printer off and on, connect again, and try once more.</p></div>`
         : `<p class="help" style="margin-top:8px">Pictures: <b>${PRN_MODES[prnMode()]}</b>. If QR codes don't print right, tap Find picture mode.</p>`}`
@@ -4394,7 +4520,7 @@ function drawImport(){ const box = $('#sheet .sheetbox'); if (!box) return; box.
     if (!file.type.startsWith('image/')) return toast('That file is not a picture.');
     try { S.importDraft = { ...(S.importDraft || {}), im: await processFile(file, 4200) }; drawImport(); } catch { toast("That picture didn't open. Try saving it again, or take a screenshot of it."); } }); }
 async function onFiles(e){
-  const files = [...e.target.files]; e.target.value = '';
+  const files = [...e.target.files], more = e.target.dataset.more === '1'; e.target.value = ''; let placed = 0, firstNew = -1, firstAt = S.fd && S.fd.cur || 0;
   const up = e.target.closest('.upload'); if (up && files.length) up.classList.add('busy');
   for (const f of files) {
     if (S.images.length >= CONFIG.maxPictures) { toast(`You can add up to ${CONFIG.maxPictures} pictures.`); break; }
@@ -4402,11 +4528,21 @@ async function onFiles(e){
     if (!f.type.startsWith('image/')) { toast('That file is not a picture.'); continue; }
     try {
       const im = await processFile(f, S.view === 'framed' && S.fd && S.fd.type === 'posters' ? 6000 : 2400); S.images.push(im); S.selImage = im.id; S.selItem = null;
-      if (S.view === 'framed' && S.fd) { const d = activeDesign(); if (d) Object.assign(d, { imageId: im.id, zoom: 1, ox: 0, oy: 0 }); if (d === S.fd.front) delete S.fd.template; posterRegrid(S.fd); }
+      if (S.view === 'framed' && S.fd) {
+        const f = S.fd, many = batchOn(f) && f.side === 'front';
+        // several pins at once: the first picture goes on the open pin (if it's empty, or if this was "Change this picture"), the rest each start a new pin
+        if (many && (placed > 0 || (more && f.front.imageId))) { fdAdd(im.id); if (firstNew < 0) firstNew = f.cur; }
+        else { const d = activeDesign(); if (d) { Object.assign(d, { imageId: im.id, zoom: 1, ox: 0, oy: 0 }); delete d.tpl; } if (d === f.front) delete f.template; posterRegrid(f); }
+        placed++;
+      }
     } catch { toast("That picture didn't open. Try a screenshot of it instead."); }
-    if (S.view === 'framed') break;
+    if (S.view === 'framed' && !(batchOn(S.fd) && S.fd.side === 'front')) break;
   }
-  if (S.view === 'framed') drawFramed(); else { drawCtrl(); drawSheet(); openPicEditor(S.images.slice(-files.length).filter(i => !i.alpha).map(i => i.id)); }
+  if (S.view === 'framed') {
+    if (placed > 1 && batchOn(S.fd)) fdLoad(more && firstNew >= 0 ? firstNew : firstAt);   // open the first of the new ones
+    drawFramed(); if (placed > 1) toast(`${placed} ${P(S.fd.type).unit}s ready. Tap any one to change it.`);
+  }
+  else { drawCtrl(); drawSheet(); openPicEditor(S.images.slice(-files.length).filter(i => !i.alpha).map(i => i.id)); }
 }
 async function processFile(file, maxPx = 2400){
   const u0 = URL.createObjectURL(file);
@@ -4464,7 +4600,7 @@ function activeDesign(){
   return f.front;
 }
 const maxQtyFor = key => (CONFIG.products[key] || {}).maxQty || CONFIG.maxQty;
-function setQty(n){ S.fd.qty = Math.max(1, Math.min(maxQtyFor(S.fd.type), Math.round(+n || 1))); drawFramedCtrl(); drawFramedBottom(); }
+function setQty(n){ S.fd.qty = Math.max(1, Math.min(maxQtyFor(S.fd.type), Math.round(+n || 1))); fdSync(); drawFramedCtrl(); drawFramedBottom(); }
 function viewMake(key){
   if (!CONFIG.products[key]) return viewNotFound();
   if (!isLive(key)) return viewUnavailable(key);
@@ -4478,6 +4614,217 @@ function viewMake(key){
   drawFramed();
 }
 function drawFramed(){ drawFramedCtrl(); drawFramedStage(); drawFramedBottom(); }
+
+/* =====================================================================
+   Many pins (or keychains) at once. S.fd.batch holds every pin being made; S.fd.front/back/backMode/qty/side
+   are the open one. Each picture chosen becomes its own pin; they all go into the order together.
+   (Editing one item from the order works on just that one.)
+   ===================================================================== */
+const batchOn = f => !!f && ['pins', 'keychains'].includes(f.type) && S.editing === null;
+const fdEntry = f => ({ front: f.front, back: f.back, backMode: f.backMode, qty: f.qty, side: f.side });
+function fdSync(){ const f = S.fd; if (!batchOn(f)) return; if (!f.batch) { f.batch = [fdEntry(f)]; f.cur = 0; } else f.batch[f.cur] = fdEntry(f); }
+function fdLoad(i){ const f = S.fd; fdSync(); f.cur = Math.max(0, Math.min(f.batch.length - 1, i)); Object.assign(f, f.batch[f.cur]); f.side = 'front'; }
+function fdAdd(imageId){   // a new pin; it keeps the open pin's look (ring, filter, letters), not its words
+  const f = S.fd; fdSync(); const cur = f.front, d = blankDesign(); if (imageId) d.imageId = imageId; d.bg = (cur && cur.bg) || '#ffffff';
+  if (cur && cur.fx) { d.fx = clone(cur.fx); if (d.fx.text) d.fx.text.value = ''; }
+  f.batch.push({ front: d, back: blankDesign(), backMode: f.backMode || 'same', qty: 1, side: 'front' }); f.cur = f.batch.length - 1; Object.assign(f, f.batch[f.cur]);
+}
+const batchList = () => { const f = S.fd; if (!batchOn(f)) return [fdEntry(f)]; fdSync(); return f.batch; };
+const batchItems = () => batchList().filter(e => e.front.imageId).map(e => framedItem(S.fd, e));
+function framedItem(f, e){
+  const item = { type: f.type, size: f.size, qty: e.qty, addons: f.addons.slice(), front: clone(e.front) };
+  if (f.type === 'posters') { item.orient = f.orient; item.cols = f.cols; item.rows = f.rows; item.tiles = f.cols * f.rows; item.count = f.count; item.sizeBy = f.sizeBy; item.fit = f.fit || 'fit'; item.wMm = f.wMm; item.hMm = f.hMm; item.ovMm = f.ovMm; }
+  if (f.type === 'keychains') { item.backMode = e.backMode; item.back = clone(e.back); }
+  if (e.front.tpl) item.template = e.front.tpl; else if (!batchOn(f) && f.template) item.template = f.template;   // only the pin that used a ready-made design
+  return item;
+}
+// pins of this kind already in the order (not counting the one being edited) plus everything here
+const framedTotalUnits = f => S.cart.filter((it, i) => i !== S.editing && it.type === f.type).reduce((t, it) => t + (+it.qty || 0), 0) + batchList().filter(e => e.front.imageId || e === f.batch?.[f.cur]).reduce((t, e) => t + (+e.qty || 0), 0);
+function batchTrayHTML(){
+  const f = S.fd, list = batchList(), mm = frameMm(f), unit = P(f.type).unit, n = list.length, k = (f.cur || 0) + 1;
+  return `<div class="btray" role="list" aria-label="Your ${unit}s">${list.map((e, i) => { const im = e.front.imageId && imgById(e.front.imageId);
+      return `<button type="button" role="listitem" class="bt ${i === (f.cur || 0) ? 'on' : ''} ${f.type === 'pins' ? 'round' : ''}" data-act="fdPick" data-i="${i}" aria-label="${unit} ${i + 1}${e.qty > 1 ? `, ${e.qty} of them` : ''}" aria-current="${i === (f.cur || 0)}">
+        ${im ? framedThumb(e.front, im.url, mm, 54) : `<span class="bt-empty">${ic('image', 18)}</span>`}${e.qty > 1 ? `<span class="bt-q num">×${e.qty}</span>` : ''}</button>`; }).join('')}
+      <label class="bt bt-add ${f.type === 'pins' ? 'round' : ''}" title="Add more pictures"><span>${ic('plus', 20)}</span><small>Add</small><input type="file" accept="image/*" multiple hidden data-more="1" class="fileMore"></label></div>
+    <div class="bt-bar"><span class="muted small">${n > 1 ? `${unit[0].toUpperCase() + unit.slice(1)} ${k} of ${n}. Tap one to change it.` : `Tip: choose several pictures at once to make several ${unit}s.`}</span>
+      <span class="bt-acts">${smallBtn('Duplicate', 'copy', 'fdDup', 'plain')}${n > 1 ? smallBtn('Remove', 'trash', 'fdRemove', 'plain') : ''}</span></div>`;
+}
+function batchSectionHTML(step){
+  const f = S.fd, unit = P(f.type).unit, has = !!f.front.imageId || batchList().some(e => e.front.imageId);
+  if (!has) return `<section>${step(`Add pictures`)}
+      <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose pictures<small>Pick one, or several at once: each picture becomes its own ${unit}.</small></span>
+        <input id="fileIn" type="file" accept="image/*" multiple hidden></label></section>`;
+  return `<section>${step(`Your ${unit}s`)}<div id="btrayWrap">${batchTrayHTML()}</div>
+      ${f.front.imageId ? `<label class="pf-ch bt-change">${ic('image', 16)}Change this picture<input id="fileIn" type="file" accept="image/*" hidden></label>`
+        : `<label class="upload" style="margin-top:12px"><span class="ui">${ic('plus', 22)}</span><span>Choose a picture for this ${unit}</span><input id="fileIn" type="file" accept="image/*" hidden></label>`}</section>`;
+}
+function batchTrayRefresh(){ const w = $('#btrayWrap'); if (!w || !batchOn(S.fd)) return; w.innerHTML = batchTrayHTML(); w.querySelectorAll('.fileMore').forEach(i => i.addEventListener('change', onFiles)); }
+function saveManyToCart(items){
+  buzz([10, 30, 10]); items.forEach(it => S.cart.push(it)); S.editing = null; S.justAdded = D('cart_bounce'); location.hash = '#/cart';
+  if (items.length > 1) toast(`Added ${items.length} ${P(items[0].type).unit}s to your order.`);
+}
+
+/* =====================================================================
+   "Make it yours" for pins and keychains: words, a ring (border), a photo filter.
+   One painter (paintFx) draws the ring and words for the preview, the small pictures in the cart and admin,
+   and the printed pin, so what customers see is exactly what prints.
+   ===================================================================== */
+const FX_FILTERS = { none: '', bw: 'grayscale(1) contrast(1.08)', warm: 'sepia(.22) saturate(1.3) hue-rotate(-6deg) brightness(1.03)',
+  cool: 'saturate(1.08) hue-rotate(14deg) brightness(1.04)', bright: 'brightness(1.12) contrast(1.1) saturate(1.2)', vintage: 'sepia(.5) contrast(.92) brightness(1.06) saturate(.8)' };
+const FX_FILTER_NAMES = [['none', 'None'], ['bw', 'Black and white'], ['warm', 'Warm'], ['cool', 'Cool'], ['bright', 'Bright'], ['vintage', 'Vintage']];
+const FX_COLORS = ['#ffffff', '#283971', '#111111', '#F2BC2E', '#ec282a', '#F7A8C4', '#7AD3B0'];
+const FX_FONTS = { bold: ['800', "'Cabinet Grotesk', 'Arial Black', sans-serif", 'Bold'], clean: ['700', "'Satoshi', system-ui, sans-serif", 'Clean'] };
+const fxFilterCss = d => (d && d.fx && FX_FILTERS[d.fx.filter]) || '';
+const fxOn = fx => !!fx && ((fx.filter && fx.filter !== 'none') || (fx.ring && fx.ring.style && fx.ring.style !== 'none') || (fx.text && (fx.text.value || '').trim()));
+const fxEnsure = d => { d.fx = d.fx || {}; d.fx.text = d.fx.text || { value: '', place: 'bottom', font: 'bold', color: '#ffffff' }; d.fx.ring = d.fx.ring || { style: 'none', color: '#283971', size: 'thin' }; return d.fx; };
+const fxContrast = c => { const h = (c || '#ffffff').replace('#', ''), n = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h, 16);
+  const l = (0.299 * (n >> 16 & 255) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255)) / 255; return l > 0.62 ? '#283971' : '#ffffff'; };
+const fxFontsWanted = fx => fx && fx.text && (fx.text.value || '').trim() ? [`${FX_FONTS[fx.text.font] ? FX_FONTS[fx.text.font][0] : '800'} 40px ${(FX_FONTS[fx.text.font] || FX_FONTS.bold)[1]}`] : [];
+async function fxFontsReady(){ try { await Promise.all(Object.values(FX_FONTS).map(([w, fam]) => document.fonts.load(`${w} 40px ${fam}`))); } catch {} }
+// opt: { round: true for pins, face: visible face as a share of the printed circle (the rest wraps around the back) }
+function paintFx(x, d, W, H, opt){
+  const fx = d && d.fx; if (!fxOn(fx)) return;
+  const ring = fx.ring && fx.ring.style !== 'none' ? fx.ring : null, tx = fx.text && (fx.text.value || '').trim() ? fx.text : null;
+  x.save();
+  if (opt.round) {
+    const cx = W / 2, cy = H / 2, R = W / 2, Rf = R * (opt.face || 1), t = Rf * (ring && ring.size === 'thick' ? 0.21 : 0.14);
+    // where curved words sit on the ring (so dots and stripes leave that part plain)
+    const onRingTx = !!(tx && ring && ring.style !== 'double' && tx.place !== 'across');
+    let gapA = null;
+    if (onRingTx) { const [wt0, fam0] = FX_FONTS[tx.font] || FX_FONTS.bold, s0 = tx.value.trim(); let fs0 = t * 0.66; const r0 = Rf - t / 2;
+      const wAt = () => { x.font = `${wt0} ${fs0}px ${fam0}`; return [...s0].reduce((a, ch) => a + x.measureText(ch).width + fs0 * 0.06, -fs0 * 0.06); };
+      while (wAt() / r0 > Math.PI * 1.15 && fs0 > 4) fs0 *= 0.92;
+      const half = wAt() / r0 / 2 + t * 0.45 / r0, mid = tx.place === 'top' ? -Math.PI / 2 : Math.PI / 2; gapA = [mid - half, mid + half]; }
+    const inGap = a => { if (!gapA) return false; let v = a; while (v < gapA[0]) v += Math.PI * 2; while (v > gapA[0] + Math.PI * 2) v -= Math.PI * 2; return v <= gapA[1]; };
+    if (ring) {
+      const col = ring.color || '#283971', con = fxContrast(col), inner = Rf - t;
+      const annulus = (ro, ri) => { x.beginPath(); x.arc(cx, cy, ro, 0, Math.PI * 2); x.arc(cx, cy, ri, 0, Math.PI * 2, true); };
+      if (ring.style === 'double') { x.fillStyle = col; annulus(R, Rf - t * 0.42); x.fill(); annulus(Rf - t * 0.72, inner); x.fill(); }
+      else {
+        x.fillStyle = col; annulus(R, inner); x.fill();
+        if (ring.style === 'dots') { const r = Rf - t / 2, n = Math.max(12, Math.floor(2 * Math.PI * r / (t * 0.8))); x.fillStyle = con;
+          for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2; if (inGap(a)) continue; x.beginPath(); x.arc(cx + r * Math.cos(a), cy + r * Math.sin(a), t * 0.17, 0, Math.PI * 2); x.fill(); } }
+        if (ring.style === 'stripes') { x.save(); annulus(R, inner); x.clip(); x.strokeStyle = con; x.lineWidth = t * 0.22; x.globalAlpha = 0.85;
+          for (let k = -2 * R; k < 2 * R; k += t * 0.6) { x.beginPath(); x.moveTo(cx + k - R, cy - R); x.lineTo(cx + k + R, cy + R); x.stroke(); } x.restore();
+          if (gapA) { x.fillStyle = col; x.beginPath(); x.arc(cx, cy, R, gapA[0], gapA[1]); x.arc(cx, cy, inner, gapA[1], gapA[0], true); x.closePath(); x.fill(); } }
+      }
+    }
+    if (tx) {
+      const [wt, fam] = FX_FONTS[tx.font] || FX_FONTS.bold, col = tx.color || '#ffffff', con = fxContrast(col), onRing = onRingTx;
+      const s = tx.value.trim();
+      if (tx.place === 'across') {
+        let fs = Rf * 0.26; x.font = `${wt} ${fs}px ${fam}`; const maxW = Rf * 1.55, w0 = x.measureText(s).width; if (w0 > maxW) { fs *= maxW / w0; x.font = `${wt} ${fs}px ${fam}`; }
+        x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineJoin = 'round'; const y = cy + Rf * 0.52;
+        x.strokeStyle = con; x.lineWidth = fs * 0.24; x.strokeText(s, cx, y); x.fillStyle = col; x.fillText(s, cx, y);
+      } else {
+        const top = tx.place === 'top'; let fs = onRing ? t * 0.66 : Rf * 0.17; const rr = () => onRing ? Rf - t / 2 : Rf - fs * 0.95;
+        const gap = () => fs * 0.06, widthAt = () => { x.font = `${wt} ${fs}px ${fam}`; return [...s].reduce((a, ch) => a + x.measureText(ch).width + gap(), -gap()); };
+        while (widthAt() / rr() > Math.PI * 1.15 && fs > 4) fs *= 0.92;   // keep the words on about the bottom (or top) half
+        const r = rr(), span = widthAt() / r; x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineJoin = 'round';
+        let a = top ? -Math.PI / 2 - span / 2 : Math.PI / 2 + span / 2;
+        for (const ch of s) { const cw = x.measureText(ch).width, step = (cw + gap()) / r, mid = top ? a + cw / 2 / r : a - cw / 2 / r;
+          x.save(); x.translate(cx + r * Math.cos(mid), cy + r * Math.sin(mid)); x.rotate(top ? mid + Math.PI / 2 : mid - Math.PI / 2);
+          if (!onRing) { x.strokeStyle = con; x.lineWidth = fs * 0.24; x.strokeText(ch, 0, 0); }
+          x.fillStyle = col; x.fillText(ch, 0, 0); x.restore(); a = top ? a + step : a - step; }
+      }
+    }
+  } else {
+    const m = Math.min(W, H), t = m * (ring && ring.size === 'thick' ? 0.1 : 0.065);
+    if (ring) {
+      const col = ring.color || '#283971', con = fxContrast(col), frame = (o, i) => { x.beginPath(); x.rect(o, o, W - 2 * o, H - 2 * o); x.rect(i, i, W - 2 * i, H - 2 * i); };
+      if (ring.style === 'double') { x.fillStyle = col; frame(0, t * 0.45); x.fill('evenodd'); frame(t * 0.72, t); x.fill('evenodd'); }
+      else {
+        x.fillStyle = col; frame(0, t); x.fill('evenodd');
+        if (ring.style === 'dots') { x.fillStyle = con; const h = t / 2, per = 2 * (W + H - 2 * t), n = Math.max(16, Math.floor(per / (t * 0.8)));
+          for (let i = 0; i < n; i++) { let p = i / n * per, px, py; const w = W - t, hh = H - t;
+            if (p < w) { px = h + p; py = h; } else if ((p -= w) < hh) { px = W - h; py = h + p; } else if ((p -= hh) < w) { px = W - h - p; py = H - h; } else { p -= w; px = h; py = H - h - p; }
+            x.beginPath(); x.arc(px, py, t * 0.17, 0, Math.PI * 2); x.fill(); } }
+        if (ring.style === 'stripes') { x.save(); frame(0, t); x.clip('evenodd'); x.strokeStyle = con; x.lineWidth = t * 0.22; x.globalAlpha = 0.85;
+          for (let k = -H; k < W + H; k += t * 0.6) { x.beginPath(); x.moveTo(k, 0); x.lineTo(k + H, H); x.stroke(); } x.restore(); }
+      }
+    }
+    if (tx) {
+      const [wt, fam] = FX_FONTS[tx.font] || FX_FONTS.bold, col = tx.color || '#ffffff', con = fxContrast(col), s = tx.value.trim(), pad = ring ? t : 0;
+      let fs = m * 0.12; x.font = `${wt} ${fs}px ${fam}`; const maxW = W - 2 * pad - m * 0.12, w0 = x.measureText(s).width; if (w0 > maxW) { fs *= maxW / w0; x.font = `${wt} ${fs}px ${fam}`; }
+      const y = tx.place === 'top' ? pad + m * 0.04 + fs * 0.62 : H - pad - m * 0.04 - fs * 0.62;
+      x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineJoin = 'round'; x.strokeStyle = con; x.lineWidth = fs * 0.24; x.strokeText(s, W / 2, y); x.fillStyle = col; x.fillText(s, W / 2, y);
+    }
+  }
+  x.restore();
+}
+// browsers without canvas filters (older Safari): the same looks, worked out pixel by pixel
+function fxFilterPixels(c, name){
+  const x = c.getContext('2d'), d = x.getImageData(0, 0, c.width, c.height), p = d.data, cl = v => v < 0 ? 0 : v > 255 ? 255 : v;
+  for (let i = 0; i < p.length; i += 4) { let r = p[i], g = p[i + 1], b = p[i + 2]; const l = 0.299 * r + 0.587 * g + 0.114 * b;
+    if (name === 'bw') { const v = (l - 128) * 1.08 + 128; r = g = b = v; }
+    else if (name === 'warm') { r = r * 1.08 + 10; g = g * 1.02 + 4; b = b * 0.88; }
+    else if (name === 'cool') { r = r * 0.92; g = g * 1.0 + 4; b = b * 1.08 + 10; }
+    else if (name === 'bright') { r = (r * 1.12 - 128) * 1.1 + 128; g = (g * 1.12 - 128) * 1.1 + 128; b = (b * 1.12 - 128) * 1.1 + 128; }
+    else if (name === 'vintage') { const sr = 0.393 * r + 0.769 * g + 0.189 * b, sg = 0.349 * r + 0.686 * g + 0.168 * b, sb = 0.272 * r + 0.534 * g + 0.131 * b;
+      r = (r * 0.5 + sr * 0.5) * 0.98 + 8; g = (g * 0.5 + sg * 0.5) * 0.98 + 6; b = (b * 0.5 + sb * 0.5) * 0.95; }
+    p[i] = cl(r); p[i + 1] = cl(g); p[i + 2] = cl(b); }
+  x.putImageData(d, 0, 0);
+}
+// draw a picture with its filter onto a canvas context (used by printing)
+function fxDrawImage(x, img, d, dx, dy, dw, dh){
+  const f = fxFilterCss(d);
+  if (!f) return x.drawImage(img, dx, dy, dw, dh);
+  if ('filter' in x) { x.save(); x.filter = f; x.drawImage(img, dx, dy, dw, dh); x.restore(); return; }
+  const t = document.createElement('canvas'); t.width = Math.max(1, Math.round(Math.abs(dw))); t.height = Math.max(1, Math.round(Math.abs(dh)));
+  t.getContext('2d').drawImage(img, 0, 0, t.width, t.height); fxFilterPixels(t, d.fx.filter); x.drawImage(t, dx, dy, dw, dh);
+}
+// paint every ring-and-words layer inside an element (preview, thumbnails); waits for the font if needed
+function fxPaintCanvas(cv, d, opt){
+  if (!cv) return; const w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return;
+  const k = Math.min(3, window.devicePixelRatio || 1); cv.width = Math.round(w * k); cv.height = Math.round(h * k);
+  const x = cv.getContext('2d'), paint = () => { x.clearRect(0, 0, cv.width, cv.height); paintFx(x, d, cv.width, cv.height, opt); }; paint();
+  const want = fxFontsWanted(d && d.fx); if (want.length && !want.every(f => document.fonts.check(f))) Promise.all(want.map(f => document.fonts.load(f))).then(paint).catch(() => {});
+}
+function fxPaintStage(){
+  const f = S.fd; if (!f || !['pins', 'keychains'].includes(f.type)) return;
+  const d = shownDesign(), mm = frameMm(f), opt = { round: f.type === 'pins', face: mm.vis ? mm.vis / mm.w : 1 };
+  document.querySelectorAll('#fstage canvas.fxc').forEach(cv => fxPaintCanvas(cv, d, opt));
+  ['#fimg', '#fimg2'].forEach(q => { const el = $(q); if (el) el.style.filter = fxFilterCss(d); });
+}
+// the "Make it yours" section: Words / Ring (Border) / Filter
+function fxSectionHTML(step, d){
+  const f = S.fd; if (!d || !d.imageId || !['pins', 'keychains'].includes(f.type)) return '';
+  const fx = fxEnsure(d), tab = f.fxTab || 'text', pin = f.type === 'pins', ringName = pin ? 'Ring' : 'Border', im = imgById(d.imageId);
+  const sw = (act, cur, extra = '') => `<div class="swatches fx-sw">${FX_COLORS.map(c => `<button type="button" class="sw ${cur.toLowerCase() === c.toLowerCase() ? 'on' : ''}" style="background:${c}" data-act="${act}" data-c="${c}" aria-label="Color ${c}" aria-pressed="${cur.toLowerCase() === c.toLowerCase()}"></button>`).join('')}
+    <label class="sw rainbow ${FX_COLORS.some(c => c.toLowerCase() === cur.toLowerCase()) ? '' : 'on'}" title="Pick any color"><input type="color" data-fxpick="${act}" value="${cur}" aria-label="Pick any color">${FX_COLORS.some(c => c.toLowerCase() === cur.toLowerCase()) ? '' : `<span style="background:${cur}"></span>`}</label>${extra}</div>`;
+  const seg = (act, cur, opts) => `<div class="seg">${opts.map(([v, l]) => `<button type="button" class="${cur === v ? 'on' : ''}" data-act="${act}" data-v="${v}" aria-pressed="${cur === v}">${l}</button>`).join('')}</div>`;
+  const places = pin ? [['bottom', 'Bottom'], ['top', 'Top'], ['across', 'Across']] : [['bottom', 'Bottom'], ['top', 'Top']];
+  if (!places.some(([v]) => v === fx.text.place)) fx.text.place = 'bottom';
+  const body = tab === 'text' ? `
+      <label class="lab flab" for="fxWords" style="margin-top:0">Words <span class="muted small" style="font-weight:500">optional</span></label>
+      <div class="fx-words"><input class="inp" id="fxWords" maxlength="28" value="${esc(fx.text.value || '')}" placeholder="A name or a date" autocomplete="off">
+        ${fx.text.value ? `<button type="button" class="fx-clear" data-act="fxTextClear" aria-label="Remove the words">${ic('x', 16)}</button>` : ''}</div>
+      <p class="lab flab">Where</p>${seg('fxPlace', fx.text.place, places)}
+      <p class="lab flab">Letters</p>${seg('fxFont', fx.text.font, Object.entries(FX_FONTS).map(([k, v]) => [k, `<span style="font-family:${v[1].replace(/"/g, '&quot;')};font-weight:${v[0]}">${v[2]}</span>`]))}
+      <p class="lab flab">Color</p>${sw('fxTextColor', fx.text.color || '#ffffff')}`
+    : tab === 'ring' ? `
+      <p class="lab flab" style="margin-top:0">Style</p>
+      <div class="fx-rings">${[['none', 'None'], ['solid', 'Solid'], ['dots', 'Dots'], ['stripes', 'Stripes'], ['double', 'Double']].map(([v, l]) => `<button type="button" class="fx-ring ${fx.ring.style === v ? 'on' : ''}" data-act="fxRing" data-v="${v}" aria-pressed="${fx.ring.style === v}">
+        <span class="fx-rprev ${pin ? 'round' : ''} r-${v}" style="--c:${fx.ring.color}"></span><small>${l}</small></button>`).join('')}</div>
+      ${fx.ring.style !== 'none' ? `<p class="lab flab">Thickness</p>${seg('fxRingSize', fx.ring.size || 'thin', [['thin', 'Thin'], ['thick', 'Thick']])}<p class="lab flab">Color</p>${sw('fxRingColor', fx.ring.color || '#283971')}` : ''}`
+    : `<div class="fx-filters">${FX_FILTER_NAMES.map(([v, l]) => `<button type="button" class="fx-filter ${(fx.filter || 'none') === v ? 'on' : ''}" data-act="fxFilter" data-v="${v}" aria-pressed="${(fx.filter || 'none') === v}">
+        <span class="fx-fprev ${pin ? 'round' : ''}" style="background-image:url('${im.url}');filter:${FX_FILTERS[v] || 'none'}"></span><small>${l}</small></button>`).join('')}</div>`;
+  const badge = k => (k === 'text' && (fx.text.value || '').trim()) || (k === 'ring' && fx.ring.style !== 'none') || (k === 'filter' && fx.filter && fx.filter !== 'none') ? '<i class="fx-dot" aria-label="(on)"></i>' : '';
+  return `<section class="fxsec">${step('Make it yours')}
+    <div class="seg fx-tabs" role="tablist">${[['text', 'Words'], ['ring', ringName], ['filter', 'Filter']].map(([k, l]) => `<button type="button" role="tab" aria-selected="${tab === k}" class="${tab === k ? 'on' : ''}" data-act="fxTab" data-v="${k}">${l}${badge(k)}</button>`).join('')}</div>
+    <div class="fx-body">${body}</div></section>`;
+}
+function fxAfter(){ buzz(4); fdSync(); drawFramedCtrl(); fxPaintStage(); }
+function fxBind(){
+  const d = activeDesign(), w = $('#fxWords');
+  if (w && d) { w.addEventListener('input', () => { fxEnsure(d).text.value = w.value; fxPaintStage(); });
+    w.addEventListener('change', () => batchTrayRefresh()); }
+  document.querySelectorAll('#ctrl [data-fxpick]').forEach(inp => {
+    const apply = () => { const dd = activeDesign(); if (!dd) return; const fx = fxEnsure(dd); if (inp.dataset.fxpick === 'fxTextColor') fx.text.color = inp.value; else fx.ring.color = inp.value; fxPaintStage(); };
+    inp.addEventListener('input', apply); inp.addEventListener('change', () => { apply(); drawFramedCtrl(); });
+  });
+}
+
 function drawFramedCtrl(){
   $('#ctrl').classList.toggle('pst', S.fd.type === 'posters');   // posters: one consistent set of controls (see .pst styles)
   if (S.fd.type === 'posters' && S.fd.mode === 'pages' && S.fd.pdf) return drawPosterPagesCtrl();
@@ -4494,7 +4841,7 @@ function drawFramedCtrl(){
       ${backSide ? `<div style="margin-top:12px">${[['same','Same picture as the front'],['different','A different picture'],['blank','Leave it clear']].map(([v, l]) =>
         `<label class="choice"><input type="radio" name="backMode" value="${v}" ${f.backMode === v ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>` : ''}
     </section>` : ''}
-    ${!backSide || f.backMode === 'different' ? `<section>${step(backSide ? 'Back picture' : 'Add a picture')}
+    ${!backSide && batchOn(f) ? batchSectionHTML(step) + starterRowHTML(f.type) : !backSide || f.backMode === 'different' ? `<section>${step(backSide ? 'Back picture' : 'Add a picture')}
       <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>${f.type === 'posters' ? 'Choose a picture or PDF' : 'Choose a picture'}<small>${f.type === 'posters' ? 'A picture, or a PDF. Got a Rasterbator PDF? Upload it and we print its pages as they are.' : `From your phone, tablet, or computer. One picture fills the whole ${esc(p.unit)}`}</small></span>
         <input id="fileIn" type="file" accept="${f.type === 'posters' ? 'image/*,application/pdf' : 'image/*'}" hidden></label>
       ${S.images.some(im => !im.sheet) ? `<div class="tray">${S.images.filter(im => !im.sheet).map(im => `
@@ -4533,18 +4880,22 @@ function drawFramedCtrl(){
           ${custom ? `<span style="background:${bg}"></span>` : ''}</label>
         <span class="muted small">${custom ? 'Your color. Tap the rainbow to change it.' : 'White. Tap the rainbow to pick any color.'}</span></div>`; })()}
     </section>` : ''}
-    ${!backSide ? `<section>${step('How many?')}
+    ${fxSectionHTML(step, d)}
+    ${!backSide ? `<section>${step(batchOn(f) && batchList().length > 1 ? `How many of this ${esc(p.unit)}?` : 'How many?')}
       <div class="qty"><button type="button" data-act="fdQty" data-d="-1" aria-label="One less">−</button><input id="qtyIn" class="num" type="number" inputmode="numeric" min="1" max="${maxQtyFor(f.type)}" value="${f.qty}" aria-label="How many"><button type="button" data-act="fdQty" data-d="1" aria-label="One more">+</button></div>
       ${(() => { const d = liveDeals().find(x => x.type === 'tiers' && x.product === f.type); if (!d) return '';
-        const tiers = (d.tiers || []).slice().sort((a, b) => a.min - b.min), base = unitPrice(f), cur = tiers.filter(t => t.min <= f.qty).pop();
+        const tiers = (d.tiers || []).slice().sort((a, b) => a.min - b.min), base = unitPrice(f), tot = framedTotalUnits(f), cur = tiers.filter(t => t.min <= tot).pop();
         return `<div class="classpack"><div class="cp-h">${ic('school', 18)}<b>Ordering for your class?</b></div>
           <p class="help" style="margin:2px 0 10px">The more pins in one order, the cheaper each one gets.</p>
-          <div class="ladder">${tiers.map(t => `<button type="button" class="rung ${cur && cur.min === t.min ? 'cur' : f.qty >= t.min ? 'on' : ''}" data-act="fdQtySet" data-n="${Math.min(t.min, maxQtyFor(f.type))}">
+          <div class="ladder">${tiers.map(t => `<button type="button" class="rung ${cur && cur.min === t.min ? 'cur' : tot >= t.min ? 'on' : ''}" data-act="fdQtySet" data-n="${Math.max(1, Math.min(maxQtyFor(f.type), t.min - (tot - f.qty)))}">
             <b>${t.min}+</b><span class="num">${money(base - t.off)}</span><small>each</small></button>`).join('')}</div>
-          ${cur ? `<p class="cp-now">${ic('check', 16)}Class pack price: <b class="num">${money(base - cur.off)}</b> each, you save <b class="num">${money(cur.off * f.qty)}</b></p>` : ''}</div>`; })()}
+          ${cur ? `<p class="cp-now">${ic('check', 16)}Class pack price: <b class="num">${money(base - cur.off)}</b> each, you save <b class="num">${money(cur.off * tot)}</b></p>` : ''}
+          ${batchOn(f) && batchList().length > 1 ? `<p class="help" style="margin:8px 0 0">Counts every ${esc(p.unit)} in your order: ${tot} so far.</p>` : ''}</div>`; })()}
       ${liveAddons(f.type).length ? `<div style="margin-top:14px">${addonChecks(f.type, f.addons)}</div>` : ''}
     </section>` : ''}`;
   const fi = $('#fileIn'); if (fi) fi.addEventListener('change', onFiles);
+  $('#ctrl').querySelectorAll('.fileMore').forEach(i => i.addEventListener('change', onFiles));
+  fxBind();
   const qi = $('#qtyIn'); if (qi) qi.addEventListener('change', () => setQty(qi.value));
   const bp = $('#bgPick');
   if (bp) {
@@ -4572,12 +4923,12 @@ function drawFramedStage(){
     const k = mm.w / mm.face, off = -(k - 1) / 2 * 100;
     const im = f.front.imageId && imgById(f.front.imageId);
     html = `<div class="pinstage">
-        <div class="pinedit"><div class="pinwrap"><div class="frame" id="frame" style="background:${bg}">${frameInner(f.front, 'Choose a picture')}
+        <div class="pinedit"><div class="pinwrap"><div class="frame" id="frame" style="background:${bg}">${frameInner(f.front, 'Choose a picture')}<canvas class="fxc" aria-hidden="true"></canvas>
           <span class="wrapzone" style="--face:${mm.face / mm.w * 100}%"></span><span class="facering" style="width:${mm.face / mm.w * 100}%"></span></div></div>
           <span class="cap">${ic('move', 14)}Drag to move</span></div>
         <div class="pinprev">
           <div class="pp"><div class="pp-face"><div class="pp-inner" style="width:${k * 100}%;left:${off}%;top:${off}%;background:${bg}">
-            ${im ? `<img id="fimg2" src="${im.url}" alt="" draggable="false">` : ''}</div><span class="pp-gloss"></span></div></div>
+            ${im ? `<img id="fimg2" src="${im.url}" alt="" draggable="false">` : ''}<canvas class="fxc" aria-hidden="true"></canvas></div><span class="pp-gloss"></span></div></div>
           <span class="cap">How it looks</span></div>
       </div>
       <p class="under" style="max-width:460px">This circle is exactly what gets printed (${Math.round(mm.w)} mm). Keep faces and words a little in from the edge.</p>`;
@@ -4627,14 +4978,14 @@ function drawFramedStage(){
     const showBack = f.side === 'back', d = sd;
     const clear = showBack && f.backMode === 'blank';
     html = `<div class="kc"><span class="ring"></span><span class="loop"></span><div class="case">
-        <div class="frame ${clear ? 'clear' : ''}" id="frame" style="aspect-ratio:${mm.w}/${mm.h};${clear ? '' : `background:${bg}`}" data-locked="${showBack && f.backMode !== 'different'}">${clear ? '' : frameInner(d, showBack && f.backMode === 'different' ? 'Choose the back picture' : 'Choose a picture')}</div></div></div>
+        <div class="frame ${clear ? 'clear' : ''}" id="frame" style="aspect-ratio:${mm.w}/${mm.h};${clear ? '' : `background:${bg}`}" data-locked="${showBack && f.backMode !== 'different'}">${clear ? '' : '<canvas class="fxc" aria-hidden="true"></canvas>' + frameInner(d, showBack && f.backMode === 'different' ? 'Choose the back picture' : 'Choose a picture')}</div></div></div>
       <p class="under">${showBack ? (f.backMode === 'same' ? 'The back shows the same picture.' : f.backMode === 'blank' ? 'The back stays clear.' : 'This is the back of the keychain.') : `This is the front, shown at its real shape: the picture inside the keychain is ${mm.w / 10} × ${mm.h / 10} cm. Tap "Back" to choose the other side.`}</p>`;
   }
   $('#fstage').innerHTML = html + `<div id="reswarn"></div>`;
   $('#fstage').querySelectorAll('.filePick').forEach(i => i.addEventListener('change', onFiles));
   const frEl = $('#frame'); if (frEl) frEl.classList.toggle('has-img', !!$('#fimg'));
   const img = $('#fimg'); if (img) { if (img.complete) placeImg(); else img.onload = placeImg; }
-  bindPan();
+  bindPan(); fxPaintStage();
 }
 /* Pins: a small A4 showing where their pins go on the real print sheet (same grid the shop prints with) */
 function shownDesign(){
@@ -4646,8 +4997,9 @@ function placeImg(){
   const img = $('#fimg'), d = shownDesign(); if (!img || !d) return;
   const im = imgById(d.imageId); if (!im) return;
   const mm = frameMm(S.fd), L = layoutFrac(im, d, mm.w, mm.h);
-  img.setAttribute('style', fracStyle(L));
-  const img2 = $('#fimg2'); if (img2) img2.setAttribute('style', fracStyle(L));
+  const flt = fxFilterCss(d) ? `;filter:${fxFilterCss(d)}` : '';
+  img.setAttribute('style', fracStyle(L) + flt);
+  const img2 = $('#fimg2'); if (img2) img2.setAttribute('style', fracStyle(L) + flt);
   // Let the page scroll in any direction the picture can't move in (e.g. a wide photo in a tall poster)
   const fr = $('#frame');
   if (fr) { const mx = Math.abs(L.dw - 1) > .002, my = Math.abs(L.dh - 1) > .002; fr.style.touchAction = mx && my ? 'none' : mx ? 'pan-y' : my ? 'pan-x' : 'pan-y'; }
@@ -4706,10 +5058,14 @@ function drawFramedBottom(){
   const f = S.fd, p = P(f.type);
   const ready = f.type === 'posters' && f.mode === 'pages' ? !!(f.pdf && f.pdf.pages > 0)
     : !!f.front.imageId && !(f.type === 'keychains' && f.backMode === 'different' && !f.back.imageId);
-  const others = S.cart.filter((_, i) => i !== S.editing), hint = dealNudges(others.concat([f])).find(t => t.product === f.type);
-  $('#bottom').innerHTML = `${hint ? `<div class="bb-hint">${ic('sparkle', 13)}<span>${esc(hint.text)}</span></div>` : ''}<div><div class="tot num">${money(f.qty * unitPrice(f))}</div>
-      <div class="sub">${f.qty} ${esc(p.unit)}${f.qty === 1 ? '' : 's'}</div></div>
-    ${btn(S.editing !== null ? 'Save changes' : 'Add to order', { act: 'addFramed', icon: S.editing !== null ? 'check' : 'arrow', attrs: ready ? '' : 'disabled' })}`;
+  const others = S.cart.filter((_, i) => i !== S.editing), many = batchOn(f), mine = many ? batchItems() : [f];
+  const hint = dealNudges(others.concat(mine.length ? mine : [f])).find(t => t.product === f.type);
+  const units = mine.reduce((t, it) => t + (+it.qty || 0), 0) || f.qty, designs = mine.length;
+  const pay = many ? computeDeals(others.concat(mine)).total - computeDeals(others).total : f.qty * unitPrice(f), full = mine.reduce((t, it) => t + it.qty * unitPrice(it), 0);
+  const label = S.editing !== null ? 'Save changes' : many && designs > 1 ? `Add ${designs} ${esc(p.unit)}s` : 'Add to order';
+  $('#bottom').innerHTML = `${hint ? `<div class="bb-hint">${ic('sparkle', 13)}<span>${esc(hint.text)}</span></div>` : ''}<div><div class="tot num">${money(pay)}${many && full > pay ? ` <s class="was">${money(full)}</s>` : ''}</div>
+      <div class="sub">${units} ${esc(p.unit)}${units === 1 ? '' : 's'}${designs > 1 ? `, ${designs} designs` : ''}</div></div>
+    ${btn(label, { act: 'addFramed', icon: S.editing !== null ? 'check' : 'arrow', attrs: ready || (many && designs) ? '' : 'disabled' })}`;
   bumpTotal();
 }
 
@@ -5858,7 +6214,8 @@ function renderFramed(img, d, mm, dpi, round){
   const x = c.getContext('2d'), L = layoutFrac({ w: img.naturalWidth, h: img.naturalHeight }, { ...d }, mm.w, mm.h);
   if (round) { x.beginPath(); x.arc(pw / 2, ph / 2, pw / 2, 0, Math.PI * 2); x.clip(); }
   x.fillStyle = d.bg || '#ffffff'; x.fillRect(0, 0, pw, ph);
-  x.drawImage(img, L.left * pw, L.top * ph, L.dw * pw, L.dh * ph);
+  fxDrawImage(x, img, d, L.left * pw, L.top * ph, L.dw * pw, L.dh * ph);
+  if (fxOn(d.fx)) paintFx(x, d, pw, ph, { round: !!round, face: mm.vis ? mm.vis / mm.w : 1 });   // words and ring, exactly like the preview
   return round ? { data: c.toDataURL('image/png'), fmt: 'PNG' } : { data: c.toDataURL('image/jpeg', 0.92), fmt: 'JPEG' };
 }
 /* Pins: as many paper circles as fit on A4, evenly spaced (4 across, 6 down at 44 mm) */
@@ -5918,6 +6275,7 @@ const pinsAgain = o => o.status === 'printing' && !o.images_deleted && orderItem
 const kcAgain = o => o.status === 'printing' && !o.images_deleted && orderItems(o).some(it => it.type === 'keychains' && it.front);
 async function pinSheets(asPng, again){
   if (!(await needLib('pdf'))) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
+  await fxFontsReady();
   const list = S.admin.orders.filter(again ? pinsAgain : pinsWaiting);
   if (!list.length) return toast(again ? 'No orders in Printing have pins.' : 'No confirmed pin orders waiting to print.');
   toast(`Packing the pins from ${list.length} order${list.length === 1 ? '' : 's'}. This can take a bit.`);
@@ -5971,6 +6329,7 @@ const sheetsCoverOrder = o => { const l = o.layout || {}; return orderItems(o).e
 /* Every confirmed keychain waiting to print, from all orders, on shared A4 sheets. Two-sided ones: front and back side by side. */
 async function kcSheets(asPng, again){
   if (!(await needLib('pdf'))) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
+  await fxFontsReady();
   const list = S.admin.orders.filter(again ? kcAgain : kcWaiting);
   if (!list.length) return toast(again ? 'No orders in Printing have keychains.' : 'No confirmed keychain orders waiting to print.');
   toast(`Packing the keychains from ${list.length} order${list.length === 1 ? '' : 's'}. This can take a bit.`);
@@ -6032,6 +6391,7 @@ async function batchPrint(date){
   S.admin.filter = 'printing'; drawAdminBody();
 }
 async function makePdf(o, batch, asPng){
+  await fxFontsReady();
   if (!(await needLib('pdf'))) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
   if (o.images_deleted) { if (!batch) toast('The pictures for this order were already cleaned up.'); return 'gone'; }
   const asIs = it => it.type === 'prints' || it.mode === 'pages';   // customer files we print exactly as they are
@@ -7229,7 +7589,7 @@ const ACTIONS = {
     const inCart = S.cart.some((it, i) => i !== S.editing && (it.type === 'stickers' ? it.sheets.some(sh => sh.items.some(x => x.imageId === id)) : [it.front, it.back].some(d => d && d.imageId === id)));
     if (inCart) { toast('This picture is used in your order. Remove that item first.'); return; }
     if (S.view === 'framed') {
-      [S.fd.front, S.fd.back].forEach(d => { if (d.imageId === id) Object.assign(d, blankDesign()); });
+      [S.fd.front, S.fd.back, ...(S.fd.batch || []).flatMap(e => [e.front, e.back])].forEach(d => { if (d && d.imageId === id) Object.assign(d, blankDesign()); });
       S.images = S.images.filter(i => i.id !== id); revoke(im.url); drawFramed(); return;
     }
     const saved = S.sheets.map(s => s.items.slice());
@@ -7407,6 +7767,22 @@ const ACTIONS = {
   },
   fdImg: t => { setTimeout(() => { if (S.fd) { posterRegrid(S.fd); drawFramed(); } }, 0); const d = activeDesign(); if (!d) return; Object.assign(d, { imageId: t.dataset.id, zoom: 1, ox: 0, oy: 0 }); drawFramed(); },
   fdSide: t => { S.fd.side = t.dataset.side; drawFramed(); },
+  fdPick: t => { const i = +t.dataset.i; if (i === S.fd.cur) return; fdLoad(i); buzz(5); drawFramed(); },
+  fdDup: () => { const f = S.fd; fdSync(); const e = clone(fdEntry(f)); e.side = 'front'; f.batch.splice(f.cur + 1, 0, e); f.cur++; Object.assign(f, f.batch[f.cur]);
+    toast(`Copied. Change this copy, or keep it as it is.`); drawFramed(); },
+  fdRemove: t => { const f = S.fd; fdSync(); if (f.batch.length < 2) return; if (!armed(t, 'Tap again to remove')) return;
+    f.batch.splice(f.cur, 1); f.cur = Math.min(f.cur, f.batch.length - 1); Object.assign(f, f.batch[f.cur]); f.side = 'front'; drawFramed(); },
+  fxTab: t => { S.fd.fxTab = t.dataset.v; drawFramedCtrl(); },
+  fxPlace: t => { const d = activeDesign(); if (!d) return; fxEnsure(d).text.place = t.dataset.v; fxAfter(); },
+  fxFont: t => { const d = activeDesign(); if (!d) return; fxEnsure(d).text.font = t.dataset.v; fxAfter(); },
+  fxTextColor: t => { const d = activeDesign(); if (!d) return; fxEnsure(d).text.color = t.dataset.c; fxAfter(); },
+  fxTextClear: () => { const d = activeDesign(); if (!d) return; fxEnsure(d).text.value = ''; fxAfter(); },
+  fxRing: t => { const d = activeDesign(); if (!d) return; const fx = fxEnsure(d); fx.ring.style = t.dataset.v;
+    if (t.dataset.v !== 'none' && (fx.text.value || '').trim() && fx.text.color === '#ffffff' && fxContrast(fx.ring.color) !== '#ffffff') fx.text.color = '#283971'; fxAfter(); },
+  fxRingSize: t => { const d = activeDesign(); if (!d) return; fxEnsure(d).ring.size = t.dataset.v; fxAfter(); },
+  fxRingColor: t => { const d = activeDesign(); if (!d) return; const fx = fxEnsure(d); fx.ring.color = t.dataset.c;
+    if ((fx.text.value || '').trim() && fx.text.place !== 'across' && fx.text.color.toLowerCase() === t.dataset.c.toLowerCase()) fx.text.color = fxContrast(t.dataset.c); fxAfter(); },
+  fxFilter: t => { const d = activeDesign(); if (!d) return; fxEnsure(d).filter = t.dataset.v; fxAfter(); },
   fdSize: t => { S.fd.size = t.dataset.size; posterRegrid(S.fd); drawFramed(); },
   fdOrient: t => { S.fd.orient = t.dataset.o; posterRegrid(S.fd); drawFramed(); },
   fdReset: () => { const d = activeDesign(); if (d) { Object.assign(d, { zoom: 1, ox: 0, oy: 0 }); drawFramed(); } },
@@ -7477,6 +7853,12 @@ const ACTIONS = {
     if (f.type === 'posters' && f.mode === 'pages' && f.pdf) {
       if (!(f.pdf.pages > 0)) return;
       S.fd = null; saveToCart({ type: 'posters', size: f.size, qty: f.qty, addons: [], mode: 'pages', pages: f.pdf.pages, across: f.across, tiles: f.pdf.pages, pdf: { ...f.pdf } }); return;
+    }
+    if (batchOn(f)) {
+      const list = batchList(), bad = list.findIndex(e => e.front.imageId && f.type === 'keychains' && e.backMode === 'different' && !e.back.imageId);
+      if (bad >= 0) { fdLoad(bad); f.side = 'back'; drawFramed(); return toast(`Keychain ${bad + 1} needs its back picture.`); }
+      const items = batchItems(); if (!items.length) return;
+      S.fd = null; return saveManyToCart(items);
     }
     if (!f.front.imageId) return;
     const item = { type: f.type, size: f.size, qty: f.qty, addons: f.addons.slice(), front: { ...f.front } };
@@ -7920,6 +8302,12 @@ const ACTIONS = {
   prnBt: async () => { try { await prnConnectBt(); toast(`Connected to ${PRN.name}.`); } catch (e) { prnFail(e); } drawPrinterCard(); },
   prnUsb: async () => { try { await prnConnectUsb(); toast(`Connected to ${PRN.name}.`); } catch (e) { prnFail(e); } drawPrinterCard(); },
   prnOff: async () => { const d = PRN.dev; PRN.send = null; PRN.dev = null; try { if (PRN.kind === 'bt') d.gatt.disconnect(); else await d.close(); } catch {} toast('Printer disconnected.'); drawPrinterCard(); },
+  prnLabOpen: () => { S.admin.prnLab = { running: false, log: [], res: null }; drawPrinterCard(); },
+  prnLabClose: () => { S.admin.prnLab = null; drawPrinterCard(); },
+  prnLabGo: () => { if (!PRN.raw || PRN.busy) return; prnLab(); },
+  prnLabUse: () => { const r = S.admin.prnLab && S.admin.prnLab.res; if (!r || r.gap === null) return;
+    safeLS.set('sk_prn_pace', JSON.stringify({ size: r.size, gap: r.gap })); safeLS.set('sk_prn_slow', '0'); toast(`Saved: ${r.size}-byte pieces with ${r.gap} ms pauses.`); },
+  prnLabCopy: async () => { const t = (S.admin.prnLab.log || []).join('\n'); try { await navigator.clipboard.writeText(t); toast('Copied. Paste it in your message to Claude.'); } catch { toast(t.slice(0, 200)); } },
   prnPaper: t => { safeLS.set('sk_prn_w', t.dataset.w); drawPrinterCard(); },
   prnTest: async () => {
     const now = new Date().toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' }), line = '-'.repeat(prnWidth() === 576 ? 48 : 32);
