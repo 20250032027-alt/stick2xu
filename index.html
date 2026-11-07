@@ -1139,9 +1139,11 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .split .stage2{padding-top:0}
 .split .pinwrap .frame{width:min(100%,320px)}
 .adjsec .hint{display:none}
-.split .adjsec{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 22px;align-items:center}
-.split .adjsec .stephead{grid-column:1/-1;margin-bottom:0}
-.split .adjsec .zoomrow{margin:0}
+.split .adjsec{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center}   /* zoom and background side by side when they fit, stacked when they don't */
+.split .adjsec .stephead{flex:1 0 100%;margin-bottom:0}
+.split .adjsec .zoomrow{margin:0;flex:1 1 260px;min-width:0}
+.split .adjsec .zoomrow input[type=range]{min-width:0}
+.split .adjsec .bgrow{flex:0 0 auto}
 .bgrow .flab{margin:16px 0 8px}
 .split .bgrow{display:flex;align-items:center;gap:10px}.split .bgrow .flab{margin:0;white-space:nowrap}.split .bgrow .flab .muted,.split .bgrow .swatches .muted{display:none}
 .bt-note{margin:2px 0 8px}
@@ -1155,7 +1157,7 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
   .split .dcol{display:contents}
   .split #fstage{order:1}.split #ctrl{order:2}.split #ctrlO{order:3}.split #ctrlQ{order:4}
 }
-@media(max-width:420px){.split .adjsec{grid-template-columns:1fr}}
+
 @media(max-width:900px){
   .split #ctrl .phead{display:none}                       /* the product name is already clear on phones */
   .split #ctrl .phead + section{margin-top:0;padding-top:0;border-top:0}
@@ -1337,6 +1339,22 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .upload .ui.aa{font-family:var(--display);font-weight:800;font-size:17px;letter-spacing:-.02em}
 .wordsbtn.on{background:var(--accent-soft);border-style:solid}
 .addhelp{margin:8px 0 0;font-size:13.5px}
+/* calmer designers: the next-step line, optional extras behind one button, "More" tiles */
+.nextstep{display:flex;align-items:center;gap:10px;width:min(100%,520px);margin:0 0 14px;padding:10px 14px;border-radius:14px;background:var(--gold-soft);border:1.5px solid #EED9A0;color:var(--ink);font-size:15px;font-weight:600;line-height:1.35}
+.nextstep .ns-ic{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--xu-gold);color:var(--ink)}
+.nextstep.done{background:#E8F5EC;border-color:#BFE3CB}.nextstep.done .ns-ic{background:#2E8B57;color:#fff}
+.stage2 > .nextstep{align-self:center}
+.fxopen{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border:2px dashed var(--line);border-radius:var(--r-md);background:#fff;color:var(--ink);font:inherit;text-align:left;cursor:pointer;transition:border-color .2s}
+.fxopen:hover{border-color:var(--ink)}
+.fxopen > svg:last-child{flex:none;margin-left:auto;opacity:.6}
+.fo-ic{flex:none;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--gold-soft);color:#B07D10}
+.fo-t{display:grid;gap:1px}.fo-t b{font-size:16px}.fo-t small{font-size:13.5px;color:var(--muted)}
+.stkopen{margin-top:14px;width:min(100%,520px)}
+.fx-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.fx-head .stephead{margin-bottom:0}
+.fx-head .linkbtn{min-height:40px}
+.fxsec .fx-head + .fx-tabs{margin-top:12px}.stkcard .fx-head{margin-bottom:12px}
+.more-tile{display:grid;justify-items:center;align-content:center;gap:4px;padding:8px 4px;border:2px dashed var(--line);border-radius:14px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;min-height:64px}
+.more-tile:hover{border-color:var(--ink)}.more-tile small{font-size:12.5px;font-weight:700}
 /* fonts: tiles that show your words in each font */
 .wd-fonts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .wd-font{display:grid;justify-items:center;align-content:center;gap:3px;min-height:64px;padding:8px 4px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit;cursor:pointer}
@@ -3984,13 +4002,33 @@ function stkCardHTML(sel){
       + (bmode !== 'none' ? g('Outline', seg('stkOutline', itemSmooth(sel) ? '1' : '0', [['1', 'Smooth'], ['0', 'Exact']])) : '')
       + (bmode === 'color' ? g('Border color', sw('stkBorderColor', sel.borderColor, FX_COLORS.filter(c => c !== '#ffffff')), true) : '')
       + `<p class="help fxg wide" style="margin:0">${bmode === 'none' ? 'Cut right at the edge of your picture.' : itemSmooth(sel) ? 'Smooth: rounded and simple, easy to cut.' : 'Exact: the border follows every corner.'}</p>`
-    : `<div class="fxg wide"><div class="fx-filters">${FX_FILTER_NAMES.map(([v, l]) => `<button type="button" class="fx-filter ${(sel.filter || 'none') === v ? 'on' : ''}" data-act="stkFilter" data-v="${v}" aria-pressed="${(sel.filter || 'none') === v}">
-        <span class="fx-fprev" style="background-image:url('${im.url}');filter:${FX_FILTERS[v] || 'none'}"></span><small>${l}</small></button>`).join('')}</div></div>`;
+    : `<div class="fxg wide"><div class="fx-filters">${shortFilters(sel.filter).map(([v, l]) => `<button type="button" class="fx-filter ${(sel.filter || 'none') === v ? 'on' : ''}" data-act="stkFilter" data-v="${v}" aria-pressed="${(sel.filter || 'none') === v}">
+        <span class="fx-fprev" style="background-image:url('${im.url}');filter:${FX_FILTERS[v] || 'none'}"></span><small>${l}</small></button>`).join('')}${filtersMore(sel.filter)}</div></div>`;
   const dot = k => (k === 'border' && (sel.borderColor || sel.border === 'none')) || (k === 'filter' && sel.filter && sel.filter !== 'none') ? '<i class="fx-dot" aria-label="(on)"></i>' : '';
-  return `<div class="panel stkcard"><div class="stephead">Make it yours <span class="muted small" style="font-weight:600">this sticker</span></div>
+  if (S.stkOpenFor !== sel.uid) return `<button type="button" class="fxopen stkopen" data-act="stkOpen"><span class="fo-ic">${ic('sparkle', 18)}</span>
+      <span class="fo-t"><b>More options for this sticker</b><small>${im.words ? 'Change the words, border, or filter' : 'Border color, outline, or a filter'}</small></span>${ic('plus', 18)}</button>`;
+  return `<div class="panel stkcard"><div class="fx-head"><div class="stephead">Make it yours <span class="muted small" style="font-weight:600">this sticker</span></div><button type="button" class="linkbtn" data-act="stkClose">Hide</button></div>
     <div class="seg fx-tabs" role="tablist">${tabs.map(([k, l]) => `<button type="button" role="tab" aria-selected="${tab === k}" class="${tab === k ? 'on' : ''}" data-act="stkTab" data-v="${k}">${l}${dot(k)}</button>`).join('')}</div>
     <div class="fx-body">${body}</div></div>`;
 }
+/* One line at the top of every designer that says what to do next. One sentence, never a manual. */
+const nextStepHTML = (text, done) => `<p class="nextstep ${done ? 'done' : ''}" aria-live="polite"><span class="ns-ic">${ic(done ? 'check' : 'arrow', 15)}</span><span>${text}</span></p>`;
+function stickerNext(free, sel){
+  const sheet = S.sheets[S.cur], placed = S.sheets.some(s => s.items.length);
+  if (!S.images.length) return nextStepHTML('Start by adding pictures or words.');
+  if (sel) return nextStepHTML(free ? "Drag it anywhere, or pull the corner dot to resize. Tap Done when you're finished." : "Tap an empty square to move it. Tap Done when you're finished.");
+  if (S.selImage) return nextStepHTML(free ? 'Now tap anywhere on the sheet to stick it.' : 'Now tap a square on the sheet to stick it.');
+  if (!placed) return nextStepHTML('Tap one of your pictures, then tap the sheet.');
+  return nextStepHTML('Looks good! Add more, or tap Add to order.', true);
+}
+function framedNext(f){
+  if (!f.front.imageId) return nextStepHTML('Start by adding a picture.');
+  if (f.type === 'keychains' && f.backMode === 'different' && !f.back.imageId) return nextStepHTML('Now add a picture for the back.');
+  const many = batchOn(f) && batchList().length > 1;
+  return nextStepHTML(many ? `Looks good! Tap a ${P(f.type).unit} above to change it, or tap Add to order.` : 'Looks good! Drag the picture to move it, then tap Add to order.', true);
+}
+// show a few choices first; "More" shows the rest (and everything shows if a hidden one is already picked)
+const moreTile = (act, label) => `<button type="button" class="more-tile" data-act="${act}">${ic('plus', 16)}<small>${label}</small></button>`;
 /* Word stickers: words become a see-through picture, so they get a die-cut border, resize and print like any sticker.
    Extra fonts (all free for any use) load only when the word maker opens; a customer can also bring their own font file.
    The sticker is drawn into a picture right away, so printing never needs these fonts. */
@@ -4004,11 +4042,13 @@ function wordFont(k){ if (WORD_FONTS[k]) return WORD_FONTS[k]; const c = S.custo
 function wordFontsLoad(){ if (document.getElementById('wdFontsCss')) return; const l = document.createElement('link'); l.id = 'wdFontsCss'; l.rel = 'stylesheet'; l.href = WORD_FONTS_CSS; document.head.appendChild(l); }
 async function wordFontReady(k){ const [w, fam] = wordFont(k); try { await document.fonts.load(`${w} 60px ${fam}`); } catch {} }
 function fontTilesHTML(act, cur, sample){
-  const all = Object.keys(WORD_FONTS).map(k => [k, WORD_FONTS[k]]).concat(S.customFonts.map(f => [f.key, ['400', `'${f.family}', sans-serif`, f.label]]));
+  const every = Object.keys(WORD_FONTS).map(k => [k, WORD_FONTS[k]]).concat(S.customFonts.map(f => [f.key, ['400', `'${f.family}', sans-serif`, f.label]]));
+  const showAll = S.moreFonts || every.slice(4).some(([k]) => k === cur), all = showAll ? every : every.slice(0, 4);
   const s = 'Aa';   // each tile shows the font; the big preview below shows your words
   return `<div class="wd-fonts" role="radiogroup" aria-label="Letters">${all.map(([k, [w, fam, label]]) => `<button type="button" role="radio" aria-checked="${cur === k}" class="wd-font ${cur === k ? 'on' : ''}" data-act="${act}" data-v="${esc(k)}">
       <span class="wd-sample" style="font-family:${fam.replace(/"/g, '&quot;')};font-weight:${w}">${s}</span><small title="${esc(label)}">${esc(label)}</small></button>`).join('')}
-    <label class="wd-font up" title="Use a font file from your phone or computer"><span class="wd-sample">${ic('plus', 18)}</span><small>Your font</small><input type="file" accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2" hidden data-fontup="${act}"></label></div>`;
+    ${showAll ? `<label class="wd-font up" title="Use a font file from your phone or computer"><span class="wd-sample">${ic('plus', 18)}</span><small>Your font</small><input type="file" accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2" hidden data-fontup="${act}"></label>`
+      : `<button type="button" class="wd-font up" data-act="moreFonts"><span class="wd-sample">${ic('plus', 18)}</span><small>More fonts</small></button>`}</div>`;
 }
 async function fontUpload(input){
   const f = input.files && input.files[0]; input.value = ''; if (!f) return null;
@@ -4111,7 +4151,7 @@ function drawSheet(){
   $('#sheetArea').innerHTML = `
     <div class="tabs" role="tablist">${S.sheets.map((s, i) => `<button class="tab ${i === S.cur ? 'on' : ''}" type="button" role="tab" aria-selected="${i === S.cur}" data-act="tab" data-i="${i}">Sheet ${i + 1}</button>`).join('')}
       ${S.sheets.length < S.settings.maxSheets ? `<button class="tab add" type="button" data-act="addSheet">${ic('plus', 16)}Add a sheet</button>` : `<span class="muted small" style="align-self:center">${S.settings.maxSheets} sheets max per order</span>`}</div>
-    <p class="hint mob" ${imp ? 'hidden' : ''}>${ic('sparkle', 18)}<span>${imp ? '' : free ? (sel ? 'Drag it anywhere. Pull the corner dot to resize.' : S.selImage ? 'Tap anywhere on the sheet to stick your picture.' : 'Pick a picture, then tap anywhere on the sheet.') : sel ? 'Tap an empty spot to move it.' : S.selImage ? 'Tap the sheet to stick your picture. Drag a sticker to move it.' : 'Choose pictures to start, then tap the sheet to place them.'}</span></p>
+    ${imp ? '' : stickerNext(free, sel)}
     ${imp ? `<div class="impbar">${ic('image', 18)}<span><b>Imported sheet</b></span>${smallBtn('Add stickers', 'plus', 'impToFree', 'plain')}${smallBtn('', 'trash', 'delSheet', 'plain', 'aria-label="Remove this sheet"')}</div>` : ''}
     ${CONFIG.freeOn && !imp ? `<div class="modebar"><div class="modeseg" role="group" aria-label="How stickers are placed">${[['', 'Grid', 'Neat squares'], ['1', 'Free', 'Any size, anywhere']].map(([v, l, h]) => `<button type="button" data-act="sheetMode" data-v="${v}" class="${(v === '1') === free ? 'on' : ''}"><b>${l}</b><small>${h}</small></button>`).join('')}</div>
       ${free && sheet.items.length > 1 ? smallBtn('Auto-arrange', 'sparkle', 'freeArrange', 'plain') : ''}</div>` : ''}
@@ -5061,7 +5101,9 @@ function saveManyToCart(items){
    ===================================================================== */
 const FX_FILTERS = { none: '', bw: 'grayscale(1) contrast(1.08)', warm: 'sepia(.22) saturate(1.3) hue-rotate(-6deg) brightness(1.03)',
   cool: 'saturate(1.08) hue-rotate(14deg) brightness(1.04)', bright: 'brightness(1.12) contrast(1.1) saturate(1.2)', vintage: 'sepia(.5) contrast(.92) brightness(1.06) saturate(.8)' };
-const FX_FILTER_NAMES = [['none', 'None'], ['bw', 'Black and white'], ['warm', 'Warm'], ['cool', 'Cool'], ['bright', 'Bright'], ['vintage', 'Vintage']];
+const FX_FILTER_NAMES = [['none', 'None'], ['bw', 'Black and white'], ['warm', 'Warm'], ['bright', 'Bright'], ['cool', 'Cool'], ['vintage', 'Vintage']];
+const shortFilters = cur => S.moreFilters || FX_FILTER_NAMES.slice(4).some(([v]) => v === cur) ? FX_FILTER_NAMES : FX_FILTER_NAMES.slice(0, 4);
+const filtersMore = cur => shortFilters(cur).length < FX_FILTER_NAMES.length ? moreTile('moreFilters', 'More') : '';
 const FX_COLORS = ['#ffffff', '#283971', '#111111', '#F2BC2E', '#ec282a', '#F7A8C4', '#7AD3B0'];
 const FX_FONTS = { bold: ['800', "'Cabinet Grotesk', 'Arial Black', sans-serif", 'Bold'], clean: ['700', "'Satoshi', system-ui, sans-serif", 'Clean'] };
 const fxFilterCss = d => (d && d.fx && FX_FILTERS[d.fx.filter]) || '';
@@ -5194,16 +5236,21 @@ function fxSectionHTML(step, d){
       + g(L('Letters'), seg('fxFont', fx.text.font, Object.entries(FX_FONTS).map(([k, v]) => [k, `<span style="font-family:${v[1].replace(/"/g, '&quot;')};font-weight:${v[0]}">${v[2]}</span>`])))
       + g(L('Color'), sw('fxTextColor', fx.text.color || '#ffffff'), true)
     : tab === 'ring' ? `<div class="fxg wide">${L('Style')}
-      <div class="fx-rings">${[['none', 'None'], ['solid', 'Solid'], ['dots', 'Dots'], ['stripes', 'Stripes'], ['double', 'Double']].map(([v, l]) => `<button type="button" class="fx-ring ${fx.ring.style === v ? 'on' : ''}" data-act="fxRing" data-v="${v}" aria-pressed="${fx.ring.style === v}">
-        <span class="fx-rprev ${pin ? 'round' : ''} r-${v}" style="--c:${fx.ring.color}"></span><small>${l}</small></button>`).join('')}</div></div>
+      <div class="fx-rings">${(() => { const all = [['none', 'None'], ['solid', 'Solid'], ['dots', 'Dots'], ['stripes', 'Stripes'], ['double', 'Double']], showAll = S.moreRings || all.slice(3).some(([v]) => v === fx.ring.style);
+        return (showAll ? all : all.slice(0, 3)); })().map(([v, l]) => `<button type="button" class="fx-ring ${fx.ring.style === v ? 'on' : ''}" data-act="fxRing" data-v="${v}" aria-pressed="${fx.ring.style === v}">
+        <span class="fx-rprev ${pin ? 'round' : ''} r-${v}" style="--c:${fx.ring.color}"></span><small>${l}</small></button>`).join('')}${S.moreRings || ['stripes', 'double'].includes(fx.ring.style) ? '' : moreTile('moreRings', 'More')}</div></div>
       ${fx.ring.style !== 'none' ? g(L('Thickness'), seg('fxRingSize', fx.ring.size || 'thin', [['thin', 'Thin'], ['thick', 'Thick']])) + g(L('Color'), sw('fxRingColor', fx.ring.color || '#283971')) : ''}`
-    : `<div class="fxg wide"><div class="fx-filters">${FX_FILTER_NAMES.map(([v, l]) => `<button type="button" class="fx-filter ${(fx.filter || 'none') === v ? 'on' : ''}" data-act="fxFilter" data-v="${v}" aria-pressed="${(fx.filter || 'none') === v}">
-        <span class="fx-fprev ${pin ? 'round' : ''}" style="background-image:url('${im.url}');filter:${FX_FILTERS[v] || 'none'}"></span><small>${l}</small></button>`).join('')}</div></div>`;
+    : `<div class="fxg wide"><div class="fx-filters">${shortFilters(fx.filter).map(([v, l]) => `<button type="button" class="fx-filter ${(fx.filter || 'none') === v ? 'on' : ''}" data-act="fxFilter" data-v="${v}" aria-pressed="${(fx.filter || 'none') === v}">
+        <span class="fx-fprev ${pin ? 'round' : ''}" style="background-image:url('${im.url}');filter:${FX_FILTERS[v] || 'none'}"></span><small>${l}</small></button>`).join('')}${filtersMore(fx.filter)}</div></div>`;
   const badge = k => (k === 'text' && (fx.text.value || '').trim()) || (k === 'ring' && fx.ring.style !== 'none') || (k === 'filter' && fx.filter && fx.filter !== 'none') ? '<i class="fx-dot" aria-label="(on)"></i>' : '';
-  return `<section class="fxsec" data-zone="opts">${step('Make it yours')}
+  const open = f.fxOpen === true || (f.fxOpen !== false && fxOn(fx));   // closed until they want it; open by itself if this design already uses something
+  if (!open) return `<section class="fxsec" data-zone="opts"><button type="button" class="fxopen" data-act="fxOpen" aria-expanded="false">
+      <span class="fo-ic">${ic('sparkle', 18)}</span><span class="fo-t"><b>Make it yours</b><small>Optional: words, ${pin ? 'a ring' : 'a border'}, a filter</small></span>${ic('plus', 18)}</button></section>`;
+  return `<section class="fxsec" data-zone="opts"><div class="fx-head">${step('Make it yours')}<button type="button" class="linkbtn" data-act="fxClose" aria-expanded="true">Hide</button></div>
     <div class="seg fx-tabs" role="tablist">${[['text', 'Words'], ['ring', ringName], ['filter', 'Filter']].map(([k, l]) => `<button type="button" role="tab" aria-selected="${tab === k}" class="${tab === k ? 'on' : ''}" data-act="fxTab" data-v="${k}">${l}${badge(k)}</button>`).join('')}</div>
     <div class="fx-body">${body}</div></section>`;
 }
+function moreRedraw(){ if (S.view === 'framed') drawFramedCtrl(); else { drawCtrl(); drawSheet(); } }
 function fxAfter(){ buzz(4); fdSync(); drawFramedCtrl(); fxPaintStage(); }
 function fxBind(){
   const d = activeDesign(), w = $('#fxWords');
@@ -5316,6 +5363,7 @@ function frameInner(d, empty){
 function drawFramedStage(){
   const f = S.fd, mm = frameMm(f), sd = shownDesign(), bg = (sd && sd.bg) || '#ffffff';
   let html = '';
+  const nextLine = ['pins', 'keychains', 'posters'].includes(f.type) ? framedNext(f) : '';
   if (f.type === 'pins') {
     const k = mm.w / mm.face, off = -(k - 1) / 2 * 100;
     const im = f.front.imageId && imgById(f.front.imageId);
@@ -5378,7 +5426,7 @@ function drawFramedStage(){
         <div class="frame ${clear ? 'clear' : ''}" id="frame" style="aspect-ratio:${mm.w}/${mm.h};${clear ? '' : `background:${bg}`}" data-locked="${showBack && f.backMode !== 'different'}">${clear ? '' : '<canvas class="fxc" aria-hidden="true"></canvas>' + frameInner(d, showBack && f.backMode === 'different' ? 'Choose the back picture' : 'Choose a picture')}</div></div></div>
       <p class="under">${showBack ? (f.backMode === 'same' ? 'The back shows the same picture.' : f.backMode === 'blank' ? 'The back stays clear.' : 'This is the back of the keychain.') : `This is the front, shown at its real shape: the picture inside the keychain is ${mm.w / 10} × ${mm.h / 10} cm. Tap "Back" to choose the other side.`}</p>`;
   }
-  $('#fstage').innerHTML = html + `<div id="reswarn"></div>`;
+  $('#fstage').innerHTML = nextLine + html + `<div id="reswarn"></div>`;
   $('#fstage').querySelectorAll('.filePick').forEach(i => i.addEventListener('change', onFiles));
   const frEl = $('#frame'); if (frEl) frEl.classList.toggle('has-img', !!$('#fimg'));
   const img = $('#fimg'); if (img) { if (img.complete) placeImg(); else img.onload = placeImg; }
@@ -8218,6 +8266,13 @@ const ACTIONS = {
   fdRemove: t => { const f = S.fd; fdSync(); if (f.batch.length < 2) return; if (!armed(t, 'Tap again to remove')) return;
     f.batch.splice(f.cur, 1); f.cur = Math.min(f.cur, f.batch.length - 1); Object.assign(f, f.batch[f.cur]); f.side = 'front'; drawFramed(); },
   fxTab: t => { S.fd.fxTab = t.dataset.v; drawFramedCtrl(); },
+  fxOpen: () => { S.fd.fxOpen = true; drawFramedCtrl(); const s = document.querySelector('.fxsec'); if (s) s.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); },
+  fxClose: () => { S.fd.fxOpen = false; drawFramedCtrl(); },
+  stkOpen: () => { const s = selected(); if (!s) return; S.stkOpenFor = s.uid; drawSheet(); const c = document.querySelector('.stkcard'); if (c) c.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); },
+  stkClose: () => { S.stkOpenFor = null; drawSheet(); },
+  moreFonts: () => { S.moreFonts = true; moreRedraw(); },
+  moreRings: () => { S.moreRings = true; moreRedraw(); },
+  moreFilters: () => { S.moreFilters = true; moreRedraw(); },
   fxPlace: t => { const d = activeDesign(); if (!d) return; fxEnsure(d).text.place = t.dataset.v; fxAfter(); },
   fxFont: t => { const d = activeDesign(); if (!d) return; fxEnsure(d).text.font = t.dataset.v; fxAfter(); },
   fxTextColor: t => { const d = activeDesign(); if (!d) return; fxEnsure(d).text.color = t.dataset.c; fxAfter(); },
