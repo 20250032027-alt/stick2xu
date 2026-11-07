@@ -1339,11 +1339,52 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .upload .ui.aa{font-family:var(--display);font-weight:800;font-size:17px;letter-spacing:-.02em}
 .wordsbtn.on{background:var(--accent-soft);border-style:solid}
 .addhelp{margin:8px 0 0;font-size:13.5px}
-/* calmer designers: the next-step line, optional extras behind one button, "More" tiles */
-.nextstep{display:flex;align-items:center;gap:10px;width:min(100%,520px);margin:0 0 14px;padding:10px 14px;border-radius:14px;background:var(--gold-soft);border:1.5px solid #EED9A0;color:var(--ink);font-size:15px;font-weight:600;line-height:1.35}
-.nextstep .ns-ic{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--xu-gold);color:var(--ink)}
-.nextstep.done{background:#E8F5EC;border-color:#BFE3CB}.nextstep.done .ns-ic{background:#2E8B57;color:#fff}
+/* the next-step line: a tiny progress tracker (Add, Stick, Order) and one sentence. It pops in when it changes, and cheers once when you're ready. */
+.nextstep{position:relative;overflow:hidden;width:min(100%,520px);margin:0 0 14px;padding:10px 14px 12px;border-radius:16px;background:var(--gold-soft);border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);color:var(--ink)}
 .stage2 > .nextstep{align-self:center}
+.nextstep.pop{animation:nsPop .45s var(--ease)}
+@keyframes nsPop{0%{transform:scale(.96) rotate(-.6deg);opacity:.4}60%{transform:scale(1.015) rotate(.3deg);opacity:1}100%{transform:none}}
+.ns-steps{display:flex;align-items:center;gap:0;list-style:none;margin:0 0 8px;padding:0;font-size:12.5px;font-weight:700;color:var(--muted)}
+.ns-steps li{display:flex;align-items:center;gap:6px;flex:none}
+.ns-steps li + li::before{content:"";width:22px;height:2px;margin:0 8px;border-radius:2px;background:#E2C77E}
+.ns-steps i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;border:2px solid #D9B860;background:#fff;color:#9A7A1E}
+.ns-steps li.now{color:var(--ink)}.ns-steps li.now i{background:var(--xu-gold);border-color:var(--ink);color:var(--ink);box-shadow:0 0 0 3px rgba(242,188,46,.35)}
+.ns-steps li.did{color:var(--ink)}.ns-steps li.did i{background:var(--ink);border-color:var(--ink);color:#fff}
+.ns-steps li.opt i{border-style:dashed}.ns-steps li.opt span::after{content:" (optional)";font-weight:600;color:var(--muted)}
+.ns-t{display:flex;align-items:center;gap:10px;margin:0;font-size:15.5px;font-weight:700;line-height:1.35}
+.ns-ic{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--xu-gold);color:var(--ink);border:2px solid var(--ink)}
+.nextstep:not(.done) .ns-ic svg{animation:nsNudge 1.6s ease-in-out infinite}
+@keyframes nsNudge{0%,60%,100%{transform:none}30%{transform:translateX(3px)}}
+.nextstep.done{background:#E8F5EC}
+.nextstep.done .ns-ic{background:#2E8B57;color:#fff}
+.nextstep.done .ns-steps li + li::before{background:#9ED3B2}
+.ns-burst{position:absolute;right:22px;top:50%;width:0;height:0;pointer-events:none}
+.ns-burst b{position:absolute;width:8px;height:8px;background:var(--xu-gold);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);animation:nsBurst .9s var(--ease) forwards}
+.ns-burst b:nth-child(1){--x:-34px;--y:-30px}.ns-burst b:nth-child(2){--x:6px;--y:-40px;background:#ec282a}.ns-burst b:nth-child(3){--x:36px;--y:-18px}
+.ns-burst b:nth-child(4){--x:-40px;--y:10px;background:#3a52a3}.ns-burst b:nth-child(5){--x:30px;--y:26px;background:#ec282a}.ns-burst b:nth-child(6){--x:-8px;--y:36px}
+@keyframes nsBurst{0%{transform:translate(0,0) scale(.3);opacity:0}25%{opacity:1}100%{transform:translate(var(--x),var(--y)) scale(1.2) rotate(90deg);opacity:0}}
+@media(max-width:480px){.ns-steps li.opt span::after{content:none}.ns-steps{flex-wrap:wrap;row-gap:4px}}   /* phones: the dashed circle already says optional */
+@media(max-width:400px){.ns-steps li + li::before{width:8px;margin:0 4px}.ns-steps{font-size:12px}.ns-steps li{gap:4px}}
+@media (prefers-reduced-motion:reduce){.nextstep.pop,.nextstep .ns-ic svg,.ns-burst b{animation:none}.ns-burst{display:none}}
+/* "Make it yours": a golden sticker button, with a peek at what's inside */
+.fxopen.fun{border:2px solid var(--ink);background:linear-gradient(135deg,#FFF3D1 0%,#FFE7A6 100%);box-shadow:3px 3px 0 var(--ink);padding:12px 14px;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.fxopen.fun:hover{transform:translate(-1px,-2px) rotate(-.4deg);box-shadow:4px 5px 0 var(--ink)}
+.fxopen.fun:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.fxopen.fun .fo-ic{width:42px;height:42px;background:var(--xu-gold);color:var(--ink);border:2px solid var(--ink);transform:rotate(-8deg);box-shadow:2px 2px 0 var(--ink)}
+.fxopen.fun .fo-ic svg{animation:foTwinkle 2.4s ease-in-out infinite}
+@keyframes foTwinkle{0%,70%,100%{transform:scale(1) rotate(0)}80%{transform:scale(1.25) rotate(18deg)}90%{transform:scale(.95) rotate(-6deg)}}
+.fxopen.fun .fo-t b{font-family:var(--display);font-size:18px;font-weight:800;letter-spacing:-.01em}
+.fxopen.fun .fo-t small{color:#6B5520;font-weight:600}
+.fo-peek{display:flex;margin-left:auto;flex:none}
+.pk{width:30px;height:30px;border-radius:50%;border:2px solid var(--ink);background:#fff;display:grid;place-items:center;font-style:normal;margin-left:-8px;box-shadow:1px 1px 0 var(--ink)}
+.pk:first-child{margin-left:0}
+.pk-aa{font-family:var(--display);font-weight:800;font-size:12px;color:var(--ink);transform:rotate(-8deg)}
+.pk-ring{border-radius:8px;box-shadow:inset 0 0 0 4px #ec282a,1px 1px 0 var(--ink);transform:rotate(6deg)}.pk-ring.round{border-radius:50%}
+.pk-flt{background:linear-gradient(90deg,#9aa0ad 0 50%,#F2BC2E 50% 100%);transform:rotate(-4deg)}
+.fxopen.fun:hover .pk:nth-child(1){transform:rotate(-14deg) translateY(-2px)}.fxopen.fun:hover .pk:nth-child(2){transform:rotate(12deg) translateY(-3px)}.fxopen.fun:hover .pk:nth-child(3){transform:rotate(-8deg) translateY(-2px)}
+.pk{transition:transform .25s var(--ease)}
+@media(max-width:360px){.fo-peek{display:none}}
+@media (prefers-reduced-motion:reduce){.fxopen.fun .fo-ic svg{animation:none}}
 .fxopen{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border:2px dashed var(--line);border-radius:var(--r-md);background:#fff;color:var(--ink);font:inherit;text-align:left;cursor:pointer;transition:border-color .2s}
 .fxopen:hover{border-color:var(--ink)}
 .fxopen > svg:last-child{flex:none;margin-left:auto;opacity:.6}
@@ -4005,29 +4046,42 @@ function stkCardHTML(sel){
     : `<div class="fxg wide"><div class="fx-filters">${shortFilters(sel.filter).map(([v, l]) => `<button type="button" class="fx-filter ${(sel.filter || 'none') === v ? 'on' : ''}" data-act="stkFilter" data-v="${v}" aria-pressed="${(sel.filter || 'none') === v}">
         <span class="fx-fprev" style="background-image:url('${im.url}');filter:${FX_FILTERS[v] || 'none'}"></span><small>${l}</small></button>`).join('')}${filtersMore(sel.filter)}</div></div>`;
   const dot = k => (k === 'border' && (sel.borderColor || sel.border === 'none')) || (k === 'filter' && sel.filter && sel.filter !== 'none') ? '<i class="fx-dot" aria-label="(on)"></i>' : '';
-  if (S.stkOpenFor !== sel.uid) return `<button type="button" class="fxopen stkopen" data-act="stkOpen"><span class="fo-ic">${ic('sparkle', 18)}</span>
-      <span class="fo-t"><b>More options for this sticker</b><small>${im.words ? 'Change the words, border, or filter' : 'Border color, outline, or a filter'}</small></span>${ic('plus', 18)}</button>`;
+  if (S.stkOpenFor !== sel.uid) return `<button type="button" class="fxopen fun stkopen" data-act="stkOpen"><span class="fo-ic">${ic('sparkle', 20)}</span>
+      <span class="fo-t"><b>Make it yours</b><small>${im.words ? 'Change the words, border, or filter' : 'Border color, outline, or a filter'}</small></span>${peekHTML(false, !!im.words)}</button>`;
   return `<div class="panel stkcard"><div class="fx-head"><div class="stephead">Make it yours <span class="muted small" style="font-weight:600">this sticker</span></div><button type="button" class="linkbtn" data-act="stkClose">Hide</button></div>
     <div class="seg fx-tabs" role="tablist">${tabs.map(([k, l]) => `<button type="button" role="tab" aria-selected="${tab === k}" class="${tab === k ? 'on' : ''}" data-act="stkTab" data-v="${k}">${l}${dot(k)}</button>`).join('')}</div>
     <div class="fx-body">${body}</div></div>`;
 }
 /* One line at the top of every designer that says what to do next. One sentence, never a manual. */
-const nextStepHTML = (text, done) => `<p class="nextstep ${done ? 'done' : ''}" aria-live="polite"><span class="ns-ic">${ic(done ? 'check' : 'arrow', 15)}</span><span>${text}</span></p>`;
+// steps: [{ label, state: 'did' | 'now' | 'todo' | 'opt' }] ('opt' = optional; not 'skip', which is the skip-link class). It pops in only when the message changes, and cheers once when you're ready.
+function nextStepHTML(text, done, steps){
+  const key = text + (done ? '1' : '0'), changed = S.lastNext !== key, cheer = done && changed && S.lastNext !== undefined && !String(S.lastNext).endsWith('1');
+  S.lastNext = key;
+  return `<div class="nextstep ${done ? 'done' : ''} ${changed ? 'pop' : ''} ${cheer ? 'cheer' : ''}">
+    ${steps ? `<ol class="ns-steps" aria-label="Your progress">${steps.map((s, i) => `<li class="${s.state}"><i aria-hidden="true">${s.state === 'did' ? ic('check', 11) : i + 1}</i><span>${s.label}</span></li>`).join('')}</ol>` : ''}
+    <p class="ns-t" aria-live="polite"><span class="ns-ic">${ic(done ? 'check' : 'arrow', 15)}</span><span>${text}</span></p>
+    ${cheer ? '<span class="ns-burst" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b></span>' : ''}</div>`;
+}
 function stickerNext(free, sel){
-  const sheet = S.sheets[S.cur], placed = S.sheets.some(s => s.items.length);
-  if (!S.images.length) return nextStepHTML('Start by adding pictures or words.');
-  if (sel) return nextStepHTML(free ? "Drag it anywhere, or pull the corner dot to resize. Tap Done when you're finished." : "Tap an empty square to move it. Tap Done when you're finished.");
-  if (S.selImage) return nextStepHTML(free ? 'Now tap anywhere on the sheet to stick it.' : 'Now tap a square on the sheet to stick it.');
-  if (!placed) return nextStepHTML('Tap one of your pictures, then tap the sheet.');
-  return nextStepHTML('Looks good! Add more, or tap Add to order.', true);
+  const placed = S.sheets.some(s => s.items.length), at = !S.images.length ? 0 : !placed ? 1 : 2;
+  const steps = ['Add', 'Stick', 'Order'].map((label, i) => ({ label, state: i < at ? 'did' : i === at ? 'now' : 'todo' }));
+  if (!S.images.length) return nextStepHTML('Start by adding pictures or words.', false, steps);
+  if (sel) return nextStepHTML(free ? "Drag it anywhere, or pull the corner dot to resize. Tap Done when you're finished." : "Tap an empty square to move it. Tap Done when you're finished.", false, steps);
+  if (S.selImage) return nextStepHTML(free ? 'Now tap anywhere on the sheet to stick it.' : 'Now tap a square on the sheet to stick it.', false, steps);
+  if (!placed) return nextStepHTML('Tap one of your pictures, then tap the sheet.', false, steps);
+  return nextStepHTML('Looks good! Add more, or tap Add to order.', true, steps);
 }
 function framedNext(f){
-  if (!f.front.imageId) return nextStepHTML('Start by adding a picture.');
-  if (f.type === 'keychains' && f.backMode === 'different' && !f.back.imageId) return nextStepHTML('Now add a picture for the back.');
+  const has = !!f.front.imageId, decorated = fxOn(f.front.fx), backMissing = f.type === 'keychains' && f.backMode === 'different' && !f.back.imageId;
+  const steps = [{ label: 'Picture', state: has ? 'did' : 'now' }, { label: 'Make it yours', state: decorated ? 'did' : 'opt' }, { label: 'Order', state: has && !backMissing ? 'now' : 'todo' }];
+  if (!has) return nextStepHTML('Start by adding a picture.', false, steps);
+  if (backMissing) return nextStepHTML('Now add a picture for the back.', false, steps);
   const many = batchOn(f) && batchList().length > 1;
-  return nextStepHTML(many ? `Looks good! Tap a ${P(f.type).unit} above to change it, or tap Add to order.` : 'Looks good! Drag the picture to move it, then tap Add to order.', true);
+  return nextStepHTML(many ? `Looks good! Tap a ${P(f.type).unit} to change it, or tap Add to order.` : 'Looks good! Drag the picture to move it, then tap Add to order.', true, steps);
 }
 // show a few choices first; "More" shows the rest (and everything shows if a hidden one is already picked)
+// tiny previews of what's inside "Make it yours": words, a ring (or border), a filter
+const peekHTML = (round, words = true) => `<span class="fo-peek" aria-hidden="true">${words ? '<i class="pk pk-aa">Aa</i>' : ''}<i class="pk pk-ring ${round ? 'round' : ''}"></i><i class="pk pk-flt"></i></span>`;
 const moreTile = (act, label) => `<button type="button" class="more-tile" data-act="${act}">${ic('plus', 16)}<small>${label}</small></button>`;
 /* Word stickers: words become a see-through picture, so they get a die-cut border, resize and print like any sticker.
    Extra fonts (all free for any use) load only when the word maker opens; a customer can also bring their own font file.
@@ -5244,8 +5298,8 @@ function fxSectionHTML(step, d){
         <span class="fx-fprev ${pin ? 'round' : ''}" style="background-image:url('${im.url}');filter:${FX_FILTERS[v] || 'none'}"></span><small>${l}</small></button>`).join('')}${filtersMore(fx.filter)}</div></div>`;
   const badge = k => (k === 'text' && (fx.text.value || '').trim()) || (k === 'ring' && fx.ring.style !== 'none') || (k === 'filter' && fx.filter && fx.filter !== 'none') ? '<i class="fx-dot" aria-label="(on)"></i>' : '';
   const open = f.fxOpen === true || (f.fxOpen !== false && fxOn(fx));   // closed until they want it; open by itself if this design already uses something
-  if (!open) return `<section class="fxsec" data-zone="opts"><button type="button" class="fxopen" data-act="fxOpen" aria-expanded="false">
-      <span class="fo-ic">${ic('sparkle', 18)}</span><span class="fo-t"><b>Make it yours</b><small>Optional: words, ${pin ? 'a ring' : 'a border'}, a filter</small></span>${ic('plus', 18)}</button></section>`;
+  if (!open) return `<section class="fxsec" data-zone="opts"><button type="button" class="fxopen fun" data-act="fxOpen" aria-expanded="false">
+      <span class="fo-ic">${ic('sparkle', 20)}</span><span class="fo-t"><b>Make it yours</b><small>Add words, ${pin ? 'a ring' : 'a border'}, or a filter</small></span>${peekHTML(pin)}</button></section>`;
   return `<section class="fxsec" data-zone="opts"><div class="fx-head">${step('Make it yours')}<button type="button" class="linkbtn" data-act="fxClose" aria-expanded="true">Hide</button></div>
     <div class="seg fx-tabs" role="tablist">${[['text', 'Words'], ['ring', ringName], ['filter', 'Filter']].map(([k, l]) => `<button type="button" role="tab" aria-selected="${tab === k}" class="${tab === k ? 'on' : ''}" data-act="fxTab" data-v="${k}">${l}${badge(k)}</button>`).join('')}</div>
     <div class="fx-body">${body}</div></section>`;
