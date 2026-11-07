@@ -1330,9 +1330,23 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .stkcard{margin-top:16px;padding:18px}
 .stkcard .stephead{margin-bottom:12px}
 @media(min-width:901px){.stkcard .fx-body{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 22px}.stkcard .fxg.wide{grid-column:1/-1}}
-.wordsbtn{display:flex;align-items:center;gap:12px;width:100%;margin-top:12px;padding:14px;border:2px dashed var(--ink);border-radius:var(--r-md);background:var(--gold-soft);cursor:pointer;text-align:left;font:inherit;color:inherit}
-.wordsbtn .ui{width:40px;height:40px;border-radius:12px;background:var(--xu-gold);border:2px solid var(--ink);display:grid;place-items:center;flex:none}
-.wordsbtn b{display:block}.wordsbtn small{display:block;color:var(--muted);font-size:14px}
+/* Add pictures / Add words: two equal options, one family */
+.addpair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.addpair .upload{flex-direction:column;align-items:flex-start;gap:10px;margin:0;text-align:left;font:inherit;font-weight:700;color:var(--ink);min-height:100%}
+.addpair .upload small{font-size:13.5px;line-height:1.3;margin-top:2px}
+.upload .ui.aa{font-family:var(--display);font-weight:800;font-size:17px;letter-spacing:-.02em}
+.wordsbtn.on{background:var(--accent-soft);border-style:solid}
+.addhelp{margin:8px 0 0;font-size:13.5px}
+/* fonts: tiles that show your words in each font */
+.wd-fonts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.wd-font{display:grid;justify-items:center;align-content:center;gap:3px;min-height:64px;padding:8px 4px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit;cursor:pointer}
+.wd-font:hover{border-color:var(--ink)}
+.wd-font.on{border-color:var(--ink);background:var(--gold-soft);box-shadow:var(--shadow-sm)}
+.wd-sample{font-size:22px;line-height:1.2;max-width:100%;overflow:hidden;white-space:nowrap;padding:0 2px}
+.wd-font small{max-width:100%;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 1px}
+.wd-font{padding-left:2px;padding-right:2px}
+#ctrl .wd-fonts{grid-template-columns:repeat(3,minmax(0,1fr))}   /* the narrow side panel: 3 across */
+.wd-font.up{border-style:dashed}.wd-font.up .wd-sample{display:grid;place-items:center;height:23px}
 .wordsbox{margin-top:12px;padding:14px;border:2px solid var(--ink);border-radius:var(--r-md);background:#fff}
 .wordsbox textarea,.stkcard textarea{width:100%;resize:none;font-size:17px;line-height:1.3}
 .wordsbox .seg{display:flex;width:100%}.wordsbox .seg button{flex:1}
@@ -2692,7 +2706,7 @@ function drawSticker(src, px, mm, fit, cut, opts){
   return out;
 }
 const stickerCache = new Map();
-const itemSmooth = it => typeof it.smooth === 'boolean' ? it.smooth : CONFIG.smoothCut;   // the customer's choice, or the shop default
+const itemSmooth = it => typeof it.smooth === 'boolean' ? it.smooth : false;   // the customer's choice; every sticker starts with the exact outline
 const stkOpts = it => ({ border: it.border, smooth: itemSmooth(it), ...(it.borderColor ? { color: it.borderColor } : {}), ...(it.filter && it.filter !== 'none' ? { filter: it.filter } : {}) });
 function stickerURL(it){
   const im = S.images.find(i => i.id === it.imageId); if (!im) return '';
@@ -3009,7 +3023,7 @@ function serializeItems(items, pathFor){
       addon_labels: (it.addons || []).map(id => (p.addons.find(a => a.id === id) || {}).label).filter(Boolean), unit_price: unitPrice(it) };
     if (it.type === 'prints') return { ...base, qty: it.qty, pages: it.pages, duplex: !!it.duplex,
       files: (it.files || []).map(f => ({ path: pathFor[f.id], name: f.name, pages: f.pages, kind: f.kind, orient: f.orient || null })) };
-    if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ ...(sh.free ? { free: true } : {}), ...(sh.imported ? { imported: sh.imported } : {}), ...(sh.fromImport ? { fromImport: sh.fromImport } : {}), ...(sh.template ? { template: sh.template.slug } : {}), items: sh.items.map(x => ({ path: pathFor[x.imageId], ...(isFree(x) ? { x: x.x, y: x.y, w: x.w, ...(x.h ? { h: x.h } : {}) } : { col: x.col, row: x.row, size: x.size }), fit: x.fit, ...(x.border === 'none' ? { border: 'none' } : {}), ...(typeof x.smooth === 'boolean' ? { smooth: x.smooth } : {}), ...(x.borderColor ? { borderColor: x.borderColor } : {}), ...(x.filter && x.filter !== 'none' ? { filter: x.filter } : {}) })) })) };
+    if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ ...(sh.free ? { free: true } : {}), ...(sh.imported ? { imported: sh.imported } : {}), ...(sh.fromImport ? { fromImport: sh.fromImport } : {}), ...(sh.template ? { template: sh.template.slug } : {}), items: sh.items.map(x => ({ path: pathFor[x.imageId], ...(isFree(x) ? { x: x.x, y: x.y, w: x.w, ...(x.h ? { h: x.h } : {}) } : { col: x.col, row: x.row, size: x.size }), fit: x.fit, ...(x.border === 'none' ? { border: 'none' } : {}), smooth: itemSmooth(x), ...(x.borderColor ? { borderColor: x.borderColor } : {}), ...(x.filter && x.filter !== 'none' ? { filter: x.filter } : {}) })) })) };
     const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy, bg: x.bg || '#ffffff', ...(fxOn(x.fx) ? { fx: clone(x.fx) } : {}) } : null;
     if (it.type === 'posters' && it.mode === 'pages') return { ...base, qty: it.qty, mode: 'pages', pages: it.pages, across: it.across, tiles: it.pages,
       pdf: { path: pathFor[it.pdf.id], name: it.pdf.name, pages: it.pages } };
@@ -3922,9 +3936,12 @@ function drawCtrl(){
       <div class="stephead"><i>1</i>Add pictures</div>
       <button type="button" class="importbtn" data-act="importOpen"><span class="ui">${ic('image', 20)}</span><span><em class="newtag">New</em><b>Import your own sheet</b><small>Got a sticker sheet from Pinterest? We'll print it, or cut out each sticker for you.</small></span>${ic('arrow', 16)}</button>
       <div class="ordiv"><span>or</span></div>
-      <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose pictures<small>From your phone, tablet, or computer. PNG with a see-through background works best</small></span>
+      <div class="addpair"><label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose pictures<small>From your phone, tablet, or computer</small></span>
         <input id="fileIn" type="file" accept="image/*" multiple hidden></label>
-      ${S.wordsDraft ? wordsComposerHTML() : `<button type="button" class="wordsbtn" data-act="wdOpen"><span class="ui">${ic('edit', 20)}</span><span><b>Add words</b><small>Turn a name or a phrase into a sticker</small></span></button>`}
+      <button type="button" class="upload wordsbtn ${S.wordsDraft ? 'on' : ''}" data-act="${S.wordsDraft ? 'wdCancel' : 'wdOpen'}" aria-expanded="${!!S.wordsDraft}"><span class="ui aa" aria-hidden="true">Aa</span><span>Add words<small>A name or a phrase, in a font you like</small></span></button>
+      </div>
+      <p class="help addhelp">PNG pictures with a see-through background work best.</p>
+      ${S.wordsDraft ? wordsComposerHTML() : ''}
       ${S.images.some(im => !im.sheet) ? `<div class="tray">${S.images.filter(im => !im.sheet).map(im => `
         <button class="thumb ${S.selImage === im.id && !sel ? 'on' : ''}" type="button" data-act="pickImg" data-id="${im.id}" style="background-image:url('${im.url}')" aria-label="Use this picture" aria-pressed="${S.selImage === im.id && !sel}">
           <span class="x" data-act="delImg" data-id="${im.id}" role="button" aria-label="Remove picture">${ic('x', 14)}</span></button>`).join('')}</div>` : ''}
@@ -3961,7 +3978,7 @@ function stkCardHTML(sel){
     <label class="sw rainbow ${cur && !list.some(c => c.toLowerCase() === cur.toLowerCase()) ? 'on' : ''}" title="Pick any color"><input type="color" data-stkpick="${act}" value="${cur || '#283971'}" aria-label="Pick any color">${cur && !list.some(c => c.toLowerCase() === cur.toLowerCase()) ? `<span style="background:${cur}"></span>` : ''}</label></div>`;
   const bmode = sel.border === 'none' ? 'none' : sel.borderColor ? 'color' : 'white';
   const body = tab === 'words' ? g('Words', `<textarea class="inp" id="stkWords" rows="2" maxlength="40" placeholder="Type your words">${esc(im.words.value)}</textarea>`, true)
-      + g('Letters', seg('wordsFont', im.words.font, Object.entries(FX_FONTS).map(([k, v]) => [k, `<span style="font-family:${v[1].replace(/"/g, '&quot;')};font-weight:${v[0]}">${v[2]}</span>`])))
+      + g('Letters', fontTilesHTML('wordsFont', im.words.font, im.words.value), true)
       + g('Color', sw('wordsColor', im.words.color, FX_COLORS.filter(c => c !== '#ffffff').concat(['#ffffff'])), true)
     : tab === 'border' ? g('Border', seg('stkBorder', bmode, [['white', 'White'], ['color', 'Color'], ['none', 'None']]))
       + (bmode !== 'none' ? g('Outline', seg('stkOutline', itemSmooth(sel) ? '1' : '0', [['1', 'Smooth'], ['0', 'Exact']])) : '')
@@ -3974,9 +3991,36 @@ function stkCardHTML(sel){
     <div class="seg fx-tabs" role="tablist">${tabs.map(([k, l]) => `<button type="button" role="tab" aria-selected="${tab === k}" class="${tab === k ? 'on' : ''}" data-act="stkTab" data-v="${k}">${l}${dot(k)}</button>`).join('')}</div>
     <div class="fx-body">${body}</div></div>`;
 }
-/* Word stickers: words become a see-through picture, so they get a die-cut border, resize and print like any sticker. */
+/* Word stickers: words become a see-through picture, so they get a die-cut border, resize and print like any sticker.
+   Extra fonts (all free for any use) load only when the word maker opens; a customer can also bring their own font file.
+   The sticker is drawn into a picture right away, so printing never needs these fonts. */
+const WORD_FONTS = { bold: ['800', "'Cabinet Grotesk', 'Arial Black', sans-serif", 'Bold'], clean: ['700', "'Satoshi', system-ui, sans-serif", 'Clean'],   // same as FX_FONTS (written out: this list loads first)
+  round: ['800', "'Baloo 2', 'Arial Rounded MT Bold', sans-serif", 'Bubbly'], script: ['400', "'Pacifico', cursive", 'Script'],
+  marker: ['400', "'Permanent Marker', 'Comic Sans MS', cursive", 'Marker'], tall: ['400', "'Bebas Neue', 'Arial Narrow', sans-serif", 'Tall'],
+  hand: ['700', "'Caveat', cursive", 'Casual'] };
+const WORD_FONTS_CSS = 'https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&family=Bebas+Neue&family=Caveat:wght@700&family=Pacifico&family=Permanent+Marker&display=swap';
+S.customFonts = S.customFonts || [];
+function wordFont(k){ if (WORD_FONTS[k]) return WORD_FONTS[k]; const c = S.customFonts.find(f => f.key === k); return c ? ['400', `'${c.family}', sans-serif`, c.label] : WORD_FONTS.bold; }
+function wordFontsLoad(){ if (document.getElementById('wdFontsCss')) return; const l = document.createElement('link'); l.id = 'wdFontsCss'; l.rel = 'stylesheet'; l.href = WORD_FONTS_CSS; document.head.appendChild(l); }
+async function wordFontReady(k){ const [w, fam] = wordFont(k); try { await document.fonts.load(`${w} 60px ${fam}`); } catch {} }
+function fontTilesHTML(act, cur, sample){
+  const all = Object.keys(WORD_FONTS).map(k => [k, WORD_FONTS[k]]).concat(S.customFonts.map(f => [f.key, ['400', `'${f.family}', sans-serif`, f.label]]));
+  const s = 'Aa';   // each tile shows the font; the big preview below shows your words
+  return `<div class="wd-fonts" role="radiogroup" aria-label="Letters">${all.map(([k, [w, fam, label]]) => `<button type="button" role="radio" aria-checked="${cur === k}" class="wd-font ${cur === k ? 'on' : ''}" data-act="${act}" data-v="${esc(k)}">
+      <span class="wd-sample" style="font-family:${fam.replace(/"/g, '&quot;')};font-weight:${w}">${s}</span><small title="${esc(label)}">${esc(label)}</small></button>`).join('')}
+    <label class="wd-font up" title="Use a font file from your phone or computer"><span class="wd-sample">${ic('plus', 18)}</span><small>Your font</small><input type="file" accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2" hidden data-fontup="${act}"></label></div>`;
+}
+async function fontUpload(input){
+  const f = input.files && input.files[0]; input.value = ''; if (!f) return null;
+  if (f.size > 6 * 1048576) { toast('That font file is too big (over 6 MB).'); return null; }
+  try {
+    const family = 'UserFont' + (S.customFonts.length + 1), face = new FontFace(family, await f.arrayBuffer()); await face.load(); document.fonts.add(face);
+    const label = f.name.replace(/\.(ttf|otf|woff2?)$/i, '').replace(/[-_]+/g, ' ').slice(0, 16) || 'Your font', key = 'custom:' + family;
+    S.customFonts.push({ key, family, label }); toast(`${label} is ready. It works while this page is open.`); return key;
+  } catch { toast("That font file didn't open. Try a .ttf or .otf file."); return null; }
+}
 function wordsCanvas(w){
-  const [wt, fam] = FX_FONTS[w.font] || FX_FONTS.bold, lines = String(w.value || '').split('\n').map(s => s.trim()).filter(Boolean).slice(0, 2);
+  const [wt, fam] = wordFont(w.font), lines = String(w.value || '').split('\n').map(s => s.trim()).filter(Boolean).slice(0, 2);
   if (!lines.length) return null;
   const fs = 220, c = document.createElement('canvas'), x = c.getContext('2d'); x.font = `${wt} ${fs}px ${fam}`;
   const wmax = Math.max(...lines.map(l => x.measureText(l).width)), pad = Math.round(fs * 0.18);
@@ -3992,7 +4036,7 @@ function wordsCanvas(w){
   return t;
 }
 async function wordsImage(w, existing){
-  await fxFontsReady();
+  await fxFontsReady(); await wordFontReady(w.font);
   const c = wordsCanvas(w); if (!c) return null;
   const blob = await new Promise(r => c.toBlob(r, 'image/png')); if (!blob) return null;
   if (existing) { revoke(existing.url); Object.assign(existing, { blob, url: URL.createObjectURL(blob), canvas: c, w: c.width, h: c.height, words: { ...w }, v: (existing.v || 0) + 1 }); return existing; }
@@ -4000,6 +4044,8 @@ async function wordsImage(w, existing){
 }
 function stkCardBind(){
   const sel = selected(), im = sel && imgById(sel.imageId);
+  if (im && im.words) wordFontsLoad();
+  document.querySelectorAll('.stkcard [data-fontup]').forEach(i => i.addEventListener('change', async () => { const k = await fontUpload(i); if (k) wordsRedo({ font: k }); }));
   document.querySelectorAll('[data-stkpick]').forEach(inp => inp.addEventListener('change', () => {
     const s = selected(); if (!s) return;
     if (inp.dataset.stkpick === 'stkBorderColor') { s.borderColor = inp.value; s.border = 'white'; drawSheet(); }
@@ -4024,7 +4070,7 @@ function wordsComposerHTML(){
     <label class="lab flab" for="wdIn" style="margin-top:0">Your words</label>
     <textarea class="inp" id="wdIn" rows="2" maxlength="40" placeholder="Like: Class of 2026">${esc(w.value)}</textarea>
     <p class="help" style="margin:4px 0 0">Up to two lines. Press Enter for a new line.</p>
-    <p class="lab flab">Letters</p>${seg('wdFont', w.font, Object.entries(FX_FONTS).map(([k, v]) => [k, `<span style="font-family:${v[1].replace(/"/g, '&quot;')};font-weight:${v[0]}">${v[2]}</span>`]))}
+    <p class="lab flab">Letters</p>${fontTilesHTML('wdFont', w.font, w.value)}
     <p class="lab flab">Color</p><div class="swatches fx-sw">${FX_COLORS.filter(c => c !== '#ffffff').concat(['#ffffff']).map(c => `<button type="button" class="sw ${w.color === c ? 'on' : ''}" style="background:${c}" data-act="wdColor" data-c="${c}" aria-label="Color ${c}" aria-pressed="${w.color === c}"></button>`).join('')}
       <label class="sw rainbow" title="Pick any color"><input type="color" id="wdPick" value="${w.color}" aria-label="Pick any color"></label></div>
     <div class="wd-prev" id="wdPrev" aria-label="Preview"></div>
@@ -4035,10 +4081,13 @@ function wordsPreview(){
   const c = wordsCanvas(w); box.innerHTML = '';
   if (!c) { box.innerHTML = '<span class="muted small">Your sticker shows here</span>'; return; }
   const k = Math.min(1, 520 / c.width), px = Math.round(Math.max(c.width, c.height) * k * 0.5);
-  const s = drawSticker(c, Math.max(120, Math.min(360, px)), 50, 'fit', false, { border: 'white', smooth: CONFIG.smoothCut }); s.className = 'wd-stk'; box.appendChild(s);
+  const s = drawSticker(c, Math.max(120, Math.min(360, px)), 50, 'fit', false, { border: 'white', smooth: false }); s.className = 'wd-stk'; box.appendChild(s);
 }
 function wordsBind(){
-  const t = $('#wdIn'); if (t) { t.addEventListener('input', () => { S.wordsDraft.value = t.value.split('\n').slice(0, 2).join('\n'); wordsPreview(); }); }
+  const t = $('#wdIn'); if (t) { t.addEventListener('input', () => { S.wordsDraft.value = t.value.split('\n').slice(0, 2).join('\n'); wordsPreview();
+  }); }
+  document.querySelectorAll('.wordsbox [data-fontup]').forEach(i => i.addEventListener('change', async () => { const k = await fontUpload(i); if (k) { S.wordsDraft.font = k; drawCtrl(); } }));
+  if (S.wordsDraft) { wordFontsLoad(); document.fonts.ready.then(() => wordsPreview()); }
   const p = $('#wdPick'); if (p) p.addEventListener('input', () => { S.wordsDraft.color = p.value; wordsPreview(); });
   if (S.wordsDraft) fxFontsReady().then(wordsPreview);
 }
@@ -5760,7 +5809,6 @@ ${codeCardHTML()}
       </fieldset>
 
           <div id="sumBox">${checkoutSummary()}</div>
-          <div class="namecheck">${ic('school', 18)}<span>Name for pickup: <b id="ncName"></b></span><button type="button" class="cchange" style="display:inline" data-act="coGo" data-s="1">Fix</button></div>
           <label class="choice"><input type="checkbox" id="promise"><span id="promiseTxt"></span></label>
           <p class="ferr" id="e-promise" role="alert"></p>
           <div class="formerr" id="formErr" role="alert"></div>
@@ -7082,7 +7130,6 @@ function drawShopForm(){
 
     <div class="cfgsec"><div class="sub">Free sticker layout and cutting</div>
       <label class="switch" style="margin-bottom:8px"><input type="checkbox" data-cfgbool="free_on" ${c.free_on !== false ? 'checked' : ''}><span>Let customers place stickers freely (any size, anywhere), not only on the grid</span></label>
-      <label class="switch" style="margin-bottom:10px"><input type="checkbox" data-cfgbool="smooth_cut" ${c.smooth_cut !== false ? 'checked' : ''}><span>Smooth outlines by default (customers can switch any sticker to exact) (rounded, simpler outlines that are much faster to cut with scissors)</span></label>
       <div class="pgrid2"><label class="dnum"><span>Smallest sticker (mm)</span>${n('free_min_mm', c.free_min_mm, 10, 100)}</label>
         <label class="dnum"><span>Most stickers on one sheet</span>${n('free_max', c.free_max, 1, 200)}</label>
         <label class="dnum"><span>Space between stickers (mm)</span>${n('free_gap_mm', c.free_gap_mm, 1, 10)}</label></div>
@@ -8124,6 +8171,7 @@ const ACTIONS = {
     if (S.images.length >= CONFIG.maxPictures) return toast(`You can add up to ${CONFIG.maxPictures} pictures.`);
     const im = await wordsImage(w); if (!im) return toast("Couldn't make that sticker. Try other words.");
     S.images.push(im); S.selImage = im.id; S.selItem = null; S.wordsDraft = null; buzz([8, 30, 8]);
+    if ((S.selSize || 1) < 2) S.selSize = 2;   // words need room to be readable: start at Medium
     toast('Your words sticker is ready. Tap the sheet to place it.'); drawCtrl(); drawSheet();
   },
   smoothToggle: () => { const it = selected(); if (!it) return; it.smooth = !itemSmooth(it);
