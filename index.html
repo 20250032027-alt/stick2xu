@@ -1202,12 +1202,22 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
   .heroacts .btn{padding-left:24px}
   .hero > :last-child{width:min(100%,320px);justify-self:center}
 }
-@media(max-width:480px){.hero .cdc:nth-child(3){display:none}}   /* phones: the next two dates, on one row */
+@media(max-width:480px){   /* phones: all three dates as equal tiles on one row: the number on top, the event under it */
+  .hero .cdrow2{justify-items:stretch}
+  .hero .cdchips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .hero .cdc{flex-direction:column;align-items:flex-start;gap:2px;padding:8px 10px 9px;min-width:0}
+  .hero .cdc .cdc-n{font-size:24px;line-height:1}
+  .hero .cdc small{font-size:12px;line-height:1.2}
+  .hero .cdc small b,.hero .cdc small strong{display:block}
+  .hero .cdc .cdic{position:absolute;right:8px;top:8px}
+}
+@media(max-width:360px){.hero .cdchips{gap:8px}.hero .cdc{padding:7px 7px 8px}.hero .cdc small{font-size:11px}.hero .cdc .cdc-n{font-size:22px}.hero .cdc .cdic{right:6px;top:6px}}
+@media(max-width:340px){.hero .cdc{padding-left:6px;padding-right:5px}.hero .cdc small{font-size:10.5px}}
 /* quiet extras ("Got an idea? Tell us", "Don't see what you want? Tell us"): plain text and an underlined link, like "Print a file" */
 .softlink{margin:18px 0 26px;font-size:15.5px;color:var(--muted)}
 .softlink.center{text-align:center;margin:24px 0 8px}
 .bento + .softlink{margin-top:2px}
-.txtlink{display:inline-block;padding:11px 0;margin:-11px 0;border:0;background:none;font:inherit;font-weight:700;color:var(--ink);cursor:pointer;white-space:nowrap;
+.txtlink{display:inline;padding:11px 0;border:0;background:none;font:inherit;font-weight:700;color:var(--ink);cursor:pointer;white-space:nowrap;
   text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;text-decoration-color:var(--xu-gold)}
 .txtlink:hover{text-decoration-color:var(--ink)}
 .sbox.quiet .softlink{margin:0}
@@ -1242,7 +1252,7 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
   #ctrl .swatches .sw,#ctrlO .swatches .sw,.stkcard .swatches .sw,.wordsbox .swatches .sw{width:40px;height:40px}
   .cuttag.cuttag{font-size:12px}
 }
-.printhint a{display:inline-block;padding:11px 0;margin:-11px 0}   /* a taller tap area, same look */
+.printhint a{padding:11px 0}   /* a taller tap area, same look; stays inline so punctuation never breaks off */
 /* store: bento */
 .bento{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin:20px 0 16px}
 .bento .pcard{min-width:0}
