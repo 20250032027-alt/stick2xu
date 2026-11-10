@@ -1396,6 +1396,32 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .fxsec .fx-head + .fx-tabs{margin-top:12px}.stkcard .fx-head{margin-bottom:12px}
 .more-tile{display:grid;justify-items:center;align-content:center;gap:4px;padding:8px 4px;border:2px dashed var(--line);border-radius:14px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;min-height:64px}
 .more-tile:hover{border-color:var(--ink)}.more-tile small{font-size:12.5px;font-weight:700}
+.rawbt{margin:10px 0 0;padding:12px 14px;border-radius:14px;background:var(--gold-soft)}
+.rawbt .rb-t{display:flex;gap:8px;align-items:flex-start;margin:0 0 10px;font-size:14.5px}.rawbt .rb-t svg{flex:none;margin-top:3px;color:#B07D10}
+.rawbt .acts{display:flex;flex-wrap:wrap;gap:10px}
+/* photo cards */
+.phstyles{display:grid;grid-template-columns:1fr;gap:10px}
+@media(max-width:900px){.phstyles{grid-template-columns:1fr 1fr}}
+.phstyle{min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;padding:10px;border:2px solid var(--line);border-radius:var(--r-md);background:#fff;color:var(--ink);font:inherit;text-align:left;cursor:pointer;transition:border-color .2s,transform .2s var(--ease)}
+.phstyle:hover{border-color:var(--ink)}
+.phstyle.on{border-color:var(--ink);background:var(--gold-soft);box-shadow:var(--shadow-sm)}
+.phstyle svg{width:34px;height:auto;transform:rotate(-5deg)}
+.phstyle > span{display:grid;grid-template-columns:1fr auto;column-gap:8px;align-items:baseline}.phstyle small{grid-column:1/-1;grid-row:2}.phstyle em{grid-column:2;grid-row:1}
+.phstyle b{display:block;font-size:15px;line-height:1.2}.phstyle small{display:block;font-size:12.5px;color:var(--muted);line-height:1.25}.phstyle em{display:block;font-style:normal;font-weight:800;margin-top:2px}
+.phwrap{display:grid;place-items:center;margin:4px 0 6px}
+.phwrap canvas{display:block;border-radius:3px;box-shadow:0 1px 0 rgba(0,0,0,.06),3px 4px 0 var(--ink),0 0 0 2px var(--ink);transform:rotate(-1.5deg);touch-action:none;cursor:grab;background:#fff}
+.phwrap canvas:active{cursor:grabbing}
+.phwrap.instant canvas{width:min(100%,290px)}
+.phwrap.strip canvas{height:min(68vh,560px);width:auto;max-width:100%}
+.phadj{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;width:min(100%,460px);margin:6px auto 0}
+.phadj .zoomrow{flex:1 1 220px;margin:0}.phadj .lab{margin:0}
+.phthumb{position:relative;border-radius:2px;box-shadow:0 0 0 1px rgba(40,57,113,.25);overflow:hidden;flex:none}
+.phthumb .phf{position:absolute;overflow:hidden;background:#E6EAF4}
+.phthumb .phf img{position:absolute;max-width:none}
+.phthumb .phcap{position:absolute;left:0;right:0;display:grid;place-items:center;line-height:1;white-space:nowrap;overflow:hidden}
+.phbt{width:auto;min-width:54px;height:auto;min-height:62px;padding:4px 6px}
+@media(max-width:900px){.phd #phStage{order:1}.phd #phCtrl{order:2}.phd #phOpts{order:3}.phd #phQty{order:4}.split #phCtrl .phead{display:none}.split #phCtrl .phead + section{margin-top:0;padding-top:0;border-top:0}}
+@media(max-width:480px){.fx-tabs button{flex:1 1 0;min-width:0;padding-left:4px;padding-right:4px;font-size:14px}.fx-tabs .fx-dot{right:4px}.phstyle{gap:8px;padding:8px}.phstyle > span{grid-template-columns:1fr}.phstyle em{grid-column:1;grid-row:3}}
 /* fonts: tiles that show your words in each font */
 .wd-fonts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .wd-font{display:grid;justify-items:center;align-content:center;gap:3px;min-height:64px;padding:8px 4px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit;cursor:pointer}
@@ -1715,20 +1741,6 @@ details.gtk ul{margin-top:10px}
 .linkbtn{border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:14px;padding:8px}
 
 /* name highlight: an ID card that fills in as you type */
-.idprev{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;margin-top:10px;padding:14px 14px 16px;border:2px solid var(--xu-gold);border-radius:16px;background:#FFF8E6}
-.idprev p{margin:0;font-size:13.5px;color:#6B4B00}
-.idprev p b{color:var(--ink)}
-.idc{width:108px;border-radius:10px;background:#fff;border:1.5px solid var(--ink);overflow:hidden;box-shadow:var(--shadow-sm);transform:rotate(-3deg);display:flex;flex-direction:column}
-.idc-top{background:var(--accent);color:#fff;font-size:8.5px;font-weight:800;letter-spacing:.14em;text-align:center;padding:4px 0}
-.idc-body{display:flex;flex-direction:column;align-items:center;gap:6px;padding:9px 7px 6px;text-align:center}
-.idc-ph{position:relative;width:46px;height:54px;border-radius:6px;background:#C9DEFA;overflow:hidden}
-.idc-ph i:first-child{position:absolute;left:50%;top:11px;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:var(--accent)}
-.idc-ph i:last-child{position:absolute;left:50%;bottom:-12px;width:38px;height:28px;margin-left:-19px;border-radius:50%;background:var(--accent)}
-.idc-txt{display:grid;gap:2px;min-width:0;width:100%}
-.idc-txt b{font-size:11px;line-height:1.15;color:var(--ink);overflow-wrap:break-word}
-.idc-txt b.ph{color:#9AA3BF;font-weight:600}
-.idc-txt small{font-size:9px;color:var(--muted)}
-.idc-bar{height:12px;margin:0 9px 8px;background:repeating-linear-gradient(90deg,var(--ink) 0 1.5px,transparent 1.5px 3px,var(--ink) 3px 5px,transparent 5px 7px,var(--ink) 7px 8px,transparent 8px 10px);opacity:.85}
 .namecheck{display:flex;gap:8px;align-items:center;margin:14px 0 10px;padding:10px 12px;border-radius:12px;background:#FFF8E6;border:1px solid #EED9A2;font-size:14px}
 .namecheck svg{flex:none;color:#C9951A}
 .namecheck span{flex:1;min-width:0}
@@ -2307,6 +2319,13 @@ const CONFIG = {
               { id: 'long', label: 'Long (8.5 x 13)', price: 6, wMm: 216, hMm: 330, enabled: false }],
       addons: [{ id: 'color', label: 'Color', note: 'instead of black and white', price: 5, enabled: true }]
     },
+    photos: {
+      name: 'Photo cards', blurb: 'Instant photos and photo-booth strips from your pictures', unit: 'piece', enabled: false, maxQty: 30,
+      // real sizes: an instant photo is the Instax Mini size (5.4 x 8.6 cm, photo 4.6 x 6.2 cm);
+      // a strip is the classic photo-booth 2 x 6 inches (5.08 x 15.24 cm), with 3 or 4 photos
+      sizes: [{ id: 'instant', label: 'Instant photo', price: 25 }, { id: 'strip', label: 'Photo strip', price: 25 }],
+      addons: []
+    },
     keychains: {
       name: 'Keychains', blurb: 'Your picture inside a clear acrylic keychain', unit: 'keychain', enabled: false,
       // The paper insert that slides into the case. The keychain is 3.2 x 5 cm on the outside;
@@ -2358,7 +2377,7 @@ const CONFIG = {
 
   gcash: { enabled: true, name: 'J. Dela Cruz', number: '0917 000 0000' },
 
-  productOrder: ['stickers', 'pins', 'keychains', 'posters', 'prints'],   // order on the "What do you want to make?" page (admin can change it)
+  productOrder: ['stickers', 'pins', 'photos', 'keychains', 'posters', 'prints'],   // order on the "What do you want to make?" page (admin can change it)
   referralOn: true,         // friend codes on/off
   referralFriendOff: 5,     // a friend's first order gets this much off
   // Stick2It Sellers (off until switched on in Settings; while on, it replaces friend codes)
@@ -2972,6 +2991,7 @@ function itemTitle(it){
   const p = CONFIG.products[it.type] || { name: it.type, sizes: [] }, n = it.type === 'stickers' ? ((it.sheets || []).filter(s => (s.items || []).length).length || +it.qty || 0) : it.qty;
   const sizeLabel = it.size_label || ((p.sizes.find(z => z.id === it.size) || {}).label) || '';
   if (it.type === 'stickers') return `Stickers, ${n} sheet${n === 1 ? '' : 's'}`;
+  if (it.type === 'photos') return it.size === 'strip' ? `Photo strip${+n === 1 ? '' : 's'}, ${(it.ph && +it.ph.count === 3) ? 3 : 4} photos × ${n}` : `Instant photo${+n === 1 ? '' : 's'} × ${n}`;
   if (it.type === 'posters' && it.mode === 'pages') return `Poster from your PDF, ${it.pages} page${+it.pages === 1 ? '' : 's'}${+it.qty > 1 ? ` × ${it.qty}` : ''}`;
   if (it.type === 'prints') return `Prints (${sizeLabel}), ${it.pages} page${+it.pages === 1 ? '' : 's'} × ${n} cop${+n === 1 ? 'y' : 'ies'}`;
   const extra = it.type === 'posters' ? `, ${(+it.tiles || 1) > 1 ? (it.cols ? `${it.cols} × ${it.rows}` : tileLabel(+it.tiles)) + ' sheets, ' : ''}${it.orient === 'landscape' ? 'wide' : 'tall'}${it.fit === 'fill' ? ', fill' : ''}` : '';
@@ -2987,6 +3007,8 @@ function itemDetails(it){
     const imps = (it.sheets || []).filter(sh => sh.imported);
     if (imps.length) bits.push(`${imps.length} imported sheet${imps.length === 1 ? '' : 's'}: ${[...new Set(imps.map(sh => sh.imported.lines === 'yes' ? 'has its own cut lines' : 'cut around each design'))].join(' / ')}`); }
   if (it.type === 'keychains') { const m = it.back_mode || it.backMode; bits.push(m === 'different' ? 'different back' : m === 'blank' ? 'clear back' : 'same picture both sides'); }
+  if (it.type === 'photos' && it.ph) { bits.push(`${phColorName(it.ph.color)} frame`); if ((it.ph.caption && it.ph.caption.value || '').trim()) bits.push(`caption “${it.ph.caption.value.trim()}”`);
+    if (it.ph.date) bits.push(`date stamp ${it.ph.dateText || ''}`.trim()); if (it.ph.filter && it.ph.filter !== 'none') bits.push(((FX_FILTER_NAMES.find(([v]) => v === it.ph.filter) || [0, ''])[1]).toLowerCase() + ' filter'); }
   return bits.join(' · ');
 }
 const TILE_GRID = { 1: [1, 1], 2: [1, 2], 4: [2, 2], 9: [3, 3] };   // [columns, rows] for a tall poster
@@ -3063,16 +3085,70 @@ function framedThumb(d, url, mm, width = 80){
   return `<div class="fthumb ${mm.round ? 'round' : ''}" style="width:${width}px;aspect-ratio:${mm.w}/${mm.h};background:${d.bg || '#fff'}">${url
     ? `<img src="${url}" alt="" data-d='${esc(JSON.stringify({ zoom: d.zoom, ox: d.ox, oy: d.oy, ...(fx ? { fx } : {}) }))}' data-w="${mm.w}" data-h="${mm.h}" data-face="${mm.vis ? mm.vis / mm.w : 1}" onload="fitThumb(this)">${fx ? '<canvas class="fxc" aria-hidden="true"></canvas>' : ''}` : ''}</div>`;
 }
+/* =====================================================================
+   Photo cards: instant photos (Instax Mini size, 54 x 86 mm, photo 46 x 62 mm) and photo-booth strips
+   (2 x 6 inches, 50.8 x 152.4 mm, 3 or 4 photos). One painter, renderPhotoCard, draws the live preview,
+   the small pictures in the cart and admin, and the printed card, so they always match.
+   ===================================================================== */
+const PH_STYLES = {
+  instant: { w: 54, h: 86, label: 'Instant photo', frames: () => [{ x: 4, y: 6, w: 46, h: 62 }], cap: { x: 4, y: 68, w: 46, h: 18 } },
+  strip: { w: 50.8, h: 152.4, label: 'Photo strip', cap: { x: 3.2, y: 132.4, w: 44.4, h: 20 },
+    frames: n => { const m = 3.2, gap = 2.4, capH = 20, fw = 50.8 - 2 * m, fh = (152.4 - m - capH - gap * (n - 1)) / n;
+      return Array.from({ length: n }, (_, i) => ({ x: m, y: m + i * (fh + gap), w: fw, h: fh })); } }
+};
+const PH_COLORS = [['#ffffff', 'White'], ['#FFF6E5', 'Cream'], ['#1B1B1F', 'Black'], ['#283971', 'Navy'], ['#F2BC2E', 'Gold'], ['#F7C6D9', 'Pink'], ['#BFE8D6', 'Mint'], ['#CFE3FF', 'Sky']];
+const PH_INK = ['#283971', '#1B1B1F', '#EC282A', '#F2BC2E', '#E8559A', '#ffffff'];
+const phColorName = c => (PH_COLORS.find(([v]) => v.toLowerCase() === String(c || '').toLowerCase()) || [0, 'Custom'])[1];
+const phFrames = c => (PH_STYLES[c.style] || PH_STYLES.instant).frames(c.style === 'strip' ? (+c.count === 3 ? 3 : 4) : 1);
+function phToday(){ const d = new Date(); return `’${String(d.getFullYear()).slice(2)} ${String(d.getMonth() + 1).padStart(2, '0')} ${String(d.getDate()).padStart(2, '0')}`; }
+// x: canvas context, c: the card ({ style, count, frames, color, caption, date, dateText, filter }), k: pixels per mm, imgFor(frame): a picture or null
+function renderPhotoCard(x, c, k, imgFor, opts = {}){
+  const sp = PH_STYLES[c.style] || PH_STYLES.instant, fr = phFrames(c);
+  x.save(); x.fillStyle = c.color || '#ffffff'; x.fillRect(0, 0, sp.w * k, sp.h * k);
+  fr.forEach((r, i) => {
+    const f = (c.frames || [])[i], rx = r.x * k, ry = r.y * k, rw = r.w * k, rh = r.h * k, im = f ? imgFor(f) : null;
+    x.save(); x.beginPath(); x.rect(rx, ry, rw, rh); x.clip();
+    if (im) { const L = layoutFrac({ w: im.naturalWidth || im.width, h: im.naturalHeight || im.height }, f, r.w, r.h);
+      fxDrawImage(x, im, { fx: { filter: c.filter || 'none' } }, rx + L.left * rw, ry + L.top * rh, L.dw * rw, L.dh * rh); }
+    else { x.fillStyle = opts.preview ? '#E6EAF4' : '#EEEEEE'; x.fillRect(rx, ry, rw, rh);
+      if (opts.preview) { const s = Math.min(rw, rh) * 0.16; x.strokeStyle = '#8D97B8'; x.lineWidth = Math.max(2, s * 0.16); x.lineCap = 'round';
+        x.beginPath(); x.moveTo(rx + rw / 2 - s / 2, ry + rh / 2 - s * 0.25); x.lineTo(rx + rw / 2 + s / 2, ry + rh / 2 - s * 0.25); x.moveTo(rx + rw / 2, ry + rh / 2 - s * 0.75); x.lineTo(rx + rw / 2, ry + rh / 2 + s * 0.25); x.stroke();
+        x.fillStyle = '#6B7598'; x.font = `600 ${Math.max(10, s * 0.55)}px ${FX_FONTS.clean[1]}`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('Add a photo', rx + rw / 2, ry + rh / 2 + s * 0.8); } }
+    x.restore();
+    if (opts.sel === i && fr.length > 1) { const lw = Math.max(2, k * 0.55); x.strokeStyle = '#F2BC2E'; x.lineWidth = lw; x.setLineDash([k * 1.8, k * 1.2]); x.strokeRect(rx + lw / 2, ry + lw / 2, rw - lw, rh - lw); x.setLineDash([]); }
+  });
+  if (c.date) {   // a date stamp, like an old film camera, in the corner of the last photo
+    const r = fr[fr.length - 1], fs = Math.min(r.h * 0.085, 3.3) * k;
+    x.font = `700 ${fs}px 'Courier New', ui-monospace, monospace`; x.textAlign = 'right'; x.textBaseline = 'alphabetic';
+    x.shadowColor = 'rgba(255,120,20,.7)'; x.shadowBlur = fs * 0.35; x.fillStyle = '#FF8A1F';
+    x.fillText(c.dateText || phToday(), (r.x + r.w) * k - fs * 0.6, (r.y + r.h) * k - fs * 0.55); x.shadowBlur = 0;
+  }
+  const cap = ((c.caption && c.caption.value) || '').trim();
+  if (cap) {   // the caption, centered in the bottom strip
+    const [wt, fam] = wordFont(c.caption.font), a = sp.cap; let fs = Math.min(a.h * 0.42, 7.5) * k; x.font = `${wt} ${fs}px ${fam}`;
+    const maxW = a.w * 0.9 * k, w0 = x.measureText(cap).width; if (w0 > maxW) { fs *= maxW / w0; x.font = `${wt} ${fs}px ${fam}`; }
+    x.fillStyle = c.caption.color || '#283971'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(cap, (a.x + a.w / 2) * k, (a.y + a.h / 2) * k);
+  }
+  x.restore();
+}
+// the small picture of a photo card (cart, admin): the frames as real pictures, positioned like the print
+function phThumbHTML(it, urlFor, width = 60){
+  const c = { ...(it.ph || {}), style: it.size, frames: it.frames || [] }, sp = PH_STYLES[c.style] || PH_STYLES.instant, fr = phFrames(c), cap = c.caption || {};
+  return `<div class="phthumb" style="width:${width}px;aspect-ratio:${sp.w}/${sp.h};background:${esc(c.color || '#ffffff')}">${fr.map((r, i) => { const f = c.frames[i], url = f ? urlFor.framed(f) : '';
+      return `<div class="phf" style="left:${r.x / sp.w * 100}%;top:${r.y / sp.h * 100}%;width:${r.w / sp.w * 100}%;height:${r.h / sp.h * 100}%">${url ? `<img src="${url}" alt="" data-d='${esc(JSON.stringify({ zoom: f.zoom, ox: f.ox, oy: f.oy, fx: { filter: c.filter || 'none' } }))}' data-w="${r.w}" data-h="${r.h}" onload="fitThumb(this)">` : ''}</div>`; }).join('')}
+    ${(cap.value || '').trim() ? `<span class="phcap" style="top:${sp.cap.y / sp.h * 100}%;height:${sp.cap.h / sp.h * 100}%;color:${esc(cap.color || '#283971')};font-family:${wordFont(cap.font)[1].replace(/"/g, '&quot;')};font-weight:${wordFont(cap.font)[0]};font-size:${Math.max(6, width * 0.1)}px">${esc(cap.value)}</span>` : ''}</div>`;
+}
 function itemThumb(it, urlFor){
   if (it.type === 'posters' && it.mode === 'pages') return `<div class="docthumb">${ic('doc', 26)}<b class="num">${it.pages}</b><small>PDF pages</small></div>`;
   if (it.type === 'prints') return `<div class="docthumb">${ic('doc', 26)}<b class="num">${it.pages}</b><small>page${+it.pages === 1 ? '' : 's'}</small></div>`;
   if (it.type === 'stickers') return miniSheet(it.sheets.find(s => s.items.length) || it.sheets[0], urlFor.sticker, false, !!urlFor.outlined);
+  if (it.type === 'photos') return phThumbHTML(it, urlFor, it.size === 'strip' ? 30 : 52);
   const mm = frameMm(it);
   return framedThumb(it.front || {}, it.front ? urlFor.framed(it.front) : '', mm, it.type === 'posters' ? 64 : 76);
 }
 
 function cartImageIds(){
-  return S.cart.flatMap(it => it.mode === 'pages' && it.pdf ? [it.pdf.id] : it.type === 'prints' ? (it.files || []).map(f => f.id) : it.type === 'stickers' ? it.sheets.flatMap(sh => sh.items.map(x => x.imageId))
+  return S.cart.flatMap(it => it.mode === 'pages' && it.pdf ? [it.pdf.id] : it.type === 'prints' ? (it.files || []).map(f => f.id) : it.type === 'photos' ? (it.frames || []).map(f => f.imageId) : it.type === 'stickers' ? it.sheets.flatMap(sh => sh.items.map(x => x.imageId))
     : [it.front && it.front.imageId, it.type === 'keychains' && it.backMode === 'different' && it.back && it.back.imageId]).filter(Boolean);
 }
 function serializeItems(items, pathFor){
@@ -3086,6 +3162,8 @@ function serializeItems(items, pathFor){
     const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy, bg: x.bg || '#ffffff', ...(fxOn(x.fx) ? { fx: clone(x.fx) } : {}) } : null;
     if (it.type === 'posters' && it.mode === 'pages') return { ...base, qty: it.qty, mode: 'pages', pages: it.pages, across: it.across, tiles: it.pages,
       pdf: { path: pathFor[it.pdf.id], name: it.pdf.name, pages: it.pages } };
+    if (it.type === 'photos') return { ...base, qty: it.qty, ph: clone(it.ph),
+      frames: it.frames.map(f => ({ path: pathFor[f.imageId], zoom: f.zoom || 1, ox: f.ox || 0, oy: f.oy || 0 })), front: { path: pathFor[it.frames[0].imageId] } };
     const out = { ...base, qty: it.qty, mm: frameMm(it), front: d(it.front) };
     if (it.type === 'posters') { out.orient = it.orient; out.cols = +it.cols || 1; out.rows = +it.rows || 1; out.tiles = out.cols * out.rows; out.fit = it.fit || 'fit'; out.wMm = +it.wMm || null; out.hMm = +it.hMm || null; out.ovMm = +it.ovMm || 0; }
     if (it.type === 'keychains') { out.back_mode = it.backMode; out.back = it.backMode === 'different' ? d(it.back) : null; }
@@ -3093,7 +3171,7 @@ function serializeItems(items, pathFor){
   });
 }
 const orderItems = o => (o.layout && o.layout.items) || [{ type: 'stickers', size: 'a4', size_label: 'A4 sheet', addons: [], addon_labels: [], sheets: (o.layout && o.layout.sheets) || [] }];
-const orderPaths = o => orderItems(o).flatMap(it => it.mode === 'pages' && it.pdf ? [it.pdf.path] : it.type === 'prints' ? (it.files || []).map(f => f.path) : it.type === 'stickers' ? (it.sheets || []).flatMap(sh => sh.items.map(x => x.path)) : [it.front && it.front.path, it.back && it.back.path]).filter(Boolean);
+const orderPaths = o => orderItems(o).flatMap(it => it.mode === 'pages' && it.pdf ? [it.pdf.path] : it.type === 'prints' ? (it.files || []).map(f => f.path) : it.type === 'photos' ? (it.frames || []).map(f => f.path) : it.type === 'stickers' ? (it.sheets || []).flatMap(sh => sh.items.map(x => x.path)) : [it.front && it.front.path, it.back && it.back.path]).filter(Boolean);
 
 /* =====================================================================
    Backend: Supabase
@@ -3856,6 +3934,15 @@ function illoKeychains(){
   const id = 'ik' + (illoN++);
   return `<svg viewBox="42 0 166 156" aria-hidden="true">${illoDefs(id)}${keychainSVG(id, 78, 8, 1.05, 6)}</svg>`;
 }
+function illoPhotos(){   // a photo strip leaning behind an instant photo with a little caption
+  const id = 'iph' + (illoN++), cap = (x, y, w) => `<path d="M${x} ${y} q ${w * 0.25} -3 ${w * 0.5} 0 t ${w * 0.5} 0" stroke="#283971" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+  return `<svg viewBox="40 0 170 156" aria-hidden="true">${illoDefs(id)}
+    <g transform="rotate(8 160 78)" filter="url(#${id}f)"><rect x="138" y="10" width="40" height="124" rx="2" fill="#1B1B1F"/>
+      ${[0, 1, 2, 3].map(i => scene(id, 142, 14 + i * 26, 32, 23, `<rect x="142" y="${14 + i * 26}" width="32" height="23"/>`)).join('')}</g>
+    <g transform="rotate(-6 100 80)" filter="url(#${id}f)"><rect x="66" y="20" width="76" height="118" rx="3" fill="#fff"/>
+      ${scene(id, 72, 27, 64, 84, '<rect x="72" y="27" width="64" height="84"/>')}${cap(84, 124, 40)}</g>
+  </svg>`;
+}
 function illoPrints(){
   const id = 'ir' + (illoN++), line = (x, y, w) => `<rect x="${x}" y="${y}" width="${w}" height="3.4" rx="1.7" fill="#C9D1E3"/>`;
   return `<svg viewBox="46 0 150 150" aria-hidden="true">${illoDefs(id)}
@@ -3866,7 +3953,7 @@ function illoPrints(){
   </svg>`;
 }
 function productIllo(key){
-  return { stickers: illoStickers, pins: illoPins, posters: illoPosters, keychains: illoKeychains, prints: illoPrints }[key]();
+  return { stickers: illoStickers, pins: illoPins, posters: illoPosters, keychains: illoKeychains, prints: illoPrints, photos: illoPhotos }[key]();
 }
 /* The store as a bento: tiles that always fill a clean rectangle, whatever products are switched on.
    The first product (Settings order) gets the big tile. 5 products: big + tall + three; 3: big + two; 4: big + two + a wide one;
@@ -4866,10 +4953,23 @@ function prnFail(e){
     : /Security|NotAllowed/i.test(m) ? 'The browser blocked it. Use Chrome, and allow Bluetooth or USB when it asks.'
     : "Couldn't connect. Turn the printer off and on, keep it close, and try again.");
 }
+/* RawBT (Android app): prints over the older Bluetooth that websites can't reach, using the printer settings chosen in the app.
+   The site hands it a job through a link: a picture (RawBT turns it into printer commands) or raw printer commands. */
+const RAWBT = '#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;';
+const RAWBT_STORE = 'https://play.google.com/store/apps/details?id=ru.a402d.rawbtprinter';
+const isAndroid = () => /Android/i.test(navigator.userAgent || '');
+function rawbtImage(canvas){ location.href = 'intent:' + canvas.toDataURL('image/png') + RAWBT; }
+function rawbtBytes(bytes){ let s = ''; for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]); location.href = 'intent:base64,' + btoa(s) + RAWBT; }
+function rawbtHTML(){
+  return `<div class="rawbt"><p class="rb-t">${ic('sparkle', 16)}<span><b>Easiest on Android: the RawBT app.</b> It prints over any kind of Bluetooth. Pick your printer and 58 mm paper in the app once.</span></p>
+    ${isAndroid() ? `<div class="acts">${smallBtn('Test print with RawBT', 'printer', 'rawbtTest', 'dark')}<a class="btn sm noi plain" href="${RAWBT_STORE}" target="_blank" rel="noopener">${ic('download', 18)}<span>Get RawBT</span></a></div>`
+      : `<p class="help" style="margin:6px 0 0">Open this page in Chrome on your Android phone to print with RawBT.</p>`}</div>`;
+}
 function drawPrinterCard(){
   const box = $('#prnCard'); if (!box) return;
   const can = { bt: !!navigator.bluetooth, usb: !!navigator.usb }, w = prnWidth();
-  box.innerHTML = `<h3 style="margin-bottom:6px">${ic('printer', 18)} Thermal printer</h3>
+  box.innerHTML = `<h3 style="margin-bottom:6px">${ic('printer', 18)} Thermal printer</h3>${rawbtHTML()}
+    <p class="lab" style="margin:16px 0 4px">Or connect directly</p>
     ${!can.bt && !can.usb ? `<p class="help">This browser can't connect to printers. On Android, open the site in <b>Chrome</b>. iPhones can't connect to printers from a website.</p>`
     : PRN.send ? `<p class="prn-on">${ic('check', 16)}<span>Connected to <b>${esc(PRN.name)}</b></span></p>
       <p class="aiprog" id="prnStatus" role="status" ${PRN.busy ? '' : 'hidden'}>Printing…</p>
@@ -5082,10 +5182,173 @@ function activeDesign(){
 }
 const maxQtyFor = key => (CONFIG.products[key] || {}).maxQty || CONFIG.maxQty;
 function setQty(n){ S.fd.qty = Math.max(1, Math.min(maxQtyFor(S.fd.type), Math.round(+n || 1))); fdSync(); drawFramedCtrl(); drawFramedBottom(); }
+/* ===================== the photo card designer ===================== */
+const phNewCard = (style, base) => ({ style: style || 'instant', count: base ? base.count : 4, frames: [], color: base ? base.color : '#ffffff',
+  caption: { value: '', font: base ? base.caption.font : 'hand', color: base ? base.caption.color : '#283971' }, date: base ? base.date : false, dateText: phToday(), filter: base ? base.filter : 'none', qty: 1 });
+const phCur = () => S.ph.cards[S.ph.cur];
+const phNeed = c => phFrames(c).length;
+const phHas = c => c.frames.slice(0, phNeed(c)).filter(f => f && f.imageId).length;
+const phFull = c => phHas(c) === phNeed(c);
+const phImg = f => { const im = f && f.imageId && imgById(f.imageId); return im ? im.canvas : null; };
+const phUrlFor = { framed: f => { const im = f && f.imageId && imgById(f.imageId); return im ? im.url : ''; } };
+const phAsItem = c => ({ size: c.style, frames: c.frames.slice(0, phNeed(c)), ph: { count: c.count, color: c.color, caption: c.caption, date: c.date, dateText: c.dateText, filter: c.filter } });
+const phDecorated = c => (c.caption.value || '').trim() || c.date || (c.filter && c.filter !== 'none') || String(c.color).toLowerCase() !== '#ffffff';
+function phFromItem(it){ const c = phNewCard(it.size); Object.assign(c, clone(it.ph || {}), { style: it.size, frames: clone(it.frames || []), qty: it.qty || 1 }); return c; }
+function viewPhotos(){
+  S.view = 'photos';
+  if (!S.ph) S.ph = { cards: [phNewCard('instant')], cur: 0, sel: 0 };
+  $('#app').innerHTML = `${topbar()}<main id="main" class="wrap">${progress(1)}${backBar()}
+    <div class="designer split phd">
+      <div class="dcol dcol-l"><aside class="panel tools" id="phCtrl"></aside><aside class="panel tools" id="phQty"></aside></div>
+      <div class="dcol dcol-r"><section class="stage2" id="phStage" aria-label="Preview"></section><aside class="panel tools" id="phOpts" aria-label="Options"></aside></div></div></main>
+    <div class="bottombar"><div class="in" id="bottom"></div></div>`;
+  wordFontsLoad(); phDraw();
+  document.fonts.ready.then(() => { if (S.view === 'photos') phPaint(); });
+}
+function phDraw(){ phDrawCtrl(); phDrawStage(); phDrawOpts(); phDrawQty(); phDrawBottom(); }
+function phStyleTile(v){
+  const on = phCur().style === v, P0 = P('photos'), z = P0.sizes.find(s => s.id === v) || {};
+  const pic = v === 'instant' ? `<svg viewBox="0 0 40 56" aria-hidden="true"><rect x="2" y="2" width="36" height="52" rx="2" fill="#fff" stroke="#283971" stroke-width="2"/><rect x="6" y="6" width="28" height="34" fill="#9CC3F2"/><circle cx="25" cy="15" r="4" fill="#F2BC2E"/><path d="M6 40l9-10 7 6 5-4 7 8z" fill="#3E9B5A"/><path d="M12 47q8-3 16 0" stroke="#283971" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`
+    : `<svg viewBox="0 0 24 64" aria-hidden="true"><rect x="2" y="2" width="20" height="60" rx="1.5" fill="#1B1B1F"/>${[0, 1, 2, 3].map(i => `<rect x="4.5" y="${4.5 + i * 11.5}" width="15" height="9.5" fill="${['#9CC3F2', '#F7C6D9', '#BFE8D6', '#FFE7A6'][i]}"/>`).join('')}</svg>`;
+  return `<button type="button" class="phstyle ${on ? 'on' : ''}" data-act="phStyle" data-v="${v}" aria-pressed="${on}">${pic}
+    <span><b>${v === 'instant' ? 'Instant photo' : 'Photo strip'}</b><small>${v === 'instant' ? '5.4 × 8.6 cm, one photo' : '5 × 15 cm, 3 or 4 photos'}</small><em class="num">${money(z.price || 25)}</em></span></button>`;
+}
+function phDrawCtrl(){
+  const c = phCur(), list = S.ph.cards, word = c.style === 'strip' ? 'strip' : 'photo', any = list.some(x => phHas(x));
+  $('#phCtrl').innerHTML = `<div class="phead"><h2>Photo cards</h2><p>Instant photos and photo-booth strips</p></div>
+    <section><div class="stephead">Pick a style</div><div class="phstyles">${phStyleTile('instant')}${phStyleTile('strip')}</div>
+      ${c.style === 'strip' ? `<p class="lab flab">Photos on the strip</p><div class="seg">${[3, 4].map(n => `<button type="button" class="${(+c.count === 3 ? 3 : 4) === n ? 'on' : ''}" data-act="phCount" data-v="${n}">${n} photos</button>`).join('')}</div>` : ''}</section>
+    <section><div class="stephead">Your photo cards</div>
+      ${any ? `<div class="btray" role="list">${list.map((x, i) => `<button type="button" role="listitem" class="bt phbt ${i === S.ph.cur ? 'on' : ''}" data-act="phPick" data-i="${i}" aria-label="Card ${i + 1}">${phThumbHTML(phAsItem(x), phUrlFor, x.style === 'strip' ? 18 : 34)}${x.qty > 1 ? `<span class="bt-q num">×${x.qty}</span>` : ''}</button>`).join('')}
+          <label class="bt bt-add" title="Add more photos"><span>${ic('plus', 20)}</span><small>Add</small><input type="file" accept="image/*" multiple hidden class="phIn" data-more="1"></label></div>
+        <p class="bt-note muted small">${list.length > 1 ? `Card ${S.ph.cur + 1} of ${list.length}. Tap one to change it.` : `Tip: choose several photos at once to make several ${word}s.`}</p>
+        <div class="bt-acts">${smallBtn('Copy', 'copy', 'phCopy', 'plain', 'aria-label="Make a copy of this card"')}${list.length > 1 ? smallBtn('Remove', 'trash', 'phDel', 'plain') : ''}</div>`
+      : `<label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose photos<small>Pick one, or several at once. ${c.style === 'strip' ? 'Each strip holds 3 or 4.' : 'Each photo becomes its own card.'}</small></span><input type="file" accept="image/*" multiple hidden class="phIn"></label>`}
+    </section>`;
+  $('#phCtrl').querySelectorAll('.phIn').forEach(i => i.addEventListener('change', phFiles));
+}
+function phNext(){
+  const c = phCur(), need = phNeed(c), has = phHas(c), ready = S.ph.cards.some(phFull);
+  const steps = [{ label: 'Photos', state: phFull(c) ? 'did' : 'now' }, { label: 'Make it yours', state: phDecorated(c) ? 'did' : 'opt' }, { label: 'Order', state: phFull(c) ? 'now' : 'todo' }];
+  if (!has) return nextStepHTML(c.style === 'strip' ? `Start by adding ${need} photos.` : 'Start by adding a photo.', false, steps);
+  if (has < need) return nextStepHTML(`Add ${need - has} more photo${need - has === 1 ? '' : 's'} to fill the strip. Tap an empty spot.`, false, steps);
+  return nextStepHTML(ready && S.ph.cards.length > 1 ? 'Looks good! Tap a card to change it, or tap Add to order.' : 'Looks good! Drag a photo to move it, then tap Add to order.', true, steps);
+}
+function phDrawStage(){
+  const c = phCur(), sp = PH_STYLES[c.style], n = phNeed(c), sel = Math.min(S.ph.sel || 0, n - 1), f = c.frames[sel];
+  S.ph.sel = sel;
+  $('#phStage').innerHTML = `${phNext()}
+    <div class="phwrap ${c.style}"><canvas id="phCanvas" style="aspect-ratio:${sp.w}/${sp.h}" role="img" aria-label="Preview of your ${c.style === 'strip' ? 'photo strip' : 'instant photo'}"></canvas></div>
+    <p class="under">${c.style === 'strip' ? 'Prints at 5.08 × 15.24 cm (2 × 6 inches).' : 'Prints at 5.4 × 8.6 cm, the size of a school ID.'} ${n > 1 ? 'Tap a photo to pick it, drag to move it.' : 'Drag the photo to move it.'}</p>
+    ${f && f.imageId ? `<div class="phadj">${n > 1 ? `<span class="lab">Photo ${sel + 1} of ${n}</span>` : ''}
+      <div class="zoomrow">${ic('search', 18)}<input type="range" id="phZoom" min="1" max="3" step="0.01" value="${f.zoom || 1}" aria-label="Zoom">${smallBtn('Reset', '', 'phReset', 'plain')}</div>
+      <label class="btn sm noi plain">${ic('image', 18)}<span>Change photo</span><input type="file" accept="image/*" hidden class="phOne"></label></div>`
+      : `<input type="file" accept="image/*" hidden class="phOne" id="phPickOne">`}`;
+  $('#phStage').querySelectorAll('.phOne').forEach(i => i.addEventListener('change', phFiles));
+  const z = $('#phZoom'); if (z) z.addEventListener('input', () => { const fr = phCur().frames[S.ph.sel]; if (fr) { fr.zoom = +z.value; phPaint(); } });
+  if (z) z.addEventListener('change', () => phDrawCtrl());
+  phPaint(); phBindCanvas();
+}
+// paint the big preview (sharp on any screen)
+function phPaint(){
+  const cv = $('#phCanvas'); if (!cv) return; const c = phCur(), sp = PH_STYLES[c.style];
+  const w = cv.clientWidth || 260, k = Math.min(3, window.devicePixelRatio || 1) * w / sp.w;
+  cv.width = Math.round(sp.w * k); cv.height = Math.round(sp.h * k);
+  renderPhotoCard(cv.getContext('2d'), c, k, phImg, { preview: true, sel: S.ph.sel });
+  if ((c.caption.value || '').trim()) wordFontReady(c.caption.font).then(() => { if ($('#phCanvas') === cv) renderPhotoCard(cv.getContext('2d'), c, k, phImg, { preview: true, sel: S.ph.sel }); });
+}
+// tap a photo to pick it, drag to move it, pinch or scroll to zoom; tap an empty spot to add a photo there
+function phBindCanvas(){
+  const cv = $('#phCanvas'); if (!cv) return;
+  const at = e => { const r = cv.getBoundingClientRect(), c = phCur(), sp = PH_STYLES[c.style], mx = (e.clientX - r.left) / r.width * sp.w, my = (e.clientY - r.top) / r.height * sp.h;
+    return { i: phFrames(c).findIndex(q => mx >= q.x && mx <= q.x + q.w && my >= q.y && my <= q.y + q.h), r }; };
+  const pts = new Map(); let st = null, picked = false;
+  cv.addEventListener('pointerdown', e => {
+    const { i, r } = at(e); if (i < 0) return; const c = phCur(), f = c.frames[i];
+    if (S.ph.sel !== i) { S.ph.sel = i; picked = true; phPaint(); }   // keep this canvas while the finger is down; the controls update on release
+    if (!f || !f.imageId) { phDrawStage(); const inp = $('#phPickOne') || $('#phStage .phOne'); if (inp) inp.click(); return; }
+    cv.setPointerCapture(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const q = phFrames(c)[i], kpx = r.width / PH_STYLES[c.style].w;
+    st = pts.size === 2 ? { mode: 'pinch', d: (() => { const [a, b] = [...pts.values()]; return Math.hypot(a.x - b.x, a.y - b.y); })(), zoom: f.zoom || 1 }
+      : { mode: 'pan', x: e.clientX, y: e.clientY, ox: f.ox || 0, oy: f.oy || 0, fw: q.w * kpx, fh: q.h * kpx };
+  });
+  cv.addEventListener('pointermove', e => {
+    if (!st || !pts.has(e.pointerId)) return; pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); const f = phCur().frames[S.ph.sel]; if (!f) return;
+    if (st.mode === 'pan' && pts.size === 1) { f.ox = st.ox + (e.clientX - st.x) / st.fw; f.oy = st.oy + (e.clientY - st.y) / st.fh; }
+    else if (pts.size === 2) { const [a, b] = [...pts.values()], d = Math.hypot(a.x - b.x, a.y - b.y); if (st.mode !== 'pinch') st = { mode: 'pinch', d, zoom: f.zoom || 1 }; f.zoom = Math.max(1, Math.min(3, st.zoom * d / st.d)); }
+    phPaint(); const z = $('#phZoom'); if (z) z.value = f.zoom || 1;
+  });
+  const end = e => { pts.delete(e.pointerId); if (!pts.size && st) { st = null; phDrawCtrl(); if (picked) { picked = false; phDrawStage(); } } };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  cv.addEventListener('wheel', e => { const f = phCur().frames[S.ph.sel]; if (!f || !f.imageId) return; e.preventDefault(); f.zoom = Math.max(1, Math.min(3, (f.zoom || 1) * (e.deltaY < 0 ? 1.06 : 1 / 1.06))); phPaint(); const z = $('#phZoom'); if (z) z.value = f.zoom; }, { passive: false });
+}
+function phDrawOpts(){
+  const c = phCur(), box = $('#phOpts'); if (!phHas(c)) { box.hidden = true; return; } box.hidden = false;
+  const open = S.ph.open === true || (S.ph.open !== false && phDecorated(c)), tab = S.ph.tab || 'frame';
+  if (!open) { box.innerHTML = `<section><button type="button" class="fxopen fun" data-act="phOpen" aria-expanded="false"><span class="fo-ic">${ic('sparkle', 20)}</span>
+      <span class="fo-t"><b>Make it yours</b><small>Frame color, a caption, a date stamp, a filter</small></span><span class="fo-peek" aria-hidden="true"><i class="pk pk-aa">Aa</i><i class="pk" style="background:#F7C6D9"></i><i class="pk pk-flt"></i></span></button></section>`; return; }
+  const sw = (act, cur, list) => `<div class="swatches fx-sw">${list.map(([v, l]) => `<button type="button" class="sw ${String(cur).toLowerCase() === v.toLowerCase() ? 'on' : ''}" style="background:${v}" data-act="${act}" data-c="${v}" aria-label="${l}" title="${l}" aria-pressed="${String(cur).toLowerCase() === v.toLowerCase()}"></button>`).join('')}
+    <label class="sw rainbow" title="Pick any color"><input type="color" data-phpick="${act}" value="${/^#[0-9a-f]{6}$/i.test(cur) ? cur : '#ffffff'}" aria-label="Pick any color"></label></div>`;
+  const g = (label, body, wide) => `<div class="fxg ${wide ? 'wide' : ''}"><p class="lab flab">${label}</p>${body}</div>`;
+  const firstUrl = phUrlFor.framed(c.frames.find(f => f && f.imageId));
+  const body = tab === 'frame' ? g('Frame color', sw('phColor', c.color, PH_COLORS), true) + `<p class="help fxg wide" style="margin:0">${phColorName(c.color)}. Black frames look great on photo strips.</p>`
+    : tab === 'caption' ? g('Caption', `<input class="inp" id="phCap" maxlength="28" value="${esc(c.caption.value || '')}" placeholder="${c.style === 'strip' ? 'Like: Best day ever' : 'Like: Us, Nov 2026'}" autocomplete="off">`, true)
+        + g('Letters', fontTilesHTML('phFont', c.caption.font, c.caption.value), true) + g('Color', sw('phInk', c.caption.color, PH_INK.map(v => [v, v])), true)
+    : tab === 'date' ? `<div class="fxg wide"><label class="switch"><input type="checkbox" id="phDateOn" ${c.date ? 'checked' : ''}><span>Add a date stamp, like an old film camera</span></label></div>
+        ${c.date ? g('Date', `<input class="inp" type="date" id="phDateIn" value="${phDateIso(c.dateText)}" style="max-width:220px">`, true) : ''}`
+    : `<div class="fxg wide"><div class="fx-filters">${shortFilters(c.filter).map(([v, l]) => `<button type="button" class="fx-filter ${(c.filter || 'none') === v ? 'on' : ''}" data-act="phFilter" data-v="${v}" aria-pressed="${(c.filter || 'none') === v}">
+        <span class="fx-fprev" style="background-image:url('${firstUrl}');filter:${FX_FILTERS[v] || 'none'}"></span><small>${l}</small></button>`).join('')}${filtersMore(c.filter)}</div></div>`;
+  const dot = k => (k === 'frame' && String(c.color).toLowerCase() !== '#ffffff') || (k === 'caption' && (c.caption.value || '').trim()) || (k === 'date' && c.date) || (k === 'filter' && c.filter && c.filter !== 'none') ? '<i class="fx-dot" aria-label="(on)"></i>' : '';
+  box.innerHTML = `<section class="fxsec"><div class="fx-head"><div class="stephead">Make it yours</div><button type="button" class="linkbtn" data-act="phClose" aria-expanded="true">Hide</button></div>
+    <div class="seg fx-tabs" role="tablist">${[['frame', 'Frame'], ['caption', 'Caption'], ['date', 'Date'], ['filter', 'Filter']].map(([k, l]) => `<button type="button" role="tab" aria-selected="${tab === k}" class="${tab === k ? 'on' : ''}" data-act="phTab" data-v="${k}">${l}${dot(k)}</button>`).join('')}</div>
+    <div class="fx-body">${body}</div></section>`;
+  const cap = $('#phCap'); if (cap) { cap.addEventListener('input', () => { phCur().caption.value = cap.value; phPaint(); }); cap.addEventListener('change', () => { phDrawCtrl(); phDrawStageLine(); }); }
+  box.querySelectorAll('[data-phpick]').forEach(inp => { const apply = () => { const cc = phCur(); if (inp.dataset.phpick === 'phColor') cc.color = inp.value; else cc.caption.color = inp.value; phPaint(); };
+    inp.addEventListener('input', apply); inp.addEventListener('change', () => { apply(); phDraw(); }); });
+  box.querySelectorAll('[data-fontup]').forEach(i => i.addEventListener('change', async () => { const k = await fontUpload(i); if (k) { phCur().caption.font = k; phDraw(); } }));
+  const dOn = $('#phDateOn'); if (dOn) dOn.addEventListener('change', () => { phCur().date = dOn.checked; phDraw(); });
+  const dIn = $('#phDateIn'); if (dIn) dIn.addEventListener('change', () => { const [y, m, d] = (dIn.value || '').split('-'); if (y) { phCur().dateText = `’${y.slice(2)} ${m} ${d}`; phPaint(); phDrawCtrl(); } });
+}
+const phDateIso = t => { const m = /’(\d\d) (\d\d) (\d\d)/.exec(t || ''); return m ? `20${m[1]}-${m[2]}-${m[3]}` : new Date().toISOString().slice(0, 10); };
+function phDrawStageLine(){ const s = $('#phStage .nextstep'); if (s) s.outerHTML = phNext(); }
+function phDrawQty(){
+  const c = phCur(), box = $('#phQty'); if (!phHas(c)) { box.hidden = true; return; } box.hidden = false;
+  box.innerHTML = `<section><div class="stephead">${S.ph.cards.length > 1 ? 'How many of this card?' : 'How many?'}</div>
+    <div class="qty"><button type="button" data-act="phQty" data-d="-1" aria-label="One less">−</button><input id="phQtyIn" class="num" type="number" inputmode="numeric" min="1" max="${maxQtyFor('photos')}" value="${c.qty}" aria-label="How many"><button type="button" data-act="phQty" data-d="1" aria-label="One more">+</button></div>
+    <p class="help" style="margin:8px 0 0">${money(unitPrice({ type: 'photos', size: c.style, addons: [] }))} each.</p></section>`;
+  const qi = $('#phQtyIn'); if (qi) qi.addEventListener('change', () => { const cc = phCur(); cc.qty = Math.max(1, Math.min(maxQtyFor('photos'), Math.round(+qi.value || 1))); phDrawQty(); phDrawBottom(); phDrawCtrl(); });
+}
+function phDrawBottom(){
+  const ready = S.ph.cards.filter(phFull), units = ready.reduce((t, c) => t + c.qty, 0), total = ready.reduce((t, c) => t + c.qty * unitPrice({ type: 'photos', size: c.style, addons: [] }), 0);
+  const label = S.editing !== null ? 'Save changes' : ready.length > 1 ? `Add ${ready.length} cards` : 'Add to order';
+  const waiting = !ready.length && S.ph.cards.some(c => phHas(c)) ? 'Fill the strip to add it' : !ready.length ? 'Add photos to start' : `${units} photo card${units === 1 ? '' : 's'}`;
+  $('#bottom').innerHTML = `<div><div class="tot num">${money(total)}</div><div class="sub">${waiting}</div></div>
+    ${btn(label, { act: 'phAdd', icon: S.editing !== null ? 'check' : 'arrow', attrs: ready.length ? '' : 'disabled' })}`;
+}
+// adding photos: fill the empty spots on the open card first, then start new cards
+async function phFiles(e){
+  const files = [...e.target.files], one = e.target.classList.contains('phOne'); e.target.value = '';
+  let made = 0;
+  for (const file of files) {
+    if (S.images.length >= CONFIG.maxPictures) { toast(`You can add up to ${CONFIG.maxPictures} pictures.`); break; }
+    if (!file.type.startsWith('image/')) { toast('That file is not a picture.'); continue; }
+    let im; try { im = await processFile(file, 2400); } catch { toast("That picture didn't open. Try a screenshot of it instead."); continue; }
+    S.images.push(im);
+    const fr = { imageId: im.id, zoom: 1, ox: 0, oy: 0 };
+    if (one) { phCur().frames[S.ph.sel] = fr; break; }
+    let c = phCur(), slot = -1;
+    for (let i = 0; i < phNeed(c); i++) if (!(c.frames[i] && c.frames[i].imageId)) { slot = i; break; }
+    if (slot < 0) { const nc = phNewCard(c.style, c); S.ph.cards.push(nc); S.ph.cur = S.ph.cards.length - 1; c = nc; slot = 0; made++; }
+    c.frames[slot] = fr; S.ph.sel = slot;
+  }
+  if (made) toast(`${made} new card${made === 1 ? '' : 's'} made. Tap any card to change it.`);
+  phDraw();
+}
 function viewMake(key){
   if (!CONFIG.products[key]) return viewNotFound();
   if (!isLive(key)) return viewUnavailable(key);
   if (key === 'prints') return viewPrints();
+  if (key === 'photos') return viewPhotos();
   S.view = 'framed';
   if (!S.fd || S.fd.type !== key) { S.fd = newFd(key); if (S.editing !== null && (!S.cart[S.editing] || S.cart[S.editing].type !== key)) S.editing = null; }
   if (!liveSizes(key).some(z => z.id === S.fd.size)) S.fd.size = liveSizes(key)[0].id;
@@ -5304,7 +5567,7 @@ function fxSectionHTML(step, d){
     <div class="seg fx-tabs" role="tablist">${[['text', 'Words'], ['ring', ringName], ['filter', 'Filter']].map(([k, l]) => `<button type="button" role="tab" aria-selected="${tab === k}" class="${tab === k ? 'on' : ''}" data-act="fxTab" data-v="${k}">${l}${badge(k)}</button>`).join('')}</div>
     <div class="fx-body">${body}</div></section>`;
 }
-function moreRedraw(){ if (S.view === 'framed') drawFramedCtrl(); else { drawCtrl(); drawSheet(); } }
+function moreRedraw(){ if (S.view === 'framed') drawFramedCtrl(); else if (S.view === 'photos') phDrawOpts(); else { drawCtrl(); drawSheet(); } }
 function fxAfter(){ buzz(4); fdSync(); drawFramedCtrl(); fxPaintStage(); }
 function fxBind(){
   const d = activeDesign(), w = $('#fxWords');
@@ -5847,12 +6110,7 @@ function viewCheckout(){
       <div id="xuBox">${xuBoxHTML()}</div>
       <div class="field"><label class="lab" for="nick">Full name <span class="req">*</span></label>
         <input class="inp" id="nick" maxlength="60" autocomplete="name" placeholder="Juan Dela Cruz" value="${esc(me.nickname || '')}" aria-describedby="e-nick e-nickhelp">
-        <div class="idprev" aria-hidden="true">
-          <div class="idc"><div class="idc-top">STUDENT ID</div><div class="idc-body"><span class="idc-ph"><i></i><i></i></span>
-            <div class="idc-txt"><b id="idName">${esc(me.nickname || 'Your full name')}</b><small id="idSec">${esc(me.section || 'Grade - Section')}</small></div></div><span class="idc-bar"></span></div>
-          <p><b>This is how we find you.</b> Type it exactly like your school ID, and bring the ID to pickup.</p>
-        </div>
-        <p class="help sr" id="e-nickhelp">As on your school ID. This is how we find your order at pickup, so bring your ID.</p>
+        <p class="help" id="e-nickhelp">As written on your school ID. Bring the ID to pickup.</p>
         <p class="ferr" id="e-nick" role="alert"></p></div>
       <div class="field"><span class="lab" id="l-gs">Grade and section <span class="req">*</span></span>
         ${S.coFreeSec ? `<select id="grade" hidden aria-hidden="true"><option value="-" selected>-</option></select><input class="inp" id="sec" maxlength="40" autocomplete="off" placeholder="Like: Grade 8 - Rose" aria-labelledby="l-gs" value="${esc(mySec)}" aria-describedby="e-sec">` : `<div class="gs" role="group" aria-labelledby="l-gs">
@@ -6027,10 +6285,6 @@ function coRender(){
   const tot = $('#ordTot'); if (tot) tot.textContent = money(checkoutTotal(d));
   const pb = $('#placeBtn span'); if (pb) pb.textContent = `Place my order · ${money(checkoutTotal(d))}`;
   // the ID preview and the name double-check follow what they type
-  const idn = $('#idName'), ids = $('#idSec'), ncn = $('#ncName');
-  if (idn) { idn.textContent = nm || 'Your full name'; idn.classList.toggle('ph', !nm); }
-  if (ids) ids.textContent = S.coFreeSec ? sec || 'Grade - Section' : g || sec ? `Grade ${g || '?'} - ${sec || '?'}` : 'Grade - Section';
-  if (ncn) ncn.textContent = nm ? `${nm}, ${gs}` : '';
 }
 /* Re-render checkout but keep what the customer already typed */
 /* ---------- Feedback: one tap counts, details are optional, never asked twice for the same order ---------- */
@@ -6643,7 +6897,7 @@ async function drawAdminBody(){
           <div><span><b>${esc(o.nickname)}</b>, ${esc(o.grade_section)}</span>${o.person_id || o.school_id ? ` <span class="tag grp">${ic('user', 14)}${esc(personAdminName((S.admin.peopleMap || {})[o.person_id || o.school_id]))}</span>` : ''}${o.seller_code ? ` <span class="tag sell">${ic('sparkle', 14)}via ${esc(o.seller_code)}</span>` : ''}</div>
           <div>${ic('pin', 18)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span>${/^Other: /.test(o.pickup || '') ? ` <span class="tag spotq" title="The customer typed this place. Check it works.">${ic('edit', 13)}Typed by the customer${o.person_id ? `, check with ${esc(personAdminName((S.admin.peopleMap || {})[o.person_id]))}` : ''}</span>` : ''}</div>
           <div>${ic('cash', 18)}<span class="num">${money(o.total)}${!o.paid && o.amount_paid ? ` (paid ${money(o.amount_paid)}, owes ${money(o.total - o.amount_paid)})` : ''}, ${o.payment === 'gcash' ? `GCash${o.gcash_ref ? ` (ref ${esc(o.gcash_ref)})` : ', no ref yet'}` : 'cash'}</span></div>
-          <ul class="ilist">${orderItems(o).map(it => `<li>${ic(it.type === 'stickers' ? 'sticker' : it.type === 'pins' ? 'badge' : it.type === 'posters' ? 'image' : it.type === 'prints' ? 'doc' : 'keychain', 18)}<span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `, ${esc(itemDetails(it))}` : ''}</span></li>`).join('')}</ul>
+          <ul class="ilist">${orderItems(o).map(it => `<li>${ic(it.type === 'stickers' ? 'sticker' : it.type === 'pins' ? 'badge' : it.type === 'posters' || it.type === 'photos' ? 'image' : it.type === 'prints' ? 'doc' : 'keychain', 18)}<span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `, ${esc(itemDetails(it))}` : ''}</span></li>`).join('')}</ul>
           <div class="tags">
             ${o.status === 'ready' && o.arrived_at ? `<span class="tag here">${ic('pin', 14)}Here now</span>` : ''}
             ${o.paid ? `<span class="tag ok">${ic('check', 14)}Paid</span>` : o.amount_paid ? `<span class="tag warn">${ic('cash', 14)}Paid ${money(o.amount_paid)} of ${money(o.total)}</span>` : ''}
@@ -6670,6 +6924,7 @@ async function drawAdminBody(){
           : it.type === 'prints' ? (it.files || []).map(f => S.admin.urls[f.path]
               ? `<a class="filechip" href="${S.admin.urls[f.path]}" target="_blank" rel="noopener" download="${esc(o.code + '-' + (f.name || 'file'))}">${ic('download', 16)}<span>${esc(f.name || 'file')}<small>${f.pages || '?'} page${+f.pages === 1 ? '' : 's'}</small></span></a>`
               : `<span class="filechip off">${ic('doc', 16)}<span>${esc(f.name || 'file')}<small>loading</small></span></span>`)
+          : it.type === 'photos' ? [phThumbHTML(it, { framed: f => S.admin.urls[f.path] || '' }, it.size === 'strip' ? 34 : 56)]
           : [framedThumb(it.front || {}, it.front ? S.admin.urls[it.front.path] : '', frameMm(it), 64)].concat(it.back ? [framedThumb(it.back, S.admin.urls[it.back.path], frameMm(it), 64)] : [])).join('')}</div>
         ${S.admin.rejecting === o.id ? `<div class="rejbox">
             <label class="lab" for="rejText">Why isn't it approved? The customer sees this.</label>
@@ -6960,6 +7215,23 @@ async function makePdf(o, batch, asPng){
           doc.setFontSize(6); doc.setTextColor(110);
           doc.text(`${who}   ${label}, sheet ${si + 1} of ${it.sheets.length}`, Math.max(2.5, g.offX / 2 + 1), g.heightMm - g.marginMm, { angle: 90, maxWidth: g.heightMm - 2 * g.marginMm });
         }
+      }
+      continue;
+    }
+    if (it.type === 'photos') {   // 9 instant photos on a portrait A4, or 5 strips across a landscape A4, each with a cut line
+      const c = { ...(it.ph || {}), style: it.size, frames: it.frames || [] }, sp = PH_STYLES[c.style] || PH_STYLES.instant, k = 300 / 25.4, imgs = {};
+      for (const f of c.frames) { try { imgs[f.path] = await getImg(f.path); } catch (e) { console.warn('image failed', f.path, e); } }
+      wordFontsLoad(); await wordFontReady(c.caption && c.caption.font);
+      const cv = document.createElement('canvas'); cv.width = Math.round(sp.w * k); cv.height = Math.round(sp.h * k);
+      renderPhotoCard(cv.getContext('2d'), c, k, f => imgs[f.path] || null);
+      const data = cv.toDataURL('image/jpeg', 0.93), land = c.style === 'strip', PW = land ? A4H : A4W, PH = land ? A4W : A4H, gap = 3;
+      const cols = Math.floor((PW - 10 + gap) / (sp.w + gap)), rows = Math.floor((PH - 16 + gap) / (sp.h + gap)), per = cols * rows;
+      const x0 = (PW - (cols * sp.w + (cols - 1) * gap)) / 2, y0 = (PH - 6 - (rows * sp.h + (rows - 1) * gap)) / 2;
+      for (let n = 0; n < it.qty; n++) {
+        const slot = n % per; if (slot === 0) page(PW, PH);
+        const cx = x0 + (slot % cols) * (sp.w + gap), cy = y0 + Math.floor(slot / cols) * (sp.h + gap);
+        doc.addImage(data, 'JPEG', cx, cy, sp.w, sp.h); cutLine(); doc.rect(cx, cy, sp.w, sp.h);
+        if (slot === per - 1 || n === it.qty - 1) foot(`${label}, ${n + 1} of ${it.qty}. Cut on the grey lines.`, PW, PH);
       }
       continue;
     }
@@ -8085,7 +8357,7 @@ function drawPosters(){
         <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn sm noi" id="qrDl" download="qr-${esc(q.slug)}.png" href="#">${ic('download', 18)}<span>Download PNG</span></a>
         ${smallBtn('Copy link', 'copy', 'copyLink', 'plain')}</div>
         <p class="lab" style="margin:14px 0 8px">For a thermal printer</p>
-        <div style="display:flex;flex-wrap:wrap;gap:10px"><span id="qrPrintNow" ${PRN.send ? '' : 'hidden'}>${smallBtn('Print now', 'printer', 'qrPrint', 'dark')}</span>${smallBtn('Save for 58 mm', 'download', 'qrThermal', 'plain', 'data-w="384"')}${smallBtn('Save for 80 mm', 'download', 'qrThermal', 'plain', 'data-w="576"')}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">${isAndroid() ? smallBtn('Print with RawBT', 'printer', 'qrRawbt', 'dark') : ''}<span id="qrPrintNow" ${PRN.send ? '' : 'hidden'}>${smallBtn('Print now', 'printer', 'qrPrint', 'dark')}</span>${smallBtn('Save for 58 mm', 'download', 'qrThermal', 'plain', 'data-w="384"')}${smallBtn('Save for 80 mm', 'download', 'qrThermal', 'plain', 'data-w="576"')}</div>
         <p class="help">Print it at least 4 cm wide, and scan it with a phone before putting the poster up. Thermal printers: pick your paper width. It's pure black with a white border, sized to print sharp.</p></div></div>` : ''}
     <div id="spotList">${spotsHTML(srcs, S.admin.scans || {})}</div>
   </div>`;
@@ -8305,6 +8577,7 @@ const ACTIONS = {
     const i = +t.dataset.i, it = S.cart[i]; S.editing = i;
     if (it.type === 'stickers') { S.sheets = clone(it.sheets); S.cur = 0; S.stickerAddons = it.addons.slice(); S.selItem = null; location.hash = '#/design'; }
     else if (it.type === 'prints') { S.pr = clone(it); location.hash = designRoute('prints'); }
+    else if (it.type === 'photos') { S.ph = { cards: [phFromItem(it)], cur: 0, sel: 0 }; location.hash = designRoute('photos'); }
     else { S.fd = { ...clone(it), side: 'front' }; location.hash = designRoute(it.type); }
   },
   cartRemove: t => {
@@ -8851,6 +9124,34 @@ const ACTIONS = {
     const W = +t.dataset.w, q = S.admin.qr, c = thermalQr(W); if (!c) return toast('Make the QR code first.');
     c.toBlob(b => { saveBlob(b, `qr-${q.slug}-thermal-${W === 384 ? 58 : 80}mm.png`); toast('Saved. Print it at 100% (no scaling) for the sharpest result.'); }, 'image/png');
   },
+  phStyle: t => { const c = phCur(); c.style = t.dataset.v; S.ph.sel = 0; buzz(5); phDraw(); },
+  phCount: t => { phCur().count = +t.dataset.v; S.ph.sel = Math.min(S.ph.sel, +t.dataset.v - 1); phDraw(); },
+  phPick: t => { const i = +t.dataset.i; if (i === S.ph.cur) return; S.ph.cur = i; S.ph.sel = 0; buzz(5); phDraw(); },
+  phCopy: () => { const c = clone(phCur()); S.ph.cards.splice(S.ph.cur + 1, 0, c); S.ph.cur++; toast('Copied. Change this copy, or keep it as it is.'); phDraw(); },
+  phDel: t => { if (S.ph.cards.length < 2) return; if (!armed(t, 'Tap again to remove')) return; S.ph.cards.splice(S.ph.cur, 1); S.ph.cur = Math.min(S.ph.cur, S.ph.cards.length - 1); S.ph.sel = 0; phDraw(); },
+  phOpen: () => { S.ph.open = true; phDrawOpts(); const s = $('#phOpts'); if (s) s.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); },
+  phClose: () => { S.ph.open = false; phDrawOpts(); },
+  phTab: t => { S.ph.tab = t.dataset.v; if (t.dataset.v === 'caption') wordFontsLoad(); phDrawOpts(); },
+  phColor: t => { phCur().color = t.dataset.c; buzz(4); phDraw(); },
+  phInk: t => { phCur().caption.color = t.dataset.c; buzz(4); phDraw(); },
+  phFont: t => { phCur().caption.font = t.dataset.v; buzz(4); phDraw(); },
+  phFilter: t => { phCur().filter = t.dataset.v; buzz(4); phDraw(); },
+  phReset: () => { const f = phCur().frames[S.ph.sel]; if (f) Object.assign(f, { zoom: 1, ox: 0, oy: 0 }); phDrawStage(); phDrawCtrl(); },
+  phQty: t => { const c = phCur(); c.qty = Math.max(1, Math.min(maxQtyFor('photos'), c.qty + +t.dataset.d)); phDrawQty(); phDrawBottom(); phDrawCtrl(); },
+  phAdd: () => {
+    const bad = S.ph.cards.findIndex(c => phHas(c) && !phFull(c));
+    if (bad >= 0) { S.ph.cur = bad; S.ph.sel = 0; phDraw(); return toast(`Strip ${bad + 1} still has an empty spot. Add a photo, or switch it to 3 photos.`); }
+    const items = S.ph.cards.filter(phFull).map(c => ({ type: 'photos', size: c.style, qty: c.qty, addons: [], ...phAsItem(c), front: clone(c.frames[0]) }));
+    items.forEach(it => { it.frames = clone(it.frames); it.ph = clone(it.ph); });
+    if (!items.length) return;
+    if (S.editing !== null) { S.cart[S.editing] = items[0]; S.editing = null; S.ph = null; buzz([10, 30, 10]); location.hash = '#/cart'; return; }
+    S.ph = null; saveManyToCart(items);
+  },
+  qrRawbt: () => { const c = thermalQr(prnWidth()); if (!c) return toast('Make the QR code first.'); toast('Opening RawBT…'); rawbtImage(c); },
+  rawbtTest: () => { const line = '-'.repeat(prnWidth() === 576 ? 48 : 32), now = new Date().toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' });
+    toast('Opening RawBT…');
+    rawbtBytes(new Uint8Array([].concat(ESCPOS.init, ESCPOS.center, ESCPOS.bold(true), ESCPOS.big(true), ESCPOS.text('Stick2It\n'), ESCPOS.big(false), ESCPOS.bold(false),
+      ESCPOS.text(`${line}\nTest print with RawBT\nIf you can read this,\nthe printer works!\n${line}\n${now}\n`), ESCPOS.feed(4)))); },
   qrPrint: async () => {
     const q = S.admin.qr, c = qrSquares(prnWidth()), mode = prnMode(); if (!q || !c) return toast('Make the QR code first.');
     const qr = mode === 4 ? escNativeQr(q.url, prnWidth() === 576 ? 10 : 7) : escPicture(c, mode);

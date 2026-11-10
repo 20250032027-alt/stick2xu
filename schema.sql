@@ -20,7 +20,8 @@ alter table public.shop_settings add column if not exists products jsonb not nul
                 "addons": [{"id": "inkjet", "label": "Inkjet print", "note": "brighter, more vivid colors", "price": 30, "enabled": true}]},
   "pins":      {"enabled": false, "sizes": [{"id": "58", "price": 35, "enabled": true}, {"id": "44", "price": 25, "enabled": true}], "addons": []},
   "posters":   {"enabled": false, "sizes": [{"id": "a4", "price": 40, "enabled": true}, {"id": "a3", "price": 80, "enabled": true}], "addons": []},
-  "keychains": {"enabled": false, "sizes": [{"id": "std", "price": 45, "enabled": true}], "addons": []}
+  "keychains": {"enabled": false, "sizes": [{"id": "std", "price": 45, "enabled": true}], "addons": []},
+  "photos":    {"enabled": true,  "sizes": [{"id": "instant", "price": 25, "enabled": true}, {"id": "strip", "price": 25, "enabled": true}], "addons": []}
 }'::jsonb;
 alter table public.shop_settings add column if not exists deals jsonb not null default '[
   {"id": "d_stk3", "type": "bulk",    "product": "stickers", "min": 3, "off": 5, "enabled": false, "label": "3+ sheets: ₱5 off each"},
@@ -405,6 +406,10 @@ begin
         if v_pages < 1 or v_pages > 500 or jsonb_array_length(coalesce(v_item->'files', '[]'::jsonb)) < 1 then raise exception 'BAD_INPUT'; end if;
         v_units := v_units * v_pages;      -- copies x pages
         v_has_prints := true;
+      elsif v_item->>'type' = 'photos' then
+        -- photo cards: 1 photo (instant) or 3 to 4 (strip), every frame with its picture
+        if jsonb_array_length(coalesce(v_item->'frames', '[]'::jsonb)) not between 1 and 4
+           or exists (select 1 from jsonb_array_elements(v_item->'frames') f where f.value->>'path' is null) then raise exception 'BAD_INPUT'; end if;
       elsif v_item->>'type' = 'posters' and v_item->>'mode' = 'pages' then
         -- a ready-made PDF (like Rasterbator's): printed page by page as it is
         if v_item->'pdf'->>'path' is null then raise exception 'BAD_INPUT'; end if;
@@ -1767,3 +1772,11 @@ begin
   return true;
 end $$;
 grant execute on function public.send_suggestion(text, text, text) to anon, authenticated;
+
+-- =====================================================================
+-- Photo cards (instant photos and photo-booth strips), ₱25 each. Added to shops that don't have them yet;
+-- after that, prices and the on/off switch are yours in admin Settings.
+-- =====================================================================
+update public.shop_settings
+   set products = products || jsonb_build_object('photos', '{"enabled": true, "sizes": [{"id": "instant", "price": 25, "enabled": true}, {"id": "strip", "price": 25, "enabled": true}], "addons": []}'::jsonb)
+ where id = 1 and not (products ? 'photos');
