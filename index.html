@@ -25,7 +25,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="Stick2It">
 <meta name="theme-color" content="#F4F5FA">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-3 -3 30 30'%3E%3Cpath d='M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z' fill='%233a52a3' stroke='%23fff' stroke-width='3' stroke-linejoin='round' paint-order='stroke'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%222 2.2 117.5 118.2%22%3E%3Cdefs%3E%3ClinearGradient id=%22curl%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23FFFFFF%22/%3E%3Cstop offset=%221%22 stop-color=%22%23C9CEDF%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22gloss%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23FFFFFF%22 stop-opacity=%22.75%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%23FFFFFF%22 stop-opacity=%220%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform=%22rotate(-6 60 60)%22%3E%3Cpath d=%22M26 14 H92 Q104 14 104 26 V80 L80 104 H26 Q14 104 14 92 V26 Q14 14 26 14 Z%22 fill=%22%23283971%22 transform=%22translate(7 8)%22/%3E%3Cpath d=%22M26 14 H92 Q104 14 104 26 V80 L80 104 H26 Q14 104 14 92 V26 Q14 14 26 14 Z%22 fill=%22%23FFFFFF%22 stroke=%22%23283971%22 stroke-width=%225%22 stroke-linejoin=%22round%22/%3E%3Cg transform=%22rotate(10 59 54)%22%3E%3Crect x=%2234%22 y=%2222%22 width=%2250%22 height=%2264%22 rx=%2210%22 fill=%22%23283971%22 transform=%22translate(4 5)%22/%3E%3Crect x=%2234%22 y=%2222%22 width=%2250%22 height=%2264%22 rx=%2210%22 fill=%22%23FFFFFF%22 stroke=%22%23283971%22 stroke-width=%224%22/%3E%3Crect x=%2239.5%22 y=%2227.76%22 width=%2239%22 height=%2252.48%22 rx=%226.5%22 fill=%22%23F2BC2E%22/%3E%3Cpath d=%22M30.73 0L2.21 0L2.21-8.64L16.42-17.55Q17.28-18.09 18.20-18.79Q19.12-19.49 19.90-20.41Q20.68-21.33 21.17-22.44Q21.65-23.54 21.65-24.89L21.65-24.89Q21.65-26.30 21.03-27.27Q20.41-28.24 19.25-28.75Q18.09-29.27 16.42-29.27L16.42-29.27Q14.53-29.27 13.37-28.67Q12.20-28.08 11.58-27.03Q10.96-25.97 10.75-24.62Q10.53-23.27 10.53-21.82L10.53-21.82L2.16-23.60Q2.05-27.65 3.78-30.54Q5.51-33.43 8.78-34.99Q12.04-36.56 16.58-36.56L16.58-36.56Q20.57-36.56 23.68-35.32Q26.78-34.07 28.54-31.62Q30.29-29.16 30.29-25.49L30.29-25.49Q30.29-22.79 29.38-20.60Q28.46-18.41 27-16.74Q25.54-15.07 23.79-13.80Q22.03-12.53 20.41-11.61L20.41-11.61L12.47-7.18L12.47-6.70L30.73-7.02L30.73 0Z%22 transform=%22translate(42.45 73.44)%22 fill=%22%23283971%22/%3E%3C/g%3E%3Cpath d=%22M104 80 L80 104 Q81.2 90.8 90.8 90.8 Q99.2 89.6 104 80 Z%22 fill=%22url(%23curl)%22 stroke=%22%23283971%22 stroke-width=%224%22 stroke-linejoin=%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <!-- facts about the shop for search engines and AI assistants (keep prices in sync with admin → Settings) -->
 <script type="application/ld+json">[
  {
@@ -234,11 +234,10 @@ button{font:inherit;color:inherit}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1120px;margin:0 auto;padding:16px 20px}
 
 /* the die-cut wordmark */
-.mark{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:-.02em;text-decoration:none;color:var(--ink);display:inline-block;transform:rotate(-3deg);
-  text-shadow:2px 0 #fff,-2px 0 #fff,0 2px #fff,0 -2px #fff,1.5px 1.5px #fff,-1.5px 1.5px #fff,1.5px -1.5px #fff,-1.5px -1.5px #fff,
-    3px 0 #fff,-3px 0 #fff,0 3px #fff,0 -3px #fff,2.2px 2.2px #fff,-2.2px 2.2px #fff,2.2px -2.2px #fff,-2.2px -2.2px #fff;
-  filter:drop-shadow(0 2px 3px rgba(40,57,113,.28))}
-.mark b{color:var(--xu-gold)}
+.mark{display:inline-flex;align-items:center;line-height:0;text-decoration:none;flex:none}
+.mark .logo{display:block;height:46px;width:auto}
+@media(max-width:360px){.mark .logo{height:40px}}
+@media(min-width:900px){.mark .logo{height:54px}}
 .pilllink{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;border:2px solid var(--ink);background:var(--paper);
   text-decoration:none;font-weight:700;font-size:15px;box-shadow:var(--shadow-sm);transition:transform .2s var(--ease),box-shadow .2s var(--ease);cursor:pointer}
 .pilllink:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
@@ -612,14 +611,26 @@ th{color:var(--muted);font-weight:700}
 .pinedit{flex:1 1 300px;max-width:380px}
 .pinedit .pinwrap .frame{width:100%}
 .cap{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.pp{position:relative;padding:6px 12px 14px 6px}
-.pp-face{position:relative;width:170px;aspect-ratio:1;border-radius:50%;overflow:hidden;background:#fff;
-  box-shadow:0 0 0 2px #1C2A57,5px 7px 0 1px #1C2A57,10px 22px 26px rgba(40,57,113,.3)}
+/* "How it looks": a real-feeling pin. A 3D disc with a printed edge, a metal back with its clasp; drag to tilt, flip to see the back. */
+.pp{position:relative;padding:10px 14px 18px 10px;perspective:620px;touch-action:none;cursor:grab}
+.pp:active{cursor:grabbing}
+.pp-tilt{position:relative;width:170px;aspect-ratio:1;transform-style:preserve-3d;--rx:0deg;--ry:0deg;--flip:0deg;
+  transform:rotateX(var(--rx)) rotateY(calc(var(--ry) + var(--flip)));transition:transform .55s var(--ease);animation:ppWobble 5s ease-in-out infinite}
+.pp-tilt.held{transition:transform .08s linear;animation:none}
+.pp-tilt.flip{--flip:180deg;animation:none}
+@keyframes ppWobble{0%,100%{transform:rotateX(6deg) rotateY(-10deg)}50%{transform:rotateX(-4deg) rotateY(12deg)}}
+.pp-tilt::after{content:"";position:absolute;inset:6%;border-radius:50%;transform:translateZ(calc(var(--depth) * -1.6));background:rgba(28,42,87,.35);filter:blur(10px)}
+.pp-ring{position:absolute;inset:0;border-radius:50%;background:var(--edge,#fff);box-shadow:inset 0 0 0 2px rgba(28,42,87,.55)}
+.pp-tilt{--depth:16px}   /* about 5 mm on a 44 mm pin */
+.pp-face{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:#fff;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 0 0 2px #1C2A57}
+.pp-face.back{transform:rotateY(180deg) translateZ(calc(var(--depth) + 1px));background:#C9CEDA}.pp-face.back svg{display:block;width:100%;height:100%}
+.pp-flip{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:6px 14px;border-radius:999px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);font:inherit;font-weight:700;font-size:14px;cursor:pointer;box-shadow:var(--shadow-sm)}
+@media (prefers-reduced-motion:reduce){.pp-tilt{animation:none;transition:none}}
 .pp-inner{position:absolute;aspect-ratio:1;overflow:hidden}
 .pp-inner img{position:absolute;max-width:none}
-.pp-gloss{position:absolute;inset:0;border-radius:50%;pointer-events:none;
-  background:radial-gradient(90% 70% at 30% 18%,rgba(255,255,255,.6),rgba(255,255,255,0) 50%),radial-gradient(circle at 50% 50%,rgba(0,0,0,0) 62%,rgba(0,0,0,.18) 100%)}
-@media(max-width:600px){.pinstage{flex-wrap:nowrap;gap:14px}.pinedit{flex:1 1 auto;min-width:0}.pp-face{width:100px}.pp{padding:4px 8px 10px 4px}}
+.pp-gloss{position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:3;
+  background:radial-gradient(90% 70% at var(--gx,30%) var(--gy,18%),rgba(255,255,255,.6),rgba(255,255,255,0) 50%),radial-gradient(circle at 50% 50%,rgba(0,0,0,0) 62%,rgba(0,0,0,.2) 100%)}
+@media(max-width:600px){.pinstage{flex-wrap:nowrap;gap:14px}.pinedit{flex:1 1 auto;min-width:0}.pp-tilt{width:100px;--depth:10px}.pp{padding:6px 10px 12px 6px}.pp-flip{padding:4px 10px;font-size:13px;min-height:38px}}
 .hang{position:relative;background:#fff;border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink),14px 22px 30px rgba(40,57,113,.18);transform:rotate(-1.2deg)}
 .hang .frame{width:100%;border:0;box-shadow:none;border-radius:0}
 .swatches{display:flex;gap:6px;flex-wrap:wrap}
@@ -1061,7 +1072,7 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .lk-bits path{stroke:#fff;stroke-width:3;stroke-linejoin:round;paint-order:stroke;filter:drop-shadow(1.5px 1.5px 0 var(--ink))}
 @keyframes lkfloat{to{transform:translate(-50%,calc(-50% - 10px)) rotate(calc(var(--r) * -1))}}
 .lk-wrap{position:relative;z-index:1;width:min(100%,400px);display:grid;justify-items:center;gap:30px}
-.lk-mark{font-size:34px;margin-bottom:-6px}
+.lk-mark{margin-bottom:-6px}.lk-mark .logo{height:72px}
 .lk-hero{position:relative;margin:0;width:min(74vw,290px);padding:10px;background:#fff;border-radius:32px;transform:rotate(-4deg);
   box-shadow:0 0 0 2px var(--ink),5px 6px 0 var(--ink);animation:lkpop .6s var(--ease) both}
 .lk-hero img{display:block;width:100%;height:auto;aspect-ratio:473/498;object-fit:cover;border-radius:23px;background:var(--accent-soft)}
@@ -1303,9 +1314,7 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 @keyframes btSafety{to{opacity:0;visibility:hidden}}
 .bt-in{display:grid;justify-items:center;gap:6px;animation:btIn .4s var(--ease) .25s both}
 @keyframes btIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.bt-mark{font-family:var(--display);font-weight:800;font-size:32px;letter-spacing:-.02em;color:var(--ink);transform:rotate(-3deg);margin-bottom:6px;
-  text-shadow:2px 0 #fff,-2px 0 #fff,0 2px #fff,0 -2px #fff,2px 2px #fff,-2px 2px #fff,2px -2px #fff,-2px -2px #fff}
-.bt-mark b{color:var(--xu-gold)}
+.bt-mark{display:block;line-height:0;margin-bottom:8px}.bt-mark .logo{display:block;height:58px;width:auto}
 .bt-pr{width:200px;height:190px;overflow:visible;filter:drop-shadow(3px 4px 0 rgba(40,57,113,.18))}
 .bt-paper{animation:btFeed 3.2s cubic-bezier(.45,0,.3,1) infinite}
 @keyframes btFeed{0%{transform:translateY(-100px)}62%,82%{transform:translateY(30px)}100%{transform:translateY(150px)}}
@@ -1422,6 +1431,37 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .phbt{width:auto;min-width:54px;height:auto;min-height:62px;padding:4px 6px}
 @media(max-width:900px){.phd #phStage{order:1}.phd #phCtrl{order:2}.phd #phOpts{order:3}.phd #phQty{order:4}.split #phCtrl .phead{display:none}.split #phCtrl .phead + section{margin-top:0;padding-top:0;border-top:0}}
 @media(max-width:480px){.fx-tabs button{flex:1 1 0;min-width:0;padding-left:4px;padding-right:4px;font-size:14px}.fx-tabs .fx-dot{right:4px}.phstyle{gap:8px;padding:8px}.phstyle > span{grid-template-columns:1fr}.phstyle em{grid-column:1;grid-row:3}}
+/* weekly post maker */
+.pm{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:22px;align-items:start}
+.pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.pm-grid .lab{display:grid;gap:6px;margin:0}
+.pm-looks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pm-look{display:grid;gap:4px;justify-items:start;padding:10px;border:2px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.pm-look.on{border-color:var(--ink);background:var(--gold-soft);box-shadow:var(--shadow-sm)}
+.pm-look b{font-size:14.5px;line-height:1.2}.pm-look small{font-size:12px;color:var(--muted);line-height:1.25}
+.pm-sw{width:100%;height:38px;border-radius:8px;border:2px solid var(--ink)}
+.pm-sw.board{background:radial-gradient(circle at 1px 1px,rgba(40,57,113,.25) 1.4px,transparent 0) 0 0/8px 8px,#F4F5FA}
+.pm-sw.instant{background:repeating-linear-gradient(45deg,#F2BC2E 0 8px,#F6CC57 8px 16px)}.pm-sw.clean{background:linear-gradient(#9CC3F2 0 62%,#283971 62%)}
+.pm-fmt{display:flex;width:100%}.pm-fmt button{flex:1}.pm-fmt small{font-weight:600;opacity:.75}
+.pm-sw2{display:grid;gap:8px;margin:14px 0 4px}
+.pm-photos{display:grid;gap:10px}
+.pm-ph{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px;border:1.5px solid var(--line);border-radius:14px;background:#fff}
+.pm-ph img{width:72px;height:72px;object-fit:cover;border-radius:10px}
+.pm-ph-f{display:grid;gap:6px}.pm-ph-f .inp{min-height:40px;padding:6px 10px;font-size:14.5px}
+.pm-ph-a{display:grid;gap:6px}.pm-ph-a .iconbtn svg{transform:rotate(90deg)}.pm-ph-a .iconbtn:last-child svg{transform:none}
+.iconbtn{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);background:#fff;color:var(--ink);display:grid;place-items:center;cursor:pointer}.iconbtn:disabled{opacity:.35}
+.pm-ok{margin-top:16px;padding:12px 14px;border-radius:14px;background:var(--gold-soft)}.pm-ok ul{margin:0;padding-left:18px;font-size:14px}
+.pm-out{position:sticky;top:84px}
+.pm-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.pm-acts{display:flex;gap:8px;flex-wrap:wrap}
+.pm-slides{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.pm-slides.busy{opacity:.55}
+.pm-slide{margin:0;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 0 0 1.5px var(--line)}
+.pm-slide img{display:block;width:100%;height:auto}
+.pm-slide figcaption{display:flex;align-items:center;justify-content:space-between;padding:6px 8px}
+.pm-slide .btn.sm{min-height:36px;padding:4px 10px;font-size:13px}
+.tag.okp{background:#E3F4E8;color:#1F6B3E}
+.okpost small{display:block;color:var(--muted);font-size:13.5px}
+@media(max-width:900px){.pm{grid-template-columns:1fr}.pm-out{position:static}.pm-slides{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.pm-grid{grid-template-columns:1fr}.pm-looks{grid-template-columns:1fr}.pm-look{grid-template-columns:64px 1fr;column-gap:10px;align-items:center}.pm-look .pm-sw{grid-row:span 2;height:44px}}
 /* fonts: tiles that show your words in each font */
 .wd-fonts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .wd-font{display:grid;justify-items:center;align-content:center;gap:3px;min-height:64px;padding:8px 4px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit;cursor:pointer}
@@ -2250,7 +2290,7 @@ input[type=date].inp::-webkit-date-and-time-value{text-align:left;margin:0}
   <p><a href="https://www.stick2it.me/#/shop">Start designing</a> · <a href="https://www.facebook.com/profile.php?id=61594155363888">Facebook</a> · <a href="https://www.instagram.com/stick2it.me">Instagram</a> · <a href="https://www.tiktok.com/@stick2it.me">TikTok</a></p>
 </main></div>
 <div id="boot" aria-hidden="true"><div class="bt-in">
-  <span class="bt-mark">Stick<b>2</b>It</span>
+  <span class="bt-mark"><svg class="logo" viewBox="36.5 12 534.5 207.8" role="img" aria-label="Stick2It"><defs><linearGradient id="curlB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#C9CEDF"/></linearGradient><linearGradient id="glossB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".75"/><stop offset=".5" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient></defs><g transform="rotate(-3 300 110)"><path d="M66 33 H538 Q556 33 556 51 V150 L512 194 H66 Q48 194 48 176 V51 Q48 33 66 33 Z" fill="#283971" transform="translate(7 8)"/><path d="M66 33 H538 Q556 33 556 51 V150 L512 194 H66 Q48 194 48 176 V51 Q48 33 66 33 Z" fill="#FFFFFF" stroke="#283971" stroke-width="5" stroke-linejoin="round"/><g transform="translate(6.2 13.5)"><path d="M32.44 1.37L32.44 1.37Q26.17 1.37 21.07 0.20Q15.97-0.98 12.25-3.38Q8.53-5.78 6.37-9.51Q4.21-13.23 3.82-18.13L3.82-18.13L17.64-22.74Q17.93-18.62 19.99-15.88Q22.05-13.13 25.53-11.81Q29.01-10.49 33.32-10.49L33.32-10.49Q37.44-10.49 40.23-11.52Q43.02-12.54 44.44-14.16Q45.86-15.78 45.86-17.64L45.86-17.64Q45.86-19.80 44.00-21.22Q42.14-22.64 38.91-23.67Q35.67-24.70 31.36-25.68L31.36-25.68Q26.46-26.85 21.76-28.22Q17.05-29.60 13.23-31.80Q9.41-34.01 7.20-37.48Q5.00-40.96 5.00-46.26L5.00-46.26Q5.00-52.23 8.04-56.64Q11.07-61.05 16.95-63.55Q22.83-66.05 31.46-66.05L31.46-66.05Q39.98-66.05 45.96-63.60Q51.94-61.15 55.17-56.79Q58.41-52.43 58.70-46.65L58.70-46.65L44.59-42.63Q44.59-45.47 43.66-47.63Q42.73-49.78 41.06-51.21Q39.40-52.63 36.95-53.36Q34.50-54.10 31.36-54.10L31.36-54.10Q27.64-54.10 25.04-53.21Q22.44-52.33 21.17-50.91Q19.89-49.49 19.89-47.63L19.89-47.63Q19.89-45.28 21.90-43.76Q23.91-42.24 27.39-41.21Q30.87-40.18 35.08-39.20L35.08-39.20Q39.30-38.32 43.81-37.00Q48.31-35.67 52.23-33.52Q56.15-31.36 58.55-27.69Q60.96-24.01 60.96-18.42L60.96-18.42Q60.96-12.45 57.77-7.99Q54.59-3.53 48.22-1.08Q41.85 1.37 32.44 1.37Z" transform="translate(85.45 155) rotate(-14)" fill="#283971"/><path d="M26.26 1.27L26.26 1.27Q17.15 1.27 12.84-3.58Q8.53-8.43 8.53-19.11L8.53-19.11L8.53-39.40L1.18-39.40L1.47-51.65L6.76-51.65Q9.90-51.74 11.52-52.63Q13.13-53.51 13.52-55.96L13.52-55.96L14.80-63.21L23.72-63.21L23.72-51.74L36.16-51.74L36.16-38.91L23.72-38.91L23.72-19.80Q23.72-16.46 25.33-14.90Q26.95-13.33 30.28-13.33L30.28-13.33Q32.14-13.33 33.81-13.72Q35.48-14.11 36.55-14.80L36.55-14.80L36.55-0.20Q33.42 0.78 30.82 1.03Q28.22 1.27 26.26 1.27Z" transform="translate(148.94 144) rotate(-8)" fill="#283971"/><path d="M21.85 0L6.08 0L6.08-51.74L21.85-51.74L21.85 0ZM14.01-59.00L14.01-59.00Q9.51-59.00 7.11-60.91Q4.70-62.82 4.70-66.35L4.70-66.35Q4.70-70.07 7.11-71.98Q9.51-73.89 14.01-73.89L14.01-73.89Q18.62-73.89 21.02-71.98Q23.42-70.07 23.42-66.44L23.42-66.44Q23.42-62.82 21.02-60.91Q18.62-59.00 14.01-59.00Z" transform="translate(187.72 153) rotate(-4)" fill="#283971"/><path d="M30.48 1.37L30.48 1.37Q23.81 1.37 18.72-0.49Q13.62-2.35 10.19-5.83Q6.76-9.31 4.95-14.21Q3.14-19.11 3.14-25.19L3.14-25.19Q3.14-31.46 4.95-36.55Q6.76-41.65 10.19-45.37Q13.62-49.10 18.62-51.11Q23.62-53.12 30.09-53.12L30.09-53.12Q36.55-53.12 41.26-51.06Q45.96-49 48.95-45.28Q51.94-41.55 53.02-36.65L53.02-36.65L38.42-31.75Q38.12-34.99 36.85-37.04Q35.57-39.10 33.57-40.03Q31.56-40.96 29.20-40.96L29.20-40.96Q26.75-40.96 24.89-39.98Q23.03-39.00 21.76-37.04Q20.48-35.08 19.80-32.29Q19.11-29.50 19.11-25.87L19.11-25.87Q19.11-20.68 20.43-17.20Q21.76-13.72 24.35-11.96Q26.95-10.19 30.67-10.19L30.67-10.19Q34.50-10.19 36.65-11.76Q38.81-13.33 39.79-15.63Q40.77-17.93 40.96-20.19L40.96-20.19L54.68-17.15Q54.29-13.52 52.77-10.14Q51.25-6.76 48.31-4.17Q45.37-1.57 41.01-0.10Q36.65 1.37 30.48 1.37Z" transform="translate(214.75 144) rotate(-7)" fill="#283971"/><path d="M21.56 0L6.08 0L6.08-70.66L21.56-70.66L21.56-31.65Q24.40-33.71 26.90-36.06Q29.40-38.42 31.51-40.96Q33.61-43.51 35.33-46.21Q37.04-48.90 38.32-51.74L38.32-51.74L56.35-51.74Q55.08-47.92 52.82-44.15Q50.57-40.38 47.33-37.19Q44.10-34.01 39.64-31.75Q35.18-29.50 29.60-28.71L29.60-28.71L29.60-26.95Q36.65-28.32 41.21-27.00Q45.77-25.68 48.51-22.74Q51.25-19.80 52.72-15.88Q54.19-11.96 55.17-8.13L55.17-8.13L57.23 0L40.08 0L39.10-4.90Q38.12-9.70 36.80-13.13Q35.48-16.56 33.03-18.47Q30.58-20.38 25.97-20.38L25.97-20.38L21.56-20.38L21.56 0Z" transform="translate(269.71 149) rotate(-2)" fill="#283971"/><path d="M22.83 0L6.76 0L6.76-64.68L22.83-64.68L22.83 0Z" transform="translate(428 141) rotate(7)" fill="#283971"/><path d="M26.26 1.27L26.26 1.27Q17.15 1.27 12.84-3.58Q8.53-8.43 8.53-19.11L8.53-19.11L8.53-39.40L1.18-39.40L1.47-51.65L6.76-51.65Q9.90-51.74 11.52-52.63Q13.13-53.51 13.52-55.96L13.52-55.96L14.80-63.21L23.72-63.21L23.72-51.74L36.16-51.74L36.16-38.91L23.72-38.91L23.72-19.80Q23.72-16.46 25.33-14.90Q26.95-13.33 30.28-13.33L30.28-13.33Q32.14-13.33 33.81-13.72Q35.48-14.11 36.55-14.80L36.55-14.80L36.55-0.20Q33.42 0.78 30.82 1.03Q28.22 1.27 26.26 1.27Z" transform="translate(458.69 152) rotate(14)" fill="#283971"/><g transform="rotate(12 382 98)"><rect x="342" y="46" width="80" height="104" rx="16" fill="#283971" transform="translate(4 5)"/><rect x="342" y="46" width="80" height="104" rx="16" fill="#FFFFFF" stroke="#283971" stroke-width="4"/><rect x="350.8" y="55.36" width="62.4" height="85.28" rx="10.4" fill="#F2BC2E"/><path d="M50.07 0L3.61 0L3.61-14.08L26.75-28.60Q28.16-29.48 29.66-30.62Q31.15-31.77 32.43-33.26Q33.70-34.76 34.50-36.56Q35.29-38.37 35.29-40.57L35.29-40.57Q35.29-42.86 34.28-44.44Q33.26-46.02 31.37-46.86Q29.48-47.70 26.75-47.70L26.75-47.70Q23.67-47.70 21.78-46.73Q19.89-45.76 18.88-44.04Q17.86-42.33 17.51-40.13Q17.16-37.93 17.16-35.55L17.16-35.55L3.52-38.46Q3.34-45.06 6.16-49.76Q8.98-54.47 14.30-57.02Q19.62-59.58 27.02-59.58L27.02-59.58Q33.53-59.58 38.59-57.55Q43.65-55.53 46.51-51.52Q49.37-47.52 49.37-41.54L49.37-41.54Q49.37-37.14 47.87-33.57Q46.38-30.01 44-27.28Q41.62-24.55 38.76-22.48Q35.90-20.42 33.26-18.92L33.26-18.92L20.33-11.70L20.33-10.91L50.07-11.44L50.07 0Z" transform="translate(355.03 129.68)" fill="#283971"/></g></g><path d="M556 150 L512 194 Q514.2 169.8 531.8 169.8 Q547.2 167.6 556 150 Z" fill="url(#curlB)" stroke="#283971" stroke-width="4" stroke-linejoin="round"/><g transform="translate(410.2 43.5) rotate(0) scale(1.0833333333333333) translate(-12 -12)"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z" fill="#F2BC2E" stroke="#FFFFFF" stroke-width="3.2" stroke-linejoin="round" paint-order="stroke"/></g><g transform="translate(436.2 63.5) rotate(0) scale(0.5416666666666666) translate(-12 -12)"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z" fill="#F2BC2E" stroke="#FFFFFF" stroke-width="3.2" stroke-linejoin="round" paint-order="stroke"/></g></g></svg></span>
   <svg class="bt-pr" viewBox="0 0 200 190" width="200" height="190">
     <defs><clipPath id="btclip"><rect x="0" y="66" width="200" height="124"/></clipPath></defs>
     <g clip-path="url(#btclip)"><g class="bt-paper">
@@ -2463,6 +2503,7 @@ const dayLabel = v => v === ymd(new Date()) ? 'Today' : fmtDate(v, { weekday: 'l
 
 /* Line icons, one stroke weight */
 const ICONS = {
+  share:'<path d="M12 3v12M7.5 7.5L12 3l4.5 4.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',
   plus:'<path d="M12 5v14M5 12h14"/>', keychain:'<circle cx="7.2" cy="5.6" r="3.6"/><path d="M9.8 8.2l2.3 2.1"/><g transform="rotate(-10 14.6 16)"><rect x="9" y="9.6" width="11.2" height="12.8" rx="2.4"/><path d="M11.4 19.6l2.3-2.7 1.9 1.9 1.2-1.1 1.8 1.9"/><circle cx="16.9" cy="13.3" r="1"/></g>', minus:'<path d="M5 12h14"/>', arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
   check:'<path d="M5 12.5l4.5 4.5L19 7"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>',
   image:'<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/>',
@@ -3205,7 +3246,7 @@ function SupaBackend(){
         if (error) throw new Error('Upload failed: ' + error.message);
         pathFor[img.id] = path;
       }
-      const layout = { items: serializeItems(p.items, pathFor) };
+      const layout = { items: serializeItems(p.items, pathFor), ...(p.okPost ? { ok_to_post: true } : {}) };
       const code = await rpc('place_order', { p_nickname: p.nickname, p_grade_section: p.section, p_pickup: p.pickup, p_payment: p.payment,
         p_gcash_ref: p.gcashRef || null, p_layout: layout, p_folder: folder, p_src: p.src || null, p_pickup_date: p.pickupDate, p_pickup_time: p.pickupTime, p_promo_code: p.promo || null, p_seller: p.seller || null, p_school: p.school || null, p_add_to: p.addTo || null, ...(p.person ? { p_person: p.person } : {}) });
       return { code };
@@ -3641,7 +3682,7 @@ function noticeHTML(){
 }
 function topbar(){
   const n = S.cart.length, onCart = location.hash.startsWith('#/cart');
-  return `<div class="topwrap"><header class="top"><a class="mark" href="#/" data-act="logoTap" aria-label="${esc(CONFIG.shopName)} home">Stick<b>2</b>It</a>
+  return `<div class="topwrap"><header class="top"><a class="mark" href="#/" data-act="logoTap" aria-label="${esc(CONFIG.shopName)} home">${logoSVG(CONFIG.shopName)}</a>
     <div class="topacts ${n && !onCart ? 'has-cart' : ''}">
       ${n && !onCart ? `<a class="pilllink cartpill" href="#/cart" aria-label="Your order, ${n} item${n > 1 ? 's' : ''}">${ic('sticker', 18)}<span class="lbl">Cart</span><b class="badge-n num">${n}</b></a>` : ''}
       <button type="button" class="acctbtn ${S.me ? 'in' : ''}" data-act="acct" aria-label="${S.me ? `Signed in as ${esc(S.me.email)}. Your orders` : 'Sign in with your XU account'}" title="${S.me ? esc(S.me.email) : 'Sign in with your XU account'}">${acctInner()}</button>
@@ -3676,7 +3717,7 @@ function viewLocked(){
   $('#app').innerHTML = `<main id="main" class="lockpg">
     <div class="lk-bits" aria-hidden="true">${LK_BITS.map(([s, c, x, y, w, r], k) => `<svg viewBox="0 0 24 24" style="left:${x}%;top:${y}%;width:${w}px;--r:${r}deg;--d:${(k % 4) * 0.7}s"><path d="${LK_SHAPES[s]}" fill="${c}"/></svg>`).join('')}</div>
     <div class="lk-wrap">
-      <span class="mark lk-mark">Stick<b>2</b>It</span>
+      <span class="mark lk-mark">${logoSVG()}</span>
       <figure class="lk-hero">
         <span class="lk-tape" aria-hidden="true"></span>
         <picture><source srcset="/lock-sparkle-still.webp" media="(prefers-reduced-motion: reduce)"><img src="/lock-sparkle.webp" alt="" width="473" height="498" decoding="async" onerror="this.closest('figure').classList.add('lk-nopic')"></picture>
@@ -4986,7 +5027,8 @@ function drawPrinterCard(){
 }
 /* Tools only some pages need (printing PDFs, QR codes) load the first time they're used, not for every visitor */
 const LIBS = { pdf: ['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', () => window.jspdf],
-               qr: ['https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js', () => window.QRCode] };
+               qr: ['https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js', () => window.QRCode],
+               zip: ['https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js', () => window.JSZip] };
 const libLoads = {};
 function needLib(k){
   const [url, ready] = LIBS[k]; if (ready()) return Promise.resolve(true);
@@ -5344,6 +5386,9 @@ async function phFiles(e){
   if (made) toast(`${made} new card${made === 1 ? '' : 's'} made. Tap any card to change it.`);
   phDraw();
 }
+const LOGO_BODY = `<defs><linearGradient id="curl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#C9CEDF"/></linearGradient><linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".75"/><stop offset=".5" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient></defs><g transform="rotate(-3 300 110)"><path d="M66 33 H538 Q556 33 556 51 V150 L512 194 H66 Q48 194 48 176 V51 Q48 33 66 33 Z" fill="#283971" transform="translate(7 8)"/><path d="M66 33 H538 Q556 33 556 51 V150 L512 194 H66 Q48 194 48 176 V51 Q48 33 66 33 Z" fill="#FFFFFF" stroke="#283971" stroke-width="5" stroke-linejoin="round"/><g transform="translate(6.2 13.5)"><path d="M32.44 1.37L32.44 1.37Q26.17 1.37 21.07 0.20Q15.97-0.98 12.25-3.38Q8.53-5.78 6.37-9.51Q4.21-13.23 3.82-18.13L3.82-18.13L17.64-22.74Q17.93-18.62 19.99-15.88Q22.05-13.13 25.53-11.81Q29.01-10.49 33.32-10.49L33.32-10.49Q37.44-10.49 40.23-11.52Q43.02-12.54 44.44-14.16Q45.86-15.78 45.86-17.64L45.86-17.64Q45.86-19.80 44.00-21.22Q42.14-22.64 38.91-23.67Q35.67-24.70 31.36-25.68L31.36-25.68Q26.46-26.85 21.76-28.22Q17.05-29.60 13.23-31.80Q9.41-34.01 7.20-37.48Q5.00-40.96 5.00-46.26L5.00-46.26Q5.00-52.23 8.04-56.64Q11.07-61.05 16.95-63.55Q22.83-66.05 31.46-66.05L31.46-66.05Q39.98-66.05 45.96-63.60Q51.94-61.15 55.17-56.79Q58.41-52.43 58.70-46.65L58.70-46.65L44.59-42.63Q44.59-45.47 43.66-47.63Q42.73-49.78 41.06-51.21Q39.40-52.63 36.95-53.36Q34.50-54.10 31.36-54.10L31.36-54.10Q27.64-54.10 25.04-53.21Q22.44-52.33 21.17-50.91Q19.89-49.49 19.89-47.63L19.89-47.63Q19.89-45.28 21.90-43.76Q23.91-42.24 27.39-41.21Q30.87-40.18 35.08-39.20L35.08-39.20Q39.30-38.32 43.81-37.00Q48.31-35.67 52.23-33.52Q56.15-31.36 58.55-27.69Q60.96-24.01 60.96-18.42L60.96-18.42Q60.96-12.45 57.77-7.99Q54.59-3.53 48.22-1.08Q41.85 1.37 32.44 1.37Z" transform="translate(85.45 155) rotate(-14)" fill="#283971"/><path d="M26.26 1.27L26.26 1.27Q17.15 1.27 12.84-3.58Q8.53-8.43 8.53-19.11L8.53-19.11L8.53-39.40L1.18-39.40L1.47-51.65L6.76-51.65Q9.90-51.74 11.52-52.63Q13.13-53.51 13.52-55.96L13.52-55.96L14.80-63.21L23.72-63.21L23.72-51.74L36.16-51.74L36.16-38.91L23.72-38.91L23.72-19.80Q23.72-16.46 25.33-14.90Q26.95-13.33 30.28-13.33L30.28-13.33Q32.14-13.33 33.81-13.72Q35.48-14.11 36.55-14.80L36.55-14.80L36.55-0.20Q33.42 0.78 30.82 1.03Q28.22 1.27 26.26 1.27Z" transform="translate(148.94 144) rotate(-8)" fill="#283971"/><path d="M21.85 0L6.08 0L6.08-51.74L21.85-51.74L21.85 0ZM14.01-59.00L14.01-59.00Q9.51-59.00 7.11-60.91Q4.70-62.82 4.70-66.35L4.70-66.35Q4.70-70.07 7.11-71.98Q9.51-73.89 14.01-73.89L14.01-73.89Q18.62-73.89 21.02-71.98Q23.42-70.07 23.42-66.44L23.42-66.44Q23.42-62.82 21.02-60.91Q18.62-59.00 14.01-59.00Z" transform="translate(187.72 153) rotate(-4)" fill="#283971"/><path d="M30.48 1.37L30.48 1.37Q23.81 1.37 18.72-0.49Q13.62-2.35 10.19-5.83Q6.76-9.31 4.95-14.21Q3.14-19.11 3.14-25.19L3.14-25.19Q3.14-31.46 4.95-36.55Q6.76-41.65 10.19-45.37Q13.62-49.10 18.62-51.11Q23.62-53.12 30.09-53.12L30.09-53.12Q36.55-53.12 41.26-51.06Q45.96-49 48.95-45.28Q51.94-41.55 53.02-36.65L53.02-36.65L38.42-31.75Q38.12-34.99 36.85-37.04Q35.57-39.10 33.57-40.03Q31.56-40.96 29.20-40.96L29.20-40.96Q26.75-40.96 24.89-39.98Q23.03-39.00 21.76-37.04Q20.48-35.08 19.80-32.29Q19.11-29.50 19.11-25.87L19.11-25.87Q19.11-20.68 20.43-17.20Q21.76-13.72 24.35-11.96Q26.95-10.19 30.67-10.19L30.67-10.19Q34.50-10.19 36.65-11.76Q38.81-13.33 39.79-15.63Q40.77-17.93 40.96-20.19L40.96-20.19L54.68-17.15Q54.29-13.52 52.77-10.14Q51.25-6.76 48.31-4.17Q45.37-1.57 41.01-0.10Q36.65 1.37 30.48 1.37Z" transform="translate(214.75 144) rotate(-7)" fill="#283971"/><path d="M21.56 0L6.08 0L6.08-70.66L21.56-70.66L21.56-31.65Q24.40-33.71 26.90-36.06Q29.40-38.42 31.51-40.96Q33.61-43.51 35.33-46.21Q37.04-48.90 38.32-51.74L38.32-51.74L56.35-51.74Q55.08-47.92 52.82-44.15Q50.57-40.38 47.33-37.19Q44.10-34.01 39.64-31.75Q35.18-29.50 29.60-28.71L29.60-28.71L29.60-26.95Q36.65-28.32 41.21-27.00Q45.77-25.68 48.51-22.74Q51.25-19.80 52.72-15.88Q54.19-11.96 55.17-8.13L55.17-8.13L57.23 0L40.08 0L39.10-4.90Q38.12-9.70 36.80-13.13Q35.48-16.56 33.03-18.47Q30.58-20.38 25.97-20.38L25.97-20.38L21.56-20.38L21.56 0Z" transform="translate(269.71 149) rotate(-2)" fill="#283971"/><path d="M22.83 0L6.76 0L6.76-64.68L22.83-64.68L22.83 0Z" transform="translate(428 141) rotate(7)" fill="#283971"/><path d="M26.26 1.27L26.26 1.27Q17.15 1.27 12.84-3.58Q8.53-8.43 8.53-19.11L8.53-19.11L8.53-39.40L1.18-39.40L1.47-51.65L6.76-51.65Q9.90-51.74 11.52-52.63Q13.13-53.51 13.52-55.96L13.52-55.96L14.80-63.21L23.72-63.21L23.72-51.74L36.16-51.74L36.16-38.91L23.72-38.91L23.72-19.80Q23.72-16.46 25.33-14.90Q26.95-13.33 30.28-13.33L30.28-13.33Q32.14-13.33 33.81-13.72Q35.48-14.11 36.55-14.80L36.55-14.80L36.55-0.20Q33.42 0.78 30.82 1.03Q28.22 1.27 26.26 1.27Z" transform="translate(458.69 152) rotate(14)" fill="#283971"/><g transform="rotate(12 382 98)"><rect x="342" y="46" width="80" height="104" rx="16" fill="#283971" transform="translate(4 5)"/><rect x="342" y="46" width="80" height="104" rx="16" fill="#FFFFFF" stroke="#283971" stroke-width="4"/><rect x="350.8" y="55.36" width="62.4" height="85.28" rx="10.4" fill="#F2BC2E"/><path d="M50.07 0L3.61 0L3.61-14.08L26.75-28.60Q28.16-29.48 29.66-30.62Q31.15-31.77 32.43-33.26Q33.70-34.76 34.50-36.56Q35.29-38.37 35.29-40.57L35.29-40.57Q35.29-42.86 34.28-44.44Q33.26-46.02 31.37-46.86Q29.48-47.70 26.75-47.70L26.75-47.70Q23.67-47.70 21.78-46.73Q19.89-45.76 18.88-44.04Q17.86-42.33 17.51-40.13Q17.16-37.93 17.16-35.55L17.16-35.55L3.52-38.46Q3.34-45.06 6.16-49.76Q8.98-54.47 14.30-57.02Q19.62-59.58 27.02-59.58L27.02-59.58Q33.53-59.58 38.59-57.55Q43.65-55.53 46.51-51.52Q49.37-47.52 49.37-41.54L49.37-41.54Q49.37-37.14 47.87-33.57Q46.38-30.01 44-27.28Q41.62-24.55 38.76-22.48Q35.90-20.42 33.26-18.92L33.26-18.92L20.33-11.70L20.33-10.91L50.07-11.44L50.07 0Z" transform="translate(355.03 129.68)" fill="#283971"/></g></g><path d="M556 150 L512 194 Q514.2 169.8 531.8 169.8 Q547.2 167.6 556 150 Z" fill="url(#curl)" stroke="#283971" stroke-width="4" stroke-linejoin="round"/><g transform="translate(410.2 43.5) rotate(0) scale(1.0833333333333333) translate(-12 -12)"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z" fill="#F2BC2E" stroke="#FFFFFF" stroke-width="3.2" stroke-linejoin="round" paint-order="stroke"/></g><g transform="translate(436.2 63.5) rotate(0) scale(0.5416666666666666) translate(-12 -12)"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z" fill="#F2BC2E" stroke="#FFFFFF" stroke-width="3.2" stroke-linejoin="round" paint-order="stroke"/></g></g>`;
+let logoN = 0;
+function logoSVG(label = 'Stick2It'){ const n = ++logoN; return `<svg class="logo" viewBox="36.5 12 534.5 207.8" role="img" aria-label="${esc(label)}">${LOGO_BODY.replace(/id="(curl|gloss)"/g, `id="$1${n}"`).replace(/url\(#(curl|gloss)\)/g, `url(#$1${n})`)}</svg>`; }
 function viewMake(key){
   if (!CONFIG.products[key]) return viewNotFound();
   if (!isLive(key)) return viewUnavailable(key);
@@ -5677,6 +5722,25 @@ function frameInner(d, empty){
   return im ? `<img id="fimg" src="${im.url}" alt="" draggable="false">`
     : `<label class="empty-f"><span class="ui">${ic('plus', 22)}</span><b>${empty}</b><small>Tap to choose one</small><input class="filePick" type="file" accept="${S.fd && S.fd.type === 'posters' ? 'image/*,application/pdf' : 'image/*'}" hidden></label>`;
 }
+// the back of a button pin: a metal shell with the safety-pin clasp across it
+const PIN_BACK = `<svg viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="pbm" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#F6F7FA"/><stop offset=".55" stop-color="#C9CEDA"/><stop offset="1" stop-color="#8E95A8"/></radialGradient></defs>
+  <circle cx="50" cy="50" r="49" fill="url(#pbm)"/><circle cx="50" cy="50" r="44" fill="none" stroke="#A6ACBC" stroke-width="1.2"/>
+  <path d="M20 50 H78" stroke="#6D7488" stroke-width="2.6" stroke-linecap="round"/><path d="M20 50 L16 47" stroke="#6D7488" stroke-width="2.2" stroke-linecap="round"/>
+  <rect x="74" y="45" width="12" height="10" rx="3" fill="#8E95A8" stroke="#6D7488" stroke-width="1.2"/><rect x="22" y="53" width="56" height="5" rx="2.5" fill="#B3B9C8" stroke="#8E95A8" stroke-width="1"/>
+  <circle cx="50" cy="50" r="5" fill="#B3B9C8" stroke="#8E95A8" stroke-width="1"/></svg>`;
+// the "How it looks" pin: drag (or hover) to tilt it, the shine follows, it wobbles gently when left alone
+function ppBind(){
+  const pp = $('#pp3d'), tilt = $('#ppTilt'); if (!pp || !tilt) return;
+  const set = (rx, ry) => { tilt.style.setProperty('--rx', rx + 'deg'); tilt.style.setProperty('--ry', ry + 'deg');
+    tilt.style.setProperty('--gx', (50 - ry * 1.6) + '%'); tilt.style.setProperty('--gy', (30 + rx * 1.6) + '%'); };
+  let down = false;
+  const move = e => { const r = pp.getBoundingClientRect(), nx = (e.clientX - r.left) / r.width - 0.5, ny = (e.clientY - r.top) / r.height - 0.5;
+    tilt.classList.add('held'); set(Math.max(-28, Math.min(28, -ny * 50)), Math.max(-32, Math.min(32, nx * 60))); };
+  pp.addEventListener('pointerdown', e => { down = true; try { pp.setPointerCapture(e.pointerId); } catch {} move(e); });
+  pp.addEventListener('pointermove', e => { if (down || e.pointerType === 'mouse') move(e); });
+  const rest = () => { down = false; tilt.classList.remove('held'); set(0, 0); };
+  pp.addEventListener('pointerup', rest); pp.addEventListener('pointercancel', rest); pp.addEventListener('pointerleave', () => { if (!down) rest(); });
+}
 function drawFramedStage(){
   const f = S.fd, mm = frameMm(f), sd = shownDesign(), bg = (sd && sd.bg) || '#ffffff';
   let html = '';
@@ -5689,8 +5753,12 @@ function drawFramedStage(){
           <span class="wrapzone" style="--face:${mm.face / mm.w * 100}%"></span><span class="facering" style="width:${mm.face / mm.w * 100}%"></span></div></div>
           <span class="cap">${ic('move', 14)}Drag to move</span></div>
         <div class="pinprev">
-          <div class="pp"><div class="pp-face"><div class="pp-inner" style="width:${k * 100}%;left:${off}%;top:${off}%;background:${bg}">
-            ${im ? `<img id="fimg2" src="${im.url}" alt="" draggable="false">` : ''}<canvas class="fxc" aria-hidden="true"></canvas></div><span class="pp-gloss"></span></div></div>
+          <div class="pp" id="pp3d" title="Drag to tilt it"><div class="pp-tilt ${f.ppFlip ? 'flip' : ''}" id="ppTilt" style="--edge:${bg}">
+            ${Array.from({ length: 10 }, (_, i) => `<span class="pp-ring" aria-hidden="true" style="transform:translateZ(calc(var(--depth) * -${(i + 1) / 10}));filter:brightness(${(1 - 0.035 * (i + 1)).toFixed(3)})"></span>`).join('')}
+            <div class="pp-face front"><div class="pp-inner" style="width:${k * 100}%;left:${off}%;top:${off}%;background:${bg}">
+              ${im ? `<img id="fimg2" src="${im.url}" alt="" draggable="false">` : ''}<canvas class="fxc" aria-hidden="true"></canvas></div><span class="pp-gloss"></span></div>
+            <div class="pp-face back" aria-hidden="true">${PIN_BACK}</div></div></div>
+          <button type="button" class="pp-flip" data-act="ppFlip" aria-pressed="${!!f.ppFlip}">${ic('refresh', 15)}<span>${f.ppFlip ? 'Show the front' : 'Flip it'}</span></button>
           <span class="cap">How it looks</span></div>
       </div>
       <p class="under" style="max-width:460px">Prints exactly like this, ${Math.round(mm.w)} mm across. Keep faces and words a little in from the edge.</p>`;
@@ -5747,7 +5815,7 @@ function drawFramedStage(){
   $('#fstage').querySelectorAll('.filePick').forEach(i => i.addEventListener('change', onFiles));
   const frEl = $('#frame'); if (frEl) frEl.classList.toggle('has-img', !!$('#fimg'));
   const img = $('#fimg'); if (img) { if (img.complete) placeImg(); else img.onload = placeImg; }
-  bindPan(); fxPaintStage();
+  bindPan(); fxPaintStage(); ppBind();
 }
 /* Pins: a small A4 showing where their pins go on the real print sheet (same grid the shop prints with) */
 function shownDesign(){
@@ -6170,6 +6238,7 @@ ${codeCardHTML()}
 
           <div id="sumBox">${checkoutSummary()}</div>
           <label class="choice"><input type="checkbox" id="promise"><span id="promiseTxt"></span></label>
+          <label class="choice okpost"><input type="checkbox" id="okPost"><span>You can post a photo of my finished order on ${esc(CONFIG.shopName)}’s pages.<small>Optional. Leave it unticked if you’d rather not.</small></span></label>
           <p class="ferr" id="e-promise" role="alert"></p>
           <div class="formerr" id="formErr" role="alert"></div>
           <div style="margin-top:14px">${btn('Place my order', { type: 'submit', cls: 'wide', icon: 'check', attrs: 'id="placeBtn"' })}</div>
@@ -6429,7 +6498,7 @@ async function submitOrder(e){
       const d = prsDoc(f.id); if (d && d.kind === 'image' && d.canvas) pages[f.id] = await renderPrintPage(f, d, (it.addons || []).includes('color'));
     }
     const uploads = S.images.concat((S.docs || []).map(d => pages[d.id] || d)).filter(i => used.has(i.id));
-    const { code } = await api.placeOrder({ nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: S.addTo ? '' : SRC, promo: S.promo && !S.promo.seller && sum.total >= S.promo.min_total ? S.promo.code : null, seller: CONFIG.sellersOn ? (S.promo && S.promo.seller ? S.promo.code : sellerRef()) || null : null, school: person && person.linked ? S.linkCode : null, person: person ? person.id : null, images: uploads, items: S.cart, addTo: S.addTo && S.addTo.code });
+    const { code } = await api.placeOrder({ okPost: !!($('#okPost') && $('#okPost').checked), nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: S.addTo ? '' : SRC, promo: S.promo && !S.promo.seller && sum.total >= S.promo.min_total ? S.promo.code : null, seller: CONFIG.sellersOn ? (S.promo && S.promo.seller ? S.promo.code : sellerRef()) || null : null, school: person && person.linked ? S.linkCode : null, person: person ? person.id : null, images: uploads, items: S.cart, addTo: S.addTo && S.addTo.code });
     const addedTo = S.addTo && S.addTo.code; S.addTo = null;
     S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal, add_to: addedTo || null, for_someone: !!S.coAdmin, group: !!person, person_name: person ? personName(person) : null };
     try { const real = await api.getOrder(code, nickname); if (real && real.total !== finalTotal) { S.lastOrder.total = real.total; if (real.total < finalTotal) setTimeout(() => toast(`Your friend credit took ${money(finalTotal - real.total)} off. New total: ${money(real.total)}.`), 900); } } catch {}
@@ -6684,11 +6753,11 @@ async function viewAdmin(){
   }
   forgetPoster();   // an admin's own phone never tags orders with a poster
   setTimeout(() => { needLib('pdf'); needLib('qr'); }, 1500);   // admins print and make QR codes: have those tools ready
-  $('#app').innerHTML = `<header class="top"><a class="mark" href="#/" aria-label="Back to the shop">Stick<b>2</b>It</a>
+  $('#app').innerHTML = `<header class="top"><a class="mark" href="#/" aria-label="Back to the shop">${logoSVG()}</a>
       <button class="pilllink" type="button" data-act="logout">${ic('logout', 18)}Log out</button></header>
     <main id="main" class="wrap">
       <nav class="atabs" aria-label="Admin sections">
-        ${[['orders','list','Orders'],['latest','bell','Latest'],['money','doc','Log book'],...(CONFIG.sellersOn ? [['sellers','badge','Sellers']] : []),['posters','qr','Poster QR codes'],['settings','sliders','Settings']].map(([k, i, l]) =>
+        ${[['orders','list','Orders'],['latest','bell','Latest'],['money','doc','Log book'],...(CONFIG.sellersOn ? [['sellers','badge','Sellers']] : []),['posters','qr','Poster QR codes'],['post','image','Weekly post'],['settings','sliders','Settings']].map(([k, i, l]) =>
           `<button class="tab ${S.admin.tab === k ? 'on' : ''}" type="button" data-act="admTab" data-tab="${k}" ${S.admin.tab === k ? 'aria-current="page"' : ''} style="display:inline-flex;gap:6px;align-items:center">${ic(i, 18)}${l}${k === 'latest' ? '<span class="newdot" id="latestDot" hidden></span>' : ''}</button>`).join('')}
         <button class="tab" type="button" data-act="admRefresh" style="display:inline-flex;gap:6px;align-items:center">${ic('refresh', 18)}Refresh</button>
       </nav>
@@ -6697,7 +6766,7 @@ async function viewAdmin(){
 }
 function drawLogin(note){
   $('#app').innerHTML = `<main id="main" class="wrap narrow" style="padding-top:40px">
-    <form class="panel" id="loginForm"><span class="mark" style="margin-bottom:14px">Stick<b>2</b>It</span><h2 style="margin:10px 0 18px">Admin log in</h2>
+    <form class="panel" id="loginForm"><span class="mark" style="margin-bottom:14px">${logoSVG()}</span><h2 style="margin:10px 0 18px">Admin log in</h2>
       ${note ? `<p class="hint" style="margin:0 0 14px">${ic('warn', 18)}<span>${note}</span></p>` : ''}
       <div class="field"><label class="lab" for="em">Email</label><input class="inp" id="em" type="email" autocomplete="username"></div>
       <div class="field"><label class="lab" for="pw">Password</label><input class="inp" id="pw" type="password" autocomplete="current-password"></div>
@@ -6814,6 +6883,7 @@ async function drawAdminBody(){
   if (S.admin.tab === 'money') return drawLogbook();
   if (S.admin.tab === 'sellers') return drawSellers();
   if (S.admin.tab === 'posters') return drawPosters();
+  if (S.admin.tab === 'post') return drawPostMaker();
   if (S.admin.tab === 'settings') { const r = drawSettings(); setupSettingsNav(); return r; }
   const all = S.admin.orders, f = S.admin.filter, who = S.admin.person || '';
   // Pickup person filter: '' everyone, 'school' pickup at school, or one person's id
@@ -6912,6 +6982,7 @@ async function drawAdminBody(){
             ${o.add_to ? `<span class="tag hot">${ic('box', 14)}Add-on to ${esc(o.add_to)}: bag together</span>` : ''}${addOns.length ? `<span class="tag hot">${ic('plus', 14)}Has add-on ${esc(addOns.join(', '))}: bag together</span>` : ''}
             ${walkin ? `<span class="tag">${ic('cash', 14)}Sold in person</span>` : o.src ? `<span class="tag">${ic('qr', 14)}Poster: ${esc(o.src)}</span>` : ''}
             ${o.reject_reason ? `<span class="tag bad">Reason: ${esc(o.reject_reason)}</span>` : ''}
+            ${o.layout && o.layout.ok_to_post ? `<span class="tag okp">${ic('image', 14)}OK to post</span>` : ''}
             ${o.discount ? `<span class="tag hot">${ic('sparkle', 14)}Saved ${money(o.discount)}: ${esc((o.deal_labels || []).join(', '))}</span>` : ''}
           </div>
           ${o.admin_note ? `<p class="onote">${ic('edit', 14)}<span>${esc(o.admin_note)}</span></p>` : ''}
@@ -8329,6 +8400,188 @@ async function templateImage(file){   // logos stay sharp PNGs (see-through kept
   if (/png|webp|gif|svg/.test(file.type)) { const px = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; for (let i = 3; i < px.length; i += 16) if (px[i] < 250) { clear = true; break; } }
   return clear ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', 0.92);
 }
+/* =====================================================================
+   Weekly post maker: photos of this week's finished orders become a slideshow for Instagram or Facebook.
+   A cover, one slide per photo, an ending slide with prices and a QR code. Three looks, three sizes.
+   Everything is drawn here in the browser; nothing is uploaded.
+   ===================================================================== */
+const POST_FMT = { post: [1080, 1350, 'Post', '4:5'], story: [1080, 1920, 'Story', '9:16'], square: [1080, 1080, 'Square', '1:1'] };
+const POST_LOOKS = [['board', 'Sticker board', 'Photos as stickers on the cutting mat'], ['instant', 'Instant photo', 'Each photo in an instant-photo frame'], ['clean', 'Clean', 'Big photo with a navy caption band']];
+function postWeek(){ const d = new Date(), a = new Date(d); a.setDate(d.getDate() - (d.getDay() + 6) % 7); const b = new Date(a); b.setDate(a.getDate() + 6);
+  const m = x => x.toLocaleDateString('en-PH', { month: 'short' }); return a.getMonth() === b.getMonth() ? `${m(a)} ${a.getDate()}–${b.getDate()}` : `${m(a)} ${a.getDate()} – ${m(b)} ${b.getDate()}`; }
+const postState = () => S.post || (S.post = { photos: [], title: `This week at ${CONFIG.shopName}`, dates: postWeek(), look: 'board', fmt: 'post', cover: true, end: true, slides: [] });
+// ----- drawing helpers (x: canvas context) -----
+const PF = { disp: () => FX_FONTS.bold[1], body: () => FX_FONTS.clean[1], hand: () => wordFont('hand')[1] };
+function pmMark(x, cx, cy, size, onDark){
+  x.save(); x.translate(cx, cy); x.rotate(-0.05); x.font = `800 ${size}px ${PF.disp()}`; x.textBaseline = 'middle'; x.lineJoin = 'round';
+  const parts = [['Stick', '#283971'], ['2', '#F2BC2E'], ['It', '#283971']], ws = parts.map(([t]) => x.measureText(t).width), W = ws.reduce((a, b) => a + b, 0); let px = -W / 2;
+  x.lineWidth = size * 0.22; x.strokeStyle = '#fff'; parts.forEach(([t], i) => { x.strokeText(t, px, 0); px += ws[i]; }); px = -W / 2;
+  parts.forEach(([t, c], i) => { x.fillStyle = c; x.fillText(t, px, 0); px += ws[i]; }); x.restore();
+}
+function pmRound(x, X, Y, W, H, r){ x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + W, Y, X + W, Y + H, r); x.arcTo(X + W, Y + H, X, Y + H, r); x.arcTo(X, Y + H, X, Y, r); x.arcTo(X, Y, X + W, Y, r); x.closePath(); }
+function pmCover(x, img, X, Y, W, H){ const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height, s = Math.max(W / iw, H / ih); x.drawImage(img, X + (W - iw * s) / 2, Y + (H - ih * s) / 2, iw * s, ih * s); }
+function pmFit(x, text, maxW, size, weight, fam){ let s = size; x.font = `${weight} ${s}px ${fam}`; while (x.measureText(text).width > maxW && s > 12) { s *= 0.94; x.font = `${weight} ${s}px ${fam}`; } return s; }
+function pmWrap(x, text, maxW){ const words = String(text).split(/\s+/), lines = []; let l = ''; for (const w of words) { const t = l ? l + ' ' + w : w; if (x.measureText(t).width > maxW && l) { lines.push(l); l = w; } else l = t; } if (l) lines.push(l); return lines; }
+function pmBg(x, W, H, look){
+  if (look === 'clean') { x.fillStyle = '#283971'; x.fillRect(0, 0, W, H); return; }
+  if (look === 'instant') { x.fillStyle = '#F2BC2E'; x.fillRect(0, 0, W, H); x.save(); x.globalAlpha = 0.13; x.strokeStyle = '#fff'; x.lineWidth = 34;
+    for (let k = -H; k < W + H; k += 120) { x.beginPath(); x.moveTo(k, 0); x.lineTo(k + H, H); x.stroke(); } x.restore(); return; }
+  x.fillStyle = '#F4F5FA'; x.fillRect(0, 0, W, H); x.fillStyle = 'rgba(40,57,113,.14)';
+  for (let yy = 18; yy < H; yy += 40) for (let xx = 18; xx < W; xx += 40) { x.beginPath(); x.arc(xx, yy, 2.6, 0, 7); x.fill(); }
+  const bits = [['star', '#F2BC2E', .07, .05, 70, -14], ['heart', '#ec282a', .92, .06, 62, 12], ['bolt', '#F2BC2E', .95, .5, 54, -8], ['moon', '#3a52a3', .05, .52, 54, 16], ['star', '#3a52a3', .06, .84, 46, 8], ['heart', '#F2BC2E', .94, .84, 48, -12]];   // kept clear of the footer
+  for (const [s, c, fx, fy, w, r] of bits) { x.save(); x.translate(fx * W, fy * H); x.rotate(r * Math.PI / 180); x.scale(w / 24, w / 24); x.translate(-12, -12);
+    const p = new Path2D(LK_SHAPES[s]); x.lineJoin = 'round'; x.save(); x.translate(1.6, 1.6); x.fillStyle = '#283971'; x.strokeStyle = '#283971'; x.lineWidth = 3; x.stroke(p); x.fill(p); x.restore();
+    x.strokeStyle = '#fff'; x.lineWidth = 3; x.stroke(p); x.fillStyle = c; x.fill(p); x.restore(); }
+}
+// a photo as a die-cut sticker, taped on
+function pmSticker(x, img, cx, cy, w, h, rot, tape = true){
+  const pad = Math.max(10, w * 0.035), r = w * 0.05;
+  x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180);
+  pmRound(x, -w / 2 - pad + 9, -h / 2 - pad + 11, w + pad * 2, h + pad * 2, r + pad); x.fillStyle = '#283971'; x.fill();
+  pmRound(x, -w / 2 - pad, -h / 2 - pad, w + pad * 2, h + pad * 2, r + pad); x.fillStyle = '#fff'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#283971'; x.stroke();
+  x.save(); pmRound(x, -w / 2, -h / 2, w, h, r); x.clip(); pmCover(x, img, -w / 2, -h / 2, w, h); x.restore();
+  if (tape) { x.save(); x.translate(0, -h / 2 - pad); x.rotate(0.06); const tw = Math.min(220, w * 0.42), th = Math.max(34, w * 0.07); x.globalAlpha = 0.92;
+    x.beginPath(); x.rect(-tw / 2, -th / 2, tw, th); x.clip(); for (let k = -tw; k < tw; k += 26) { x.fillStyle = (k / 26) % 2 ? '#FFF3D1' : '#F2BC2E'; x.beginPath(); x.moveTo(k, -th); x.lineTo(k + 13, -th); x.lineTo(k + 13 + th * 2, th); x.lineTo(k + th * 2, th); x.fill(); } x.restore(); }
+  x.restore();
+}
+// a photo in an instant-photo frame (54 x 86 mm proportions), caption in handwriting
+function pmInstant(x, img, cx, cy, w, rot, caption){
+  const h = w * 86 / 54, k = w / 54;
+  x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180);
+  x.shadowColor = 'rgba(40,57,113,.35)'; x.shadowBlur = 30; x.shadowOffsetY = 12; x.fillStyle = '#fff'; x.fillRect(-w / 2, -h / 2, w, h); x.shadowColor = 'transparent';
+  x.save(); x.beginPath(); x.rect(-w / 2 + 4 * k, -h / 2 + 6 * k, 46 * k, 62 * k); x.clip(); pmCover(x, img, -w / 2 + 4 * k, -h / 2 + 6 * k, 46 * k, 62 * k); x.restore();
+  if (caption) { x.fillStyle = '#283971'; x.textAlign = 'center'; x.textBaseline = 'middle'; const s = pmFit(x, caption, 44 * k, 9.5 * k, 700, PF.hand()); x.fillText(caption, 0, -h / 2 + 77 * k); }
+  x.restore();
+}
+function pmPill(x, text, X, Y, bg, fg, size){ x.font = `800 ${size}px ${PF.disp()}`; const w = x.measureText(text).width + size * 1.4, h = size * 1.9;
+  pmRound(x, X, Y, w, h, h / 2); x.fillStyle = bg; x.fill(); x.fillStyle = fg; x.textAlign = 'left'; x.textBaseline = 'middle'; x.fillText(text, X + size * 0.7, Y + h / 2 + 1); return w; }
+function pmLabel(x, text, cx, cy, maxW, rot, size){   // a caption on a white label sticker
+  x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180); const s = pmFit(x, text, maxW - 60, size, 800, PF.disp()), w = Math.min(maxW, x.measureText(text).width + s * 1.4), h = s * 1.9;
+  pmRound(x, -w / 2 + 7, -h / 2 + 8, w, h, 22); x.fillStyle = '#283971'; x.fill(); pmRound(x, -w / 2, -h / 2, w, h, 22); x.fillStyle = '#fff'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#283971'; x.stroke();
+  x.fillStyle = '#283971'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, 0, 2); x.restore();
+}
+function pmFoot(x, W, H, look, n, total){
+  const dark = look === 'clean'; x.font = `700 30px ${PF.body()}`; x.textBaseline = 'alphabetic';
+  x.fillStyle = dark ? 'rgba(255,255,255,.85)' : '#283971'; x.textAlign = 'left'; x.fillText(postSite(), 56, H - 50);
+  if (total > 1) { x.textAlign = 'right'; x.fillText(`${n} / ${total}`, W - 56, H - 50); }
+}
+const postSite = () => String(CONFIG.siteUrl || 'stick2it.me').replace(/^https?:\/\//, '').replace(/\/$/, '');
+// ----- the slides -----
+function pmCoverSlide(x, W, H, st){
+  const look = st.look, ph = st.photos.slice(0, 3), dark = look === 'clean', tall = H / W;
+  pmBg(x, W, H, look); pmMark(x, W / 2, 120, 64);
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = dark ? '#fff' : '#283971';
+  const ts = pmFit(x, st.title, W - 160, 112, 800, PF.disp()); const lines = pmWrap(x, st.title, W - 160).slice(0, 3);
+  let y = 210 + ts; lines.forEach(l => { x.fillText(l, W / 2, y); y += ts * 1.02; });
+  x.font = `800 40px ${PF.disp()}`; const dw = x.measureText(st.dates).width + 56; pmRound(x, W / 2 - dw / 2, y - 6, dw, 72, 36); x.fillStyle = dark ? '#F2BC2E' : look === 'instant' ? '#283971' : '#F2BC2E'; x.fill();
+  x.fillStyle = look === 'instant' ? '#fff' : '#283971'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(st.dates, W / 2, y + 31);
+  const top = y + 110, room = H - top - 120, n = ph.length;
+  if (n) {
+    const pw = Math.min(W * (n === 1 ? 0.62 : n === 2 ? 0.44 : 0.36), room * (look === 'instant' ? 0.6 : 0.9)), rots = n === 1 ? [-3] : n === 2 ? [-7, 6] : [-9, 3, 9], xs = n === 1 ? [0.5] : n === 2 ? [0.32, 0.68] : [0.24, 0.5, 0.76];
+    ph.forEach((p, i) => { const cx = xs[i] * W, cy = top + room / 2 + (n === 3 && i === 1 ? -room * 0.08 : room * 0.04);
+      if (look === 'instant') pmInstant(x, p.img, cx, cy, pw * 0.85, rots[i], p.caption || '');
+      else if (look === 'clean') { x.save(); x.translate(cx, cy); x.rotate(rots[i] * Math.PI / 360); pmRound(x, -pw / 2, -pw * 0.62, pw, pw * 1.24, 28); x.save(); x.clip(); pmCover(x, p.img, -pw / 2, -pw * 0.62, pw, pw * 1.24); x.restore(); x.lineWidth = 8; x.strokeStyle = '#fff'; x.stroke(); x.restore(); }
+      else pmSticker(x, p.img, cx, cy, pw, pw * 1.18, rots[i], i === n - 1); });
+  }
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.font = `700 34px ${PF.body()}`; x.fillStyle = dark ? 'rgba(255,255,255,.85)' : '#283971';
+  x.fillText(st.photos.length ? `${st.photos.length} thing${st.photos.length === 1 ? '' : 's'} we made this week. Swipe!` : 'Add photos to fill this post', W / 2, H - 56);
+}
+function pmPhotoSlide(x, W, H, st, p, n, total){
+  const look = st.look; pmBg(x, W, H, look);
+  if (look === 'clean') {
+    const band = Math.round(H * (p.caption || p.tag ? 0.2 : 0.11)); pmCover(x, p.img, 0, 0, W, H - band);
+    x.fillStyle = '#283971'; x.fillRect(0, H - band, W, band); pmMark(x, 140, 84, 46);
+    if (p.tag) pmPill(x, p.tag, 56, H - band + 36, '#F2BC2E', '#283971', 30);
+    if (p.caption) { x.fillStyle = '#fff'; x.textAlign = 'left'; x.textBaseline = 'alphabetic'; const s = pmFit(x, p.caption, W - 112, 62, 800, PF.disp()); x.fillText(p.caption, 56, H - band + (p.tag ? 112 : 80) + s * 0.55); }
+    pmFoot(x, W, H, look, n, total); return;
+  }
+  pmMark(x, W / 2, 104, 54);
+  const capRoom = p.caption ? 190 : 70, top = 190, room = H - top - capRoom - 110;
+  if (look === 'instant') { const w = Math.min(W * 0.7, room * 54 / 86); pmInstant(x, p.img, W / 2, top + room / 2 + 20, w, n % 2 ? -3 : 3, p.caption || ''); }
+  else { const w = Math.min(W * 0.78, room * 0.9), h = Math.min(room, w * 1.2); pmSticker(x, p.img, W / 2, top + room / 2 + 20, w, h, n % 2 ? -2.5 : 2.5);
+    if (p.caption) pmLabel(x, p.caption, W / 2, H - 120 - capRoom / 2 + 30, W - 140, n % 2 ? 2 : -2, 54); }
+  if (p.tag) { x.font = `800 30px ${PF.disp()}`; const tw = x.measureText(p.tag).width + 42; x.save(); x.translate(W - 70 - tw, top - 10); x.rotate(0.05); pmPill(x, p.tag, 0, 0, look === 'instant' ? '#283971' : '#F2BC2E', look === 'instant' ? '#fff' : '#283971', 30); x.restore(); }
+  if (look === 'instant' && p.caption) {}   // the caption is handwritten on the frame
+  pmFoot(x, W, H, look, n, total);
+}
+function pmEndSlide(x, W, H, st, qr){
+  const look = st.look, dark = look === 'clean', ink = dark ? '#fff' : '#283971'; pmBg(x, W, H, look); pmMark(x, W / 2, 120, 64);
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = ink; const s = pmFit(x, 'Make yours', W - 160, 112, 800, PF.disp()); x.fillText('Make yours', W / 2, 200 + s);
+  x.font = `600 36px ${PF.body()}`; x.fillStyle = dark ? 'rgba(255,255,255,.88)' : '#283971'; pmWrap(x, 'Custom stickers, pins and more from your own pictures, picked up at school.', W - 220).slice(0, 2).forEach((l, i) => x.fillText(l, W / 2, 280 + s + i * 46));
+  const list = liveProducts().slice(0, 6), cardW = W - 200, rowH = H < 1200 ? 58 : 64, top = 370 + s, cardH = list.length * rowH + 36;
+  pmRound(x, 100 + 8, top + 10, cardW, cardH, 32); x.fillStyle = '#283971'; x.fill(); pmRound(x, 100, top, cardW, cardH, 32); x.fillStyle = '#fff'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#283971'; x.stroke();
+  list.forEach((p, i) => { const y = top + 18 + i * rowH + rowH / 2; x.textBaseline = 'middle'; x.textAlign = 'left'; x.fillStyle = '#283971'; x.font = `700 40px ${PF.body()}`; x.fillText(p.name, 140, y);
+    x.textAlign = 'right'; x.font = `800 42px ${PF.disp()}`; x.fillText(`${liveSizes(p.key).length > 1 ? 'from ' : ''}${money(fromPrice(p.key))}`, W - 140, y);
+    if (i < list.length - 1) { x.fillStyle = 'rgba(40,57,113,.15)'; x.fillRect(140, y + rowH / 2, cardW - 80, 2); } });
+  const qy = top + cardH + 44, qs = Math.min(280, H - qy - 190);
+  if (qr && qs >= 150) { pmRound(x, W / 2 - qs / 2 - 18, qy, qs + 36, qs + 36, 24); x.fillStyle = '#fff'; x.fill(); x.drawImage(qr, W / 2 - qs / 2, qy + 18, qs, qs); }
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = ink; x.font = `800 52px ${PF.disp()}`; x.fillText(postSite(), W / 2, H - 110);
+  x.font = `600 32px ${PF.body()}`; x.fillStyle = dark ? 'rgba(255,255,255,.85)' : '#283971'; x.fillText('Follow us for new designs every week', W / 2, H - 58);
+}
+async function postRender(){
+  const st = postState(), [W, H] = POST_FMT[st.fmt];
+  await fxFontsReady(); wordFontsLoad(); await wordFontReady('hand');
+  let qr = null;
+  if (st.end && await needLib('qr')) { const d = document.createElement('div'); new QRCode(d, { text: CONFIG.siteUrl || location.origin, width: 360, height: 360, colorDark: '#283971', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); qr = d.querySelector('canvas'); }
+  const plan = [...(st.cover ? [{ k: 'cover' }] : []), ...st.photos.map(p => ({ k: 'photo', p })), ...(st.end ? [{ k: 'end' }] : [])];
+  st.slides = plan.map((s, i) => { const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
+    if (s.k === 'cover') pmCoverSlide(x, W, H, st); else if (s.k === 'end') pmEndSlide(x, W, H, st, qr); else pmPhotoSlide(x, W, H, st, s.p, i + 1, plan.length);
+    return c; });
+  return st.slides;
+}
+let postTimer = null;
+function postRefresh(){ clearTimeout(postTimer); postTimer = setTimeout(async () => { const box = $('#pmSlides'); if (!box) return; box.classList.add('busy'); await postRender(); drawPostSlides(); }, 250); }
+function drawPostSlides(){
+  const st = postState(), box = $('#pmSlides'); if (!box) return; box.classList.remove('busy');
+  const [W, H] = POST_FMT[st.fmt];
+  $('#pmCount').textContent = `${st.slides.length} slide${st.slides.length === 1 ? '' : 's'}`;
+  box.innerHTML = st.slides.map((c, i) => `<figure class="pm-slide" style="aspect-ratio:${W}/${H}"><img src="${c.toDataURL('image/jpeg', 0.8)}" alt="Slide ${i + 1}"><figcaption><span class="num">${i + 1}</span>${smallBtn('Save', 'download', 'pmSave', 'plain', `data-i="${i}" aria-label="Save slide ${i + 1}"`)}</figcaption></figure>`).join('');
+}
+function drawPostMaker(){
+  const st = postState(), body = $('#admBody');
+  const okOrders = (S.admin.orders || []).filter(o => o.layout && o.layout.ok_to_post && Date.now() - new Date(o.created_at).getTime() < 8 * 864e5);
+  const tags = ['', ...liveProducts().map(p => p.name)];
+  body.innerHTML = `<div class="pm">
+    <section class="panel pm-set">
+      <h3>Weekly post</h3>
+      <p class="help" style="margin:4px 0 14px">Turn photos of this week’s finished orders into a slideshow for Instagram or Facebook. Only post orders where the customer said OK.</p>
+      <div class="pm-grid"><label class="lab" for="pmTitle">Title<input class="inp" id="pmTitle" maxlength="48" value="${esc(st.title)}"></label>
+        <label class="lab" for="pmDates">Dates<input class="inp" id="pmDates" maxlength="30" value="${esc(st.dates)}"></label></div>
+      <p class="lab flab">Look</p>
+      <div class="pm-looks">${POST_LOOKS.map(([k, l, d]) => `<button type="button" class="pm-look ${st.look === k ? 'on' : ''}" data-act="pmLook" data-v="${k}" aria-pressed="${st.look === k}"><span class="pm-sw ${k}" aria-hidden="true"></span><b>${l}</b><small>${d}</small></button>`).join('')}</div>
+      <p class="lab flab">Size</p>
+      <div class="seg pm-fmt">${Object.entries(POST_FMT).map(([k, [w, h, l, r]]) => `<button type="button" class="${st.fmt === k ? 'on' : ''}" data-act="pmFmt" data-v="${k}">${l} <small>${r}</small></button>`).join('')}</div>
+      <div class="pm-sw2"><label class="switch"><input type="checkbox" id="pmCover" ${st.cover ? 'checked' : ''}><span>Cover slide</span></label><label class="switch"><input type="checkbox" id="pmEnd" ${st.end ? 'checked' : ''}><span>Ending slide with prices and QR code</span></label></div>
+      <p class="lab flab">Photos <span class="muted small" style="font-weight:500">${st.photos.length ? `${st.photos.length} added` : 'of finished orders'}</span></p>
+      <div class="pm-photos">${st.photos.map((p, i) => `<div class="pm-ph"><img src="${p.url}" alt="">
+          <div class="pm-ph-f"><input class="inp" data-pmcap="${i}" maxlength="40" value="${esc(p.caption || '')}" placeholder="Caption, like: Class pins for 8-Rose" aria-label="Caption for photo ${i + 1}">
+            <select class="inp" data-pmtag="${i}" aria-label="Product for photo ${i + 1}">${tags.map(t => `<option value="${esc(t)}" ${p.tag === t ? 'selected' : ''}>${t ? esc(t) : 'No product tag'}</option>`).join('')}</select></div>
+          <div class="pm-ph-a"><button type="button" class="iconbtn" data-act="pmMove" data-i="${i}" data-d="-1" aria-label="Move up" ${i === 0 ? 'disabled' : ''}>${ic('back', 16)}</button>
+            <button type="button" class="iconbtn" data-act="pmDel" data-i="${i}" aria-label="Remove photo">${ic('trash', 16)}</button></div></div>`).join('')}
+        <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>${st.photos.length ? 'Add more photos' : 'Add photos'}<small>Clear photos of finished stickers, pins and cards look best. Pick several at once.</small></span><input type="file" accept="image/*" multiple hidden id="pmIn"></label>
+      </div>
+      ${okOrders.length ? `<div class="pm-ok"><p class="lab" style="margin:0 0 6px">${ic('image', 16)} Said OK to post this week</p><ul>${okOrders.slice(0, 12).map(o => `<li><b>${esc(o.nickname)}</b> <span class="muted">${esc(o.code)}, ${esc(orderItems(o).map(itemTitle).join('; '))}</span></li>`).join('')}</ul></div>`
+        : `<p class="help pm-ok">No orders this week said OK to post yet. Customers can tick it at checkout.</p>`}
+    </section>
+    <section class="pm-out">
+      <div class="pm-bar"><b id="pmCount"></b><span class="pm-acts">${smallBtn('Share', 'share', 'pmShare', 'dark')}${smallBtn('Download all', 'download', 'pmAll', 'plain')}</span></div>
+      <div class="pm-slides" id="pmSlides"><p class="muted">Making your slides…</p></div>
+      <p class="help" style="margin-top:12px">${navigator.canShare ? 'Share sends all the slides to Instagram or Facebook as one post.' : 'Download all saves the slides in one zip file. On your phone, Share sends them straight to Instagram or Facebook.'}</p>
+    </section></div>`;
+  $('#pmIn').addEventListener('change', async e => { const files = [...e.target.files].filter(f => f.type.startsWith('image/')); e.target.value = '';
+    for (const f of files) { const url = URL.createObjectURL(f), img = new Image(); img.src = url; try { await img.decode(); st.photos.push({ id: uid(), url, img, caption: '', tag: '' }); } catch { toast("One photo didn't open."); } }
+    drawPostMaker(); });
+  $('#pmTitle').addEventListener('input', e => { st.title = e.target.value; postRefresh(); });
+  $('#pmDates').addEventListener('input', e => { st.dates = e.target.value; postRefresh(); });
+  $('#pmCover').addEventListener('change', e => { st.cover = e.target.checked; postRefresh(); });
+  $('#pmEnd').addEventListener('change', e => { st.end = e.target.checked; postRefresh(); });
+  body.querySelectorAll('[data-pmcap]').forEach(i => i.addEventListener('input', () => { st.photos[+i.dataset.pmcap].caption = i.value; postRefresh(); }));
+  body.querySelectorAll('[data-pmtag]').forEach(i => i.addEventListener('change', () => { st.photos[+i.dataset.pmtag].tag = i.value; postRefresh(); }));
+  postRefresh();
+}
+async function postBlobs(){ const st = postState(); if (!st.slides.length) await postRender();
+  const slug = (st.dates || 'week').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '').toLowerCase();
+  return Promise.all(st.slides.map((c, i) => new Promise(r => c.toBlob(b => r({ blob: b, name: `stick2it-${slug}-${String(i + 1).padStart(2, '0')}.jpg` }), 'image/jpeg', 0.93)))); }
 function drawPosters(){
   const base = CONFIG.siteUrl || (location.origin + location.pathname);
   const bad = !CONFIG.siteUrl && !/^https?:/.test(location.origin);
@@ -8587,6 +8840,8 @@ const ACTIONS = {
   },
   fdImg: t => { setTimeout(() => { if (S.fd) { posterRegrid(S.fd); drawFramed(); } }, 0); const d = activeDesign(); if (!d) return; Object.assign(d, { imageId: t.dataset.id, zoom: 1, ox: 0, oy: 0 }); drawFramed(); },
   fdSide: t => { S.fd.side = t.dataset.side; drawFramed(); },
+  ppFlip: t => { const f = S.fd; f.ppFlip = !f.ppFlip; const tl = $('#ppTilt'); if (tl) tl.classList.toggle('flip', f.ppFlip);
+    t.setAttribute('aria-pressed', f.ppFlip); t.querySelector('span').textContent = f.ppFlip ? 'Show the front' : 'Flip it'; buzz(5); },
   fdPick: t => { const i = +t.dataset.i; if (i === S.fd.cur) return; fdLoad(i); buzz(5); drawFramed(); },
   fdDup: () => { const f = S.fd; fdSync(); const e = clone(fdEntry(f)); e.side = 'front'; f.batch.splice(f.cur + 1, 0, e); f.cur++; Object.assign(f, f.batch[f.cur]);
     toast(`Copied. Change this copy, or keep it as it is.`); drawFramed(); },
@@ -9147,6 +9402,18 @@ const ACTIONS = {
     if (S.editing !== null) { S.cart[S.editing] = items[0]; S.editing = null; S.ph = null; buzz([10, 30, 10]); location.hash = '#/cart'; return; }
     S.ph = null; saveManyToCart(items);
   },
+  pmLook: t => { postState().look = t.dataset.v; drawPostMaker(); },
+  pmFmt: t => { postState().fmt = t.dataset.v; drawPostMaker(); },
+  pmMove: t => { const a = postState().photos, i = +t.dataset.i, j = i + +t.dataset.d; if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; drawPostMaker(); },
+  pmDel: t => { const a = postState().photos, i = +t.dataset.i; if (!armed(t, 'Tap again')) return; URL.revokeObjectURL(a[i].url); a.splice(i, 1); drawPostMaker(); },
+  pmSave: async t => { const files = await postBlobs(), f = files[+t.dataset.i]; if (f) saveBlob(f.blob, f.name); },
+  pmAll: async () => { if (!postState().photos.length) return toast('Add some photos first.'); toast('Packing your slides…'); const files = await postBlobs();
+    if (!(await needLib('zip'))) { files.forEach((f, i) => setTimeout(() => saveBlob(f.blob, f.name), i * 400)); return; }
+    const z = new JSZip(); files.forEach(f => z.file(f.name, f.blob)); saveBlob(await z.generateAsync({ type: 'blob' }), files[0].name.replace(/-01\.jpg$/, '.zip')); },
+  pmShare: async () => { if (!postState().photos.length) return toast('Add some photos first.');
+    const files = (await postBlobs()).map(f => new File([f.blob], f.name, { type: 'image/jpeg' }));
+    if (navigator.canShare && navigator.canShare({ files })) { try { await navigator.share({ files, title: postState().title }); } catch (e) { if (e && e.name !== 'AbortError') toast("Couldn't share. Try Download all."); } }
+    else toast("This browser can't share pictures. Use Download all, then post them."); },
   qrRawbt: () => { const c = thermalQr(prnWidth()); if (!c) return toast('Make the QR code first.'); toast('Opening RawBT…'); rawbtImage(c); },
   rawbtTest: () => { const line = '-'.repeat(prnWidth() === 576 ? 48 : 32), now = new Date().toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' });
     toast('Opening RawBT…');
@@ -9264,7 +9531,7 @@ function applySettings(s){
 (async function init(){
   if (!CONFIG.supabaseUrl || !CONFIG.supabaseAnonKey || !window.supabase) {
     $('#app').innerHTML = `<main id="main" class="wrap narrow" style="padding-top:60px"><div class="panel">
-      <span class="mark">Stick<b>2</b>It</span>
+      <span class="mark">${logoSVG()}</span>
       <h2 style="margin:16px 0 10px">${!window.supabase && CONFIG.supabaseUrl ? "Can't connect right now" : 'Not connected yet'}</h2>
       <p class="muted">${!window.supabase && CONFIG.supabaseUrl ? 'Check your internet connection and refresh the page.' : 'Add the Supabase URL and anon key to CONFIG at the top of index.html. See SETUP.md.'}</p></div></main>`;
     return;
