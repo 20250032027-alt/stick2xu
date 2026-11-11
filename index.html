@@ -236,7 +236,7 @@ button{font:inherit;color:inherit}
 /* the die-cut wordmark */
 .mark{display:inline-flex;align-items:center;line-height:0;text-decoration:none;flex:none}
 .mark .logo{display:block;height:44px;width:auto}
-@media(max-width:360px){.mark .logo{height:38px}}
+@media(max-width:360px){.mark .logo{height:40px}}
 @media(min-width:900px){.mark .logo{height:46px}}
 .pilllink{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;border:2px solid var(--ink);background:var(--paper);
   text-decoration:none;font-weight:700;font-size:15px;box-shadow:var(--shadow-sm);transition:transform .2s var(--ease),box-shadow .2s var(--ease);cursor:pointer}
@@ -265,7 +265,8 @@ button{font:inherit;color:inherit}
 
 /* ---------- home ---------- */
 .home{min-height:calc(100dvh - 90px);display:flex;flex-direction:column}
-.hero{flex:1;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding:24px 0 48px}
+.hero{flex:0 0 auto;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding:28px 0 56px}
+.home > :last-child{margin-top:auto}
 .hero h1{font-size:clamp(44px,6vw,70px)}
 .hero .lead{font-size:19px;max-width:38ch;margin:20px 0 30px;color:#2E3B57}
 .facts{display:flex;flex-wrap:wrap;gap:10px 22px;margin:28px 0 0;padding:16px 0 0;border-top:1px solid var(--line);list-style:none;font-size:15px;color:var(--muted);font-weight:500}
@@ -623,6 +624,8 @@ th{color:var(--muted);font-weight:700}
 .pp-ring{position:absolute;inset:0;border-radius:50%;background:var(--edge,#fff);box-shadow:inset 0 0 0 2px rgba(28,42,87,.55)}
 .pp-tilt{--depth:16px}   /* about 5 mm on a 44 mm pin */
 .pp-face{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:#fff;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 0 0 2px #1C2A57}
+.pp-tilt.pp-blank .pp-inner{background:radial-gradient(120% 90% at 32% 22%,#FFFFFF 0,#F1F3F9 38%,#DCE1EE 78%,#C9D0E3 100%)!important}
+.pp-tilt.pp-blank .pp-gloss{background:radial-gradient(70% 45% at var(--gx,32%) var(--gy,20%),rgba(255,255,255,.95),rgba(255,255,255,0) 60%),linear-gradient(115deg,rgba(255,255,255,0) 42%,rgba(255,255,255,.55) 50%,rgba(255,255,255,0) 58%),radial-gradient(circle at 50% 50%,rgba(0,0,0,0) 60%,rgba(40,57,113,.16) 100%)}
 .pp-face.back{transform:rotateY(180deg) translateZ(calc(var(--depth) + 1px));background:#C9CEDA}.pp-face.back svg{display:block;width:100%;height:100%}
 .pp-flip{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:6px 14px;border-radius:999px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);font:inherit;font-weight:700;font-size:14px;cursor:pointer;box-shadow:var(--shadow-sm)}
 @media (prefers-reduced-motion:reduce){.pp-tilt{animation:none;transition:none}}
@@ -720,8 +723,8 @@ th{color:var(--muted);font-weight:700}
 html{-webkit-tap-highlight-color:transparent}
 main{animation:pagein .4s var(--ease) both}
 @keyframes pagein{from{opacity:0;transform:translateY(10px)}}
-.topwrap{position:sticky;top:0;z-index:15;background:rgba(244,245,250,.86);-webkit-backdrop-filter:saturate(1.4) blur(12px);backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid transparent;transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
-.topwrap.scrolled{border-bottom-color:var(--line);box-shadow:0 6px 20px rgba(40,57,113,.06)}
+.topwrap{position:sticky;top:0;z-index:15;background:rgba(255,255,255,.94);-webkit-backdrop-filter:saturate(1.4) blur(12px);backdrop-filter:saturate(1.4) blur(12px);border-bottom:1.5px solid #E1E5F0;transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
+.topwrap.scrolled{border-bottom-color:#C9CFE2;box-shadow:0 6px 20px rgba(40,57,113,.07)}
 .topwrap .top{padding:12px 20px}
 .topacts{display:flex;gap:8px;align-items:center}
 .cartpill{background:var(--xu-gold);gap:6px}
@@ -878,10 +881,12 @@ label.empty-f:active .ui{transform:scale(.94)}
 .kc .frame label.empty-f .ui{width:38px;height:38px}
 
 /* ---------- handoff: notice, confirm, reschedule, expectations ---------- */
-.notice{background:var(--accent-soft);border-bottom:1px solid #C9D3EE;color:var(--ink)}
+.notice{background:var(--ink);border-bottom:0;color:#fff}
+.notice a,.notice button{color:inherit}
 .notice.alert{background:#FFF1D6;border-bottom-color:#EBCB7E}
 .notice .in{max-width:1120px;margin:0 auto;padding:10px 20px;display:flex;gap:10px;align-items:center;font-weight:600;font-size:15px}
-.notice .in > svg{flex:none;color:var(--accent)}
+.notice .in > svg{flex:none;color:var(--xu-gold)}
+.notice.alert{color:var(--ink)}
 .notice.alert .in > svg{color:#B07D10}
 .notice .in span{flex:1}
 .nx{flex:none;width:34px;height:34px;border-radius:50%;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--muted)}
@@ -2423,7 +2428,7 @@ const CONFIG = {
 
   gcash: { enabled: true, name: 'J. Dela Cruz', number: '0917 000 0000' },
 
-  productOrder: ['stickers', 'pins', 'photos', 'keychains', 'posters', 'prints'],   // order on the "What do you want to make?" page (admin can change it)
+  productOrder: ['stickers', 'pins', 'keychains', 'photos', 'posters', 'prints'],   // order on the "What do you want to make?" page (admin can change it)
   referralOn: true,         // friend codes on/off
   referralFriendOff: 5,     // a friend's first order gets this much off
   // Stick2It Sellers (off until switched on in Settings; while on, it replaces friend codes)
@@ -5765,7 +5770,7 @@ function drawFramedStage(){
           <span class="wrapzone" style="--face:${mm.face / mm.w * 100}%"></span><span class="facering" style="width:${mm.face / mm.w * 100}%"></span></div></div>
           <span class="cap">${ic('move', 14)}Drag to move</span></div>
         <div class="pinprev">
-          <div class="pp" id="pp3d" title="Drag to tilt it"><div class="pp-tilt ${f.ppFlip ? 'flip' : ''}" id="ppTilt" style="--edge:${bg}">
+          <div class="pp" id="pp3d" title="Drag to tilt it"><div class="pp-tilt ${f.ppFlip ? 'flip' : ''} ${im ? '' : 'pp-blank'}" id="ppTilt" style="--edge:${im ? bg : '#D4DAEA'}">
             ${Array.from({ length: 10 }, (_, i) => `<span class="pp-ring" aria-hidden="true" style="transform:translateZ(calc(var(--depth) * -${(i + 1) / 10}));filter:brightness(${(1 - 0.035 * (i + 1)).toFixed(3)})"></span>`).join('')}
             <div class="pp-face front"><div class="pp-inner" style="width:${k * 100}%;left:${off}%;top:${off}%;background:${bg}">
               ${im ? `<img id="fimg2" src="${im.url}" alt="" draggable="false">` : ''}<canvas class="fxc" aria-hidden="true"></canvas></div><span class="pp-gloss"></span></div>
