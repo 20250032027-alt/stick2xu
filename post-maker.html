@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Stick2It weekly post maker</title>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800&f[]=satoshi@500,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap">
+<style>
+:root{--navy:#283971;--deep:#1C2A57;--gold:#F2BC2E;--gold-soft:#FFF3D1;--blue:#3A52A3;--bg:#F4F5FA;--line:#D8DCEB;--muted:#5B6385;
+  --display:'Cabinet Grotesk','Arial Black',sans-serif;--body:'Satoshi',system-ui,sans-serif;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--navy);font:16px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+header{display:flex;align-items:center;gap:16px;padding:14px 24px;background:#fff;border-bottom:1.5px solid #E1E5F0;position:sticky;top:0;z-index:5}
+header svg{height:44px;width:auto;display:block}
+header h1{font:800 22px/1.1 var(--display);margin:0}
+header p{margin:2px 0 0;color:var(--muted);font-size:14px}
+header a{margin-left:auto;color:var(--navy);font-weight:700;font-size:14.5px;text-decoration:underline;text-underline-offset:3px;min-height:40px;display:inline-flex;align-items:center}
+main{display:grid;grid-template-columns:minmax(0,430px) minmax(0,1fr);gap:24px;max-width:1360px;margin:0 auto;padding:24px}
+.panel{background:#fff;border:2px solid var(--navy);border-radius:22px;box-shadow:4px 5px 0 var(--navy);padding:20px}
+.panel h2{font:800 20px/1.2 var(--display);margin:0 0 4px}
+.help{color:var(--muted);font-size:14px;margin:0 0 14px}
+.lab{display:block;font-weight:700;font-size:14.5px;margin:16px 0 6px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.inp{width:100%;min-height:44px;padding:8px 12px;border:2px solid var(--line);border-radius:12px;background:#fff}
+.inp:focus{border-color:var(--navy)}
+.seg{display:flex;border:2px solid var(--navy);border-radius:999px;overflow:hidden}
+.seg button{flex:1;min-height:42px;border:0;background:#fff;font-weight:700;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--navy);color:#fff}
+.sw{display:flex;align-items:center;gap:10px;min-height:40px;font-size:15px;cursor:pointer}
+.sw input{width:20px;height:20px;accent-color:var(--navy)}
+.photos{display:grid;gap:10px;margin-top:8px}
+.ph{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px;border:1.5px solid var(--line);border-radius:14px}
+.ph img{width:72px;height:72px;object-fit:cover;border-radius:10px;display:block}
+.ph .f{display:grid;gap:6px}.ph .inp{min-height:40px;padding:6px 10px;font-size:14.5px}
+.ph .a{display:grid;gap:6px}
+.ib{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer}.ib:disabled{opacity:.35}
+.add{display:flex;align-items:center;gap:12px;padding:14px;border:2px dashed var(--navy);border-radius:16px;background:#F6F6F8;cursor:pointer;font-weight:700}
+.add span.i{width:42px;height:42px;border-radius:12px;background:var(--blue);color:#fff;border:2px solid var(--navy);display:grid;place-items:center;font-size:26px;line-height:1;flex:none}
+.add small{display:block;font-weight:500;color:var(--muted);font-size:13.5px}
+details{margin-top:16px;border-top:1.5px dashed var(--line);padding-top:12px}
+summary{cursor:pointer;font-weight:700;min-height:40px;display:flex;align-items:center}
+.prices{display:grid;grid-template-columns:minmax(0,1fr) 90px;gap:8px;margin-top:8px}
+.out{position:sticky;top:96px;align-self:start}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.bar b{font:800 18px var(--display)}
+.acts{display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 18px;border-radius:999px;border:2px solid var(--navy);background:#fff;font-weight:700;cursor:pointer;box-shadow:2px 3px 0 var(--navy)}
+.btn.dark{background:var(--navy);color:#fff}
+.btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--navy)}
+.slides{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.slides.busy{opacity:.55}
+figure{margin:0;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 0 0 1.5px var(--line)}
+figure img{display:block;width:100%;height:auto;cursor:zoom-in}
+figcaption{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;font-weight:700;font-size:14px}
+figcaption button{min-height:40px;padding:4px 12px;border-radius:999px;border:2px solid var(--line);background:#fff;font-weight:700;cursor:pointer}
+.empty{padding:40px 20px;text-align:center;color:var(--muted);border:2px dashed var(--line);border-radius:18px}
+dialog{border:0;padding:0;background:transparent;max-width:min(92vw,560px)}
+dialog img{width:100%;height:auto;border-radius:12px;display:block}
+dialog::backdrop{background:rgba(28,42,87,.75)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 18px;border-radius:999px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+@media(max-width:900px){main{grid-template-columns:1fr;padding:16px}.out{position:static}.slides{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.row2{grid-template-columns:1fr}header{padding:12px 16px}header svg{height:38px}header p{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><span id="hdrLogo"></span><div><h1>Weekly post maker</h1><p>Photos of this week’s orders, turned into a slideshow.</p></div><a href="./#/admin">Back to admin</a></header>
+<main>
+  <section class="panel">
+    <h2>This week’s post</h2>
+    <p class="help">Add photos of finished orders where the customer said OK to post. Everything stays on this device; nothing is uploaded.</p>
+    <div class="row2"><label><span class="lab" style="margin-top:0">Title</span><input class="inp" id="title" maxlength="48"></label>
+      <label><span class="lab" style="margin-top:0">Dates</span><input class="inp" id="dates" maxlength="30"></label></div>
+    <span class="lab">Size</span>
+    <div class="seg" role="group" aria-label="Size"><button type="button" data-fmt="post" aria-pressed="true">Post, 4:5</button><button type="button" data-fmt="story" aria-pressed="false">Story, 9:16</button></div>
+    <span class="lab">Photos</span>
+    <div class="photos" id="photos"></div>
+    <label class="add" style="margin-top:10px"><span class="i" aria-hidden="true">+</span><span id="addTxt">Add photos<small>Clear, well-lit photos of the real stickers, pins and prints work best. Pick several at once.</small></span><input type="file" id="fileIn" accept="image/*" multiple hidden></label>
+    <span class="lab">Extra slides</span>
+    <label class="sw"><input type="checkbox" id="shelfOn" checked>“What you can make” with prices</label>
+    <label class="sw"><input type="checkbox" id="endOn" checked>Ending slide with the QR code</label>
+    <details><summary>Prices shown on the slides</summary><p class="help" style="margin:4px 0 0">Filled in from the shop when you open this from admin.</p><div class="prices" id="prices"></div></details>
+  </section>
+  <section class="out">
+    <div class="bar"><b id="count">Slides</b><span class="acts"><button type="button" class="btn dark" id="shareBtn">Share</button><button type="button" class="btn" id="allBtn">Download all</button></span></div>
+    <div class="slides" id="slides"></div>
+    <p class="help" style="margin-top:12px">On your phone, Share sends every slide to Instagram or Facebook as one post. Download all saves them in one zip file, in order.</p>
+  </section>
+</main>
+<dialog id="zoom"><img alt="" id="zoomImg"></dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(() => {
+/* ============================== settings ============================== */
+// Opened from admin, the shop hands over its live names and prices in the link (#c=...). Opened directly, these defaults are used.
+const DEF = { shop: 'Stick2It', site: 'stick2it.me', products: [
+  { key: 'prints', name: 'Prints', price: 5, unit: 'a page' }, { key: 'stickers', name: 'Stickers', price: 45, unit: 'a sheet' },
+  { key: 'pins', name: 'Pins', price: 30, unit: 'each' }, { key: 'keychains', name: 'Keychains', price: 45, unit: 'each' },
+  { key: 'photos', name: 'Photo cards', price: 25, unit: 'each' }, { key: 'posters', name: 'Posters', price: 50, unit: 'each', from: true } ] };
+let CFG = DEF;
+try { const m = /[#&]c=([^&]+)/.exec(location.hash); if (m) { const c = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(m[1]))))); if (c && Array.isArray(c.products) && c.products.length) CFG = { ...DEF, ...c }; } } catch {}
+const ST = { title: `This week at ${CFG.shop}`, dates: weekRange(), fmt: 'post', photos: [], shelf: true, end: true, prices: CFG.products.map(p => ({ ...p })), slides: [] };
+const FMT = { post: [1080, 1350], story: [1080, 1920] };
+const NAVY = '#283971', DEEP = '#1C2A57', GOLD = '#F2BC2E', BLUE = '#3A52A3', WHITE = '#ffffff', RED = '#EC282A';
+const F = { disp: "'Cabinet Grotesk','Arial Black',sans-serif", body: "'Satoshi',system-ui,sans-serif", hand: "'Caveat','Segoe Print','Comic Sans MS',cursive" };
+function weekRange(){ const d = new Date(), a = new Date(d); a.setDate(d.getDate() - (d.getDay() + 6) % 7); const b = new Date(a); b.setDate(a.getDate() + 6);
+  const m = x => x.toLocaleDateString('en-PH', { month: 'short' }); return a.getMonth() === b.getMonth() ? `${m(a)} ${a.getDate()}–${b.getDate()}` : `${m(a)} ${a.getDate()} – ${m(b)} ${b.getDate()}`; }
+function weekNo(){ const d = new Date(), t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())), day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); return Math.ceil(((t - Date.UTC(t.getUTCFullYear(), 0, 1)) / 864e5 + 1) / 7); }
+const money = n => '₱' + Number(n).toLocaleString('en-PH');
+
+/* ============================== artwork ============================== */
+const LOGO = `<defs><linearGradient id="curl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#C9CEDF"/></linearGradient><linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".75"/><stop offset=".5" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient></defs><g transform="rotate(-3 300 110)"><path d="M66 33 H538 Q556 33 556 51 V150 L512 194 H66 Q48 194 48 176 V51 Q48 33 66 33 Z" fill="#283971" transform="translate(7 8)"/><path d="M66 33 H538 Q556 33 556 51 V150 L512 194 H66 Q48 194 48 176 V51 Q48 33 66 33 Z" fill="#FFFFFF" stroke="#283971" stroke-width="5" stroke-linejoin="round"/><g transform="translate(0 0)"><path d="M32.44 1.37L32.44 1.37Q26.17 1.37 21.07 0.20Q15.97-0.98 12.25-3.38Q8.53-5.78 6.37-9.51Q4.21-13.23 3.82-18.13L3.82-18.13L17.64-22.74Q17.93-18.62 19.99-15.88Q22.05-13.13 25.53-11.81Q29.01-10.49 33.32-10.49L33.32-10.49Q37.44-10.49 40.23-11.52Q43.02-12.54 44.44-14.16Q45.86-15.78 45.86-17.64L45.86-17.64Q45.86-19.80 44.00-21.22Q42.14-22.64 38.91-23.67Q35.67-24.70 31.36-25.68L31.36-25.68Q26.46-26.85 21.76-28.22Q17.05-29.60 13.23-31.80Q9.41-34.01 7.20-37.48Q5.00-40.96 5.00-46.26L5.00-46.26Q5.00-52.23 8.04-56.64Q11.07-61.05 16.95-63.55Q22.83-66.05 31.46-66.05L31.46-66.05Q39.98-66.05 45.96-63.60Q51.94-61.15 55.17-56.79Q58.41-52.43 58.70-46.65L58.70-46.65L44.59-42.63Q44.59-45.47 43.66-47.63Q42.73-49.78 41.06-51.21Q39.40-52.63 36.95-53.36Q34.50-54.10 31.36-54.10L31.36-54.10Q27.64-54.10 25.04-53.21Q22.44-52.33 21.17-50.91Q19.89-49.49 19.89-47.63L19.89-47.63Q19.89-45.28 21.90-43.76Q23.91-42.24 27.39-41.21Q30.87-40.18 35.08-39.20L35.08-39.20Q39.30-38.32 43.81-37.00Q48.31-35.67 52.23-33.52Q56.15-31.36 58.55-27.69Q60.96-24.01 60.96-18.42L60.96-18.42Q60.96-12.45 57.77-7.99Q54.59-3.53 48.22-1.08Q41.85 1.37 32.44 1.37Z" transform="translate(85.45 155) rotate(-14)" fill="#283971"/><path d="M26.26 1.27L26.26 1.27Q17.15 1.27 12.84-3.58Q8.53-8.43 8.53-19.11L8.53-19.11L8.53-39.40L1.18-39.40L1.47-51.65L6.76-51.65Q9.90-51.74 11.52-52.63Q13.13-53.51 13.52-55.96L13.52-55.96L14.80-63.21L23.72-63.21L23.72-51.74L36.16-51.74L36.16-38.91L23.72-38.91L23.72-19.80Q23.72-16.46 25.33-14.90Q26.95-13.33 30.28-13.33L30.28-13.33Q32.14-13.33 33.81-13.72Q35.48-14.11 36.55-14.80L36.55-14.80L36.55-0.20Q33.42 0.78 30.82 1.03Q28.22 1.27 26.26 1.27Z" transform="translate(148.94 144) rotate(-8)" fill="#283971"/><path d="M21.85 0L6.08 0L6.08-51.74L21.85-51.74L21.85 0ZM14.01-59.00L14.01-59.00Q9.51-59.00 7.11-60.91Q4.70-62.82 4.70-66.35L4.70-66.35Q4.70-70.07 7.11-71.98Q9.51-73.89 14.01-73.89L14.01-73.89Q18.62-73.89 21.02-71.98Q23.42-70.07 23.42-66.44L23.42-66.44Q23.42-62.82 21.02-60.91Q18.62-59.00 14.01-59.00Z" transform="translate(187.72 153) rotate(-4)" fill="#283971"/><path d="M30.48 1.37L30.48 1.37Q23.81 1.37 18.72-0.49Q13.62-2.35 10.19-5.83Q6.76-9.31 4.95-14.21Q3.14-19.11 3.14-25.19L3.14-25.19Q3.14-31.46 4.95-36.55Q6.76-41.65 10.19-45.37Q13.62-49.10 18.62-51.11Q23.62-53.12 30.09-53.12L30.09-53.12Q36.55-53.12 41.26-51.06Q45.96-49 48.95-45.28Q51.94-41.55 53.02-36.65L53.02-36.65L38.42-31.75Q38.12-34.99 36.85-37.04Q35.57-39.10 33.57-40.03Q31.56-40.96 29.20-40.96L29.20-40.96Q26.75-40.96 24.89-39.98Q23.03-39.00 21.76-37.04Q20.48-35.08 19.80-32.29Q19.11-29.50 19.11-25.87L19.11-25.87Q19.11-20.68 20.43-17.20Q21.76-13.72 24.35-11.96Q26.95-10.19 30.67-10.19L30.67-10.19Q34.50-10.19 36.65-11.76Q38.81-13.33 39.79-15.63Q40.77-17.93 40.96-20.19L40.96-20.19L54.68-17.15Q54.29-13.52 52.77-10.14Q51.25-6.76 48.31-4.17Q45.37-1.57 41.01-0.10Q36.65 1.37 30.48 1.37Z" transform="translate(214.75 144) rotate(-7)" fill="#283971"/><path d="M21.56 0L6.08 0L6.08-70.66L21.56-70.66L21.56-31.65Q24.40-33.71 26.90-36.06Q29.40-38.42 31.51-40.96Q33.61-43.51 35.33-46.21Q37.04-48.90 38.32-51.74L38.32-51.74L56.35-51.74Q55.08-47.92 52.82-44.15Q50.57-40.38 47.33-37.19Q44.10-34.01 39.64-31.75Q35.18-29.50 29.60-28.71L29.60-28.71L29.60-26.95Q36.65-28.32 41.21-27.00Q45.77-25.68 48.51-22.74Q51.25-19.80 52.72-15.88Q54.19-11.96 55.17-8.13L55.17-8.13L57.23 0L40.08 0L39.10-4.90Q38.12-9.70 36.80-13.13Q35.48-16.56 33.03-18.47Q30.58-20.38 25.97-20.38L25.97-20.38L21.56-20.38L21.56 0Z" transform="translate(269.71 149) rotate(-2)" fill="#283971"/><path d="M22.83 0L6.76 0L6.76-64.68L22.83-64.68L22.83 0Z" transform="translate(428 141) rotate(7)" fill="#283971"/><path d="M26.26 1.27L26.26 1.27Q17.15 1.27 12.84-3.58Q8.53-8.43 8.53-19.11L8.53-19.11L8.53-39.40L1.18-39.40L1.47-51.65L6.76-51.65Q9.90-51.74 11.52-52.63Q13.13-53.51 13.52-55.96L13.52-55.96L14.80-63.21L23.72-63.21L23.72-51.74L36.16-51.74L36.16-38.91L23.72-38.91L23.72-19.80Q23.72-16.46 25.33-14.90Q26.95-13.33 30.28-13.33L30.28-13.33Q32.14-13.33 33.81-13.72Q35.48-14.11 36.55-14.80L36.55-14.80L36.55-0.20Q33.42 0.78 30.82 1.03Q28.22 1.27 26.26 1.27Z" transform="translate(458.69 152) rotate(14)" fill="#283971"/><g transform="rotate(12 382 98)"><rect x="342" y="46" width="80" height="104" rx="16" fill="#283971" transform="translate(4 5)"/><rect x="342" y="46" width="80" height="104" rx="16" fill="#FFFFFF" stroke="#283971" stroke-width="4"/><rect x="350.8" y="55.36" width="62.4" height="85.28" rx="10.4" fill="#F2BC2E"/><path d="M50.07 0L3.61 0L3.61-14.08L26.75-28.60Q28.16-29.48 29.66-30.62Q31.15-31.77 32.43-33.26Q33.70-34.76 34.50-36.56Q35.29-38.37 35.29-40.57L35.29-40.57Q35.29-42.86 34.28-44.44Q33.26-46.02 31.37-46.86Q29.48-47.70 26.75-47.70L26.75-47.70Q23.67-47.70 21.78-46.73Q19.89-45.76 18.88-44.04Q17.86-42.33 17.51-40.13Q17.16-37.93 17.16-35.55L17.16-35.55L3.52-38.46Q3.34-45.06 6.16-49.76Q8.98-54.47 14.30-57.02Q19.62-59.58 27.02-59.58L27.02-59.58Q33.53-59.58 38.59-57.55Q43.65-55.53 46.51-51.52Q49.37-47.52 49.37-41.54L49.37-41.54Q49.37-37.14 47.87-33.57Q46.38-30.01 44-27.28Q41.62-24.55 38.76-22.48Q35.90-20.42 33.26-18.92L33.26-18.92L20.33-11.70L20.33-10.91L50.07-11.44L50.07 0Z" transform="translate(355.03 129.68)" fill="#283971"/></g></g><path d="M556 150 L512 194 Q514.2 169.8 531.8 169.8 Q547.2 167.6 556 150 Z" fill="url(#curl)" stroke="#283971" stroke-width="4" stroke-linejoin="round"/><g transform="translate(404 30) rotate(0) scale(1.0833333333333333) translate(-12 -12)"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z" fill="#F2BC2E" stroke="#FFFFFF" stroke-width="3.2" stroke-linejoin="round" paint-order="stroke"/></g><g transform="translate(430 50) rotate(0) scale(0.5416666666666666) translate(-12 -12)"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z" fill="#F2BC2E" stroke="#FFFFFF" stroke-width="3.2" stroke-linejoin="round" paint-order="stroke"/></g></g>`;
+const SCENE = (x, y, w, h, id) => `<clipPath id="${id}"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath><g clip-path="url(#${id})"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#9CC3F2"/>
+  <circle cx="${x + w * .7}" cy="${y + h * .3}" r="${w * .13}" fill="${GOLD}"/><path d="M${x} ${y + h * .78} Q${x + w * .3} ${y + h * .48} ${x + w * .58} ${y + h * .7} T${x + w} ${y + h * .62} V${y + h} H${x} Z" fill="#3E9B5A"/>
+  <path d="M${x} ${y + h * .9} Q${x + w * .45} ${y + h * .74} ${x + w} ${y + h * .86} V${y + h} H${x} Z" fill="#2E7D4A"/></g>`;
+const PATH = { star: 'M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z', heart: 'M12 21s-7.5-4.6-9.6-9.2C1 8.6 3 5 6.6 5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6C19 5 21 8.6 19.6 11.8 17.5 16.4 12 21 12 21z',
+  bolt: 'M13.5 2L4 13.5h6.5L9 22l10-12h-6.6z', moon: 'M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z', spark: 'M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z' };
+const ART = {   // each product as a little drawing (viewBox 0 0 120 120); the white die-cut edge is added when drawn
+  stickers: `<rect x="16" y="10" width="88" height="100" rx="6" fill="#E9ECF6" stroke="${NAVY}" stroke-width="3"/>${[30, 50, 70, 90].map(v => `<path d="M16 ${v + 4}H104M${v - 6} 10V110" stroke="#C9D0E3" stroke-width="1.2"/>`).join('')}
+    <g transform="translate(24 20) scale(1.6)"><path d="${'M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z'}" fill="${GOLD}" stroke="#fff" stroke-width="2.4" paint-order="stroke"/></g>
+    <g transform="translate(62 22) scale(1.5)"><path d="M12 21s-7.5-4.6-9.6-9.2C1 8.6 3 5 6.6 5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6C19 5 21 8.6 19.6 11.8 17.5 16.4 12 21 12 21z" fill="${RED}" stroke="#fff" stroke-width="2.4" paint-order="stroke"/></g>
+    <rect x="28" y="66" width="38" height="28" rx="7" fill="${NAVY}" stroke="#fff" stroke-width="3"/><text x="47" y="86" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="15" fill="#fff">HI!</text>
+    <circle cx="84" cy="80" r="12" fill="#fff"/><circle cx="84" cy="80" r="9.5" fill="#9CC3F2"/><circle cx="87" cy="76" r="3.5" fill="${GOLD}"/>`,
+  pins: `<circle cx="60" cy="60" r="50" fill="#fff" stroke="${NAVY}" stroke-width="3"/>${SCENE(14, 14, 92, 92, 'pc')}<circle cx="60" cy="60" r="46" fill="none" stroke="#fff" stroke-width="2"/>
+    <ellipse cx="44" cy="36" rx="22" ry="12" fill="#fff" opacity=".45" transform="rotate(-25 44 36)"/><circle cx="60" cy="60" r="50" fill="none" stroke="${NAVY}" stroke-width="3"/>`,
+  keychains: `<circle cx="60" cy="16" r="11" fill="none" stroke="#9AA1B4" stroke-width="5"/><rect x="56" y="24" width="8" height="12" rx="3" fill="#9AA1B4"/>
+    <rect x="28" y="34" width="64" height="80" rx="13" fill="#EAF2FF" stroke="#9AA6C8" stroke-width="3"/>${SCENE(36, 42, 48, 64, 'kc')}<rect x="28" y="34" width="64" height="80" rx="13" fill="none" stroke="${NAVY}" stroke-width="2.4"/>
+    <path d="M36 46 l10 -6" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/>`,
+  photos: `<rect x="24" y="8" width="72" height="104" rx="3" fill="#fff" stroke="${NAVY}" stroke-width="3"/>${SCENE(31, 15, 58, 66, 'pp')}
+    <path d="M38 96 q11 -6 22 0 t22 0" stroke="${NAVY}" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+  strip: `<rect x="38" y="4" width="44" height="112" rx="3" fill="#1B1B1F"/>${[0, 1, 2].map(i => SCENE(43, 9 + i * 34, 34, 28, 'st' + i)).join('')}`,
+  posters: `<rect x="18" y="16" width="84" height="96" rx="3" fill="#fff" stroke="${NAVY}" stroke-width="3"/>${SCENE(25, 23, 70, 82, 'po')}
+    <rect x="44" y="8" width="32" height="14" fill="${GOLD}" opacity=".9" transform="rotate(-4 60 15)"/>`,
+  prints: `<rect x="30" y="12" width="70" height="98" rx="4" fill="#fff" stroke="${NAVY}" stroke-width="3" transform="translate(-8 4)"/>
+    <path d="M30 8 H88 L100 20 V106 H30 Z" fill="#fff" stroke="${NAVY}" stroke-width="3" stroke-linejoin="round"/><path d="M88 8 V20 H100" fill="#E1E5F0" stroke="${NAVY}" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="40" y="24" width="34" height="7" rx="3.5" fill="${NAVY}"/>${[40, 50, 60, 70, 80, 90].map((y, i) => `<rect x="40" y="${y}" width="${[50, 46, 50, 38, 48, 30][i]}" height="4" rx="2" fill="#BCC4DD"/>`).join('')}`,
+  star: `<path d="${PATH.star}" fill="${GOLD}" transform="translate(6 6) scale(4.5)"/>`, heart: `<path d="${PATH.heart}" fill="${RED}" transform="translate(6 8) scale(4.5)"/>`,
+  bolt: `<path d="${PATH.bolt}" fill="${GOLD}" transform="translate(6 6) scale(4.5)"/>`, moon: `<path d="${PATH.moon}" fill="${BLUE}" transform="translate(6 6) scale(4.5)"/>`,
+  smiley: `<circle cx="60" cy="60" r="48" fill="${GOLD}"/><circle cx="44" cy="52" r="6" fill="${NAVY}"/><circle cx="76" cy="52" r="6" fill="${NAVY}"/><path d="M38 70 q22 22 44 0" stroke="${NAVY}" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <circle cx="34" cy="70" r="7" fill="#F7A8C4" opacity=".8"/><circle cx="86" cy="70" r="7" fill="#F7A8C4" opacity=".8"/>`
+};
+const PRODUCT_ART = { prints: 'prints', stickers: 'stickers', pins: 'pins', keychains: 'keychains', photos: 'photos', posters: 'posters' };
+const POOL = ['stickers', 'pins', 'star', 'keychains', 'heart', 'photos', 'bolt', 'prints', 'strip', 'moon', 'posters', 'smiley'];
+const IMG = {};
+function svgImage(body, vb = '0 0 120 120'){ const img = new Image(); img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}">${body}</svg>`); return img.decode().then(() => img); }
+async function loadArt(){ for (const [k, v] of Object.entries(ART)) if (!IMG[k]) IMG[k] = await svgImage(v); if (!IMG.logo) IMG.logo = await svgImage(LOGO, '36.5 6 534.5 213.8'); }
+// a die-cut sticker from any drawing: white edge, thin navy line, the brand's offset shadow
+const STK = {};
+function sticker(key, size){
+  const k = key + '@' + size; if (STK[k]) return STK[k];
+  const img = IMG[key], pad = Math.round(size * 0.12), S = size + pad * 2, c = document.createElement('canvas'); c.width = c.height = S + 12;
+  const x = c.getContext('2d'), sil = color => { const s = document.createElement('canvas'); s.width = s.height = S; const g = s.getContext('2d'); g.drawImage(img, pad, pad, size, size); g.globalCompositeOperation = 'source-in'; g.fillStyle = color; g.fillRect(0, 0, S, S); return s; };
+  const ring = (src, r, dx = 0, dy = 0) => { for (let a = 0; a < Math.PI * 2; a += Math.PI / 16) x.drawImage(src, dx + Math.cos(a) * r, dy + Math.sin(a) * r); };
+  const r = size * 0.06, navy = sil(NAVY), white = sil(WHITE);
+  ring(navy, r + 3, 7, 9); ring(navy, r + 3); ring(white, r); x.drawImage(img, pad, pad, size, size);
+  return (STK[k] = c);
+}
+function drawSticker(x, key, cx, cy, size, rot){ if (!IMG[key]) return; const c = sticker(key, Math.round(size)); x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180); x.drawImage(c, -c.width / 2, -c.height / 2); x.restore(); }
+
+/* ============================== drawing helpers ============================== */
+function rr(x, X, Y, W, H, r){ x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + W, Y, X + W, Y + H, r); x.arcTo(X + W, Y + H, X, Y + H, r); x.arcTo(X, Y + H, X, Y, r); x.arcTo(X, Y, X + W, Y, r); x.closePath(); }
+function cover(x, img, X, Y, W, H){ const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height, s = Math.max(W / iw, H / ih); x.drawImage(img, X + (W - iw * s) / 2, Y + (H - ih * s) / 2, iw * s, ih * s); }
+function fit(x, t, maxW, size, weight, fam){ let s = size; x.font = `${weight} ${s}px ${fam}`; while (x.measureText(t).width > maxW && s > 14) { s *= 0.94; x.font = `${weight} ${s}px ${fam}`; } return s; }
+function wrap(x, t, maxW){ const ws = String(t).split(/\s+/), out = []; let l = ''; for (const w of ws) { const n = l ? l + ' ' + w : w; if (x.measureText(n).width > maxW && l) { out.push(l); l = w; } else l = n; } if (l) out.push(l); return out; }
+let GRAIN = null;
+function grain(x, W, H){ if (!GRAIN) { GRAIN = document.createElement('canvas'); GRAIN.width = GRAIN.height = 200; const g = GRAIN.getContext('2d'), d = g.createImageData(200, 200);
+    for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; } g.putImageData(d, 0, 0); }
+  x.save(); x.globalAlpha = 0.07; x.globalCompositeOperation = 'overlay'; x.fillStyle = x.createPattern(GRAIN, 'repeat'); x.fillRect(0, 0, W, H); x.restore(); }
+function marker(x, X, Y, w, h, color){ x.save(); x.fillStyle = color; x.beginPath(); x.moveTo(X - 10, Y + h * .2); x.quadraticCurveTo(X + w * .5, Y - h * .08, X + w + 12, Y + h * .1); x.lineTo(X + w + 6, Y + h * .92); x.quadraticCurveTo(X + w * .45, Y + h * 1.05, X - 6, Y + h * .86); x.closePath(); x.fill(); x.restore(); }
+function arrow(x, x1, y1, cx, cy, x2, y2, color, lw){ x.save(); x.strokeStyle = color; x.lineWidth = lw; x.lineCap = x.lineJoin = 'round'; x.beginPath(); x.moveTo(x1, y1); x.quadraticCurveTo(cx, cy, x2, y2); x.stroke();
+  const a = Math.atan2(y2 - cy, x2 - cx), L = lw * 4.2; x.beginPath(); x.moveTo(x2 - L * Math.cos(a - .5), y2 - L * Math.sin(a - .5)); x.lineTo(x2, y2); x.lineTo(x2 - L * Math.cos(a + .5), y2 - L * Math.sin(a + .5)); x.stroke(); x.restore(); }
+function tape(x, cx, cy, w, h, rot){ x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180); x.globalAlpha = .92; x.beginPath(); x.rect(-w / 2, -h / 2, w, h); x.clip();
+  for (let k = -w; k < w; k += 24) { x.fillStyle = (k / 24) % 2 ? '#FFF3D1' : GOLD; x.beginPath(); x.moveTo(k, -h); x.lineTo(k + 12, -h); x.lineTo(k + 12 + h * 2, h); x.lineTo(k + h * 2, h); x.fill(); } x.restore(); }
+function pill(x, t, X, Y, bg, fg, size, outline){ x.font = `800 ${size}px ${F.disp}`; const w = x.measureText(t).width + size * 1.4, h = size * 1.9; rr(x, X, Y, w, h, h / 2); x.fillStyle = bg; x.fill();
+  if (outline) { x.lineWidth = 3; x.strokeStyle = outline; x.stroke(); } x.fillStyle = fg; x.textAlign = 'left'; x.textBaseline = 'middle'; x.fillText(t, X + size * .7, Y + h / 2 + 1); return w; }
+function tagSticker(x, t, cx, cy, rot){ x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180); x.font = `800 30px ${F.disp}`; const w = x.measureText(t).width + 44, h = 58;
+  rr(x, -w / 2 + 5, -h / 2 + 6, w, h, h / 2); x.fillStyle = DEEP; x.fill(); rr(x, -w / 2, -h / 2, w, h, h / 2); x.fillStyle = GOLD; x.fill(); x.lineWidth = 4; x.strokeStyle = WHITE; x.stroke();
+  x.fillStyle = NAVY; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(t, 0, 2); x.restore(); }
+function logo(x, cx, cy, h){ if (!IMG.logo) return; const w = h * 534.5 / 213.8; x.drawImage(IMG.logo, cx - w / 2, cy - h / 2, w, h); }
+function foot(x, W, H, n, total){
+  x.font = `700 30px ${F.body}`; x.textBaseline = 'middle'; x.textAlign = 'left'; x.fillStyle = 'rgba(255,255,255,.9)'; x.fillText(CFG.site, 64, H - 64);
+  const r = 7, gap = 24, x0 = W - 64 - (total - 1) * gap;
+  for (let i = 0; i < total; i++) { if (i + 1 === n) { rr(x, x0 + i * gap - r - 6, H - 64 - r, r * 2 + 12, r * 2, r); x.fillStyle = GOLD; x.fill(); } else { x.beginPath(); x.arc(x0 + i * gap, H - 64, r * .75, 0, 7); x.fillStyle = 'rgba(255,255,255,.32)'; x.fill(); } }
+}
+
+/* ============================== six navy backgrounds (no two slides in a row alike) ============================== */
+const BG = {
+  mat(x, W, H){ x.fillStyle = 'rgba(255,255,255,.09)'; for (let y = 24; y < H; y += 44) for (let X = 24; X < W; X += 44) { x.beginPath(); x.arc(X, y, 2.6, 0, 7); x.fill(); } },
+  rays(x, W, H){ const g = x.createRadialGradient(W * .5, H * .42, 0, W * .5, H * .42, H * .7); g.addColorStop(0, 'rgba(242,188,46,.22)'); g.addColorStop(1, 'rgba(242,188,46,0)'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+    x.save(); x.translate(W * .5, H * .42); x.fillStyle = 'rgba(255,255,255,.035)'; for (let i = 0; i < 18; i++) { x.rotate(Math.PI / 9); x.beginPath(); x.moveTo(0, 0); x.lineTo(H, -60); x.lineTo(H, 60); x.fill(); } x.restore(); },
+  stripes(x, W, H){ x.save(); x.strokeStyle = 'rgba(255,255,255,.05)'; x.lineWidth = 34; for (let k = -H; k < W + H; k += 120) { x.beginPath(); x.moveTo(k, 0); x.lineTo(k + H, H); x.stroke(); } x.restore();
+    x.save(); x.translate(W, 0); x.rotate(Math.PI / 4); x.fillStyle = GOLD; x.fillRect(-160, 70, 320, 40); x.restore(); },
+  rings(x, W, H){ x.save(); x.strokeStyle = 'rgba(255,255,255,.07)'; for (let r = 120; r < H * 1.2; r += 90) { x.lineWidth = r % 180 ? 3 : 12; x.beginPath(); x.arc(W * .92, H * .9, r, 0, 7); x.stroke(); } x.restore(); },
+  confetti(x, W, H){ let s = 7; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+    for (let i = 0; i < 70; i++) { const px = rnd() * W, py = rnd() * H, k = rnd(); x.save(); x.translate(px, py); x.rotate(rnd() * 6); x.globalAlpha = .1 + rnd() * .14; x.fillStyle = k < .4 ? GOLD : WHITE;
+      if (k < .5) { x.scale(.9, .9); x.translate(-12, -12); x.fill(new Path2D(PATH.spark)); } else { x.beginPath(); x.arc(0, 0, 3 + rnd() * 4, 0, 7); x.fill(); } x.restore(); } },
+  grid(x, W, H){ x.strokeStyle = 'rgba(255,255,255,.07)'; x.lineWidth = 1.5; for (let X = 0; X < W; X += 90) { x.beginPath(); x.moveTo(X, 0); x.lineTo(X, H); x.stroke(); } for (let y = 0; y < H; y += 90) { x.beginPath(); x.moveTo(0, y); x.lineTo(W, y); x.stroke(); }
+    x.fillStyle = 'rgba(242,188,46,.75)'; for (let y = 30; y < H - 120; y += 30) x.fillRect(0, y, y % 150 === 0 ? 26 : 14, 3); }
+};
+function background(x, W, H, kind){ const g = x.createLinearGradient(0, 0, W * .3, H); g.addColorStop(0, '#2E4384'); g.addColorStop(1, DEEP); x.fillStyle = g; x.fillRect(0, 0, W, H); BG[kind](x, W, H); grain(x, W, H); }
+
+/* ============================== photo layouts (they rotate: no two in a row alike) ============================== */
+const LAYOUTS = ['polaroid', 'diecut', 'pin', 'poster', 'keychain', 'bleed'];
+const tall = H => H > 1600;   // story size: things grow into the extra height
+const nameOf = key => (ST.prices.find(p => p.key === key) || {}).name || '';
+let LATER = [];
+function sprinkle(x, slots, k, tagKey){   // a different mix of products and shapes on every slide; drawn last, so they sit on top like real stickers
+  const keys = slots.map((_, j) => j === 0 && tagKey && PRODUCT_ART[tagKey] ? PRODUCT_ART[tagKey] : POOL[(k * 5 + j * 3) % POOL.length]);
+  slots.forEach(([cx, cy, s, r], j) => LATER.push(() => drawSticker(x, keys[j], cx, cy, s, r)));
+}
+const LAY = {
+  polaroid(x, W, H, p, k){   // an instant photo with washi tape and a handwritten caption
+    const top = 210, room = H - top - 170, w = Math.min(W * (tall(H) ? .78 : .64), room * 54 / 86 * .96), h = w * 86 / 54, cx = W / 2 + (k % 2 ? 18 : -18), cy = top + room / 2, rot = k % 2 ? 3 : -3.5, s = w / 54;
+    sprinkle(x, [[W * .13, cy + h * .34, 150, -12], [W * .87, top + 70, 130, 14]], k, p.tag);
+    x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180); x.shadowColor = 'rgba(10,16,40,.45)'; x.shadowBlur = 40; x.shadowOffsetY = 18; x.fillStyle = WHITE; x.fillRect(-w / 2, -h / 2, w, h); x.shadowColor = 'transparent';
+    x.save(); x.beginPath(); x.rect(-w / 2 + 4 * s, -h / 2 + 6 * s, 46 * s, 62 * s); x.clip(); cover(x, p.img, -w / 2 + 4 * s, -h / 2 + 6 * s, 46 * s, 62 * s); x.restore();
+    if (p.caption) { x.fillStyle = NAVY; x.textAlign = 'center'; x.textBaseline = 'middle'; fit(x, p.caption, 44 * s, 10 * s, 700, F.hand); x.fillText(p.caption, 0, -h / 2 + 77 * s); }
+    x.restore(); tape(x, cx, cy - h / 2 + 4, w * .4, 46, rot - 4);
+    if (p.tag) tagSticker(x, nameOf(p.tag), cx + w * .4, cy - h * .47, 8);
+  },
+  diecut(x, W, H, p, k){   // the photo as a die-cut sticker, its corner peeling up
+    const top = 220, room = H - top - (p.caption ? 300 : 190), w = Math.min(W * (tall(H) ? .8 : .7), room / 1.15), h = Math.min(room, w * 1.15), cx = W / 2, cy = top + (tall(H) ? (room - h) / 2 : 0) + h / 2 + 10, pad = 20, c = 110, r = 36, rot = k % 2 ? -2 : 2;
+    sprinkle(x, [[W * .86, cy - h * .42, 140, 12], [W * .12, cy + h * .2, 120, -10]], k, p.tag);
+    x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180);
+    const X = -w / 2 - pad, Y = -h / 2 - pad, WW = w + pad * 2, HH = h + pad * 2;
+    const shape = () => { x.beginPath(); x.moveTo(X + r, Y); x.lineTo(X + WW - r, Y); x.quadraticCurveTo(X + WW, Y, X + WW, Y + r); x.lineTo(X + WW, Y + HH - c); x.lineTo(X + WW - c, Y + HH); x.lineTo(X + r, Y + HH); x.quadraticCurveTo(X, Y + HH, X, Y + HH - r); x.lineTo(X, Y + r); x.quadraticCurveTo(X, Y, X + r, Y); x.closePath(); };
+    x.save(); x.translate(10, 13); shape(); x.fillStyle = 'rgba(10,16,40,.5)'; x.fill(); x.restore(); shape(); x.fillStyle = WHITE; x.fill();
+    x.save(); rr(x, -w / 2, -h / 2, w, h, 22); x.clip(); cover(x, p.img, -w / 2, -h / 2, w, h); x.restore();
+    x.beginPath(); x.moveTo(X + WW, Y + HH - c); x.quadraticCurveTo(X + WW - c * .95, Y + HH - c * .45, X + WW - c, Y + HH); x.quadraticCurveTo(X + WW - c * .55, Y + HH - c * .55, X + WW, Y + HH - c); x.closePath();
+    x.fillStyle = '#DCE1EE'; x.fill(); x.restore();
+    if (p.caption) { x.save(); x.translate(W / 2, cy + h / 2 + 108); x.rotate((k % 2 ? 1.5 : -1.5) * Math.PI / 180); const s = fit(x, p.caption, W - 220, 54, 800, F.disp), tw = Math.min(W - 160, x.measureText(p.caption).width + s * 1.5), th = s * 1.9;
+      rr(x, -tw / 2 + 7, -th / 2 + 9, tw, th, 22); x.fillStyle = DEEP; x.fill(); rr(x, -tw / 2, -th / 2, tw, th, 22); x.fillStyle = WHITE; x.fill(); x.fillStyle = NAVY; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(p.caption, 0, 2); x.restore(); }
+    if (p.tag) tagSticker(x, nameOf(p.tag), cx - w * .3, cy - h / 2 - 4, -8);
+  },
+  pin(x, W, H, p, k){   // the photo as a giant button pin, with smaller pins around it
+    const top = 200, room = H - top - (p.caption ? 300 : 200), R = Math.min(W * (tall(H) ? .44 : .37), room / 2), cx = W / 2, cy = top + room / 2 + 10;
+    sprinkle(x, [[cx + R * .98, cy + R * .78, 150, 10], [cx - R * 1.02, cy - R * .78, 120, -14], [W * .1, H * .78, 96, 8]], k, p.tag || 'pins');
+    x.beginPath(); x.arc(cx + 12, cy + 16, R + 16, 0, 7); x.fillStyle = 'rgba(10,16,40,.5)'; x.fill();
+    x.beginPath(); x.arc(cx, cy, R + 16, 0, 7); x.fillStyle = WHITE; x.fill();
+    x.save(); x.beginPath(); x.arc(cx, cy, R, 0, 7); x.clip(); cover(x, p.img, cx - R, cy - R, R * 2, R * 2);
+    const g = x.createRadialGradient(cx - R * .35, cy - R * .45, R * .05, cx - R * .2, cy - R * .3, R * 1.1); g.addColorStop(0, 'rgba(255,255,255,.5)'); g.addColorStop(.35, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(0,0,0,.18)'); x.fillStyle = g; x.fillRect(cx - R, cy - R, R * 2, R * 2); x.restore();
+    if (p.caption) { x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = WHITE; const s = fit(x, p.caption, W - 160, 64, 800, F.disp); x.fillText(p.caption, W / 2, cy + R + 16 + 70 + s * .5); }
+    if (p.tag) tagSticker(x, nameOf(p.tag), cx, cy - R - 16, -4);
+  },
+  poster(x, W, H, p, k){   // the photo as a poster taped to the wall, with a handwritten sticky note
+    const top = 210, room = H - top - 190, w = Math.min(W * (tall(H) ? .8 : .68), room / 1.32), h = w * 1.32, cx = W / 2 - 20, cy = top + room / 2, rot = k % 2 ? 1.5 : -1.5;
+    sprinkle(x, [[W * .88, top + 60, 130, 12], [W * .1, cy - h * .1, 110, -12]], k, p.tag);
+    x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180); x.shadowColor = 'rgba(10,16,40,.45)'; x.shadowBlur = 30; x.shadowOffsetY = 14; x.fillStyle = WHITE; x.fillRect(-w / 2, -h / 2, w, h); x.shadowColor = 'transparent';
+    x.save(); x.beginPath(); x.rect(-w / 2 + 16, -h / 2 + 16, w - 32, h - 32); x.clip(); cover(x, p.img, -w / 2 + 16, -h / 2 + 16, w - 32, h - 32); x.restore(); x.restore();
+    [[-1, -1, -38], [1, -1, 38], [-1, 1, 38], [1, 1, -38]].forEach(([sx, sy, a]) => tape(x, cx + sx * (w / 2 - 12), cy + sy * (h / 2 - 12), 110, 38, a + rot));
+    if (p.caption) { const nw = 300, nx = cx + w / 2 - 40, ny = cy + h / 2 - 60; x.save(); x.translate(nx, ny); x.rotate(6 * Math.PI / 180); x.shadowColor = 'rgba(10,16,40,.35)'; x.shadowBlur = 18; x.shadowOffsetY = 8;
+      x.fillStyle = '#FFE58A'; x.fillRect(-nw / 2, -nw / 2 * .8, nw, nw * .8); x.shadowColor = 'transparent'; x.fillStyle = NAVY; x.textAlign = 'center'; x.textBaseline = 'middle';
+      x.font = `700 46px ${F.hand}`; const L = wrap(x, p.caption, nw - 40).slice(0, 3); L.forEach((l, i) => x.fillText(l, 0, (i - (L.length - 1) / 2) * 48)); x.restore(); }
+    if (p.tag) tagSticker(x, nameOf(p.tag), cx - w * .32, cy - h / 2 - 6, -7);
+  },
+  keychain(x, W, H, p, k){   // the photo inside an acrylic keychain, hanging from its ring
+    const top = 160, room = H - top - (p.caption ? 330 : 210), h = Math.min(room - 150, W * (tall(H) ? .74 : .62) * 1.36), w = h / 1.36, cx = W / 2, ry = top + (tall(H) ? Math.max(60, (room - 150 - h) / 2 + 60) : 60), rot = k % 2 ? -5 : 5;
+    sprinkle(x, [[W * .14, H * .66, 140, -10], [W * .86, H * .4, 120, 12]], k, p.tag || 'keychains');
+    x.save(); x.translate(cx, ry); x.rotate(rot * Math.PI / 180);
+    x.lineWidth = 14; x.strokeStyle = '#C9CEDA'; x.beginPath(); x.arc(0, 0, 46, 0, 7); x.stroke(); x.lineWidth = 3; x.strokeStyle = '#8E95A8'; x.beginPath(); x.arc(0, 0, 53, 0, 7); x.stroke();
+    x.fillStyle = '#C9CEDA'; rr(x, -12, 44, 24, 60, 10); x.fill();
+    const Y = 100; x.save(); x.shadowColor = 'rgba(10,16,40,.5)'; x.shadowBlur = 34; x.shadowOffsetY = 16; rr(x, -w / 2 - 26, Y, w + 52, h + 52, 46); x.fillStyle = 'rgba(234,242,255,.92)'; x.fill(); x.restore();
+    x.lineWidth = 4; x.strokeStyle = 'rgba(255,255,255,.9)'; rr(x, -w / 2 - 26, Y, w + 52, h + 52, 46); x.stroke();
+    x.save(); rr(x, -w / 2, Y + 26, w, h, 26); x.clip(); cover(x, p.img, -w / 2, Y + 26, w, h); x.restore();
+    x.fillStyle = 'rgba(255,255,255,.35)'; x.beginPath(); x.moveTo(-w / 2 + 10, Y + 40); x.lineTo(-w / 2 + 70, Y + 40); x.lineTo(-w / 2 + 10, Y + 160); x.closePath(); x.fill();
+    x.restore();
+    if (p.caption) { const tx = W / 2, ty = ry + 100 + h + 52 + 80; x.save(); x.translate(tx, ty); x.rotate(-2 * Math.PI / 180); x.font = `700 58px ${F.hand}`; x.fillStyle = WHITE; x.textAlign = 'center'; x.textBaseline = 'middle'; fit(x, p.caption, W - 200, 58, 700, F.hand); x.fillText(p.caption, 0, 0); x.restore(); }
+    if (p.tag) tagSticker(x, nameOf(p.tag), cx + w / 2 + 30, ry + 150, 8);
+  },
+  bleed(x, W, H, p, k){   // the photo fills the slide, with a torn-paper caption band
+    const edge = H * (p.caption ? .7 : .8); cover(x, p.img, 0, 0, W, edge + 30);
+    x.fillStyle = 'rgba(28,42,87,.0)';
+    x.beginPath(); x.moveTo(0, edge); for (let X = 0; X <= W; X += 36) x.lineTo(X, edge + ((X / 36) % 2 ? 16 : -10) + Math.sin(X) * 4); x.lineTo(W, H); x.lineTo(0, H); x.closePath();
+    const g = x.createLinearGradient(0, edge, 0, H); g.addColorStop(0, '#2E4384'); g.addColorStop(1, DEEP); x.fillStyle = g; x.fill(); grain(x, W, H);
+    sprinkle(x, [[W - 120, edge - 10, 150, 12]], k, p.tag);
+    if (p.caption) { x.fillStyle = WHITE; x.textAlign = 'left'; x.textBaseline = 'alphabetic'; x.font = `800 64px ${F.disp}`; const L = wrap(x, p.caption, W - 128).slice(0, 2); L.forEach((l, i) => x.fillText(l, 64, edge + 120 + i * 72)); }
+    if (p.tag) tagSticker(x, nameOf(p.tag), 64 + 90, edge - 10, -5);
+  }
+};
+
+/* ============================== the slides ============================== */
+function coverSlide(x, W, H){
+  logo(x, W / 2, 126, 112);
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; const ts = fit(x, ST.title, W - 170, 112, 800, F.disp), L = wrap(x, ST.title, W - 170).slice(0, 3);
+  let y = 250 + ts; L.forEach((l, i) => { if (i === L.length - 1) { const lw = x.measureText(l).width; marker(x, W / 2 - lw / 2, y - ts * .42, lw, ts * .5, 'rgba(58,82,163,.95)'); } x.fillStyle = WHITE; x.font = `800 ${ts}px ${F.disp}`; x.fillText(l, W / 2, y); y += ts * 1.02; });
+  x.font = `800 36px ${F.disp}`; const wk = `Week ${weekNo()}`, ww = x.measureText(wk).width + 50, dw = x.measureText(ST.dates).width + 50, X = W / 2 - (ww + 14 + dw) / 2;
+  pill(x, wk, X, y - 6, WHITE, NAVY, 36); pill(x, ST.dates, X + ww + 14, y - 6, GOLD, NAVY, 36);
+  const top = y + 110, bottom = H - 190, mid = (top + bottom) / 2, ph = ST.photos;
+  // a mixed collage: an instant photo, a pin and a die-cut sticker, with products around them
+  drawSticker(x, 'prints', W * .14, bottom - 40, 150, -12); drawSticker(x, 'stickers', W * .86, top + 20, 140, 12); drawSticker(x, 'star', W * .5, bottom + 10, 90, 8);
+  if (ph[0]) { const w = Math.min(tall(H) ? 420 : 330, (bottom - top) * .62 * 54 / 86 * 1.4), h = w * 86 / 54, s = w / 54; x.save(); x.translate(W * .3, mid); x.rotate(-7 * Math.PI / 180); x.shadowColor = 'rgba(10,16,40,.45)'; x.shadowBlur = 30; x.shadowOffsetY = 14;
+    x.fillStyle = WHITE; x.fillRect(-w / 2, -h / 2, w, h); x.shadowColor = 'transparent'; x.save(); x.beginPath(); x.rect(-w / 2 + 4 * s, -h / 2 + 6 * s, 46 * s, 62 * s); x.clip(); cover(x, ph[0].img, -w / 2 + 4 * s, -h / 2 + 6 * s, 46 * s, 62 * s); x.restore(); x.restore(); tape(x, W * .3 - 10, mid - h / 2 + 8, 120, 40, -12); }
+  if (ph[1]) { const R = Math.min(tall(H) ? 200 : 150, (bottom - top) * .26), cx = W * .7, cy = mid - (bottom - top) * .14; x.beginPath(); x.arc(cx + 9, cy + 12, R + 12, 0, 7); x.fillStyle = 'rgba(10,16,40,.5)'; x.fill(); x.beginPath(); x.arc(cx, cy, R + 12, 0, 7); x.fillStyle = WHITE; x.fill();
+    x.save(); x.beginPath(); x.arc(cx, cy, R, 0, 7); x.clip(); cover(x, ph[1].img, cx - R, cy - R, R * 2, R * 2); x.restore(); }
+  if (ph[2]) { const w = Math.min(tall(H) ? 340 : 260, (bottom - top) * .4), h = w * 1.1, cx = W * .68, cy = mid + (bottom - top) * .22; x.save(); x.translate(cx, cy); x.rotate(6 * Math.PI / 180); rr(x, -w / 2 - 14 + 8, -h / 2 - 14 + 10, w + 28, h + 28, 30); x.fillStyle = 'rgba(10,16,40,.5)'; x.fill();
+    rr(x, -w / 2 - 14, -h / 2 - 14, w + 28, h + 28, 30); x.fillStyle = WHITE; x.fill(); x.save(); rr(x, -w / 2, -h / 2, w, h, 20); x.clip(); cover(x, ph[2].img, -w / 2, -h / 2, w, h); x.restore(); x.restore(); }
+  if (!ph.length) { x.fillStyle = 'rgba(255,255,255,.75)'; x.font = `700 40px ${F.body}`; x.textAlign = 'center'; x.fillText('Add photos to fill this post', W / 2, mid); }
+  x.font = `700 50px ${F.hand}`; x.textAlign = 'right'; x.textBaseline = 'middle'; x.fillStyle = WHITE; const tx = W - 160; x.fillText('swipe for this week’s batch', tx, H - 136);
+  arrow(x, tx + 16, H - 146, tx + 74, H - 176, tx + 96, H - 124, GOLD, 5);
+}
+function shelfSlide(x, W, H){
+  logo(x, W / 2, 120, 100);
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = WHITE; const s = fit(x, 'What you can make', W - 160, 96, 800, F.disp); x.fillText('What you can make', W / 2, 220 + s);
+  const pr = ST.prices.find(p => p.key === 'prints'), others = ST.prices.filter(p => p.key !== 'prints' && PRODUCT_ART[p.key]).slice(0, 6);
+  let y = 270 + s;
+  if (pr) {   // printing leads: a gold banner card
+    const bw = W - 160, bh = 170; rr(x, 80 + 8, y + 10, bw, bh, 30); x.fillStyle = 'rgba(10,16,40,.5)'; x.fill(); rr(x, 80, y, bw, bh, 30); x.fillStyle = GOLD; x.fill();
+    drawSticker(x, 'prints', 80 + 96, y + bh / 2, 120, -8);
+    x.textAlign = 'left'; x.textBaseline = 'alphabetic'; x.fillStyle = NAVY; fit(x, 'Print tonight, get it at school tomorrow.', bw - 230, 46, 800, F.disp); x.fillText('Print tonight, get it at school tomorrow.', 80 + 190, y + 76);
+    x.font = `700 34px ${F.body}`; x.fillText(`${money(pr.price)} ${pr.unit || 'a page'}. No line at the book center.`, 80 + 190, y + 126); y += bh + 50;
+  }
+  const cols = 3, rows = Math.ceil(others.length / cols), cw = (W - 160) / cols, ch = Math.min(tall(H) ? 460 : 300, (H - y - 170) / Math.max(1, rows));
+  others.forEach((p, i) => { const cx = 80 + cw * (i % cols) + cw / 2, cy = y + ch * Math.floor(i / cols) + ch * .4;
+    drawSticker(x, PRODUCT_ART[p.key], cx, cy, Math.min(tall(H) ? 210 : 150, ch * .55), (i % 2 ? 6 : -6));
+    x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = WHITE; x.font = `800 36px ${F.disp}`; x.fillText(p.name, cx, cy + ch * .42);
+    x.fillStyle = GOLD; x.font = `700 30px ${F.body}`; x.fillText(`${p.from ? 'from ' : ''}${money(p.price)} ${p.unit || ''}`.trim(), cx, cy + ch * .42 + 40); });
+}
+function endSlide(x, W, H, qr){
+  logo(x, W / 2, 126, 112);
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; const s = fit(x, 'Your turn.', W - 160, 150, 800, F.disp), tw = x.measureText('Your turn.').width;
+  marker(x, W / 2 - tw / 2, 236 + s * .58, tw, s * .5, 'rgba(58,82,163,.95)'); x.fillStyle = WHITE; x.font = `800 ${s}px ${F.disp}`; x.fillText('Your turn.', W / 2, 236 + s);
+  x.font = `600 36px ${F.body}`; x.fillStyle = 'rgba(255,255,255,.9)';
+  wrap(x, 'Prints, stickers, pins and more, brought to you at school. Order on our site.', W - 260).slice(0, 2).forEach((l, i) => x.fillText(l, W / 2, 310 + s + i * 48));
+  const qs = Math.min(tall(H) ? 440 : 300, H - (420 + s) - 300), qy = 420 + s + (H - (420 + s) - 300 - qs) / 2;
+  drawSticker(x, 'pins', W * .14, qy + 40, 130, -12); drawSticker(x, 'keychains', W * .86, qy + qs * .2, 130, 10); drawSticker(x, 'photos', W * .16, qy + qs + 30, 120, 8); drawSticker(x, 'heart', W * .84, qy + qs + 60, 90, -10);
+  if (qr) { const S = qs + 44, X = W / 2 - S / 2, c = 40; x.save(); x.translate(W / 2, qy + S / 2); x.rotate(-.035); x.translate(-W / 2, -(qy + S / 2));
+    const path = () => { x.beginPath(); x.moveTo(X + 24, qy); x.lineTo(X + S - 24, qy); x.quadraticCurveTo(X + S, qy, X + S, qy + 24); x.lineTo(X + S, qy + S - c); x.lineTo(X + S - c, qy + S); x.lineTo(X + 24, qy + S); x.quadraticCurveTo(X, qy + S, X, qy + S - 24); x.lineTo(X, qy + 24); x.quadraticCurveTo(X, qy, X + 24, qy); x.closePath(); };
+    x.save(); x.translate(10, 12); path(); x.fillStyle = 'rgba(10,16,40,.5)'; x.fill(); x.restore(); path(); x.fillStyle = WHITE; x.fill(); x.drawImage(qr, W / 2 - qs / 2, qy + 22, qs, qs);
+    x.beginPath(); x.moveTo(X + S, qy + S - c); x.quadraticCurveTo(X + S - c * .95, qy + S - c * .45, X + S - c, qy + S); x.quadraticCurveTo(X + S - c * .55, qy + S - c * .55, X + S, qy + S - c); x.closePath(); x.fillStyle = '#DCE1EE'; x.fill(); x.restore();
+    x.font = `700 54px ${F.hand}`; x.fillStyle = WHITE; x.textAlign = 'left'; x.textBaseline = 'middle'; const hx = W / 2 + S / 2 + 30, hy = qy + 10; x.fillText('scan me!', hx - 40, hy - 30);
+    arrow(x, hx, hy, hx - 10, hy + 90, W / 2 + S / 2 + 14, qy + S * .5, GOLD, 5); }
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = WHITE; x.font = `800 52px ${F.disp}`; x.fillText(CFG.site, W / 2, H - 130);
+  x.font = `600 30px ${F.body}`; x.fillStyle = 'rgba(255,255,255,.85)'; x.fillText('Follow us for next week’s batch', W / 2, H - 84);
+}
+async function render(){
+  const [W, H] = FMT[ST.fmt];
+  await loadArt();
+  try { await Promise.all([document.fonts.load(`800 60px 'Cabinet Grotesk'`), document.fonts.load(`700 30px 'Satoshi'`), document.fonts.load(`700 40px 'Caveat'`)]); } catch {}
+  let qr = null; if (ST.end && window.QRCode) { const d = document.createElement('div'); new QRCode(d, { text: 'https://' + CFG.site.replace(/^https?:\/\//, ''), width: 400, height: 400, colorDark: NAVY, colorLight: WHITE, correctLevel: QRCode.CorrectLevel.M }); qr = d.querySelector('canvas'); }
+  const plan = [{ k: 'cover', bg: 'confetti' }, ...ST.photos.map((p, i) => ({ k: 'photo', p, lay: LAYOUTS[i % LAYOUTS.length] })), ...(ST.shelf ? [{ k: 'shelf', bg: 'grid' }] : []), ...(ST.end ? [{ k: 'end', bg: 'rays' }] : [])];
+  const cycle = ['mat', 'stripes', 'rays', 'rings', 'grid', 'confetti']; let prev = null, ci = 0;
+  plan.forEach(s => { if (!s.bg) { do { s.bg = cycle[ci++ % cycle.length]; } while (s.bg === prev); } if (s.bg === prev) s.bg = cycle[(cycle.indexOf(s.bg) + 1) % cycle.length]; prev = s.bg; });
+  ST.slides = plan.map((s, i) => { const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
+    if (s.k === 'photo' && s.lay === 'bleed') { x.fillStyle = DEEP; x.fillRect(0, 0, W, H); } else background(x, W, H, s.bg);
+    if (s.k === 'cover') coverSlide(x, W, H); else if (s.k === 'shelf') shelfSlide(x, W, H); else if (s.k === 'end') endSlide(x, W, H, qr);
+    else { LATER = []; if (s.lay !== 'bleed') logo(x, W / 2, 104, 90); LAY[s.lay](x, W, H, s.p, i); LATER.forEach(f => f()); LATER = []; if (s.lay === 'bleed') logo(x, 64 + 96, 82, 78); }
+    foot(x, W, H, i + 1, plan.length); return c; });
+}
+
+/* ============================== the page ============================== */
+const $ = s => document.querySelector(s), esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function toast(m){ const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2600); }
+$('#hdrLogo').innerHTML = `<svg viewBox="36.5 6 534.5 213.8" role="img" aria-label="${esc(CFG.shop)}">${LOGO}</svg>`;
+$('#title').value = ST.title; $('#dates').value = ST.dates;
+function drawPhotos(){
+  const opts = ['', ...ST.prices.map(p => p.key)];
+  $('#photos').innerHTML = ST.photos.map((p, i) => `<div class="ph"><img src="${p.url}" alt="Photo ${i + 1}">
+    <div class="f"><input class="inp" data-cap="${i}" maxlength="40" value="${esc(p.caption)}" placeholder="Caption, like: Class pins for 8-Rose" aria-label="Caption for photo ${i + 1}">
+      <select class="inp" data-tag="${i}" aria-label="Product in photo ${i + 1}">${opts.map(k => `<option value="${k}" ${p.tag === k ? 'selected' : ''}>${k ? esc(nameOf(k)) : 'Which product? (optional)'}</option>`).join('')}</select></div>
+    <div class="a"><button type="button" class="ib" data-up="${i}" aria-label="Move up" ${i ? '' : 'disabled'}>↑</button><button type="button" class="ib" data-del="${i}" aria-label="Remove photo">✕</button></div></div>`).join('');
+  $('#addTxt').firstChild.textContent = ST.photos.length ? 'Add more photos' : 'Add photos';
+}
+function drawPrices(){ $('#prices').innerHTML = ST.prices.map((p, i) => `<label style="display:contents"><span style="align-self:center;font-weight:700">${esc(p.name)}</span><input class="inp" type="number" min="0" data-price="${i}" value="${p.price}" aria-label="Price of ${esc(p.name)}"></label>`).join(''); }
+let timer = null;
+function refresh(){ clearTimeout(timer); timer = setTimeout(async () => { $('#slides').classList.add('busy'); await render(); drawSlides(); }, 220); }
+function drawSlides(){
+  const [W, H] = FMT[ST.fmt]; $('#slides').classList.remove('busy'); $('#count').textContent = `${ST.slides.length} slides`;
+  $('#slides').innerHTML = ST.photos.length || true ? ST.slides.map((c, i) => `<figure style="aspect-ratio:${W}/${H}"><img src="${c.toDataURL('image/jpeg', .8)}" alt="Slide ${i + 1}" data-zoom="${i}"><figcaption><span>${i + 1}</span><button type="button" data-save="${i}">Save</button></figcaption></figure>`).join('') : '';
+}
+async function blobs(){ if (!ST.slides.length) await render(); const slug = (ST.dates || 'week').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '').toLowerCase();
+  return Promise.all(ST.slides.map((c, i) => new Promise(r => c.toBlob(b => r({ blob: b, name: `stick2it-${slug}-${String(i + 1).padStart(2, '0')}.jpg` }), 'image/jpeg', .93)))); }
+function save(blob, name){ const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
+$('#fileIn').addEventListener('change', async e => { const files = [...e.target.files].filter(f => f.type.startsWith('image/')); e.target.value = '';
+  for (const f of files) { const url = URL.createObjectURL(f), img = new Image(); img.src = url; try { await img.decode(); ST.photos.push({ url, img, caption: '', tag: '' }); } catch { toast('One photo didn’t open. Try a screenshot of it instead.'); } }
+  drawPhotos(); refresh(); });
+$('#photos').addEventListener('input', e => { const t = e.target; if (t.dataset.cap !== undefined) { ST.photos[+t.dataset.cap].caption = t.value; refresh(); } });
+$('#photos').addEventListener('change', e => { const t = e.target; if (t.dataset.tag !== undefined) { ST.photos[+t.dataset.tag].tag = t.value; refresh(); } });
+$('#photos').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.up !== undefined) { const i = +b.dataset.up; [ST.photos[i - 1], ST.photos[i]] = [ST.photos[i], ST.photos[i - 1]]; }
+  if (b.dataset.del !== undefined) { const i = +b.dataset.del; URL.revokeObjectURL(ST.photos[i].url); ST.photos.splice(i, 1); }
+  drawPhotos(); refresh(); });
+$('#title').addEventListener('input', e => { ST.title = e.target.value; refresh(); });
+$('#dates').addEventListener('input', e => { ST.dates = e.target.value; refresh(); });
+$('#shelfOn').addEventListener('change', e => { ST.shelf = e.target.checked; refresh(); });
+$('#endOn').addEventListener('change', e => { ST.end = e.target.checked; refresh(); });
+$('#prices').addEventListener('input', e => { const i = e.target.dataset.price; if (i !== undefined) { ST.prices[+i].price = Math.max(0, +e.target.value || 0); refresh(); } });
+document.querySelectorAll('[data-fmt]').forEach(b => b.addEventListener('click', () => { ST.fmt = b.dataset.fmt; document.querySelectorAll('[data-fmt]').forEach(o => o.setAttribute('aria-pressed', o === b)); refresh(); }));
+$('#slides').addEventListener('click', async e => { const s = e.target.closest('[data-save]'), z = e.target.closest('[data-zoom]');
+  if (s) { const f = (await blobs())[+s.dataset.save]; save(f.blob, f.name); }
+  if (z) { $('#zoomImg').src = ST.slides[+z.dataset.zoom].toDataURL('image/jpeg', .9); $('#zoomImg').alt = `Slide ${+z.dataset.zoom + 1}, larger`; $('#zoom').showModal(); } });
+$('#zoom').addEventListener('click', () => $('#zoom').close());
+$('#allBtn').addEventListener('click', async () => { toast('Packing your slides…'); const fs = await blobs();
+  if (!window.JSZip) { fs.forEach((f, i) => setTimeout(() => save(f.blob, f.name), i * 400)); return; }
+  const z = new JSZip(); fs.forEach(f => z.file(f.name, f.blob)); save(await z.generateAsync({ type: 'blob' }), fs[0].name.replace(/-01\.jpg$/, '.zip')); });
+$('#shareBtn').addEventListener('click', async () => { const files = (await blobs()).map(f => new File([f.blob], f.name, { type: 'image/jpeg' }));
+  if (navigator.canShare && navigator.canShare({ files })) { try { await navigator.share({ files, title: ST.title }); } catch (e) { if (e && e.name !== 'AbortError') toast('Couldn’t share. Use Download all instead.'); } }
+  else toast('This browser can’t share pictures. Use Download all, then post them.'); });
+drawPhotos(); drawPrices(); refresh();
+window.__pm = { ST, render };   // for testing
+})();
+</script>
+</body>
+</html>

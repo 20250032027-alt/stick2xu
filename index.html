@@ -614,7 +614,8 @@ th{color:var(--muted);font-weight:700}
 @keyframes psPop{from{transform:scale(0)}to{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.ps-pin.new{animation:none}}
 .pinedit{flex:1 1 300px;max-width:380px}
-.pinedit .pinwrap .frame{width:100%}
+.pinedit .pinwrap{width:100%;display:flex;justify-content:center}   /* a definite width, so the pin's height (from aspect-ratio) is right in every browser */
+.pinedit .pinwrap .frame{width:100%;height:auto;flex:none}
 .cap{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 /* "How it looks": a real-feeling pin. A 3D disc with a printed edge, a metal back with its clasp; drag to tilt, flip to see the back. */
 .pp{position:relative;padding:10px 14px 18px 10px;perspective:620px;touch-action:none;cursor:grab}
@@ -1196,10 +1197,16 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .heroacts{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
 .printhint{display:flex;align-items:center;gap:8px;margin:18px 0 0;font-size:15.5px;color:var(--muted)}
 /* quiet facts under the hero buttons: plain text, small icons, no pills */
-.trust{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px 22px;max-width:560px}
-.trust li{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--ink)}
-.trust li svg{flex:none;width:28px;height:28px;padding:5px;border-radius:50%;background:var(--gold-soft);color:#9A6F0B}
-@media(max-width:600px){.trust{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}.trust li{font-size:14px;align-items:flex-start}.trust li span{padding-top:4px}}
+/* two equal ways in: printing and making things. Same size, same style, neither shouts */
+.paths{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:14px;max-width:600px;margin-top:6px}   /* equal partners: always the same size */
+.path{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;padding:14px 16px;border:2px solid var(--ink);border-radius:var(--r-md);background:#fff;color:var(--ink);text-decoration:none;box-shadow:3px 4px 0 var(--ink);transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.path:hover{transform:translate(-1px,-2px);box-shadow:4px 6px 0 var(--ink)}
+.path:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.path .pi{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--gold-soft);border:2px solid var(--ink);color:var(--ink)}
+.path b{display:block;font-family:var(--display);font-size:18px;line-height:1.2}
+.path small{display:block;font-size:14px;color:var(--muted);margin-top:2px}
+.path > svg:last-child{opacity:.7;transition:transform .2s var(--ease)}.path:hover > svg:last-child{transform:translateX(3px)}
+@media(max-width:600px){.paths{grid-template-columns:1fr;gap:12px}}
 .printhint svg{flex:none;color:var(--ink)}
 .printhint a{white-space:nowrap;color:var(--ink);font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;text-decoration-color:var(--xu-gold)}
 .printhint a:hover{text-decoration-color:var(--ink)}
@@ -1450,33 +1457,9 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .phbt{width:auto;min-width:54px;height:auto;min-height:62px;padding:4px 6px}
 @media(max-width:900px){.phd #phStage{order:1}.phd #phCtrl{order:2}.phd #phOpts{order:3}.phd #phQty{order:4}.split #phCtrl .phead{display:none}.split #phCtrl .phead + section{margin-top:0;padding-top:0;border-top:0}}
 @media(max-width:480px){.fx-tabs button{flex:1 1 0;min-width:0;padding-left:4px;padding-right:4px;font-size:14px}.fx-tabs .fx-dot{right:4px}.phstyle{gap:8px;padding:8px}.phstyle > span{grid-template-columns:1fr}.phstyle em{grid-column:1;grid-row:3}}
-/* weekly post maker */
-.pm{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:22px;align-items:start}
-.pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.pm-grid .lab{display:grid;gap:6px;margin:0}
-.pm-looks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.pm-look{display:grid;gap:4px;justify-items:start;padding:10px;border:2px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
-.pm-look.on{border-color:var(--ink);background:var(--gold-soft);box-shadow:var(--shadow-sm)}
-.pm-look b{font-size:14.5px;line-height:1.2}.pm-look small{font-size:12px;color:var(--muted);line-height:1.25}
-.pm-sw{width:100%;height:38px;border-radius:8px;border:2px solid var(--ink)}
-.pm-sw.board{background:radial-gradient(circle at 1px 1px,rgba(40,57,113,.25) 1.4px,transparent 0) 0 0/8px 8px,#F4F5FA}
-.pm-sw.instant{background:repeating-linear-gradient(45deg,#F2BC2E 0 8px,#F6CC57 8px 16px)}.pm-sw.clean{background:linear-gradient(#9CC3F2 0 62%,#283971 62%)}
-.pm-fmt{display:flex;width:100%}.pm-fmt button{flex:1}.pm-fmt small{font-weight:600;opacity:.75}
-.pm-sw2{display:grid;gap:8px;margin:14px 0 4px}
-.pm-photos{display:grid;gap:10px}
-.pm-ph{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px;border:1.5px solid var(--line);border-radius:14px;background:#fff}
-.pm-ph img{width:72px;height:72px;object-fit:cover;border-radius:10px}
-.pm-ph-f{display:grid;gap:6px}.pm-ph-f .inp{min-height:40px;padding:6px 10px;font-size:14.5px}
-.pm-ph-a{display:grid;gap:6px}.pm-ph-a .iconbtn svg{transform:rotate(90deg)}.pm-ph-a .iconbtn:last-child svg{transform:none}
-.iconbtn{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);background:#fff;color:var(--ink);display:grid;place-items:center;cursor:pointer}.iconbtn:disabled{opacity:.35}
+/* weekly post maker launch card */
+.pmlaunch{max-width:640px}
 .pm-ok{margin-top:16px;padding:12px 14px;border-radius:14px;background:var(--gold-soft)}.pm-ok ul{margin:0;padding-left:18px;font-size:14px}
-.pm-out{position:sticky;top:84px}
-.pm-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.pm-acts{display:flex;gap:8px;flex-wrap:wrap}
-.pm-slides{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
-.pm-slides.busy{opacity:.55}
-.pm-slide{margin:0;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 0 0 1.5px var(--line)}
-.pm-slide img{display:block;width:100%;height:auto}
-.pm-slide figcaption{display:flex;align-items:center;justify-content:space-between;padding:6px 8px}
-.pm-slide .btn.sm{min-height:40px;padding:4px 12px;font-size:13.5px}
 .tag.okp{background:#E3F4E8;color:#1F6B3E}
 .okpost small{display:block;color:var(--muted);font-size:13.5px}
 @media(max-width:900px){.pm{grid-template-columns:1fr}.pm-out{position:static}.pm-slides{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -2429,6 +2412,7 @@ const CONFIG = {
   noPickupDates: [],             // skip these, e.g. ['2026-11-02'] for holidays or exam days
   pickupOptions: ['Gate 1', 'Gate 4'],
   allowCustomPickup: false,      // true shows a "Somewhere else in school" option
+  classroomOn: true,             // shows "At your classroom" (the customer types the room); admin can switch it off
   // What the seller holds or wears at pickup. These are only the starting values:
   // change them anytime from the admin page under Settings.
   signalVerb: 'holding',         // 'holding' or 'wearing'
@@ -2896,6 +2880,7 @@ function applyShopConfig(c){
   CONFIG.pickupTimes = arr(c.pickup_times, D.pickupTimes).filter(t => t && t.label && t.time);
   CONFIG.pickupOptions = arr(c.pickup_places, D.pickupOptions).filter(Boolean);
   CONFIG.allowCustomPickup = typeof c.allow_custom_pickup === 'boolean' ? c.allow_custom_pickup : D.allowCustomPickup;
+  CONFIG.classroomOn = typeof c.classroom_pickup === 'boolean' ? c.classroom_pickup : D.classroomOn;
   CONFIG.leadDays = Number.isFinite(+c.lead_days) && c.lead_days !== null && c.lead_days !== '' ? +c.lead_days : D.leadDays;
   CONFIG.datesToShow = +c.dates_to_show > 0 ? +c.dates_to_show : D.datesToShow;
   CONFIG.noPickupDates = Array.isArray(c.no_pickup_dates) ? c.no_pickup_dates : D.noPickupDates;
@@ -3890,18 +3875,12 @@ function viewHome(){
     <section class="hero">
       <div>
         ${printsLive() ? `
-        <h1>Print tonight.<br>Get it at school tomorrow.</h1>
-        <p class="lead">Send us your files, and we’ll print them overnight and bring them to you at school. We also turn your pictures into ${others.length ? 'stickers, pins and more' : 'sticker sheets'}.</p>
-        <div class="heroacts">
-          ${btn('Print a file', { href: designRoute('prints') })}
-          <a class="pilllink" href="#/shop">${ic('sparkle', 18)}Make stickers and more</a>
-        </div>
-        <ul class="trust" aria-label="Why print with us">
-          <li>${ic('clock', 17)}<span>Ready the next school day</span></li>
-          <li>${ic('printer', 17)}<span>${money(printFrom())} a page, no lines</span></li>
-          <li>${ic('cash', 17)}<span>${CONFIG.gcash.enabled ? 'Pay cash or GCash' : 'Pay cash when you get it'}</span></li>
-          <li>${ic('school', 17)}<span>Run by XU students</span></li>
-        </ul>` : `
+        <h1>Print it, stick it, get it at school.</h1>
+        <p class="lead">Send your files tonight and get them printed by tomorrow, or turn your pictures into ${others.length ? 'stickers, pins and more' : 'sticker sheets'}. We bring it all to you at school.</p>
+        <div class="paths">
+          <a class="path" href="${designRoute('prints')}"><span class="pi">${ic('printer', 22)}</span><span><b>Print a file</b><small>${money(printFrom())} a page, ready tomorrow</small></span>${ic('arrow', 18)}</a>
+          <a class="path" href="#/shop"><span class="pi">${ic('sparkle', 22)}</span><span><b>Make stickers and more</b><small>${others.length ? 'Stickers, pins, photo cards' : 'Sticker sheets from your pictures'}</small></span>${ic('arrow', 18)}</a>
+        </div>` : `
         <h1>${others.length ? 'Turn your pictures into stickers and more.' : 'Turn your pictures into a sticker sheet.'}</h1>
         <p class="lead">${others.length ? 'We print them, and you pick them up at school.' : 'Pick your pics, make them tiny or huge, and we print the whole sheet for you. You pick it up at school.'}</p>
         <div class="heroacts">
@@ -5803,7 +5782,7 @@ function drawFramedStage(){
             <div class="pp-face front"><div class="pp-inner" style="width:${k * 100}%;left:${off}%;top:${off}%;background:${bg}">
               ${im ? `<img id="fimg2" src="${im.url}" alt="" draggable="false">` : ''}<canvas class="fxc" aria-hidden="true"></canvas></div><span class="pp-gloss"></span></div>
             <div class="pp-face back" aria-hidden="true">${PIN_BACK}</div></div></div>
-          <button type="button" class="pp-flip" data-act="ppFlip" aria-pressed="${!!f.ppFlip}">${ic('refresh', 15)}<span>${f.ppFlip ? 'Show the front' : 'Flip it'}</span></button>
+          <button type="button" class="pp-flip" data-act="ppFlip" aria-pressed="${!!f.ppFlip}">${ic('refresh', 15)}<span>${f.ppFlip ? 'Flip back' : 'Flip it'}</span></button>
           <span class="cap">How it looks</span></div>
       </div>
       <p class="under" style="max-width:460px">Prints exactly like this, ${Math.round(mm.w)} mm across. Keep faces and words a little in from the edge.</p>`;
@@ -5860,7 +5839,14 @@ function drawFramedStage(){
   $('#fstage').querySelectorAll('.filePick').forEach(i => i.addEventListener('change', onFiles));
   const frEl = $('#frame'); if (frEl) frEl.classList.toggle('has-img', !!$('#fimg'));
   const img = $('#fimg'); if (img) { if (img.complete) placeImg(); else img.onload = placeImg; }
-  bindPan(); fxPaintStage(); ppBind();
+  bindPan(); fxPaintStage(); ppBind(); keepPinRound();
+}
+let pinRO = null;
+function keepPinRound(){
+  const fr = $('#frame'); if (pinRO) { pinRO.disconnect(); pinRO = null; }
+  if (!fr || !S.fd || S.fd.type !== 'pins') return;
+  const fix = () => { const w = fr.getBoundingClientRect().width, h = fr.getBoundingClientRect().height; if (w && Math.abs(w - h) > 1) fr.style.height = w + 'px'; else if (w && fr.style.height && Math.abs(parseFloat(fr.style.height) - w) > 1) fr.style.height = w + 'px'; };
+  fix(); if (window.ResizeObserver) { pinRO = new ResizeObserver(fix); pinRO.observe(fr); }
 }
 /* Pins: a small A4 showing where their pins go on the real print sheet (same grid the shop prints with) */
 function shownDesign(){
@@ -6255,7 +6241,13 @@ function viewCheckout(){
         ${S.people.length && S.linkPerson ? peopleChoicesHTML() : ''}
         ${S.people.length ? '<p class="pgroup-h">At school</p>' : ''}
         ${CONFIG.pickupOptions.map((o, i) => `<label class="choice"><input type="radio" name="pickup" value="${esc(o)}" ${i === 0 && !S.linkPerson ? 'checked' : ''}>${ic('pin', 20)}<span>${esc(o)}</span></label>`).join('')}
-        ${CONFIG.allowCustomPickup ? `<label class="choice"><input type="radio" name="pickup" value="__other">${ic('school', 20)}<span>Somewhere else in school</span></label>
+        ${CONFIG.classroomOn ? `<label class="choice"><input type="radio" name="pickup" value="__room">${ic('school', 20)}<span>At your classroom</span></label>
+        <div id="roomBox" hidden>
+          <label class="lab" for="roomPlace" style="display:block;margin:6px 0">Which room?</label>
+          <input class="inp" id="roomPlace" maxlength="60" placeholder="Like: Room 204, or Grade 8 - Rose" aria-describedby="e-room">
+          <p class="ferr" id="e-room" role="alert"></p>
+        </div>` : ''}
+        ${CONFIG.allowCustomPickup ? `<label class="choice"><input type="radio" name="pickup" value="__other">${ic('pin', 20)}<span>Somewhere else in school</span></label>
         <div id="otherBox" hidden>
           <label class="lab" for="otherPlace" style="display:block;margin:6px 0">Where in school?</label>
           <input class="inp" id="otherPlace" maxlength="80" aria-describedby="e-place">
@@ -6301,6 +6293,7 @@ ${codeCardHTML()}
     syncPerson(form);
     const pe = S.coPerson;
     if ($('#otherBox')) $('#otherBox').hidden = radio(form, 'pickup') !== '__other';
+    if ($('#roomBox')) $('#roomBox').hidden = radio(form, 'pickup') !== '__room';
     if ($('#gcashBox')) $('#gcashBox').hidden = radio(form, 'pay') !== 'gcash';
     const place = radio(form, 'pickup') === '__other' ? 'my chosen spot' : radio(form, 'pickup');
     if ($('#promise').checked) setErr(null, 'e-promise', '');
@@ -6338,7 +6331,7 @@ ${codeCardHTML()}
   loadAvail(dates).then(() => { if (document.body.contains(form)) sync(); });
   if ($('#promo')) $('#promo').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ACTIONS.promoApply(); } });   // no box once a code is in
   // errors clear the moment they're fixed (while typing), so nothing moves when they tap Next
-  ['nick','sec','grade','otherPlace'].forEach(id => $('#' + id) && ['input', 'change'].forEach(ev => $('#' + id).addEventListener(ev, () => { validate(false); coRender(); })));
+  ['nick','sec','grade','otherPlace','roomPlace'].forEach(id => $('#' + id) && ['input', 'change'].forEach(ev => $('#' + id).addEventListener(ev, () => { validate(false); coRender(); })));
   form.addEventListener('submit', e => { if (xuNeeded()) { e.preventDefault(); S.coStep = S.people.length ? 2 : 1; coRender(); toast(S.people.length ? 'Sign in with your XU account for pickup at school, or pick up from a person.' : 'Sign in with your XU account first.'); return; } if (S.coStep < 3) { e.preventDefault(); ACTIONS.coNext({ dataset: { s: String(S.coStep) } }); return; } submitOrder(e); });
   checkoutAdminMode();
   if (S.addTo) {
@@ -6395,7 +6388,7 @@ function coRender(){
   $('#csum1').textContent = nm ? `${nm}${gs ? `, ${gs}` : ''}` : '';
   const pe = chosenPerson(form), d = pe ? radio(form, 'pday') : radio(form, 'pdate'), t = radio(form, 'ptime'), pl = radio(form, 'pickup');
   $('#csum2').textContent = !d ? '' : pe ? `${fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' })}, ${personName(pe)}, ${radio(form, 'pspot') || ''}`
-    : `${fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' })}, ${String(t || '').replace(/\s*\(.*\)/, '')}, ${pl === '__other' ? (($('#otherPlace') || {}).value || 'in school') : pl}`;
+    : `${fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' })}, ${String(t || '').replace(/\s*\(.*\)/, '')}, ${pl === '__other' ? (($('#otherPlace') || {}).value || 'in school') : pl === '__room' ? 'Your classroom' + (($('#roomPlace') || {}).value ? ': ' + $('#roomPlace').value : '') : pl}`;
   const tot = $('#ordTot'); if (tot) tot.textContent = money(checkoutTotal(d));
   const pb = $('#placeBtn span'); if (pb) pb.textContent = `Place my order · ${money(checkoutTotal(d))}`;
   // the ID preview and the name double-check follow what they type
@@ -6516,6 +6509,7 @@ function validateFields(form, which){
     if (grade && sec.length >= 2) $('#sec').setAttribute('aria-invalid', 'false');
   }
   if (other && which.place) ok = setErr('otherPlace', 'e-place', $('#otherPlace').value.trim().length < 3 ? 'Tell us where in school to meet.' : '') && ok;
+  if (radio(form, 'pickup') === '__room' && which.place) ok = setErr('roomPlace', 'e-room', $('#roomPlace').value.trim().length < 2 ? 'Tell us your room so we can bring it to you.' : '') && ok;
   if (S.coPerson && radio(form, 'pspot') === '__other' && (which.place || all)) ok = setErr('pOther', 'e-pother', $('#pOther').value.trim().length < 3 ? `Tell ${personName(S.coPerson)} where to meet.` : '') && ok;
   const noTime = !S.addTo && !S.coPerson && !!radio(form, 'pdate') && !radio(form, 'ptime');
   if (all) ok = setErr(null, 'e-promise', !S.addTo && (S.coPerson ? !radio(form, 'pday') || !radio(form, 'pspot') : !radio(form, 'pdate')) ? 'Pick a pickup day and place.' :
@@ -6529,7 +6523,7 @@ async function submitOrder(e){
   if (!validate(true)) { const bad = form.querySelector('[aria-invalid="true"]') || $('#promise'); bad.focus(); return; }
   const nickname = $('#nick').value.trim(), section = S.coFreeSec ? $('#sec').value.trim() : `${$('#grade').value} - ${$('#sec').value.trim()}`;
   const person = S.addTo ? null : chosenPerson(form);
-  let pickup = radio(form, 'pickup'); if (pickup === '__other') pickup = 'Other: ' + $('#otherPlace').value.trim();
+  let pickup = radio(form, 'pickup'); if (pickup === '__other') pickup = 'Other: ' + $('#otherPlace').value.trim(); else if (pickup === '__room') pickup = 'Classroom: ' + $('#roomPlace').value.trim();
   let pickupDate = radio(form, 'pdate'), pickupTime = radio(form, 'ptime');
   if (person) { pickup = radio(form, 'pspot'); if (pickup === '__other') pickup = 'Other: ' + $('#pOther').value.trim(); pickupDate = radio(form, 'pday'); pickupTime = 'Any time'; }
   if (S.addTo) { pickup = S.addTo.pickup; pickupDate = S.addTo.pickup_date; pickupTime = S.addTo.pickup_time; }   // same pickup as the order it adds to
@@ -7010,7 +7004,7 @@ async function drawAdminBody(){
           ${o.status === 'done' ? `<b class="oprice num">${peso(o.total)}</b>` : `<span class="tag st ${stCls[o.status] || ''}">${ic(STATUS[o.status][0], 16)}${esc(o.status)}</span>`}</div>
         <div class="ometa">
           <div><span><b>${esc(o.nickname)}</b>, ${esc(o.grade_section)}</span>${o.person_id || o.school_id ? ` <span class="tag grp">${ic('user', 14)}${esc(personAdminName((S.admin.peopleMap || {})[o.person_id || o.school_id]))}</span>` : ''}${o.seller_code ? ` <span class="tag sell">${ic('sparkle', 14)}via ${esc(o.seller_code)}</span>` : ''}</div>
-          <div>${ic('pin', 18)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span>${/^Other: /.test(o.pickup || '') ? ` <span class="tag spotq" title="The customer typed this place. Check it works.">${ic('edit', 13)}Typed by the customer${o.person_id ? `, check with ${esc(personAdminName((S.admin.peopleMap || {})[o.person_id]))}` : ''}</span>` : ''}</div>
+          <div>${ic('pin', 18)}<span>${esc(o.pickup)}${o.pickup_time ? `, ${esc(o.pickup_time)}` : ''}</span>${/^Classroom: /.test(o.pickup || '') ? ` <span class="tag okp" title="Bring this order to the customer's classroom.">${ic('school', 13)}Classroom delivery</span>` : ''}${/^Other: /.test(o.pickup || '') ? ` <span class="tag spotq" title="The customer typed this place. Check it works.">${ic('edit', 13)}Typed by the customer${o.person_id ? `, check with ${esc(personAdminName((S.admin.peopleMap || {})[o.person_id]))}` : ''}</span>` : ''}</div>
           <div>${ic('cash', 18)}<span class="num">${money(o.total)}${!o.paid && o.amount_paid ? ` (paid ${money(o.amount_paid)}, owes ${money(o.total - o.amount_paid)})` : ''}, ${o.payment === 'gcash' ? `GCash${o.gcash_ref ? ` (ref ${esc(o.gcash_ref)})` : ', no ref yet'}` : 'cash'}</span></div>
           <ul class="ilist">${orderItems(o).map(it => `<li>${ic(it.type === 'stickers' ? 'sticker' : it.type === 'pins' ? 'badge' : it.type === 'posters' || it.type === 'photos' ? 'image' : it.type === 'prints' ? 'doc' : 'keychain', 18)}<span><b>${esc(itemTitle(it))}</b>${itemDetails(it) ? `, ${esc(itemDetails(it))}` : ''}</span></li>`).join('')}</ul>
           <div class="tags">
@@ -7484,7 +7478,7 @@ function drawSettings(){
     seller_reward_every: CONFIG.sellerRewardEvery, seller_reward_item: CONFIG.sellerRewardItem, seller_goal_by: CONFIG.sellerGoalBy, seller_goal_orders: CONFIG.sellerGoalOrders, seller_pro_orders: CONFIG.sellerProOrders, seller_min_order: CONFIG.sellerMinOrder, seller_pro_goal: CONFIG.sellerProGoal, seller_pro_rate: CONFIG.sellerProRate, seller_buyer_off: CONFIG.sellerBuyerOff, seller_welcome: CONFIG.sellerWelcome, sellers_max: CONFIG.sellersMax, seller_min_payout: CONFIG.sellerMinPayout, confirm_days_before: CONFIG.confirmDaysBefore, sellers_at_pickup: CONFIG.sellersAtPickup, max_per_slot: CONFIG.maxPerSlot, max_per_day: CONFIG.maxPerDay,
     print_weekdays: CONFIG.printWeekdays.slice(), prep_hours: CONFIG.prepHours, rush_same_day: CONFIG.rushSameDay, rush_next_day: CONFIG.rushNextDay,
     print_cleanup_days: CONFIG.printCleanupDays, poster_extra_sheet: CONFIG.posterExtraSheet, poster_margin_mm: CONFIG.posterMarginMm, poster_overlap_mm: CONFIG.posterOverlapMm, sticker_margin_mm: CONFIG.sheet.marginMm, sticker_gap_mm: CONFIG.sheet.gapMm, pin_gap_mm: CONFIG.pinGapMm, kc_gap_mm: CONFIG.kcGapMm, contact_on: CONFIG.contactOn, contact_email: CONFIG.contactEmail, contact_phone: CONFIG.contactPhone, free_on: CONFIG.freeOn, smooth_cut: CONFIG.smoothCut, show_signal: CONFIG.showSignal, lockdown: CONFIG.lockdown, free_min_mm: CONFIG.freeMinMm, free_max: CONFIG.freeMax, free_gap_mm: CONFIG.freeGapMm, max_reschedules: CONFIG.maxReschedules, refund_days: CONFIG.refundDays, notice: { ...CONFIG.notice },
-    allow_custom_pickup: CONFIG.allowCustomPickup, lead_days: CONFIG.leadDays, feedback_on: CONFIG.feedbackOn, rush_on: CONFIG.rushOn, rush_make: CONFIG.rushMake, rush_cutoff_hour: CONFIG.rushCutoff, max_rush_per_day: CONFIG.maxRushPerDay, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
+    allow_custom_pickup: CONFIG.allowCustomPickup, classroom_pickup: CONFIG.classroomOn, lead_days: CONFIG.leadDays, feedback_on: CONFIG.feedbackOn, rush_on: CONFIG.rushOn, rush_make: CONFIG.rushMake, rush_cutoff_hour: CONFIG.rushCutoff, max_rush_per_day: CONFIG.maxRushPerDay, dates_to_show: CONFIG.datesToShow, no_pickup_dates: CONFIG.noPickupDates.slice(),
     grades: CONFIG.grades.slice(), gcash: { ...CONFIG.gcash }, cleanup_days: CONFIG.cleanupDays, max_pictures: CONFIG.maxPictures, max_noshows: CONFIG.maxNoShows,
     max_qty: Object.fromEntries(['pins', 'posters', 'keychains'].map(k => [k, maxQtyFor(k)])),
     sizes: { pins: Object.fromEntries(CONFIG.products.pins.sizes.map(z => [z.id, { faceMm: z.faceMm, cutMm: z.cutMm }])),
@@ -7581,6 +7575,7 @@ function drawShopForm(){
     <div class="cfgsec"><div class="sub">Pickup places</div>
       ${c.pickup_places.map((pl, i) => `<div class="cfgrow two"><input class="inp" data-pp="${i}" value="${esc(pl)}" placeholder="Like Gate 1" aria-label="Pickup place">${smallBtn('', 'trash', 'cfgDelPlace', 'plain', `data-i="${i}" aria-label="Remove place"`)}</div>`).join('')}
       ${smallBtn('Add a place', 'plus', 'cfgAddPlace', 'plain')}
+      <label class="switch" style="margin-top:10px"><input type="checkbox" data-cfgbool="classroom_pickup" ${c.classroom_pickup !== false ? 'checked' : ''}><span>Offer delivery to the customer’s classroom</span></label>
       <label class="switch" style="margin-top:10px"><input type="checkbox" data-cfgbool="allow_custom_pickup" ${c.allow_custom_pickup ? 'checked' : ''}><span>Let customers type another spot in school</span></label></div>
 
     <div class="cfgsec"><div class="sub">Pickup dates</div>
@@ -8445,243 +8440,23 @@ async function templateImage(file){   // logos stay sharp PNGs (see-through kept
   if (/png|webp|gif|svg/.test(file.type)) { const px = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; for (let i = 3; i < px.length; i += 16) if (px[i] < 250) { clear = true; break; } }
   return clear ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', 0.92);
 }
-/* =====================================================================
-   Weekly post maker: photos of this week's finished orders become a slideshow for Instagram or Facebook.
-   A cover, one slide per photo, an ending slide with prices and a QR code. Three looks, three sizes.
-   Everything is drawn here in the browser; nothing is uploaded.
-   ===================================================================== */
-const POST_FMT = { post: [1080, 1350, 'Post', '4:5'], story: [1080, 1920, 'Story', '9:16'], square: [1080, 1080, 'Square', '1:1'] };
-const POST_LOOKS = [['board', 'Sticker board', 'Photos as stickers on the cutting mat'], ['instant', 'Instant photo', 'Each photo in an instant-photo frame'], ['clean', 'Clean', 'Big photo with a navy caption band']];
-function postWeek(){ const d = new Date(), a = new Date(d); a.setDate(d.getDate() - (d.getDay() + 6) % 7); const b = new Date(a); b.setDate(a.getDate() + 6);
-  const m = x => x.toLocaleDateString('en-PH', { month: 'short' }); return a.getMonth() === b.getMonth() ? `${m(a)} ${a.getDate()}–${b.getDate()}` : `${m(a)} ${a.getDate()} – ${m(b)} ${b.getDate()}`; }
-const postState = () => S.post || (S.post = { photos: [], title: `This week at ${CONFIG.shopName}`, dates: postWeek(), look: 'board', fmt: 'post', cover: true, end: true, slides: [] });
-// ----- drawing helpers (x: canvas context) -----
-const PF = { disp: () => FX_FONTS.bold[1], body: () => FX_FONTS.clean[1], hand: () => wordFont('hand')[1] };
-// the new logo, drawn from the same traced artwork as the site header
-let PM_LOGO = null;
-function pmLogoImage(){
-  if (PM_LOGO) return Promise.resolve(PM_LOGO);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="36.5 6 534.5 213.8">${LOGO_FULL}</svg>`, img = new Image();
-  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-  return img.decode().then(() => (PM_LOGO = img)).catch(() => null);
-}
-function pmLogo(x, cx, cy, h){ if (!PM_LOGO) return; const w = h * 534.5 / 213.8; x.drawImage(PM_LOGO, cx - w / 2, cy - h / 2, w, h); }
-function pmRound(x, X, Y, W, H, r){ x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + W, Y, X + W, Y + H, r); x.arcTo(X + W, Y + H, X, Y + H, r); x.arcTo(X, Y + H, X, Y, r); x.arcTo(X, Y, X + W, Y, r); x.closePath(); }
-function pmCover(x, img, X, Y, W, H){ const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height, s = Math.max(W / iw, H / ih); x.drawImage(img, X + (W - iw * s) / 2, Y + (H - ih * s) / 2, iw * s, ih * s); }
-function pmFit(x, text, maxW, size, weight, fam){ let s = size; x.font = `${weight} ${s}px ${fam}`; while (x.measureText(text).width > maxW && s > 12) { s *= 0.94; x.font = `${weight} ${s}px ${fam}`; } return s; }
-function pmWrap(x, text, maxW){ const words = String(text).split(/\s+/), lines = []; let l = ''; for (const w of words) { const t = l ? l + ' ' + w : w; if (x.measureText(t).width > maxW && l) { lines.push(l); l = w; } else l = t; } if (l) lines.push(l); return lines; }
-// a faint paper grain, so slides feel printed rather than flat
-let PM_GRAIN = null;
-function pmGrain(x, W, H, dark){
-  if (!PM_GRAIN) { const c = document.createElement('canvas'); c.width = c.height = 220; const g = c.getContext('2d'), d = g.createImageData(220, 220);
-    for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; } g.putImageData(d, 0, 0); PM_GRAIN = c; }
-  x.save(); x.globalAlpha = dark ? 0.06 : 0.045; x.globalCompositeOperation = 'overlay'; x.fillStyle = x.createPattern(PM_GRAIN, 'repeat'); x.fillRect(0, 0, W, H); x.restore();
-}
-// a hand-drawn marker swipe behind a line of text
-function pmMarker(x, X, Y, w, h, color){
-  x.save(); x.globalAlpha = 0.9; x.fillStyle = color; x.beginPath();
-  x.moveTo(X - 8, Y + h * 0.18); x.quadraticCurveTo(X + w * 0.5, Y - h * 0.06, X + w + 10, Y + h * 0.1);
-  x.lineTo(X + w + 4, Y + h * 0.92); x.quadraticCurveTo(X + w * 0.45, Y + h * 1.04, X - 4, Y + h * 0.86); x.closePath(); x.fill(); x.restore();
-}
-// a hand-drawn arrow, for "swipe" and "scan me"
-function pmArrow(x, x1, y1, cx, cy, x2, y2, color, lw){
-  x.save(); x.strokeStyle = color; x.lineWidth = lw; x.lineCap = 'round'; x.lineJoin = 'round';
-  x.beginPath(); x.moveTo(x1, y1); x.quadraticCurveTo(cx, cy, x2, y2); x.stroke();
-  const a = Math.atan2(y2 - cy, x2 - cx), L = lw * 4.2; x.beginPath(); x.moveTo(x2 - L * Math.cos(a - 0.5), y2 - L * Math.sin(a - 0.5)); x.lineTo(x2, y2); x.lineTo(x2 - L * Math.cos(a + 0.5), y2 - L * Math.sin(a + 0.5)); x.stroke(); x.restore();
-}
-const pmWeekNo = () => { const d = new Date(), t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())), day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); return Math.ceil(((t - Date.UTC(t.getUTCFullYear(), 0, 1)) / 864e5 + 1) / 7); };
-function pmBg(x, W, H, look){
-  if (look === 'clean') { x.fillStyle = '#283971'; x.fillRect(0, 0, W, H); pmGrain(x, W, H, true); return; }
-  if (look === 'instant') { x.fillStyle = '#F2BC2E'; x.fillRect(0, 0, W, H); x.save(); x.globalAlpha = 0.12; x.strokeStyle = '#fff'; x.lineWidth = 30;
-    for (let k = -H; k < W + H; k += 110) { x.beginPath(); x.moveTo(k, 0); x.lineTo(k + H, H); x.stroke(); } x.restore(); pmGrain(x, W, H); return; }
-  x.fillStyle = '#F4F5FA'; x.fillRect(0, 0, W, H); x.fillStyle = 'rgba(40,57,113,.13)';
-  for (let yy = 20; yy < H; yy += 40) for (let xx = 20; xx < W; xx += 40) { x.beginPath(); x.arc(xx, yy, 2.4, 0, 7); x.fill(); }
-  const bits = [['star', '#F2BC2E', .08, .06, 60, -14], ['heart', '#ec282a', .92, .07, 52, 12], ['moon', '#3a52a3', .06, .5, 46, 16], ['bolt', '#F2BC2E', .94, .52, 46, -8]];
-  for (const [s, c, fx, fy, w, r] of bits) { x.save(); x.translate(fx * W, fy * H); x.rotate(r * Math.PI / 180); x.scale(w / 24, w / 24); x.translate(-12, -12);
-    const p = new Path2D(LK_SHAPES[s]); x.lineJoin = 'round'; x.save(); x.translate(1.4, 1.6); x.fillStyle = '#283971'; x.strokeStyle = '#283971'; x.lineWidth = 3; x.stroke(p); x.fill(p); x.restore();
-    x.strokeStyle = '#fff'; x.lineWidth = 3; x.stroke(p); x.fillStyle = c; x.fill(p); x.restore(); }
-  pmGrain(x, W, H);
-}
-// a photo as a die-cut sticker, taped on
-function pmSticker(x, img, cx, cy, w, h, rot, tape = true){
-  const pad = Math.max(10, w * 0.032), r = w * 0.05;
-  x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180);
-  pmRound(x, -w / 2 - pad + 8, -h / 2 - pad + 10, w + pad * 2, h + pad * 2, r + pad); x.fillStyle = '#283971'; x.fill();
-  pmRound(x, -w / 2 - pad, -h / 2 - pad, w + pad * 2, h + pad * 2, r + pad); x.fillStyle = '#fff'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#283971'; x.stroke();
-  x.save(); pmRound(x, -w / 2, -h / 2, w, h, r); x.clip(); pmCover(x, img, -w / 2, -h / 2, w, h); x.restore();
-  if (tape) { x.save(); x.translate(0, -h / 2 - pad); x.rotate(-0.05); const tw = Math.min(200, w * 0.38), th = Math.max(34, w * 0.065); x.globalAlpha = 0.9;
-    x.beginPath(); x.rect(-tw / 2, -th / 2, tw, th); x.clip(); for (let k = -tw; k < tw; k += 26) { x.fillStyle = (k / 26) % 2 ? '#FFF3D1' : '#F2BC2E'; x.beginPath(); x.moveTo(k, -th); x.lineTo(k + 13, -th); x.lineTo(k + 13 + th * 2, th); x.lineTo(k + th * 2, th); x.fill(); } x.restore(); }
-  x.restore();
-}
-// a photo in an instant-photo frame (54 x 86 mm proportions), caption in handwriting
-function pmInstant(x, img, cx, cy, w, rot, caption){
-  const h = w * 86 / 54, k = w / 54;
-  x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180);
-  x.shadowColor = 'rgba(40,57,113,.32)'; x.shadowBlur = 34; x.shadowOffsetY = 14; x.fillStyle = '#fff'; x.fillRect(-w / 2, -h / 2, w, h); x.shadowColor = 'transparent';
-  x.save(); x.beginPath(); x.rect(-w / 2 + 4 * k, -h / 2 + 6 * k, 46 * k, 62 * k); x.clip(); pmCover(x, img, -w / 2 + 4 * k, -h / 2 + 6 * k, 46 * k, 62 * k); x.restore();
-  if (caption) { x.fillStyle = '#283971'; x.textAlign = 'center'; x.textBaseline = 'middle'; pmFit(x, caption, 44 * k, 9.5 * k, 700, PF.hand()); x.fillText(caption, 0, -h / 2 + 77 * k); }
-  x.restore();
-}
-function pmPill(x, text, X, Y, bg, fg, size){ x.font = `800 ${size}px ${PF.disp()}`; const w = x.measureText(text).width + size * 1.4, h = size * 1.9;
-  pmRound(x, X, Y, w, h, h / 2); x.fillStyle = bg; x.fill(); x.fillStyle = fg; x.textAlign = 'left'; x.textBaseline = 'middle'; x.fillText(text, X + size * 0.7, Y + h / 2 + 1); return w; }
-function pmTag(x, text, cx, cy, rot, dark){   // the product as a small gold sticker
-  x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180); x.font = `800 30px ${PF.disp()}`; const w = x.measureText(text).width + 44, h = 58;
-  pmRound(x, -w / 2 + 4, -h / 2 + 5, w, h, h / 2); x.fillStyle = '#283971'; x.fill(); pmRound(x, -w / 2, -h / 2, w, h, h / 2); x.fillStyle = '#F2BC2E'; x.fill();
-  x.lineWidth = 3.5; x.strokeStyle = dark ? '#fff' : '#283971'; x.stroke(); x.fillStyle = '#283971'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, 0, 2); x.restore();
-}
-function pmLabel(x, text, cx, cy, maxW, rot, size){   // a caption on a white label sticker
-  x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180); const s = pmFit(x, text, maxW - 60, size, 800, PF.disp()), w = Math.min(maxW, x.measureText(text).width + s * 1.4), h = s * 1.9;
-  pmRound(x, -w / 2 + 7, -h / 2 + 8, w, h, 22); x.fillStyle = '#283971'; x.fill(); pmRound(x, -w / 2, -h / 2, w, h, 22); x.fillStyle = '#fff'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#283971'; x.stroke();
-  x.fillStyle = '#283971'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, 0, 2); x.restore();
-}
-// footer: the site on the left, carousel dots on the right (where you are in the swipe)
-function pmFoot(x, W, H, look, n, total){
-  const dark = look === 'clean', ink = dark ? 'rgba(255,255,255,.9)' : '#283971';
-  x.font = `700 30px ${PF.body()}`; x.textBaseline = 'middle'; x.textAlign = 'left'; x.fillStyle = ink; x.fillText(postSite(), 64, H - 64);
-  if (total > 1) { const r = 7, gap = 24, x0 = W - 64 - (total - 1) * gap;
-    for (let i = 0; i < total; i++) { x.beginPath(); if (i + 1 === n) { pmRound(x, x0 + i * gap - r - 6, H - 64 - r, r * 2 + 12, r * 2, r); x.fillStyle = dark ? '#F2BC2E' : look === 'instant' ? '#283971' : '#F2BC2E'; }
-      else { x.arc(x0 + i * gap, H - 64, r * 0.75, 0, 7); x.fillStyle = dark ? 'rgba(255,255,255,.35)' : 'rgba(40,57,113,.25)'; } x.fill(); } }
-}
-const postSite = () => String(CONFIG.siteUrl || 'stick2it.me').replace(/^https?:\/\//, '').replace(/\/$/, '');
-// ----- the slides -----
-function pmCoverSlide(x, W, H, st, total){
-  const look = st.look, ph = st.photos.slice(0, 3), dark = look === 'clean', ink = dark ? '#fff' : '#283971';
-  pmBg(x, W, H, look); pmLogo(x, W / 2, 124, 108);
-  // the title, with a marker swipe behind its last line
-  x.textAlign = 'center'; x.textBaseline = 'alphabetic';
-  const ts = pmFit(x, st.title, W - 170, 108, 800, PF.disp()), lines = pmWrap(x, st.title, W - 170).slice(0, 3);
-  let y = 236 + ts;
-  lines.forEach((l, i) => { if (i === lines.length - 1) { const lw = x.measureText(l).width; pmMarker(x, W / 2 - lw / 2, y - ts * 0.42, lw, ts * 0.5, dark ? 'rgba(58,82,163,.95)' : look === 'instant' ? 'rgba(255,255,255,.7)' : 'rgba(242,188,46,.75)'); }
-    x.fillStyle = ink; x.font = `800 ${ts}px ${PF.disp()}`; x.fillText(l, W / 2, y); y += ts * 1.02; });
-  // week badge and dates, side by side
-  x.font = `800 36px ${PF.disp()}`; const wk = `Week ${pmWeekNo()}`, ww = x.measureText(wk).width + 48, dw = x.measureText(st.dates).width + 48, gap = 14, X = W / 2 - (ww + gap + dw) / 2, Y = y - 4;
-  pmPill(x, wk, X, Y, dark ? '#fff' : '#283971', dark ? '#283971' : '#fff', 36); pmPill(x, st.dates, X + ww + gap, Y, '#F2BC2E', '#283971', 36);
-  if (look !== 'clean') { pmRound(x, X + ww + gap, Y, dw, 68, 34); x.lineWidth = 3; x.strokeStyle = '#283971'; x.stroke(); }
-  const top = Y + 120, room = H - top - 170, n = ph.length;
-  if (n) {
-    const pw = Math.min(W * (n === 1 ? 0.6 : n === 2 ? 0.42 : 0.34), room * (look === 'instant' ? 0.6 : 0.88)), rots = n === 1 ? [-3] : n === 2 ? [-6, 5] : [-8, 3, 8], xs = n === 1 ? [0.5] : n === 2 ? [0.33, 0.67] : [0.25, 0.5, 0.75];
-    ph.forEach((p, i) => { const cx = xs[i] * W, cy = top + room / 2 + (n === 3 && i === 1 ? -room * 0.07 : room * 0.03);
-      if (look === 'instant') pmInstant(x, p.img, cx, cy, pw * 0.86, rots[i], p.caption || '');
-      else if (look === 'clean') { x.save(); x.translate(cx, cy); x.rotate(rots[i] * Math.PI / 360); pmRound(x, -pw / 2, -pw * 0.62, pw, pw * 1.24, 26); x.save(); x.clip(); pmCover(x, p.img, -pw / 2, -pw * 0.62, pw, pw * 1.24); x.restore(); x.lineWidth = 8; x.strokeStyle = '#fff'; x.stroke(); x.restore(); }
-      else pmSticker(x, p.img, cx, cy, pw, pw * 1.18, rots[i], i === n - 1); });
-  }
-  // a handwritten nudge to swipe
-  x.font = `700 46px ${PF.hand()}`; x.textAlign = 'right'; x.textBaseline = 'middle'; x.fillStyle = ink;
-  const sw = st.photos.length ? 'swipe for the good stuff' : 'add photos to fill this post', tx = W - 150; x.fillText(sw, tx, H - 132);
-  if (st.photos.length) pmArrow(x, tx + 14, H - 140, tx + 70, H - 168, tx + 92, H - 120, dark ? '#F2BC2E' : '#283971', 5);
-  pmFoot(x, W, H, look, 1, total);
-}
-function pmPhotoSlide(x, W, H, st, p, n, total){
-  const look = st.look; pmBg(x, W, H, look);
-  if (look === 'clean') {
-    const band = Math.round(H * (p.caption ? 0.22 : 0.14)); pmCover(x, p.img, 0, 0, W, H - band);
-    const gr = x.createLinearGradient(0, H - band - 180, 0, H - band); gr.addColorStop(0, 'rgba(40,57,113,0)'); gr.addColorStop(1, 'rgba(40,57,113,.45)'); x.fillStyle = gr; x.fillRect(0, H - band - 180, W, 180);
-    x.fillStyle = '#283971'; x.fillRect(0, H - band, W, band); pmGrain(x, W, H, true); pmLogo(x, 64 + 92, 74, 72);
-    if (p.tag) pmTag(x, p.tag, W - 64 - 90, H - band - 2, -4, true);
-    if (p.caption) { x.fillStyle = '#fff'; x.textAlign = 'left'; x.textBaseline = 'alphabetic'; pmFit(x, p.caption, W - 128, 60, 800, PF.disp()); x.fillText(p.caption, 64, H - band + 110); }
-    pmFoot(x, W, H, look, n, total); return;
-  }
-  pmLogo(x, W / 2, 104, 86);
-  const capRoom = p.caption && look !== 'instant' ? 170 : 40, top = 190, room = H - top - capRoom - 140;
-  if (look === 'instant') { const w = Math.min(W * 0.66, room * 54 / 86); pmInstant(x, p.img, W / 2, top + room / 2 + 10, w, n % 2 ? -2.5 : 2.5, p.caption || '');
-    if (p.tag) pmTag(x, p.tag, W / 2 + w * 0.42, top + 16, 6); }
-  else { const w = Math.min(W * 0.76, room * 0.88), h = Math.min(room, w * 1.18), cy = top + room / 2 + 14; pmSticker(x, p.img, W / 2, cy, w, h, n % 2 ? -2 : 2);
-    if (p.tag) pmTag(x, p.tag, W / 2 + w / 2 - 30, cy - h / 2 + 26, 7);
-    if (p.caption) pmLabel(x, p.caption, W / 2, cy + h / 2 + 92, W - 160, n % 2 ? 1.5 : -1.5, 52); }
-  pmFoot(x, W, H, look, n, total);
-}
-function pmEndSlide(x, W, H, st, qr, total){
-  const look = st.look, dark = look === 'clean', ink = dark ? '#fff' : '#283971'; pmBg(x, W, H, look); pmLogo(x, W / 2, 124, 108);
-  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; const s = pmFit(x, 'Make yours', W - 160, 116, 800, PF.disp()), tw = x.measureText('Make yours').width;
-  pmMarker(x, W / 2 - tw / 2, 236 + s * 0.58, tw, s * 0.5, dark ? 'rgba(58,82,163,.95)' : look === 'instant' ? 'rgba(255,255,255,.7)' : 'rgba(242,188,46,.75)');
-  x.fillStyle = ink; x.font = `800 ${s}px ${PF.disp()}`; x.fillText('Make yours', W / 2, 236 + s);
-  x.font = `600 34px ${PF.body()}`; x.fillStyle = dark ? 'rgba(255,255,255,.88)' : '#283971';
-  pmWrap(x, 'Stickers, pins and more from your own pictures, picked up at school.', W - 240).slice(0, 2).forEach((l, i) => x.fillText(l, W / 2, 300 + s + i * 44));
-  const list = liveProducts().slice(0, 6), short = H < 1200, rowH = short ? 54 : 62, cardW = W - 220, top = 380 + s, cardH = list.length * rowH + 32;
-  pmRound(x, 110 + 8, top + 10, cardW, cardH, 30); x.fillStyle = '#283971'; x.fill(); pmRound(x, 110, top, cardW, cardH, 30); x.fillStyle = '#fff'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#283971'; x.stroke();
-  list.forEach((p, i) => { const yy = top + 16 + i * rowH + rowH / 2; x.textBaseline = 'middle'; x.textAlign = 'left'; x.fillStyle = '#283971'; x.font = `700 ${short ? 34 : 38}px ${PF.body()}`; x.fillText(p.name, 150, yy);
-    x.textAlign = 'right'; x.font = `800 ${short ? 36 : 40}px ${PF.disp()}`; x.fillText(`${liveSizes(p.key).length > 1 ? 'from ' : ''}${money(fromPrice(p.key))}`, W - 150, yy);
-    if (i < list.length - 1) { x.fillStyle = 'rgba(40,57,113,.13)'; x.fillRect(150, yy + rowH / 2, cardW - 80, 2); } });
-  // the QR code as a peel-off sticker, with a handwritten "scan me!"
-  const qy = top + cardH + 46, qs = Math.min(250, H - qy - 190);
-  if (qr && qs >= 150) {
-    const X = W / 2 - qs / 2 - 20, S = qs + 40, c = 34;
-    x.save(); x.translate(W / 2, qy + S / 2); x.rotate(-0.04); x.translate(-W / 2, -(qy + S / 2));
-    const path = () => { x.beginPath(); x.moveTo(X + 22, qy); x.lineTo(X + S - 22, qy); x.quadraticCurveTo(X + S, qy, X + S, qy + 22); x.lineTo(X + S, qy + S - c); x.lineTo(X + S - c, qy + S); x.lineTo(X + 22, qy + S); x.quadraticCurveTo(X, qy + S, X, qy + S - 22); x.lineTo(X, qy + 22); x.quadraticCurveTo(X, qy, X + 22, qy); x.closePath(); };
-    x.save(); x.translate(7, 9); path(); x.fillStyle = '#283971'; x.fill(); x.restore(); path(); x.fillStyle = '#fff'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#283971'; x.stroke();
-    x.drawImage(qr, W / 2 - qs / 2, qy + 20, qs, qs);
-    x.beginPath(); x.moveTo(X + S, qy + S - c); x.quadraticCurveTo(X + S - c * 0.95, qy + S - c * 0.45, X + S - c, qy + S); x.quadraticCurveTo(X + S - c * 0.55, qy + S - c * 0.55, X + S, qy + S - c); x.closePath();
-    x.fillStyle = '#DCE1EE'; x.fill(); x.lineWidth = 3; x.strokeStyle = '#283971'; x.stroke(); x.restore();
-    x.font = `700 48px ${PF.hand()}`; x.fillStyle = ink; x.textAlign = 'left'; x.textBaseline = 'middle'; const hx = W / 2 + qs / 2 + 48, hy = qy + 30; x.fillText('scan me!', hx, hy);
-    pmArrow(x, hx + 30, hy + 30, hx + 10, hy + 100, W / 2 + qs / 2 + 26, qy + S * 0.55, dark ? '#F2BC2E' : '#283971', 5);
-  }
-  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = ink; x.font = `800 48px ${PF.disp()}`; x.fillText(postSite(), W / 2, H - 120);
-  x.font = `600 30px ${PF.body()}`; x.fillStyle = dark ? 'rgba(255,255,255,.85)' : '#283971'; x.fillText('Follow us for new designs every week', W / 2, H - 74);
-}
-async function postRender(){
-  const st = postState(), [W, H] = POST_FMT[st.fmt];
-  await fxFontsReady(); wordFontsLoad(); await wordFontReady('hand'); await pmLogoImage();
-  let qr = null;
-  if (st.end && await needLib('qr')) { const d = document.createElement('div'); new QRCode(d, { text: CONFIG.siteUrl || location.origin, width: 360, height: 360, colorDark: '#283971', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); qr = d.querySelector('canvas'); }
-  const plan = [...(st.cover ? [{ k: 'cover' }] : []), ...st.photos.map(p => ({ k: 'photo', p })), ...(st.end ? [{ k: 'end' }] : [])];
-  st.slides = plan.map((s, i) => { const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
-    if (s.k === 'cover') pmCoverSlide(x, W, H, st, plan.length); else if (s.k === 'end') pmEndSlide(x, W, H, st, qr, plan.length); else pmPhotoSlide(x, W, H, st, s.p, i + 1, plan.length);
-    return c; });
-  return st.slides;
-}
-let postTimer = null;
-function postRefresh(){ clearTimeout(postTimer); postTimer = setTimeout(async () => { const box = $('#pmSlides'); if (!box) return; box.classList.add('busy'); await postRender(); drawPostSlides(); }, 250); }
-function drawPostSlides(){
-  const st = postState(), box = $('#pmSlides'); if (!box) return; box.classList.remove('busy');
-  const [W, H] = POST_FMT[st.fmt];
-  $('#pmCount').textContent = `${st.slides.length} slide${st.slides.length === 1 ? '' : 's'}`;
-  box.innerHTML = st.slides.map((c, i) => `<figure class="pm-slide" style="aspect-ratio:${W}/${H}"><img src="${c.toDataURL('image/jpeg', 0.8)}" alt="Slide ${i + 1}"><figcaption><span class="num">${i + 1}</span>${smallBtn('Save', 'download', 'pmSave', 'plain', `data-i="${i}" aria-label="Save slide ${i + 1}"`)}</figcaption></figure>`).join('');
+/* Weekly post maker: its own page (post-maker.html, uploaded next to index.html). Opening it from here hands over the live names and prices. */
+const PM_UNIT = { prints: 'a page', stickers: 'a sheet' };
+function postMakerUrl(){
+  const products = liveProducts().map(p => ({ key: p.key, name: p.name, price: fromPrice(p.key), unit: PM_UNIT[p.key] || 'each', ...(liveSizes(p.key).length > 1 ? { from: true } : {}) }));
+  const cfg = { shop: CONFIG.shopName, site: String(CONFIG.siteUrl || location.host).replace(/^https?:\/\//, '').replace(/\/$/, ''), products };
+  return 'post-maker.html#c=' + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(cfg)))));
 }
 function drawPostMaker(){
-  const st = postState(), body = $('#admBody');
   const okOrders = (S.admin.orders || []).filter(o => o.layout && o.layout.ok_to_post && Date.now() - new Date(o.created_at).getTime() < 8 * 864e5);
-  const tags = ['', ...liveProducts().map(p => p.name)];
-  body.innerHTML = `<div class="pm">
-    <section class="panel pm-set">
+  $('#admBody').innerHTML = `<section class="panel pmlaunch">
       <h3>Weekly post</h3>
-      <p class="help" style="margin:4px 0 14px">Turn photos of this week’s finished orders into a slideshow for Instagram or Facebook. Only post orders where the customer said OK.</p>
-      <div class="pm-grid"><label class="lab" for="pmTitle">Title<input class="inp" id="pmTitle" maxlength="48" value="${esc(st.title)}"></label>
-        <label class="lab" for="pmDates">Dates<input class="inp" id="pmDates" maxlength="30" value="${esc(st.dates)}"></label></div>
-      <p class="lab flab">Look</p>
-      <div class="pm-looks">${POST_LOOKS.map(([k, l, d]) => `<button type="button" class="pm-look ${st.look === k ? 'on' : ''}" data-act="pmLook" data-v="${k}" aria-pressed="${st.look === k}"><span class="pm-sw ${k}" aria-hidden="true"></span><b>${l}</b><small>${d}</small></button>`).join('')}</div>
-      <p class="lab flab">Size</p>
-      <div class="seg pm-fmt">${Object.entries(POST_FMT).map(([k, [w, h, l, r]]) => `<button type="button" class="${st.fmt === k ? 'on' : ''}" data-act="pmFmt" data-v="${k}">${l} <small>${r}</small></button>`).join('')}</div>
-      <div class="pm-sw2"><label class="switch"><input type="checkbox" id="pmCover" ${st.cover ? 'checked' : ''}><span>Cover slide</span></label><label class="switch"><input type="checkbox" id="pmEnd" ${st.end ? 'checked' : ''}><span>Ending slide with prices and QR code</span></label></div>
-      <p class="lab flab">Photos <span class="muted small" style="font-weight:500">${st.photos.length ? `${st.photos.length} added` : 'of finished orders'}</span></p>
-      <div class="pm-photos">${st.photos.map((p, i) => `<div class="pm-ph"><img src="${p.url}" alt="">
-          <div class="pm-ph-f"><input class="inp" data-pmcap="${i}" maxlength="40" value="${esc(p.caption || '')}" placeholder="Caption, like: Class pins for 8-Rose" aria-label="Caption for photo ${i + 1}">
-            <select class="inp" data-pmtag="${i}" aria-label="Product for photo ${i + 1}">${tags.map(t => `<option value="${esc(t)}" ${p.tag === t ? 'selected' : ''}>${t ? esc(t) : 'No product tag'}</option>`).join('')}</select></div>
-          <div class="pm-ph-a"><button type="button" class="iconbtn" data-act="pmMove" data-i="${i}" data-d="-1" aria-label="Move up" ${i === 0 ? 'disabled' : ''}>${ic('back', 16)}</button>
-            <button type="button" class="iconbtn" data-act="pmDel" data-i="${i}" aria-label="Remove photo">${ic('trash', 16)}</button></div></div>`).join('')}
-        <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>${st.photos.length ? 'Add more photos' : 'Add photos'}<small>Clear photos of finished stickers, pins and cards look best. Pick several at once.</small></span><input type="file" accept="image/*" multiple hidden id="pmIn"></label>
-      </div>
-      ${okOrders.length ? `<div class="pm-ok"><p class="lab" style="margin:0 0 6px">${ic('image', 16)} Said OK to post this week</p><ul>${okOrders.slice(0, 12).map(o => `<li><b>${esc(o.nickname)}</b> <span class="muted">${esc(o.code)}, ${esc(orderItems(o).map(itemTitle).join('; '))}</span></li>`).join('')}</ul></div>`
+      <p class="help" style="margin:4px 0 16px">Turn photos of this week’s finished orders into a slideshow for Instagram or Facebook. It opens in its own page with your current prices already in.</p>
+      <a class="btn" href="${postMakerUrl()}" target="_blank" rel="noopener">${ic('image', 20)}<span>Open the post maker</span></a>
+      ${okOrders.length ? `<div class="pm-ok"><p class="lab" style="margin:0 0 6px">${ic('image', 16)} Said OK to post this week</p><ul>${okOrders.slice(0, 15).map(o => `<li><b>${esc(o.nickname)}</b> <span class="muted">${esc(o.code)}, ${esc(orderItems(o).map(itemTitle).join('; '))}</span></li>`).join('')}</ul></div>`
         : `<p class="help pm-ok">No orders this week said OK to post yet. Customers can tick it at checkout.</p>`}
-    </section>
-    <section class="pm-out">
-      <div class="pm-bar"><b id="pmCount"></b><span class="pm-acts">${smallBtn('Share', 'share', 'pmShare', 'dark')}${smallBtn('Download all', 'download', 'pmAll', 'plain')}</span></div>
-      <div class="pm-slides" id="pmSlides"><p class="muted">Making your slides…</p></div>
-      <p class="help" style="margin-top:12px">${navigator.canShare ? 'Share sends all the slides to Instagram or Facebook as one post.' : 'Download all saves the slides in one zip file. On your phone, Share sends them straight to Instagram or Facebook.'}</p>
-    </section></div>`;
-  $('#pmIn').addEventListener('change', async e => { const files = [...e.target.files].filter(f => f.type.startsWith('image/')); e.target.value = '';
-    for (const f of files) { const url = URL.createObjectURL(f), img = new Image(); img.src = url; try { await img.decode(); st.photos.push({ id: uid(), url, img, caption: '', tag: '' }); } catch { toast("One photo didn't open."); } }
-    drawPostMaker(); });
-  $('#pmTitle').addEventListener('input', e => { st.title = e.target.value; postRefresh(); });
-  $('#pmDates').addEventListener('input', e => { st.dates = e.target.value; postRefresh(); });
-  $('#pmCover').addEventListener('change', e => { st.cover = e.target.checked; postRefresh(); });
-  $('#pmEnd').addEventListener('change', e => { st.end = e.target.checked; postRefresh(); });
-  body.querySelectorAll('[data-pmcap]').forEach(i => i.addEventListener('input', () => { st.photos[+i.dataset.pmcap].caption = i.value; postRefresh(); }));
-  body.querySelectorAll('[data-pmtag]').forEach(i => i.addEventListener('change', () => { st.photos[+i.dataset.pmtag].tag = i.value; postRefresh(); }));
-  postRefresh();
+    </section>`;
 }
-async function postBlobs(){ const st = postState(); if (!st.slides.length) await postRender();
-  const slug = (st.dates || 'week').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '').toLowerCase();
-  return Promise.all(st.slides.map((c, i) => new Promise(r => c.toBlob(b => r({ blob: b, name: `stick2it-${slug}-${String(i + 1).padStart(2, '0')}.jpg` }), 'image/jpeg', 0.93)))); }
 function drawPosters(){
   const base = CONFIG.siteUrl || (location.origin + location.pathname);
   const bad = !CONFIG.siteUrl && !/^https?:/.test(location.origin);
@@ -8941,7 +8716,7 @@ const ACTIONS = {
   fdImg: t => { setTimeout(() => { if (S.fd) { posterRegrid(S.fd); drawFramed(); } }, 0); const d = activeDesign(); if (!d) return; Object.assign(d, { imageId: t.dataset.id, zoom: 1, ox: 0, oy: 0 }); drawFramed(); },
   fdSide: t => { S.fd.side = t.dataset.side; drawFramed(); },
   ppFlip: t => { const f = S.fd; f.ppFlip = !f.ppFlip; const tl = $('#ppTilt'); if (tl) tl.classList.toggle('flip', f.ppFlip);
-    t.setAttribute('aria-pressed', f.ppFlip); t.querySelector('span').textContent = f.ppFlip ? 'Show the front' : 'Flip it'; buzz(5); },
+    t.setAttribute('aria-pressed', f.ppFlip); t.querySelector('span').textContent = f.ppFlip ? 'Flip back' : 'Flip it'; buzz(5); },
   fdPick: t => { const i = +t.dataset.i; if (i === S.fd.cur) return; fdLoad(i); buzz(5); drawFramed(); },
   fdDup: () => { const f = S.fd; fdSync(); const e = clone(fdEntry(f)); e.side = 'front'; f.batch.splice(f.cur + 1, 0, e); f.cur++; Object.assign(f, f.batch[f.cur]);
     toast(`Copied. Change this copy, or keep it as it is.`); drawFramed(); },
@@ -9098,7 +8873,7 @@ const ACTIONS = {
     const form = $('#orderForm');
     if (n === 2 && form && !S.addTo && !S.coPerson && radio(form, 'pdate') && !radio(form, 'ptime')) { setErr(null, 'e-where', 'Every pickup time on that day is full. Pick another day.'); return; }
     if (n === 2 && xuNeeded()) { setErr(null, 'e-where', 'Pickup at school needs your XU account. Sign in in step 1, or pick up from a person.'); return; }
-    const bad = n === 1 ? ['e-nick', 'e-sec'] : ['e-place', 'e-pother'];
+    const bad = n === 1 ? ['e-nick', 'e-sec'] : ['e-place', 'e-pother', 'e-room'];
     if (bad.some(id => $('#' + id) && $('#' + id).textContent)) { const f = $('#orderForm [aria-invalid="true"]'); if (f) f.focus(); return; }
     S.coStep = n + 1 + (n === 1 && S.addTo ? 1 : 0); coRender(); buzz(6);   // an add-on skips Pickup
     const nx = document.querySelector(`.cstep[data-step="${n + 1}"]`); if (nx) nx.scrollIntoView({ block: 'start' });
@@ -9502,18 +9277,6 @@ const ACTIONS = {
     if (S.editing !== null) { S.cart[S.editing] = items[0]; S.editing = null; S.ph = null; buzz([10, 30, 10]); location.hash = '#/cart'; return; }
     S.ph = null; saveManyToCart(items);
   },
-  pmLook: t => { postState().look = t.dataset.v; drawPostMaker(); },
-  pmFmt: t => { postState().fmt = t.dataset.v; drawPostMaker(); },
-  pmMove: t => { const a = postState().photos, i = +t.dataset.i, j = i + +t.dataset.d; if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; drawPostMaker(); },
-  pmDel: t => { const a = postState().photos, i = +t.dataset.i; if (!armed(t, 'Tap again')) return; URL.revokeObjectURL(a[i].url); a.splice(i, 1); drawPostMaker(); },
-  pmSave: async t => { const files = await postBlobs(), f = files[+t.dataset.i]; if (f) saveBlob(f.blob, f.name); },
-  pmAll: async () => { if (!postState().photos.length) return toast('Add some photos first.'); toast('Packing your slides…'); const files = await postBlobs();
-    if (!(await needLib('zip'))) { files.forEach((f, i) => setTimeout(() => saveBlob(f.blob, f.name), i * 400)); return; }
-    const z = new JSZip(); files.forEach(f => z.file(f.name, f.blob)); saveBlob(await z.generateAsync({ type: 'blob' }), files[0].name.replace(/-01\.jpg$/, '.zip')); },
-  pmShare: async () => { if (!postState().photos.length) return toast('Add some photos first.');
-    const files = (await postBlobs()).map(f => new File([f.blob], f.name, { type: 'image/jpeg' }));
-    if (navigator.canShare && navigator.canShare({ files })) { try { await navigator.share({ files, title: postState().title }); } catch (e) { if (e && e.name !== 'AbortError') toast("Couldn't share. Try Download all."); } }
-    else toast("This browser can't share pictures. Use Download all, then post them."); },
   qrRawbt: () => { const c = thermalQr(prnWidth()); if (!c) return toast('Make the QR code first.'); toast('Opening RawBT…'); rawbtImage(c); },
   rawbtTest: () => { const line = '-'.repeat(prnWidth() === 576 ? 48 : 32), now = new Date().toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' });
     toast('Opening RawBT…');
