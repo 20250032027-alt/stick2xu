@@ -3877,10 +3877,11 @@ function viewHome(){
         ${printsLive() ? `
         <h1>Print it, stick it, get it at school.</h1>
         <p class="lead">Send your files tonight and get them printed by tomorrow, or turn your pictures into ${others.length ? 'stickers, pins and more' : 'sticker sheets'}. We bring it all to you at school.</p>
-        <div class="paths">
-          <a class="path" href="${designRoute('prints')}"><span class="pi">${ic('printer', 22)}</span><span><b>Print a file</b><small>${money(printFrom())} a page, ready tomorrow</small></span>${ic('arrow', 18)}</a>
-          <a class="path" href="#/shop"><span class="pi">${ic('sparkle', 22)}</span><span><b>Make stickers and more</b><small>${others.length ? 'Stickers, pins, photo cards' : 'Sticker sheets from your pictures'}</small></span>${ic('arrow', 18)}</a>
-        </div>` : `
+        <div class="heroacts">
+          ${btn('Start designing', { href: '#/shop' })}
+          <a class="pilllink" href="#/status">${ic('search', 18)}Check my order</a>
+        </div>
+        <p class="printhint">${ic('printer', 17)}<span>Just need to print a document? <a href="${designRoute('prints')}">Print a file</a>, from ${money(printFrom())} a page.</span></p>` : `
         <h1>${others.length ? 'Turn your pictures into stickers and more.' : 'Turn your pictures into a sticker sheet.'}</h1>
         <p class="lead">${others.length ? 'We print them, and you pick them up at school.' : 'Pick your pics, make them tiny or huge, and we print the whole sheet for you. You pick it up at school.'}</p>
         <div class="heroacts">
