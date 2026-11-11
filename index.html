@@ -3592,12 +3592,12 @@ async function xuSignIn(){
 function xuBoxHTML(){
   if (S.linkPerson) return '';   // came through a pickup person's link: no XU sign-in needed
   if (S.me) return `<div class="xuchip">${ic('check', 18)}<span>Signed in as <b>${esc(S.me.email)}</b></span><button type="button" class="linkbtn" data-act="xuOut">Not you?</button></div>`;
-  const note = `<p class="xunote">${ic('school', 16)}<span>For <b>XU uptown</b> students (Pueblo de Oro): grade school, junior high, and senior high.</span></p>`;
+  const note = '';   // the "For XU uptown students" line was removed on request
   if (inAppBrowser()) return `<div class="xubox">${note}<p class="xuapp"><b>Open this page in Safari or Chrome to ${CONFIG.requireXu ? 'order' : 'sign in'}.</b> Google doesn't allow sign-in inside apps like TikTok or Facebook. Tap the <b>⋯</b> menu and choose "Open in browser", or copy the link.</p>
     <button type="button" class="pilllink" data-act="copySite">${ic('check', 16)}Copy link</button></div>`;
   return `<div class="xubox">${note}
-    <button type="button" class="gbtn" data-act="xuIn"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Continue with your XU account</button>
-    <p class="help" style="margin:6px 0 0">${CONFIG.requireXu ? (S.people.length ? 'Needed for pickup at school. Only accounts ending in <b>' + XU_DOMAIN + '</b> work.' : 'Required to order. Only school accounts ending in <b>' + XU_DOMAIN + '</b> work.') : 'Optional. Signing in keeps all your orders in one place, no codes needed.'}</p>
+    <button type="button" class="gbtn" data-act="xuIn"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Sign in with Google</button>
+    <p class="help" style="margin:6px 0 0">${CONFIG.requireXu ? (S.people.length ? 'Needed for pickup at school. Only accounts ending in <b>' + XU_DOMAIN + '</b> work.' : 'Required to order. Only school accounts ending in <b>' + XU_DOMAIN + '</b> work.') : 'Signing in keeps all your orders in one place and helps show you’re from XU.'}</p>
     <p class="ferr" id="e-xu" role="alert"></p></div>`;
 }
 // The sign-in window lands back here (?signin=1&code=...): finish, check it's a school account, tell the shop page, and close.
@@ -8432,35 +8432,59 @@ function postWeek(){ const d = new Date(), a = new Date(d); a.setDate(d.getDate(
 const postState = () => S.post || (S.post = { photos: [], title: `This week at ${CONFIG.shopName}`, dates: postWeek(), look: 'board', fmt: 'post', cover: true, end: true, slides: [] });
 // ----- drawing helpers (x: canvas context) -----
 const PF = { disp: () => FX_FONTS.bold[1], body: () => FX_FONTS.clean[1], hand: () => wordFont('hand')[1] };
-function pmMark(x, cx, cy, size, onDark){
-  x.save(); x.translate(cx, cy); x.rotate(-0.05); x.font = `800 ${size}px ${PF.disp()}`; x.textBaseline = 'middle'; x.lineJoin = 'round';
-  const parts = [['Stick', '#283971'], ['2', '#F2BC2E'], ['It', '#283971']], ws = parts.map(([t]) => x.measureText(t).width), W = ws.reduce((a, b) => a + b, 0); let px = -W / 2;
-  x.lineWidth = size * 0.22; x.strokeStyle = '#fff'; parts.forEach(([t], i) => { x.strokeText(t, px, 0); px += ws[i]; }); px = -W / 2;
-  parts.forEach(([t, c], i) => { x.fillStyle = c; x.fillText(t, px, 0); px += ws[i]; }); x.restore();
+// the new logo, drawn from the same traced artwork as the site header
+let PM_LOGO = null;
+function pmLogoImage(){
+  if (PM_LOGO) return Promise.resolve(PM_LOGO);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="36.5 6 534.5 213.8">${LOGO_FULL}</svg>`, img = new Image();
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  return img.decode().then(() => (PM_LOGO = img)).catch(() => null);
 }
+function pmLogo(x, cx, cy, h){ if (!PM_LOGO) return; const w = h * 534.5 / 213.8; x.drawImage(PM_LOGO, cx - w / 2, cy - h / 2, w, h); }
 function pmRound(x, X, Y, W, H, r){ x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + W, Y, X + W, Y + H, r); x.arcTo(X + W, Y + H, X, Y + H, r); x.arcTo(X, Y + H, X, Y, r); x.arcTo(X, Y, X + W, Y, r); x.closePath(); }
 function pmCover(x, img, X, Y, W, H){ const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height, s = Math.max(W / iw, H / ih); x.drawImage(img, X + (W - iw * s) / 2, Y + (H - ih * s) / 2, iw * s, ih * s); }
 function pmFit(x, text, maxW, size, weight, fam){ let s = size; x.font = `${weight} ${s}px ${fam}`; while (x.measureText(text).width > maxW && s > 12) { s *= 0.94; x.font = `${weight} ${s}px ${fam}`; } return s; }
 function pmWrap(x, text, maxW){ const words = String(text).split(/\s+/), lines = []; let l = ''; for (const w of words) { const t = l ? l + ' ' + w : w; if (x.measureText(t).width > maxW && l) { lines.push(l); l = w; } else l = t; } if (l) lines.push(l); return lines; }
+// a faint paper grain, so slides feel printed rather than flat
+let PM_GRAIN = null;
+function pmGrain(x, W, H, dark){
+  if (!PM_GRAIN) { const c = document.createElement('canvas'); c.width = c.height = 220; const g = c.getContext('2d'), d = g.createImageData(220, 220);
+    for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; } g.putImageData(d, 0, 0); PM_GRAIN = c; }
+  x.save(); x.globalAlpha = dark ? 0.06 : 0.045; x.globalCompositeOperation = 'overlay'; x.fillStyle = x.createPattern(PM_GRAIN, 'repeat'); x.fillRect(0, 0, W, H); x.restore();
+}
+// a hand-drawn marker swipe behind a line of text
+function pmMarker(x, X, Y, w, h, color){
+  x.save(); x.globalAlpha = 0.9; x.fillStyle = color; x.beginPath();
+  x.moveTo(X - 8, Y + h * 0.18); x.quadraticCurveTo(X + w * 0.5, Y - h * 0.06, X + w + 10, Y + h * 0.1);
+  x.lineTo(X + w + 4, Y + h * 0.92); x.quadraticCurveTo(X + w * 0.45, Y + h * 1.04, X - 4, Y + h * 0.86); x.closePath(); x.fill(); x.restore();
+}
+// a hand-drawn arrow, for "swipe" and "scan me"
+function pmArrow(x, x1, y1, cx, cy, x2, y2, color, lw){
+  x.save(); x.strokeStyle = color; x.lineWidth = lw; x.lineCap = 'round'; x.lineJoin = 'round';
+  x.beginPath(); x.moveTo(x1, y1); x.quadraticCurveTo(cx, cy, x2, y2); x.stroke();
+  const a = Math.atan2(y2 - cy, x2 - cx), L = lw * 4.2; x.beginPath(); x.moveTo(x2 - L * Math.cos(a - 0.5), y2 - L * Math.sin(a - 0.5)); x.lineTo(x2, y2); x.lineTo(x2 - L * Math.cos(a + 0.5), y2 - L * Math.sin(a + 0.5)); x.stroke(); x.restore();
+}
+const pmWeekNo = () => { const d = new Date(), t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())), day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); return Math.ceil(((t - Date.UTC(t.getUTCFullYear(), 0, 1)) / 864e5 + 1) / 7); };
 function pmBg(x, W, H, look){
-  if (look === 'clean') { x.fillStyle = '#283971'; x.fillRect(0, 0, W, H); return; }
-  if (look === 'instant') { x.fillStyle = '#F2BC2E'; x.fillRect(0, 0, W, H); x.save(); x.globalAlpha = 0.13; x.strokeStyle = '#fff'; x.lineWidth = 34;
-    for (let k = -H; k < W + H; k += 120) { x.beginPath(); x.moveTo(k, 0); x.lineTo(k + H, H); x.stroke(); } x.restore(); return; }
-  x.fillStyle = '#F4F5FA'; x.fillRect(0, 0, W, H); x.fillStyle = 'rgba(40,57,113,.14)';
-  for (let yy = 18; yy < H; yy += 40) for (let xx = 18; xx < W; xx += 40) { x.beginPath(); x.arc(xx, yy, 2.6, 0, 7); x.fill(); }
-  const bits = [['star', '#F2BC2E', .07, .05, 70, -14], ['heart', '#ec282a', .92, .06, 62, 12], ['bolt', '#F2BC2E', .95, .5, 54, -8], ['moon', '#3a52a3', .05, .52, 54, 16], ['star', '#3a52a3', .06, .84, 46, 8], ['heart', '#F2BC2E', .94, .84, 48, -12]];   // kept clear of the footer
+  if (look === 'clean') { x.fillStyle = '#283971'; x.fillRect(0, 0, W, H); pmGrain(x, W, H, true); return; }
+  if (look === 'instant') { x.fillStyle = '#F2BC2E'; x.fillRect(0, 0, W, H); x.save(); x.globalAlpha = 0.12; x.strokeStyle = '#fff'; x.lineWidth = 30;
+    for (let k = -H; k < W + H; k += 110) { x.beginPath(); x.moveTo(k, 0); x.lineTo(k + H, H); x.stroke(); } x.restore(); pmGrain(x, W, H); return; }
+  x.fillStyle = '#F4F5FA'; x.fillRect(0, 0, W, H); x.fillStyle = 'rgba(40,57,113,.13)';
+  for (let yy = 20; yy < H; yy += 40) for (let xx = 20; xx < W; xx += 40) { x.beginPath(); x.arc(xx, yy, 2.4, 0, 7); x.fill(); }
+  const bits = [['star', '#F2BC2E', .08, .06, 60, -14], ['heart', '#ec282a', .92, .07, 52, 12], ['moon', '#3a52a3', .06, .5, 46, 16], ['bolt', '#F2BC2E', .94, .52, 46, -8]];
   for (const [s, c, fx, fy, w, r] of bits) { x.save(); x.translate(fx * W, fy * H); x.rotate(r * Math.PI / 180); x.scale(w / 24, w / 24); x.translate(-12, -12);
-    const p = new Path2D(LK_SHAPES[s]); x.lineJoin = 'round'; x.save(); x.translate(1.6, 1.6); x.fillStyle = '#283971'; x.strokeStyle = '#283971'; x.lineWidth = 3; x.stroke(p); x.fill(p); x.restore();
+    const p = new Path2D(LK_SHAPES[s]); x.lineJoin = 'round'; x.save(); x.translate(1.4, 1.6); x.fillStyle = '#283971'; x.strokeStyle = '#283971'; x.lineWidth = 3; x.stroke(p); x.fill(p); x.restore();
     x.strokeStyle = '#fff'; x.lineWidth = 3; x.stroke(p); x.fillStyle = c; x.fill(p); x.restore(); }
+  pmGrain(x, W, H);
 }
 // a photo as a die-cut sticker, taped on
 function pmSticker(x, img, cx, cy, w, h, rot, tape = true){
-  const pad = Math.max(10, w * 0.035), r = w * 0.05;
+  const pad = Math.max(10, w * 0.032), r = w * 0.05;
   x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180);
-  pmRound(x, -w / 2 - pad + 9, -h / 2 - pad + 11, w + pad * 2, h + pad * 2, r + pad); x.fillStyle = '#283971'; x.fill();
+  pmRound(x, -w / 2 - pad + 8, -h / 2 - pad + 10, w + pad * 2, h + pad * 2, r + pad); x.fillStyle = '#283971'; x.fill();
   pmRound(x, -w / 2 - pad, -h / 2 - pad, w + pad * 2, h + pad * 2, r + pad); x.fillStyle = '#fff'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#283971'; x.stroke();
   x.save(); pmRound(x, -w / 2, -h / 2, w, h, r); x.clip(); pmCover(x, img, -w / 2, -h / 2, w, h); x.restore();
-  if (tape) { x.save(); x.translate(0, -h / 2 - pad); x.rotate(0.06); const tw = Math.min(220, w * 0.42), th = Math.max(34, w * 0.07); x.globalAlpha = 0.92;
+  if (tape) { x.save(); x.translate(0, -h / 2 - pad); x.rotate(-0.05); const tw = Math.min(200, w * 0.38), th = Math.max(34, w * 0.065); x.globalAlpha = 0.9;
     x.beginPath(); x.rect(-tw / 2, -th / 2, tw, th); x.clip(); for (let k = -tw; k < tw; k += 26) { x.fillStyle = (k / 26) % 2 ? '#FFF3D1' : '#F2BC2E'; x.beginPath(); x.moveTo(k, -th); x.lineTo(k + 13, -th); x.lineTo(k + 13 + th * 2, th); x.lineTo(k + th * 2, th); x.fill(); } x.restore(); }
   x.restore();
 }
@@ -8468,84 +8492,115 @@ function pmSticker(x, img, cx, cy, w, h, rot, tape = true){
 function pmInstant(x, img, cx, cy, w, rot, caption){
   const h = w * 86 / 54, k = w / 54;
   x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180);
-  x.shadowColor = 'rgba(40,57,113,.35)'; x.shadowBlur = 30; x.shadowOffsetY = 12; x.fillStyle = '#fff'; x.fillRect(-w / 2, -h / 2, w, h); x.shadowColor = 'transparent';
+  x.shadowColor = 'rgba(40,57,113,.32)'; x.shadowBlur = 34; x.shadowOffsetY = 14; x.fillStyle = '#fff'; x.fillRect(-w / 2, -h / 2, w, h); x.shadowColor = 'transparent';
   x.save(); x.beginPath(); x.rect(-w / 2 + 4 * k, -h / 2 + 6 * k, 46 * k, 62 * k); x.clip(); pmCover(x, img, -w / 2 + 4 * k, -h / 2 + 6 * k, 46 * k, 62 * k); x.restore();
-  if (caption) { x.fillStyle = '#283971'; x.textAlign = 'center'; x.textBaseline = 'middle'; const s = pmFit(x, caption, 44 * k, 9.5 * k, 700, PF.hand()); x.fillText(caption, 0, -h / 2 + 77 * k); }
+  if (caption) { x.fillStyle = '#283971'; x.textAlign = 'center'; x.textBaseline = 'middle'; pmFit(x, caption, 44 * k, 9.5 * k, 700, PF.hand()); x.fillText(caption, 0, -h / 2 + 77 * k); }
   x.restore();
 }
 function pmPill(x, text, X, Y, bg, fg, size){ x.font = `800 ${size}px ${PF.disp()}`; const w = x.measureText(text).width + size * 1.4, h = size * 1.9;
   pmRound(x, X, Y, w, h, h / 2); x.fillStyle = bg; x.fill(); x.fillStyle = fg; x.textAlign = 'left'; x.textBaseline = 'middle'; x.fillText(text, X + size * 0.7, Y + h / 2 + 1); return w; }
+function pmTag(x, text, cx, cy, rot, dark){   // the product as a small gold sticker
+  x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180); x.font = `800 30px ${PF.disp()}`; const w = x.measureText(text).width + 44, h = 58;
+  pmRound(x, -w / 2 + 4, -h / 2 + 5, w, h, h / 2); x.fillStyle = '#283971'; x.fill(); pmRound(x, -w / 2, -h / 2, w, h, h / 2); x.fillStyle = '#F2BC2E'; x.fill();
+  x.lineWidth = 3.5; x.strokeStyle = dark ? '#fff' : '#283971'; x.stroke(); x.fillStyle = '#283971'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, 0, 2); x.restore();
+}
 function pmLabel(x, text, cx, cy, maxW, rot, size){   // a caption on a white label sticker
   x.save(); x.translate(cx, cy); x.rotate(rot * Math.PI / 180); const s = pmFit(x, text, maxW - 60, size, 800, PF.disp()), w = Math.min(maxW, x.measureText(text).width + s * 1.4), h = s * 1.9;
   pmRound(x, -w / 2 + 7, -h / 2 + 8, w, h, 22); x.fillStyle = '#283971'; x.fill(); pmRound(x, -w / 2, -h / 2, w, h, 22); x.fillStyle = '#fff'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#283971'; x.stroke();
   x.fillStyle = '#283971'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, 0, 2); x.restore();
 }
+// footer: the site on the left, carousel dots on the right (where you are in the swipe)
 function pmFoot(x, W, H, look, n, total){
-  const dark = look === 'clean'; x.font = `700 30px ${PF.body()}`; x.textBaseline = 'alphabetic';
-  x.fillStyle = dark ? 'rgba(255,255,255,.85)' : '#283971'; x.textAlign = 'left'; x.fillText(postSite(), 56, H - 50);
-  if (total > 1) { x.textAlign = 'right'; x.fillText(`${n} / ${total}`, W - 56, H - 50); }
+  const dark = look === 'clean', ink = dark ? 'rgba(255,255,255,.9)' : '#283971';
+  x.font = `700 30px ${PF.body()}`; x.textBaseline = 'middle'; x.textAlign = 'left'; x.fillStyle = ink; x.fillText(postSite(), 64, H - 64);
+  if (total > 1) { const r = 7, gap = 24, x0 = W - 64 - (total - 1) * gap;
+    for (let i = 0; i < total; i++) { x.beginPath(); if (i + 1 === n) { pmRound(x, x0 + i * gap - r - 6, H - 64 - r, r * 2 + 12, r * 2, r); x.fillStyle = dark ? '#F2BC2E' : look === 'instant' ? '#283971' : '#F2BC2E'; }
+      else { x.arc(x0 + i * gap, H - 64, r * 0.75, 0, 7); x.fillStyle = dark ? 'rgba(255,255,255,.35)' : 'rgba(40,57,113,.25)'; } x.fill(); } }
 }
 const postSite = () => String(CONFIG.siteUrl || 'stick2it.me').replace(/^https?:\/\//, '').replace(/\/$/, '');
 // ----- the slides -----
-function pmCoverSlide(x, W, H, st){
-  const look = st.look, ph = st.photos.slice(0, 3), dark = look === 'clean', tall = H / W;
-  pmBg(x, W, H, look); pmMark(x, W / 2, 120, 64);
-  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = dark ? '#fff' : '#283971';
-  const ts = pmFit(x, st.title, W - 160, 112, 800, PF.disp()); const lines = pmWrap(x, st.title, W - 160).slice(0, 3);
-  let y = 210 + ts; lines.forEach(l => { x.fillText(l, W / 2, y); y += ts * 1.02; });
-  x.font = `800 40px ${PF.disp()}`; const dw = x.measureText(st.dates).width + 56; pmRound(x, W / 2 - dw / 2, y - 6, dw, 72, 36); x.fillStyle = dark ? '#F2BC2E' : look === 'instant' ? '#283971' : '#F2BC2E'; x.fill();
-  x.fillStyle = look === 'instant' ? '#fff' : '#283971'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(st.dates, W / 2, y + 31);
-  const top = y + 110, room = H - top - 120, n = ph.length;
+function pmCoverSlide(x, W, H, st, total){
+  const look = st.look, ph = st.photos.slice(0, 3), dark = look === 'clean', ink = dark ? '#fff' : '#283971';
+  pmBg(x, W, H, look); pmLogo(x, W / 2, 124, 108);
+  // the title, with a marker swipe behind its last line
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+  const ts = pmFit(x, st.title, W - 170, 108, 800, PF.disp()), lines = pmWrap(x, st.title, W - 170).slice(0, 3);
+  let y = 236 + ts;
+  lines.forEach((l, i) => { if (i === lines.length - 1) { const lw = x.measureText(l).width; pmMarker(x, W / 2 - lw / 2, y - ts * 0.42, lw, ts * 0.5, dark ? 'rgba(58,82,163,.95)' : look === 'instant' ? 'rgba(255,255,255,.7)' : 'rgba(242,188,46,.75)'); }
+    x.fillStyle = ink; x.font = `800 ${ts}px ${PF.disp()}`; x.fillText(l, W / 2, y); y += ts * 1.02; });
+  // week badge and dates, side by side
+  x.font = `800 36px ${PF.disp()}`; const wk = `Week ${pmWeekNo()}`, ww = x.measureText(wk).width + 48, dw = x.measureText(st.dates).width + 48, gap = 14, X = W / 2 - (ww + gap + dw) / 2, Y = y - 4;
+  pmPill(x, wk, X, Y, dark ? '#fff' : '#283971', dark ? '#283971' : '#fff', 36); pmPill(x, st.dates, X + ww + gap, Y, '#F2BC2E', '#283971', 36);
+  if (look !== 'clean') { pmRound(x, X + ww + gap, Y, dw, 68, 34); x.lineWidth = 3; x.strokeStyle = '#283971'; x.stroke(); }
+  const top = Y + 120, room = H - top - 170, n = ph.length;
   if (n) {
-    const pw = Math.min(W * (n === 1 ? 0.62 : n === 2 ? 0.44 : 0.36), room * (look === 'instant' ? 0.6 : 0.9)), rots = n === 1 ? [-3] : n === 2 ? [-7, 6] : [-9, 3, 9], xs = n === 1 ? [0.5] : n === 2 ? [0.32, 0.68] : [0.24, 0.5, 0.76];
-    ph.forEach((p, i) => { const cx = xs[i] * W, cy = top + room / 2 + (n === 3 && i === 1 ? -room * 0.08 : room * 0.04);
-      if (look === 'instant') pmInstant(x, p.img, cx, cy, pw * 0.85, rots[i], p.caption || '');
-      else if (look === 'clean') { x.save(); x.translate(cx, cy); x.rotate(rots[i] * Math.PI / 360); pmRound(x, -pw / 2, -pw * 0.62, pw, pw * 1.24, 28); x.save(); x.clip(); pmCover(x, p.img, -pw / 2, -pw * 0.62, pw, pw * 1.24); x.restore(); x.lineWidth = 8; x.strokeStyle = '#fff'; x.stroke(); x.restore(); }
+    const pw = Math.min(W * (n === 1 ? 0.6 : n === 2 ? 0.42 : 0.34), room * (look === 'instant' ? 0.6 : 0.88)), rots = n === 1 ? [-3] : n === 2 ? [-6, 5] : [-8, 3, 8], xs = n === 1 ? [0.5] : n === 2 ? [0.33, 0.67] : [0.25, 0.5, 0.75];
+    ph.forEach((p, i) => { const cx = xs[i] * W, cy = top + room / 2 + (n === 3 && i === 1 ? -room * 0.07 : room * 0.03);
+      if (look === 'instant') pmInstant(x, p.img, cx, cy, pw * 0.86, rots[i], p.caption || '');
+      else if (look === 'clean') { x.save(); x.translate(cx, cy); x.rotate(rots[i] * Math.PI / 360); pmRound(x, -pw / 2, -pw * 0.62, pw, pw * 1.24, 26); x.save(); x.clip(); pmCover(x, p.img, -pw / 2, -pw * 0.62, pw, pw * 1.24); x.restore(); x.lineWidth = 8; x.strokeStyle = '#fff'; x.stroke(); x.restore(); }
       else pmSticker(x, p.img, cx, cy, pw, pw * 1.18, rots[i], i === n - 1); });
   }
-  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.font = `700 34px ${PF.body()}`; x.fillStyle = dark ? 'rgba(255,255,255,.85)' : '#283971';
-  x.fillText(st.photos.length ? `${st.photos.length} thing${st.photos.length === 1 ? '' : 's'} we made this week. Swipe!` : 'Add photos to fill this post', W / 2, H - 56);
+  // a handwritten nudge to swipe
+  x.font = `700 46px ${PF.hand()}`; x.textAlign = 'right'; x.textBaseline = 'middle'; x.fillStyle = ink;
+  const sw = st.photos.length ? 'swipe for the good stuff' : 'add photos to fill this post', tx = W - 150; x.fillText(sw, tx, H - 132);
+  if (st.photos.length) pmArrow(x, tx + 14, H - 140, tx + 70, H - 168, tx + 92, H - 120, dark ? '#F2BC2E' : '#283971', 5);
+  pmFoot(x, W, H, look, 1, total);
 }
 function pmPhotoSlide(x, W, H, st, p, n, total){
   const look = st.look; pmBg(x, W, H, look);
   if (look === 'clean') {
-    const band = Math.round(H * (p.caption || p.tag ? 0.2 : 0.11)); pmCover(x, p.img, 0, 0, W, H - band);
-    x.fillStyle = '#283971'; x.fillRect(0, H - band, W, band); pmMark(x, 140, 84, 46);
-    if (p.tag) pmPill(x, p.tag, 56, H - band + 36, '#F2BC2E', '#283971', 30);
-    if (p.caption) { x.fillStyle = '#fff'; x.textAlign = 'left'; x.textBaseline = 'alphabetic'; const s = pmFit(x, p.caption, W - 112, 62, 800, PF.disp()); x.fillText(p.caption, 56, H - band + (p.tag ? 112 : 80) + s * 0.55); }
+    const band = Math.round(H * (p.caption ? 0.22 : 0.14)); pmCover(x, p.img, 0, 0, W, H - band);
+    const gr = x.createLinearGradient(0, H - band - 180, 0, H - band); gr.addColorStop(0, 'rgba(40,57,113,0)'); gr.addColorStop(1, 'rgba(40,57,113,.45)'); x.fillStyle = gr; x.fillRect(0, H - band - 180, W, 180);
+    x.fillStyle = '#283971'; x.fillRect(0, H - band, W, band); pmGrain(x, W, H, true); pmLogo(x, 64 + 92, 74, 72);
+    if (p.tag) pmTag(x, p.tag, W - 64 - 90, H - band - 2, -4, true);
+    if (p.caption) { x.fillStyle = '#fff'; x.textAlign = 'left'; x.textBaseline = 'alphabetic'; pmFit(x, p.caption, W - 128, 60, 800, PF.disp()); x.fillText(p.caption, 64, H - band + 110); }
     pmFoot(x, W, H, look, n, total); return;
   }
-  pmMark(x, W / 2, 104, 54);
-  const capRoom = p.caption ? 190 : 70, top = 190, room = H - top - capRoom - 110;
-  if (look === 'instant') { const w = Math.min(W * 0.7, room * 54 / 86); pmInstant(x, p.img, W / 2, top + room / 2 + 20, w, n % 2 ? -3 : 3, p.caption || ''); }
-  else { const w = Math.min(W * 0.78, room * 0.9), h = Math.min(room, w * 1.2); pmSticker(x, p.img, W / 2, top + room / 2 + 20, w, h, n % 2 ? -2.5 : 2.5);
-    if (p.caption) pmLabel(x, p.caption, W / 2, H - 120 - capRoom / 2 + 30, W - 140, n % 2 ? 2 : -2, 54); }
-  if (p.tag) { x.font = `800 30px ${PF.disp()}`; const tw = x.measureText(p.tag).width + 42; x.save(); x.translate(W - 70 - tw, top - 10); x.rotate(0.05); pmPill(x, p.tag, 0, 0, look === 'instant' ? '#283971' : '#F2BC2E', look === 'instant' ? '#fff' : '#283971', 30); x.restore(); }
-  if (look === 'instant' && p.caption) {}   // the caption is handwritten on the frame
+  pmLogo(x, W / 2, 104, 86);
+  const capRoom = p.caption && look !== 'instant' ? 170 : 40, top = 190, room = H - top - capRoom - 140;
+  if (look === 'instant') { const w = Math.min(W * 0.66, room * 54 / 86); pmInstant(x, p.img, W / 2, top + room / 2 + 10, w, n % 2 ? -2.5 : 2.5, p.caption || '');
+    if (p.tag) pmTag(x, p.tag, W / 2 + w * 0.42, top + 16, 6); }
+  else { const w = Math.min(W * 0.76, room * 0.88), h = Math.min(room, w * 1.18), cy = top + room / 2 + 14; pmSticker(x, p.img, W / 2, cy, w, h, n % 2 ? -2 : 2);
+    if (p.tag) pmTag(x, p.tag, W / 2 + w / 2 - 30, cy - h / 2 + 26, 7);
+    if (p.caption) pmLabel(x, p.caption, W / 2, cy + h / 2 + 92, W - 160, n % 2 ? 1.5 : -1.5, 52); }
   pmFoot(x, W, H, look, n, total);
 }
-function pmEndSlide(x, W, H, st, qr){
-  const look = st.look, dark = look === 'clean', ink = dark ? '#fff' : '#283971'; pmBg(x, W, H, look); pmMark(x, W / 2, 120, 64);
-  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = ink; const s = pmFit(x, 'Make yours', W - 160, 112, 800, PF.disp()); x.fillText('Make yours', W / 2, 200 + s);
-  x.font = `600 36px ${PF.body()}`; x.fillStyle = dark ? 'rgba(255,255,255,.88)' : '#283971'; pmWrap(x, 'Custom stickers, pins and more from your own pictures, picked up at school.', W - 220).slice(0, 2).forEach((l, i) => x.fillText(l, W / 2, 280 + s + i * 46));
-  const list = liveProducts().slice(0, 6), cardW = W - 200, rowH = H < 1200 ? 58 : 64, top = 370 + s, cardH = list.length * rowH + 36;
-  pmRound(x, 100 + 8, top + 10, cardW, cardH, 32); x.fillStyle = '#283971'; x.fill(); pmRound(x, 100, top, cardW, cardH, 32); x.fillStyle = '#fff'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#283971'; x.stroke();
-  list.forEach((p, i) => { const y = top + 18 + i * rowH + rowH / 2; x.textBaseline = 'middle'; x.textAlign = 'left'; x.fillStyle = '#283971'; x.font = `700 40px ${PF.body()}`; x.fillText(p.name, 140, y);
-    x.textAlign = 'right'; x.font = `800 42px ${PF.disp()}`; x.fillText(`${liveSizes(p.key).length > 1 ? 'from ' : ''}${money(fromPrice(p.key))}`, W - 140, y);
-    if (i < list.length - 1) { x.fillStyle = 'rgba(40,57,113,.15)'; x.fillRect(140, y + rowH / 2, cardW - 80, 2); } });
-  const qy = top + cardH + 44, qs = Math.min(280, H - qy - 190);
-  if (qr && qs >= 150) { pmRound(x, W / 2 - qs / 2 - 18, qy, qs + 36, qs + 36, 24); x.fillStyle = '#fff'; x.fill(); x.drawImage(qr, W / 2 - qs / 2, qy + 18, qs, qs); }
-  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = ink; x.font = `800 52px ${PF.disp()}`; x.fillText(postSite(), W / 2, H - 110);
-  x.font = `600 32px ${PF.body()}`; x.fillStyle = dark ? 'rgba(255,255,255,.85)' : '#283971'; x.fillText('Follow us for new designs every week', W / 2, H - 58);
+function pmEndSlide(x, W, H, st, qr, total){
+  const look = st.look, dark = look === 'clean', ink = dark ? '#fff' : '#283971'; pmBg(x, W, H, look); pmLogo(x, W / 2, 124, 108);
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; const s = pmFit(x, 'Make yours', W - 160, 116, 800, PF.disp()), tw = x.measureText('Make yours').width;
+  pmMarker(x, W / 2 - tw / 2, 236 + s * 0.58, tw, s * 0.5, dark ? 'rgba(58,82,163,.95)' : look === 'instant' ? 'rgba(255,255,255,.7)' : 'rgba(242,188,46,.75)');
+  x.fillStyle = ink; x.font = `800 ${s}px ${PF.disp()}`; x.fillText('Make yours', W / 2, 236 + s);
+  x.font = `600 34px ${PF.body()}`; x.fillStyle = dark ? 'rgba(255,255,255,.88)' : '#283971';
+  pmWrap(x, 'Stickers, pins and more from your own pictures, picked up at school.', W - 240).slice(0, 2).forEach((l, i) => x.fillText(l, W / 2, 300 + s + i * 44));
+  const list = liveProducts().slice(0, 6), short = H < 1200, rowH = short ? 54 : 62, cardW = W - 220, top = 380 + s, cardH = list.length * rowH + 32;
+  pmRound(x, 110 + 8, top + 10, cardW, cardH, 30); x.fillStyle = '#283971'; x.fill(); pmRound(x, 110, top, cardW, cardH, 30); x.fillStyle = '#fff'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#283971'; x.stroke();
+  list.forEach((p, i) => { const yy = top + 16 + i * rowH + rowH / 2; x.textBaseline = 'middle'; x.textAlign = 'left'; x.fillStyle = '#283971'; x.font = `700 ${short ? 34 : 38}px ${PF.body()}`; x.fillText(p.name, 150, yy);
+    x.textAlign = 'right'; x.font = `800 ${short ? 36 : 40}px ${PF.disp()}`; x.fillText(`${liveSizes(p.key).length > 1 ? 'from ' : ''}${money(fromPrice(p.key))}`, W - 150, yy);
+    if (i < list.length - 1) { x.fillStyle = 'rgba(40,57,113,.13)'; x.fillRect(150, yy + rowH / 2, cardW - 80, 2); } });
+  // the QR code as a peel-off sticker, with a handwritten "scan me!"
+  const qy = top + cardH + 46, qs = Math.min(250, H - qy - 190);
+  if (qr && qs >= 150) {
+    const X = W / 2 - qs / 2 - 20, S = qs + 40, c = 34;
+    x.save(); x.translate(W / 2, qy + S / 2); x.rotate(-0.04); x.translate(-W / 2, -(qy + S / 2));
+    const path = () => { x.beginPath(); x.moveTo(X + 22, qy); x.lineTo(X + S - 22, qy); x.quadraticCurveTo(X + S, qy, X + S, qy + 22); x.lineTo(X + S, qy + S - c); x.lineTo(X + S - c, qy + S); x.lineTo(X + 22, qy + S); x.quadraticCurveTo(X, qy + S, X, qy + S - 22); x.lineTo(X, qy + 22); x.quadraticCurveTo(X, qy, X + 22, qy); x.closePath(); };
+    x.save(); x.translate(7, 9); path(); x.fillStyle = '#283971'; x.fill(); x.restore(); path(); x.fillStyle = '#fff'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#283971'; x.stroke();
+    x.drawImage(qr, W / 2 - qs / 2, qy + 20, qs, qs);
+    x.beginPath(); x.moveTo(X + S, qy + S - c); x.quadraticCurveTo(X + S - c * 0.95, qy + S - c * 0.45, X + S - c, qy + S); x.quadraticCurveTo(X + S - c * 0.55, qy + S - c * 0.55, X + S, qy + S - c); x.closePath();
+    x.fillStyle = '#DCE1EE'; x.fill(); x.lineWidth = 3; x.strokeStyle = '#283971'; x.stroke(); x.restore();
+    x.font = `700 48px ${PF.hand()}`; x.fillStyle = ink; x.textAlign = 'left'; x.textBaseline = 'middle'; const hx = W / 2 + qs / 2 + 48, hy = qy + 30; x.fillText('scan me!', hx, hy);
+    pmArrow(x, hx + 30, hy + 30, hx + 10, hy + 100, W / 2 + qs / 2 + 26, qy + S * 0.55, dark ? '#F2BC2E' : '#283971', 5);
+  }
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = ink; x.font = `800 48px ${PF.disp()}`; x.fillText(postSite(), W / 2, H - 120);
+  x.font = `600 30px ${PF.body()}`; x.fillStyle = dark ? 'rgba(255,255,255,.85)' : '#283971'; x.fillText('Follow us for new designs every week', W / 2, H - 74);
 }
 async function postRender(){
   const st = postState(), [W, H] = POST_FMT[st.fmt];
-  await fxFontsReady(); wordFontsLoad(); await wordFontReady('hand');
+  await fxFontsReady(); wordFontsLoad(); await wordFontReady('hand'); await pmLogoImage();
   let qr = null;
   if (st.end && await needLib('qr')) { const d = document.createElement('div'); new QRCode(d, { text: CONFIG.siteUrl || location.origin, width: 360, height: 360, colorDark: '#283971', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); qr = d.querySelector('canvas'); }
   const plan = [...(st.cover ? [{ k: 'cover' }] : []), ...st.photos.map(p => ({ k: 'photo', p })), ...(st.end ? [{ k: 'end' }] : [])];
   st.slides = plan.map((s, i) => { const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
-    if (s.k === 'cover') pmCoverSlide(x, W, H, st); else if (s.k === 'end') pmEndSlide(x, W, H, st, qr); else pmPhotoSlide(x, W, H, st, s.p, i + 1, plan.length);
+    if (s.k === 'cover') pmCoverSlide(x, W, H, st, plan.length); else if (s.k === 'end') pmEndSlide(x, W, H, st, qr, plan.length); else pmPhotoSlide(x, W, H, st, s.p, i + 1, plan.length);
     return c; });
   return st.slides;
 }
