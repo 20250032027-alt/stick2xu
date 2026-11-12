@@ -7140,7 +7140,7 @@ async function viewAdmin(){
       <button class="pilllink" type="button" data-act="logout">${ic('logout', 18)}Log out</button></header>
     <main id="main" class="wrap">
       <nav class="atabs" aria-label="Admin sections">
-        ${[['orders','list','Orders'],...(CONFIG.boothOn || S.admin.tab === 'booth' ? [['booth','sparkle','Booth']] : []),['latest','bell','Latest'],['money','doc','Log book'],...(CONFIG.sellersOn ? [['sellers','badge','Sellers']] : []),['posters','qr','Poster QR codes'],['post','image','Weekly post'],['settings','sliders','Settings']].map(([k, i, l]) =>
+        ${[['orders','list','Orders'],['booth','sparkle','Booth'],['latest','bell','Latest'],['money','doc','Log book'],...(CONFIG.sellersOn ? [['sellers','badge','Sellers']] : []),['posters','qr','Poster QR codes'],['post','image','Weekly post'],['settings','sliders','Settings']].map(([k, i, l]) =>
           `<button class="tab ${S.admin.tab === k ? 'on' : ''}" type="button" data-act="admTab" data-tab="${k}" ${S.admin.tab === k ? 'aria-current="page"' : ''} style="display:inline-flex;gap:6px;align-items:center">${ic(i, 18)}${l}${k === 'latest' ? '<span class="newdot" id="latestDot" hidden></span>' : ''}</button>`).join('')}
         <button class="tab" type="button" data-act="admRefresh" style="display:inline-flex;gap:6px;align-items:center">${ic('refresh', 18)}Refresh</button>
       </nav>
