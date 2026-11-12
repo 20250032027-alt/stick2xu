@@ -1474,14 +1474,11 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .codeline{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin:16px 2px 0;font-size:14.5px;color:var(--muted)}
 .codeline > svg{flex:none}.codeline > span{flex:1 1 calc(100% - 30px)}.codeline .linkbtn:first-of-type{margin-left:26px}.codeline b{color:var(--ink);letter-spacing:.02em}
 .codeline .linkbtn{font-size:14.5px}
-@media(max-width:900px){.pm{grid-template-columns:1fr}.pm-out{position:static}.pm-slides{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:520px){.pm-grid{grid-template-columns:1fr}.pm-looks{grid-template-columns:1fr}.pm-look{grid-template-columns:64px 1fr;column-gap:10px;align-items:center}.pm-look .pm-sw{grid-row:span 2;height:44px}}
 /* ===== booth mode ===== */
 .bhd .top{justify-content:flex-start}.bhd .topacts{margin-left:auto}
 .bhd-tag{margin-left:10px;padding:3px 12px 4px;border-radius:999px;background:var(--ink);color:#fff;font-weight:800;font-size:13.5px;letter-spacing:.02em;transform:rotate(-3deg)}
 .bco .bco-a{display:flex;gap:16px;margin:4px 0 0}.bco .bco-a .linkbtn{font-size:14px;min-height:36px}
 .booth .bhero{padding:18px 0 6px}
-.bkick{display:inline-flex;align-items:center;gap:6px;margin:0 0 10px;padding:4px 12px;border-radius:999px;background:var(--gold-soft);border:1.5px solid #EED9A0;font-weight:700;font-size:14px}
 .booth h1{font-size:clamp(40px,9vw,64px);line-height:1.02;margin:0 0 10px;letter-spacing:-.02em}
 .bline{display:inline-flex;align-items:center;gap:10px;margin:12px 0 0;padding:8px 14px;border-radius:999px;background:#fff;border:2px solid var(--ink);box-shadow:2px 3px 0 var(--ink);font-weight:700;font-size:15px}
 .bline i{width:10px;height:10px;border-radius:50%;background:#2E8B57;box-shadow:0 0 0 0 rgba(46,139,87,.5);animation:bPulse 1.8s infinite}
@@ -1529,29 +1526,37 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .bready .bnum.big{font-size:clamp(76px,24vw,160px);background:#fff;margin-bottom:28px}
 .bready p{font-size:18px;font-weight:700;margin:0 0 22px}
 @keyframes bIn{from{opacity:0;transform:scale(1.04)}}@keyframes bSpin{to{transform:rotate(360deg)}}
-/* the booth buddy: a peeling-sticker booth worker. Moods: idle (blinks, tuft wiggles), work (tongue out, busy hands), cheer (arms up, jumping) */
-.twoey{display:block;overflow:visible}
-.bd-bob{animation:bdBob 1.8s ease-in-out infinite;transform-origin:70px 150px}
-.bd-shadow{animation:bdShadow 1.8s ease-in-out infinite;transform-origin:70px 157px}
+/* the booth buddy: a sticker that came alive. Moods: idle, work (tongue out), cheer (open smile, sparkles).
+   Faces: e-happy (eyes closed), e-oh (surprised, while held). Reactions: r-tap (corner flutters), r-slap (sticks back down). */
+.twoey{display:block;overflow:visible;touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.twoey.held{cursor:grabbing;z-index:20;position:relative}
+.bd-bob{animation:bdBob 1.9s ease-in-out infinite;transform-origin:70px 130px}
+.bd-shadow{animation:bdShadow 1.9s ease-in-out infinite;transform-origin:70px 140px;transition:opacity .2s}
 .bd-eyes{animation:bdBlink 4.4s infinite;transform-origin:70px 71px}
-.bd-tuft{transform-origin:102px 42px;animation:bdTuft 2.6s ease-in-out infinite}
-.bd-armL{transform-origin:31px 92px;animation:bdWaveL 2.6s ease-in-out infinite}.bd-armR{transform-origin:109px 92px;animation:bdWaveR 2.6s ease-in-out infinite}
-.bd-mo,.bd-spark{display:none}.m-idle .mo-idle,.m-work .mo-work,.m-cheer .mo-cheer{display:block}
-@keyframes bdBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-@keyframes bdShadow{0%,100%{transform:scale(1)}50%{transform:scale(.84)}}
+.bd-tuft{transform-origin:102px 42px;animation:bdTuft 2.8s ease-in-out infinite}
+.bd-mo,.bd-spark,.bd-happy{display:none}.m-idle .mo-idle,.m-work .mo-work,.m-cheer .mo-cheer{display:block}
+@keyframes bdBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes bdShadow{0%,100%{transform:scale(1)}50%{transform:scale(.86)}}
 @keyframes bdBlink{0%,91%,100%{transform:scaleY(1)}94.5%{transform:scaleY(.08)}}
-@keyframes bdTuft{0%,100%{transform:rotate(0)}30%{transform:rotate(-9deg)}60%{transform:rotate(5deg)}}
-@keyframes bdWaveL{0%,100%{transform:rotate(0)}50%{transform:rotate(10deg)}}@keyframes bdWaveR{0%,100%{transform:rotate(0)}50%{transform:rotate(-10deg)}}
-.m-work .bd-bob{animation-duration:.9s}
-.m-work .bd-armL{animation:bdWorkL .6s ease-in-out infinite}.m-work .bd-armR{animation:bdWorkR .6s ease-in-out infinite}
-@keyframes bdWorkL{0%,100%{transform:rotate(38deg)}50%{transform:rotate(64deg)}}@keyframes bdWorkR{0%,100%{transform:rotate(-64deg)}50%{transform:rotate(-38deg)}}
+@keyframes bdTuft{0%,100%{transform:rotate(0)}30%{transform:rotate(-8deg)}60%{transform:rotate(4deg)}}
+.m-work .bd-bob{animation:bdBusy .7s ease-in-out infinite}@keyframes bdBusy{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-3px) rotate(-2.5deg)}75%{transform:translateY(-3px) rotate(2.5deg)}}
 .m-cheer .bd-bob{animation:bdJump .85s var(--ease) infinite}
-@keyframes bdJump{0%,100%{transform:translateY(0) rotate(0)}40%{transform:translateY(-22px) rotate(-5deg)}70%{transform:translateY(-8px) rotate(4deg)}}
+@keyframes bdJump{0%,100%{transform:translateY(0) rotate(0)}40%{transform:translateY(-20px) rotate(-5deg)}70%{transform:translateY(-7px) rotate(4deg)}}
 .m-cheer .bd-shadow{animation:bdShadowJ .85s var(--ease) infinite}@keyframes bdShadowJ{40%{transform:scale(.6)}}
-.m-cheer .bd-armL{animation:bdCheerL .42s ease-in-out infinite}.m-cheer .bd-armR{animation:bdCheerR .42s ease-in-out infinite}
-@keyframes bdCheerL{0%,100%{transform:rotate(100deg)}50%{transform:rotate(126deg)}}@keyframes bdCheerR{0%,100%{transform:rotate(-100deg)}50%{transform:rotate(-126deg)}}
+.m-cheer .bd-tuft{animation:bdFlutter .5s ease-in-out infinite}
 .m-cheer .bd-spark{display:block;animation:bdTwinkle .9s ease-in-out infinite;transform-origin:70px 30px}
 @keyframes bdTwinkle{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+/* faces */
+.e-happy .bd-eyes{display:none}.e-happy .bd-happy{display:block}.e-happy .bd-blush{transform:scale(1.25);transform-box:fill-box;transform-origin:center}
+.e-oh .bd-mo{display:none}.e-oh .mo-oh{display:block}.e-oh .bd-eyes{animation:none;transform:scale(1.12)}
+/* held: peeled up off the screen */
+.held .bd-bob{animation:none;transform:none}.held .bd-shadow{animation:none;opacity:.35;transform:scale(1.3) translateY(10px)}.held .bd-tuft{animation:bdFlutter .35s ease-in-out infinite}
+/* a tap: the corner flutters and it does a happy squish */
+.r-tap .bd-bob{animation:bdSquish .55s var(--ease)}.r-tap .bd-tuft{animation:bdFlutter .5s ease-in-out 2}
+@keyframes bdSquish{0%{transform:scale(1)}25%{transform:scale(1.1,.88)}55%{transform:scale(.94,1.08)}100%{transform:scale(1)}}
+@keyframes bdFlutter{0%,100%{transform:rotate(0)}25%{transform:rotate(-16deg)}50%{transform:rotate(6deg)}75%{transform:rotate(-8deg)}}
+/* let go: it sticks back down with a slap */
+.r-slap .bd-bob{animation:bdSlap .5s var(--ease)}@keyframes bdSlap{0%{transform:scale(1.06,.9)}40%{transform:scale(.95,1.06)}100%{transform:scale(1)}}
 /* the workshop: printer + Twoey + what's happening */
 .workshop{position:relative;display:grid;place-items:center;padding:10px 0 0}
 .ws-pr{width:min(240px,60%);height:auto;filter:drop-shadow(4px 6px 0 rgba(10,16,40,.35))}
@@ -1607,7 +1612,7 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
   .bb2-none .twoey{width:72px}.bb2-banner{width:calc(100% - 40px);padding:16px 18px}.bb2-banner .twoey{width:64px}
   .bb2-qrbox{width:84px;height:84px}.bb2-qr b{font-size:20px}.bb2-tip{font-size:15px}
 }
-@media (prefers-reduced-motion:reduce){.bd-bob,.bd-eyes,.bd-armL,.bd-armR,.bd-shadow,.bd-tuft,.bd-spark,.bb2-nums .bnum.lead,.bb2-nums .bnum.new,.ws-cap span{animation:none}.ws-cap span:first-child{opacity:1}}
+@media (prefers-reduced-motion:reduce){.bd-bob,.bd-eyes,.bd-shadow,.bd-tuft,.bd-spark,.bb2-nums .bnum.lead,.bb2-nums .bnum.new,.ws-cap span{animation:none}.ws-cap span:first-child{opacity:1}}
 @media(max-width:900px){.bmenu{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}
 @media(max-width:400px){.bt-t b{font-size:17px}.bpopgrid{gap:7px}.bsteps li + li::before{width:14px;margin:0 6px}}
 /* the booth console (admin) */
@@ -1644,9 +1649,9 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .is-bars .done i{width:100%}.is-bars .now i{animation:isBar linear forwards}@keyframes isBar{to{width:100%}}
 .is-skip{position:absolute;right:12px;top:calc(4px + env(safe-area-inset-top,0px));z-index:4;min-height:40px;padding:6px 14px;border:0;border-radius:999px;background:rgba(255,255,255,.16);color:#fff;font:inherit;font-weight:700;cursor:pointer}
 .is-tap{position:absolute;top:60px;bottom:0;z-index:2}.is-tap.l{left:0;width:30%}.is-tap.r{right:0;width:70%}
-.is-stage{position:absolute;inset:0;display:grid;place-items:center;padding:calc(70px + env(safe-area-inset-top,0px)) 24px calc(30px + env(safe-area-inset-bottom,0px))}
+.is-stage{position:absolute;inset:0;z-index:3;pointer-events:none;display:grid;place-items:center;padding:calc(70px + env(safe-area-inset-top,0px)) 24px calc(30px + env(safe-area-inset-bottom,0px))}
 .is-scene{width:min(100%,440px);display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px;position:relative;z-index:1}
-.is-scene .btn{position:relative;z-index:3}
+.is-scene .btn,.is-scene .buddy{pointer-events:auto}
 .is-t{font-family:var(--display);font-weight:800;font-size:clamp(30px,8.5vw,44px);line-height:1.05;margin:0;color:#fff;animation:isUp .55s var(--ease) both .15s}
 .is-t.top{order:-1}
 @keyframes isUp{from{opacity:0;transform:translateY(16px)}}
@@ -5833,6 +5838,7 @@ function drawPop(){
   $('#bPopN').textContent = S.popN ? `${S.popN} popped` : '';
 }
 // ---------- sounds that work on iPhones (also with the silent switch on): real audio clips, made here ----------
+// One family of soft, plucked tones, like a kalimba: quick and natural.
 function wavUrl(dur, fn){   // fn(t) -> sample in -1..1
   const sr = 22050, n = Math.round(sr * dur), pcm = new Int16Array(n);
   for (let i = 0; i < n; i++) pcm[i] = Math.max(-1, Math.min(1, fn(i / sr))) * 32767;
@@ -5843,23 +5849,18 @@ function wavUrl(dur, fn){   // fn(t) -> sample in -1..1
   let s = ''; for (let i = 0; i < b.length; i += 8192) s += String.fromCharCode.apply(null, b.subarray(i, i + 8192));
   return 'data:audio/wav;base64,' + btoa(s);
 }
-const TAU = Math.PI * 2, crunch = (x, a = 2.4) => Math.tanh(x * a);   // a little bite, like an arcade coin
-// the "ready" sound: a pop, two bright rising notes, then a ringing ding with shimmer
+const TAU = Math.PI * 2;
+// a plucked tine: a bright attack that mellows quickly, like a kalimba
+const tine = (u, f, decay) => u < 0 ? 0 : Math.sin(TAU * f * u + Math.sin(TAU * f * 3.5 * u) * 1.6 * Math.exp(-u * 38)) * Math.min(1, u / .002) * Math.exp(-u * decay);
+// the "ready" sound: three quick notes rising into each other, about half a second
 function chimeUrl(){
-  if (S.chimeUrl) return S.chimeUrl;
-  let seed = 7; const noise = () => ((seed = (seed * 16807) % 2147483647) / 2147483647) * 2 - 1;
-  const note = (t, st, f, len, hold) => { const u = t - st; if (u < 0 || u > len) return 0; const env = Math.min(1, u / .004) * (hold ? Math.exp(-u * 3.4) : Math.exp(-u * 16));
-    return (crunch(Math.sin(TAU * f * u)) * .55 + Math.sin(TAU * 2 * f * u) * .16 + Math.sin(TAU * 3.01 * f * u) * .07) * env * (hold ? 1 + .12 * Math.sin(TAU * 11 * u) : 1); };
-  return (S.chimeUrl = wavUrl(1.35, t => {
-    const p = t < .09 ? Math.sin(TAU * (620 * t - 2300 * t * t)) * Math.exp(-t * 34) * .9 + (t < .012 ? noise() * .5 * (1 - t / .012) : 0) : 0;   // the pop
-    return (p + note(t, .09, 987.77, .12) + note(t, .18, 1318.51, .12) + note(t, .27, 1975.53, 1.05, true)) * .62; }));
+  return S.chimeUrl || (S.chimeUrl = wavUrl(.7, t => (tine(t, 783.99, 9) * .34 + tine(t - .07, 1046.5, 8) * .34 + tine(t - .14, 1567.98, 6) * .42) * .9));
 }
-// a tiny pop for the sticker bubbles
+// the bubble pop (and the buddy's sounds): a short rising "bloop" from the same family
 function popUrl(){
-  if (S.popUrl) return S.popUrl; let seed = 3; const noise = () => ((seed = (seed * 16807) % 2147483647) / 2147483647) * 2 - 1;
-  return (S.popUrl = wavUrl(.14, t => (Math.sin(TAU * (700 * t - 2600 * t * t)) * Math.exp(-t * 30) + (t < .01 ? noise() * .6 * (1 - t / .01) : 0)) * .8));
+  return S.popUrl || (S.popUrl = wavUrl(.12, t => (Math.sin(TAU * (520 * t + 3400 * t * t)) * Math.min(1, t / .003) * Math.exp(-t * 34) * .7 + tine(t, 1318.5, 40) * .18)));
 }
-function playPop(){ try { const a = new Audio(popUrl()); a.volume = .7; const p = a.play(); if (p && p.catch) p.catch(() => {}); } catch {} }
+function playPop(vol = 1){ try { const a = new Audio(popUrl()); a.volume = Math.min(1, .75 * vol); const p = a.play(); if (p && p.catch) p.catch(() => {}); } catch {} }
 // phones only let a page play sound after a tap: the first tap anywhere quietly unlocks it, and the sound buttons play it once so you hear it works
 function unlockSound(audible){
   try { if (!S.chimeEl) { S.chimeEl = new Audio(chimeUrl()); S.chimeEl.preload = 'auto'; }
@@ -5870,36 +5871,61 @@ function unlockSound(audible){
 ['click', 'touchend'].forEach(ev => document.addEventListener(ev, () => { if (!S.soundReady) unlockSound(false); }, { capture: true, passive: true }));
 function chime(){ try { if (!S.chimeEl) return; S.chimeEl.muted = false; S.chimeEl.currentTime = 0; const p = S.chimeEl.play(); if (p && p.catch) p.catch(() => {}); } catch {} }
 
-// ---------- the booth buddy: a little booth worker made from a peeling sticker ----------
-// Its peeled corner is a tuft that wiggles; it wears the booth apron with a gold "2" badge. Moods: idle, work, cheer.
+// ---------- the booth buddy: a sticker that came alive, and behaves like one ----------
+// No arms or legs: a die-cut sticker with a face and a peeled corner (its "tuft").
+// Grab it and it peels up off the screen; let go and it flies back and sticks down. Tap it and its corner flutters.
 let buddyN = 0;
 function twoeySVG(cls = '', mood){
   const m = mood || (/jump/.test(cls) ? 'cheer' : /ws-tw/.test(cls) ? 'work' : 'idle'), g = 'bdg' + (++buddyN);
-  const shoe = `<path d="M40 147q0-10 11-10h7q6 0 6 6v4q0 3-3 3H44q-4 0-4-3z" fill="#fff" stroke="#fff" stroke-width="7.5" stroke-linejoin="round"/><path d="M40 147q0-10 11-10h7q6 0 6 6v4q0 3-3 3H44q-4 0-4-3z" fill="#fff" stroke="#283971" stroke-width="3" stroke-linejoin="round"/><path d="M45 144h13" stroke="#F2BC2E" stroke-width="3" stroke-linecap="round"/>`;
-  return `<svg class="twoey buddy m-${m} ${cls}" viewBox="0 0 140 164" aria-hidden="true">
+  return `<svg class="twoey buddy m-${m} ${cls}" viewBox="0 0 140 148" aria-hidden="true">
     <defs><linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#CBD1E2"/></linearGradient></defs>
-    <ellipse class="bd-shadow" cx="70" cy="157" rx="34" ry="5.5" fill="rgba(10,16,40,.26)"/>
+    <ellipse class="bd-shadow" cx="70" cy="140" rx="38" ry="6" fill="rgba(10,16,40,.24)"/>
     <g class="bd-bob">
-      <path d="M56 120v16M84 120v16" stroke="#fff" stroke-width="12" stroke-linecap="round"/><path d="M56 120v16M84 120v16" stroke="#283971" stroke-width="7" stroke-linecap="round"/>${shoe}<g transform="translate(140 0) scale(-1 1)">${shoe}</g>
-      <g class="bd-armL"><path d="M31 92q-12 4-16 15" stroke="#fff" stroke-width="11.5" fill="none" stroke-linecap="round"/><path d="M31 92q-12 4-16 15" stroke="#283971" stroke-width="6.5" fill="none" stroke-linecap="round"/><circle cx="14" cy="109" r="9.5" fill="#fff"/><circle cx="14" cy="109" r="7" fill="#fff" stroke="#283971" stroke-width="3"/></g>
-      <g class="bd-armR"><path d="M109 92q12 4 16 15" stroke="#fff" stroke-width="11.5" fill="none" stroke-linecap="round"/><path d="M109 92q12 4 16 15" stroke="#283971" stroke-width="6.5" fill="none" stroke-linecap="round"/><circle cx="126" cy="109" r="9.5" fill="#fff"/><circle cx="126" cy="109" r="7" fill="#fff" stroke="#283971" stroke-width="3"/></g>
       <path d="M54 28H88L116 56V96Q116 126 86 126H54Q24 126 24 96V58Q24 28 54 28Z" fill="#283971" transform="translate(5 6)"/>
       <path d="M54 28H88L116 56V96Q116 126 86 126H54Q24 126 24 96V58Q24 28 54 28Z" fill="#fff" stroke="#283971" stroke-width="3.5" stroke-linejoin="round"/>
       <path d="M54 35H85L109 59V96Q109 119 86 119H54Q31 119 31 96V58Q31 35 54 35Z" fill="#F2BC2E"/>
       <path d="M43 99h54v10q0 10-11 10H54q-11 0-11-10z" fill="#283971"/><path d="M47 99l-6-11M93 99l6-11" stroke="#283971" stroke-width="4" stroke-linecap="round"/>
       <path d="M49 104h42" stroke="#fff" stroke-width="1.6" stroke-dasharray="3 3" opacity=".75"/>
-      <circle cx="70" cy="111.5" r="6.5" fill="#F2BC2E"/><text x="70" y="115.2" text-anchor="middle" font-size="9.5" font-weight="900" font-family="Arial Black,Arial,sans-serif" fill="#283971">2</text>
-      <path d="M47 57q7-5 14-1M79 56q7-4 14 1" stroke="#283971" stroke-width="3" fill="none" stroke-linecap="round" class="bd-brow"/>
+      <circle cx="70" cy="111.5" r="6.5" fill="#F2BC2E"/><path d="M67.2 109.2q.4-2.6 2.9-2.6 2.6 0 2.6 2.4 0 1.6-2.1 3.2l-3.4 2.6h5.8" fill="none" stroke="#283971" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="bd-brow" d="M47 57q7-5 14-1M79 56q7-4 14 1" stroke="#283971" stroke-width="3" fill="none" stroke-linecap="round"/>
       <g class="bd-eyes"><ellipse cx="55" cy="71" rx="7" ry="9.5" fill="#283971"/><ellipse cx="85" cy="71" rx="7" ry="9.5" fill="#283971"/>
         <circle cx="57.6" cy="67.4" r="2.9" fill="#fff"/><circle cx="87.6" cy="67.4" r="2.9" fill="#fff"/><circle cx="52.6" cy="74.5" r="1.4" fill="#fff"/><circle cx="82.6" cy="74.5" r="1.4" fill="#fff"/></g>
-      <ellipse cx="43.5" cy="85" rx="6" ry="4" fill="#F7A8C4" opacity=".9"/><ellipse cx="96.5" cy="85" rx="6" ry="4" fill="#F7A8C4" opacity=".9"/>
+      <path class="bd-happy" d="M47 73q8-10 16 0M77 73q8-10 16 0" stroke="#283971" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <ellipse class="bd-blush" cx="43.5" cy="85" rx="6" ry="4" fill="#F7A8C4" opacity=".9"/><ellipse class="bd-blush" cx="96.5" cy="85" rx="6" ry="4" fill="#F7A8C4" opacity=".9"/>
       <path class="bd-mo mo-idle" d="M62 84q8 8 16 0" stroke="#283971" stroke-width="3.6" fill="none" stroke-linecap="round"/>
       <g class="bd-mo mo-work"><path d="M63 85q7 5 14 0" stroke="#283971" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="77.5" cy="88.5" r="3.4" fill="#F47C9C" stroke="#283971" stroke-width="1.6"/></g>
       <g class="bd-mo mo-cheer"><path d="M58 82q12 17 24 0z" fill="#283971" stroke="#283971" stroke-width="3" stroke-linejoin="round"/><path d="M64 90q6 5 12 0q-6-3-12 0z" fill="#F47C9C"/></g>
+      <ellipse class="bd-mo mo-oh" cx="70" cy="88" rx="5" ry="6.5" fill="#283971"/>
       <path class="bd-tuft" d="M88 28L116 56Q97 59 90 51Q84 43 88 28Z" fill="url(#${g})" stroke="#283971" stroke-width="3.2" stroke-linejoin="round"/>
-      <g class="bd-spark" fill="#F2BC2E" stroke="#fff" stroke-width="1.5"><path d="M16 34l3 8 8 3-8 3-3 8-3-8-8-3 8-3z"/><path d="M124 20l2.2 6 6 2.2-6 2.2-2.2 6-2.2-6-6-2.2 6-2.2z"/></g>
+      <g class="bd-spark" fill="#F2BC2E" stroke="#fff" stroke-width="1.5"><path d="M14 40l3 8 8 3-8 3-3 8-3-8-8-3 8-3z"/><path d="M126 18l2.2 6 6 2.2-6 2.2-2.2 6-2.2-6-6-2.2 6-2.2z"/></g>
     </g></svg>`;
 }
+// sticker physics: grab to peel it up, let go and it sticks back down; a tap makes its corner flutter
+let bdHold = null;
+function bdReact(s, kind){
+  s.classList.remove('r-tap', 'r-slap'); void s.getBoundingClientRect(); s.classList.add(kind === 'tap' ? 'r-tap' : 'r-slap', 'e-happy');
+  playPop(kind === 'tap' ? 1 : .8); try { navigator.vibrate && navigator.vibrate(kind === 'tap' ? 8 : 14); } catch {}
+  clearTimeout(s._bdT); s._bdT = setTimeout(() => s.classList.remove('r-tap', 'r-slap', 'e-happy'), 950);
+}
+document.addEventListener('pointerdown', e => {
+  const s = e.target.closest && e.target.closest('.buddy'); if (!s) return;
+  e.preventDefault(); e.stopPropagation(); try { s.setPointerCapture(e.pointerId); } catch {}
+  bdHold = { s, id: e.pointerId, x: e.clientX, y: e.clientY, moved: false }; s.style.transition = 'none';
+}, true);
+document.addEventListener('pointermove', e => {
+  if (!bdHold || e.pointerId !== bdHold.id) return; const dx = e.clientX - bdHold.x, dy = e.clientY - bdHold.y;
+  if (!bdHold.moved && Math.hypot(dx, dy) > 7) { bdHold.moved = true; bdHold.s.classList.add('held', 'e-oh'); }
+  if (bdHold.moved) bdHold.s.style.transform = `translate(${dx}px,${dy}px) rotate(${Math.max(-16, Math.min(16, dx * .1))}deg) scale(1.1)`;
+}, true);
+const bdLet = e => {
+  if (!bdHold || e.pointerId !== bdHold.id) return; const { s, moved } = bdHold; bdHold = null;
+  s.classList.remove('held', 'e-oh');
+  if (!moved) return bdReact(s, 'tap');
+  s.style.transition = 'transform .5s cubic-bezier(.3,1.5,.6,1)'; s.style.transform = '';
+  setTimeout(() => { s.style.transition = ''; bdReact(s, 'slap'); }, 380);
+};
+document.addEventListener('pointerup', bdLet, true); document.addEventListener('pointercancel', bdLet, true);
+document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.buddy')) { e.stopPropagation(); e.preventDefault(); } }, true);   // touching the buddy never presses what's behind it
 // the workshop: the printer printing a sheet of stickers, with Twoey at work beside it
 let wsN = 0;
 function workshopHTML(){
