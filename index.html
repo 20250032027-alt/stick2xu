@@ -1670,20 +1670,27 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 @keyframes isFloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-14px) rotate(14deg)}}
 .is-t em{font-style:normal;color:var(--xu-gold)}
 .is-t.big{font-size:clamp(40px,11vw,58px)}
-.is-art{width:min(78%,300px);height:auto;animation:isPop .6s var(--ease) both}
-/* the night before: the moon rises, the clock hands race */
-.is-moon{animation:isMoon 1.6s var(--ease) both .2s;transform-box:fill-box;transform-origin:center}@keyframes isMoon{from{transform:translateY(30px) rotate(-30deg);opacity:0}}
-.is-hh{animation:isSpin 6s linear infinite;transform-origin:0 0}.is-mh{animation:isSpin 1.2s linear infinite;transform-origin:0 0}@keyframes isSpin{to{transform:rotate(360deg)}}
-.is-tw circle{animation:isTw 1.4s ease-in-out infinite}.is-tw circle:nth-child(2){animation-delay:.5s}.is-tw circle:nth-child(3){animation-delay:.9s}@keyframes isTw{50%{opacity:.2}}
-/* the long line: the queue inches forward, slowly */
-.is-q{animation:isInch 2.8s steps(4) infinite}@keyframes isInch{from{transform:translateX(-32px)}to{transform:translateX(0)}}
+.is-art{width:min(78%,300px);height:auto}
+/* slides 1 and 2: just the words, rising in one by one; the punchline gets a gold underline that draws itself */
+.is-t.xl{font-size:clamp(38px,11vw,60px);line-height:1.04;animation:none;max-width:12ch}
+.is-t.xl .w{display:inline-block;animation:isWord .55s cubic-bezier(.2,1.2,.4,1) both;animation-delay:calc(var(--i) * 85ms + .15s)}
+@keyframes isWord{from{opacity:0;transform:translateY(22px) rotate(4deg)}}
+.is-t.xl .hl{color:var(--xu-gold);background:linear-gradient(var(--xu-gold),var(--xu-gold)) no-repeat 0 96%/0% .11em;padding-bottom:.08em;
+  animation:isLine .9s var(--ease) both;animation-delay:calc(var(--i) * 85ms + .5s)}   /* drawn along every line the phrase wraps onto */
+@keyframes isLine{to{background-size:100% .11em}}
+/* tonight, we print, tomorrow */
+.is-route{width:min(100%,370px)}
+.is-tile{animation:isPop .5s cubic-bezier(.2,1.4,.4,1) both;animation-delay:calc(var(--k) * .35s + .2s);transform-box:fill-box;transform-origin:center}
+.is-feed{animation:isFeed 1.6s ease-in-out infinite;animation-delay:1s}@keyframes isFeed{0%,100%{transform:translateY(-6px)}50%{transform:translateY(2px)}}
+.is-link{stroke-dasharray:16;stroke-dashoffset:16;animation:isDraw .35s ease-out forwards}.is-link.l1{animation-delay:.5s}.is-link.l2{animation-delay:.85s}
+@keyframes isDraw{to{stroke-dashoffset:0}}
+.is-flag{transform-box:fill-box;transform-origin:left center;animation:isWave .9s ease-in-out infinite}@keyframes isWave{50%{transform:scaleX(.7) skewY(8deg)}}
+.is-sub{margin:-6px 0 0;font-size:clamp(17px,4.6vw,21px);line-height:1.4;color:rgba(255,255,255,.9);max-width:24ch;animation:isUp .55s var(--ease) both .4s}
+.is-sub b{color:var(--xu-gold)}
 /* look no further */
 .s2 .is-t.big{animation-delay:0s}.s2 .is-logo{width:min(80%,320px);animation:isSlap .7s cubic-bezier(.2,1.6,.4,1) both .35s}.s2 .is-logo .logo{width:100%;height:auto;display:block}
 @keyframes isSlap{0%{transform:scale(2.2) rotate(-14deg);opacity:0}55%{transform:scale(.94) rotate(2deg);opacity:1}75%{transform:scale(1.03) rotate(-1deg)}100%{transform:none}}
 .s2 .is-bud{width:104px;animation:isPop .6s var(--ease) both .8s}@keyframes isPop{from{transform:translateY(40px) scale(.6);opacity:0}}
-/* tonight to tomorrow: a paper plane flies phone, printer, school */
-.is-plane{offset-path:path('M44 60C90 10 150 10 216 60');animation:isFlyRoute 2.6s ease-in-out .3s both}
-@keyframes isFlyRoute{from{offset-distance:0%}to{offset-distance:100%}}
 /* why us: three big lines */
 .is-why2{list-style:none;margin:0;padding:0;display:grid;gap:14px;width:100%}
 .is-why2 li{padding:14px 18px;border-radius:18px;background:#fff;color:var(--ink);font-size:clamp(19px,5vw,23px);text-align:left;box-shadow:4px 5px 0 #0E1838;animation:isSlide .5s cubic-bezier(.2,1.3,.4,1) both}
@@ -1703,7 +1710,7 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .intro .btn.is-go{animation:isUp .5s var(--ease) both 1.3s;background:var(--xu-gold);color:var(--ink);border-color:#fff;box-shadow:4px 5px 0 #0E1838}
 .intro .btn.is-go .bi,.intro .btn.is-go svg{color:var(--ink)}
 .is-print{display:inline-flex;align-items:center;gap:6px;min-height:40px;color:#fff;font-weight:700;text-decoration:underline;text-underline-offset:4px;pointer-events:auto;animation:isUp .5s var(--ease) both 1.5s}
-@media(max-height:640px){.s2 .is-bud{width:80px}.is-art{width:min(66%,240px)}.is-why2 li{padding:10px 14px}}
+@media(max-height:640px){.s2 .is-bud{width:80px}.is-art{width:min(76%,270px)}.is-why2 li{padding:10px 14px}.is-t.xl{font-size:clamp(34px,10vw,48px)}}
 @media (prefers-reduced-motion:reduce){.intro *,.intro{animation-duration:.01ms!important;animation-delay:0s!important}.is-bars .now i{animation:none;width:50%}}
 /* the customer preview in the Booth tab */
 .bprev{margin-top:18px}.bprev-head{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
@@ -5766,24 +5773,29 @@ const introSeen = () => readJSON('sk_intro') === new Date().toISOString().slice(
 function introScenes(){
   const menu = (S.boothBoard && S.boothBoard.menu) || CONFIG.boothMenu, prints = printsLive();
   const pic = `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" fill="#9CC3F2"/><circle cx="72" cy="30" r="13" fill="#F2BC2E"/><path d="M0 78Q30 48 58 70T100 62V100H0Z" fill="#3E9B5A"/><path d="M0 90Q45 74 100 86V100H0Z" fill="#2E7D4A"/></svg>`;
-  const night = `<svg class="is-art is-night" viewBox="0 0 160 120" aria-hidden="true"><path class="is-moon" d="M98 22a24 24 0 1 0 22 34 19 19 0 1 1-22-34z" fill="#F2BC2E"/>
-      <g class="is-tw"><circle cx="22" cy="28" r="2.5" fill="#fff"/><circle cx="138" cy="86" r="2" fill="#fff"/><circle cx="40" cy="96" r="1.8" fill="#fff"/></g>
-      <g transform="translate(50 50)"><circle cx="0" cy="0" r="34" fill="#fff" stroke="#0E1838" stroke-width="4"/><circle r="3.5" fill="#283971"/>
-        <path class="is-hh" d="M0 0V-16" stroke="#283971" stroke-width="5" stroke-linecap="round"/><path class="is-mh" d="M0 0V-26" stroke="#EC282A" stroke-width="3.4" stroke-linecap="round"/></g></svg>`;
-  const line = `<svg class="is-art is-line" viewBox="0 0 220 90" aria-hidden="true"><rect x="8" y="70" width="204" height="6" rx="3" fill="rgba(255,255,255,.18)"/>
-      <g class="is-q">${[0, 1, 2, 3, 4, 5].map(i => `<g transform="translate(${30 + i * 32} 0)"><circle cx="0" cy="34" r="11" fill="${['#F2BC2E', '#F7A8C4', '#7AD3B0', '#fff', '#9CC3F2', '#F2BC2E'][i]}"/><rect x="-12" y="48" width="24" height="22" rx="10" fill="${['#F2BC2E', '#F7A8C4', '#7AD3B0', '#fff', '#9CC3F2', '#F2BC2E'][i]}" opacity=".85"/></g>`).join('')}</g>
-      <path d="M200 20v50" stroke="#fff" stroke-width="3" stroke-dasharray="4 5" opacity=".5"/></svg>`;
-  const route = `<svg class="is-art is-route" viewBox="0 0 260 110" aria-hidden="true"><path d="M44 60C90 10 150 10 216 60" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="3" stroke-dasharray="6 7"/>
-      <g transform="translate(16 30)"><rect width="34" height="56" rx="7" fill="#fff" stroke="#0E1838" stroke-width="3"/><rect x="5" y="8" width="24" height="34" rx="2" fill="#9CC3F2"/></g>
-      <g transform="translate(108 70)"><rect x="-26" y="0" width="52" height="24" rx="6" fill="#283971" stroke="#fff" stroke-width="3"/><rect x="-16" y="-12" width="32" height="14" rx="2" fill="#fff"/></g>
-      <g transform="translate(222 36)"><path d="M-26 20L0 0L26 20V56H-26Z" fill="#F2BC2E" stroke="#0E1838" stroke-width="3" stroke-linejoin="round"/><rect x="-7" y="36" width="14" height="20" fill="#0E1838"/><path d="M0 0V-14l12 5-12 5" fill="#EC282A" stroke="#0E1838" stroke-width="2"/></g>
-      <g class="is-plane"><path d="M-12-6L14 0-12 6-6 0Z" fill="#fff" stroke="#0E1838" stroke-width="2" stroke-linejoin="round"/></g></svg>`;
+  // words that rise in one by one; the punchline in gold, with an underline that draws itself
+  const rise = (plain, gold) => { let i = 0; const w = s => s.split(' ').map(x => `<span class="w" style="--i:${i++}">${x}</span>`).join(' ');
+    return `${w(plain)} <span class="hl" style="--i:${i + 1}">${w(gold)}</span>`; };
+  // tonight, we print, tomorrow: three matching sticker tiles, and a page that travels between them
+  const tile = (x, inner, label, k) => `<g class="is-tile" style="--k:${k}"><rect x="${x - 37}" y="18" width="74" height="74" rx="18" fill="#0E1838" transform="translate(4 5)"/>
+      <rect x="${x - 37}" y="18" width="74" height="74" rx="18" fill="#fff" stroke="#0E1838" stroke-width="3"/>${inner}
+      <text x="${x}" y="118" text-anchor="middle" font-family="Satoshi,system-ui,sans-serif" font-weight="700" font-size="14" fill="#fff">${label}</text></g>`;
+  const route = `<svg class="is-art is-route" viewBox="0 0 300 130" aria-hidden="true">
+      <path class="is-link l1" d="M92 55H108" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path class="is-link l2" d="M192 55H208" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      ${tile(50, `<rect x="37" y="30" width="26" height="46" rx="5" fill="#283971"/><rect x="40.5" y="36" width="19" height="31" rx="2" fill="#fff"/>
+        <path d="M44 42h12M44 47h12M44 52h9M44 57h11" stroke="#BCC4DD" stroke-width="2" stroke-linecap="round"/><path d="M76 26a8 8 0 1 0 7 11 6.3 6.3 0 1 1-7-11z" fill="#F2BC2E"/>`, 'Tonight', 0)}
+      ${tile(150, `<rect x="128" y="40" width="44" height="20" rx="5" fill="#283971"/><rect x="134" y="30" width="32" height="12" rx="2" fill="#E1E5F0"/><circle cx="164" cy="48" r="2.2" fill="#F2BC2E"/>
+        <g class="is-feed"><rect x="135" y="56" width="30" height="24" rx="2" fill="#fff" stroke="#283971" stroke-width="2"/><path d="M140 63h20M140 68h20M140 73h13" stroke="#BCC4DD" stroke-width="2" stroke-linecap="round"/></g>`, 'We print', 1)}
+      ${tile(250, `<path d="M228 54L250 38L272 54Z" fill="#F2BC2E" stroke="#283971" stroke-width="2.5" stroke-linejoin="round"/><rect x="232" y="54" width="36" height="26" fill="#283971"/>
+        <rect x="245" y="64" width="10" height="16" fill="#F2BC2E"/><rect x="236" y="59" width="7" height="7" fill="#9CC3F2"/><rect x="257" y="59" width="7" height="7" fill="#9CC3F2"/>
+        <path d="M250 38V28" stroke="#283971" stroke-width="1.6"/><path class="is-flag" d="M250 28l9 3.5-9 3.5z" fill="#EC282A" stroke="#283971" stroke-width="1.6" stroke-linejoin="round"/><circle cx="276" cy="30" r="5" fill="#F2BC2E"/>`, 'Tomorrow', 2)}
+    </svg>`;
   const why = [prints ? `<b>${money(printFrom())}</b> a page` : '<b>Student</b> prices', '<b>No lines</b> to wait in', `<b>Brought to you</b> at ${CONFIG.classroomOn ? 'your classroom or the gate' : 'school'}`];
   return [
-    { t: 2900, h: `${night}<h2 class="is-t">Ever needed to print something <em>the night before?</em></h2>` },
-    { t: 2900, h: `${line}<h2 class="is-t">Or waited in a long line at the <em>book center?</em></h2>` },
+    { t: 3000, h: `<h2 class="is-t xl">${rise('Ever needed to print something', 'the night before?')}</h2>` },
+    { t: 3000, h: `<h2 class="is-t xl">${rise('Or waited in a long line at the', 'book center?')}</h2>` },
     { t: 2400, h: `<h2 class="is-t big">Look no further.</h2><div class="is-logo">${logoSVG(CONFIG.shopName, true)}</div>${twoeySVG('is-bud', 'cheer')}` },
-    { t: 3600, h: `${route}<h2 class="is-t">Send it tonight. We print it and bring it to you at school, <em>as early as tomorrow.</em></h2>` },
+    { t: 4200, h: `${route}<h2 class="is-t">Send it tonight.</h2><p class="is-sub">We print it and bring it to you at school, <b>as early as tomorrow.</b></p>` },
     { t: 3400, h: `<h2 class="is-t top">Why print with us?</h2><ul class="is-why2">${why.map(w => `<li>${w}</li>`).join('')}</ul>` },
     { t: 0, h: `<h2 class="is-t">And right here at the booth: <em>made while you wait.</em></h2>
         <div class="is-out"><span class="o1"><i class="is-pin">${pic}</i><b>Pins</b></span><span class="o2"><i class="is-stk">${pic}</i><b>Stickers</b></span><span class="o3"><i class="is-card">${pic}</i><b>Photo cards</b></span></div>
