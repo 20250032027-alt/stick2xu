@@ -1681,7 +1681,9 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 /* tonight, we print, tomorrow */
 .is-route{width:min(100%,370px)}
 .is-tile{animation:isPop .5s cubic-bezier(.2,1.4,.4,1) both;animation-delay:calc(var(--k) * .35s + .2s);transform-box:fill-box;transform-origin:center}
-.is-feed{animation:isFeed 1.6s ease-in-out infinite;animation-delay:1s}@keyframes isFeed{0%,100%{transform:translateY(-6px)}50%{transform:translateY(2px)}}
+.is-feed{animation:isFeed 2.2s ease-in-out infinite;animation-delay:.9s;transform:translateY(-24px)}
+@keyframes isFeed{0%{transform:translateY(-24px)}55%,85%{transform:translateY(0)}100%{transform:translateY(0);opacity:0}}
+.is-led{animation:isBlink 1s ease-in-out infinite}@keyframes isBlink{50%{opacity:.25}}
 .is-link{stroke-dasharray:16;stroke-dashoffset:16;animation:isDraw .35s ease-out forwards}.is-link.l1{animation-delay:.5s}.is-link.l2{animation-delay:.85s}
 @keyframes isDraw{to{stroke-dashoffset:0}}
 .is-flag{transform-box:fill-box;transform-origin:left center;animation:isWave .9s ease-in-out infinite}@keyframes isWave{50%{transform:scaleX(.7) skewY(8deg)}}
@@ -5777,6 +5779,7 @@ function introScenes(){
   const rise = (plain, gold) => { let i = 0; const w = s => s.split(' ').map(x => `<span class="w" style="--i:${i++}">${x}</span>`).join(' ');
     return `${w(plain)} <span class="hl" style="--i:${i + 1}">${w(gold)}</span>`; };
   // tonight, we print, tomorrow: three matching sticker tiles, and a page that travels between them
+  const cid = 'isclip' + (++buddyN);
   const tile = (x, inner, label, k) => `<g class="is-tile" style="--k:${k}"><rect x="${x - 37}" y="18" width="74" height="74" rx="18" fill="#0E1838" transform="translate(4 5)"/>
       <rect x="${x - 37}" y="18" width="74" height="74" rx="18" fill="#fff" stroke="#0E1838" stroke-width="3"/>${inner}
       <text x="${x}" y="118" text-anchor="middle" font-family="Satoshi,system-ui,sans-serif" font-weight="700" font-size="14" fill="#fff">${label}</text></g>`;
@@ -5784,11 +5787,18 @@ function introScenes(){
       <path class="is-link l1" d="M92 55H108" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path class="is-link l2" d="M192 55H208" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
       ${tile(50, `<rect x="37" y="30" width="26" height="46" rx="5" fill="#283971"/><rect x="40.5" y="36" width="19" height="31" rx="2" fill="#fff"/>
         <path d="M44 42h12M44 47h12M44 52h9M44 57h11" stroke="#BCC4DD" stroke-width="2" stroke-linecap="round"/><path d="M76 26a8 8 0 1 0 7 11 6.3 6.3 0 1 1-7-11z" fill="#F2BC2E"/>`, 'Tonight', 0)}
-      ${tile(150, `<rect x="128" y="40" width="44" height="20" rx="5" fill="#283971"/><rect x="134" y="30" width="32" height="12" rx="2" fill="#E1E5F0"/><circle cx="164" cy="48" r="2.2" fill="#F2BC2E"/>
-        <g class="is-feed"><rect x="135" y="56" width="30" height="24" rx="2" fill="#fff" stroke="#283971" stroke-width="2"/><path d="M140 63h20M140 68h20M140 73h13" stroke="#BCC4DD" stroke-width="2" stroke-linecap="round"/></g>`, 'We print', 1)}
-      ${tile(250, `<path d="M228 54L250 38L272 54Z" fill="#F2BC2E" stroke="#283971" stroke-width="2.5" stroke-linejoin="round"/><rect x="232" y="54" width="36" height="26" fill="#283971"/>
-        <rect x="245" y="64" width="10" height="16" fill="#F2BC2E"/><rect x="236" y="59" width="7" height="7" fill="#9CC3F2"/><rect x="257" y="59" width="7" height="7" fill="#9CC3F2"/>
-        <path d="M250 38V28" stroke="#283971" stroke-width="1.6"/><path class="is-flag" d="M250 28l9 3.5-9 3.5z" fill="#EC282A" stroke="#283971" stroke-width="1.6" stroke-linejoin="round"/><circle cx="276" cy="30" r="5" fill="#F2BC2E"/>`, 'Tomorrow', 2)}
+      ${tile(150, `<defs><clipPath id="${cid}"><rect x="120" y="55" width="60" height="32"/></clipPath></defs>
+        <rect x="132" y="28" width="36" height="8" rx="3" fill="#3A52A3"/><rect x="126" y="34" width="48" height="24" rx="6" fill="#283971"/>
+        <rect x="133" y="52" width="34" height="3.5" rx="1.75" fill="#0E1838"/><circle cx="166" cy="42" r="2.4" fill="#F2BC2E" class="is-led"/><rect x="131" y="40" width="16" height="3" rx="1.5" fill="#4A5D9E"/>
+        <g clip-path="url(#${cid})"><g class="is-feed"><rect x="136" y="54" width="28" height="26" rx="1.5" fill="#fff" stroke="#283971" stroke-width="1.8"/>
+          <path d="M140.5 61h19M140.5 66h19M140.5 71h12" stroke="#BCC4DD" stroke-width="2" stroke-linecap="round"/></g></g>`, 'We print', 1)}
+      ${tile(250, `<circle cx="276" cy="31" r="5" fill="#F2BC2E"/>
+        <rect x="227" y="54" width="46" height="26" rx="2" fill="#283971"/><rect x="227" y="52" width="46" height="4" rx="1.5" fill="#3A52A3"/>
+        ${[231, 237, 259, 265].map(x => `<rect x="${x}" y="59" width="4" height="5" rx="1" fill="#9CC3F2"/><rect x="${x}" y="68" width="4" height="5" rx="1" fill="#9CC3F2"/>`).join('')}
+        <rect x="242" y="44" width="16" height="36" fill="#283971"/><path d="M239.5 45L250 34.5L260.5 45Z" fill="#F2BC2E" stroke="#283971" stroke-width="2" stroke-linejoin="round"/>
+        <circle cx="250" cy="52" r="4" fill="#fff"/><path d="M250 52V49.6M250 52h1.8" stroke="#283971" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M245.5 80V67.5a4.5 4.5 0 0 1 9 0V80Z" fill="#F2BC2E"/>
+        <path d="M250 34.5V25" stroke="#283971" stroke-width="1.6"/><path class="is-flag" d="M250 25l8 3.2-8 3.2z" fill="#EC282A" stroke="#283971" stroke-width="1.4" stroke-linejoin="round"/>`, 'Tomorrow', 2)}
     </svg>`;
   const why = [prints ? `<b>${money(printFrom())}</b> a page` : '<b>Student</b> prices', '<b>No lines</b> to wait in', `<b>Brought to you</b> at ${CONFIG.classroomOn ? 'your classroom or the gate' : 'school'}`];
   return [
