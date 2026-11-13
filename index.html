@@ -1199,17 +1199,17 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 @media(max-width:600px){.paths{grid-template-columns:1fr;gap:12px}}
 /* Coming up: the label above, every chip alike (the next one only gets its little icon) */
 /* Coming up: little date stickers, slightly tilted like they're stuck on. The next one wears its own color and twinkles. */
-.hero .cdrow2,.cdshop .cdrow2{display:grid;gap:10px;justify-items:start;margin-top:30px}
-.hero .cd-lbl,.cdshop .cd-lbl{font-size:14px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--muted)}
-.hero .cdchips,.cdshop .cdchips{gap:12px;padding:2px 0 4px}
-.hero .cdc,.cdshop .cdc{border:2px solid var(--ink);border-radius:14px;padding:6px 13px 6px 10px;box-shadow:2px 2px 0 var(--ink);rotate:-1.5deg;transition:rotate .25s var(--ease),translate .25s var(--ease),box-shadow .25s var(--ease)}
-.hero .cdc:nth-child(2),.cdshop .cdc:nth-child(2){rotate:1.2deg}.hero .cdc:nth-child(3),.cdshop .cdc:nth-child(3){rotate:-.7deg}
-.hero .cdc:hover,.cdshop .cdc:hover{rotate:0deg;translate:0 -2px;box-shadow:3px 4px 0 var(--ink);border-color:var(--ink)}
-.hero .cdc .cdc-n,.cdshop .cdc .cdc-n{font-size:22px}
-.hero .cdc small,.cdshop .cdc small{font-size:12px}
-.hero .cdc.next,.cdshop .cdc.next{background:color-mix(in srgb,var(--cdc) 11%,#fff);border-color:var(--ink)}
-.hero .cdc.next .cdc-n,.cdshop .cdc.next .cdc-n{color:var(--cdc)}
-.hero .cdtw.t1,.cdshop .cdtw.t1{right:-5px;top:-6px;width:12px;height:12px}.hero .cdtw.t2,.cdshop .cdtw.t2{left:-4px;bottom:-5px;width:8px;height:8px}
+.hero .cdrow2{display:grid;gap:10px;justify-items:start;margin-top:30px}
+.hero .cd-lbl{font-size:14px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--muted)}
+.hero .cdchips{gap:12px;padding:2px 0 4px}
+.hero .cdc{border:2px solid var(--ink);border-radius:14px;padding:6px 13px 6px 10px;box-shadow:2px 2px 0 var(--ink);rotate:-1.5deg;transition:rotate .25s var(--ease),translate .25s var(--ease),box-shadow .25s var(--ease)}
+.hero .cdc:nth-child(2){rotate:1.2deg}.hero .cdc:nth-child(3){rotate:-.7deg}
+.hero .cdc:hover{rotate:0deg;translate:0 -2px;box-shadow:3px 4px 0 var(--ink);border-color:var(--ink)}
+.hero .cdc .cdc-n{font-size:22px}
+.hero .cdc small{font-size:12px}
+.hero .cdc.next{background:color-mix(in srgb,var(--cdc) 11%,#fff);border-color:var(--ink)}
+.hero .cdc.next .cdc-n{color:var(--cdc)}
+.hero .cdtw.t1{right:-5px;top:-6px;width:12px;height:12px}.hero .cdtw.t2{left:-4px;bottom:-5px;width:8px;height:8px}
 @media (prefers-reduced-motion:reduce){.hero .cdc{rotate:0deg}}
 /* homepage review: footer lined up, phones tidied */
 footer .ft-l{display:grid;gap:8px;align-content:start}
@@ -1227,16 +1227,16 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
   .hero > :last-child{width:min(100%,320px);justify-self:center}
 }
 @media(max-width:480px){   /* phones: all three dates as equal tiles on one row: the number on top, the event under it */
-  .hero .cdrow2,.cdshop .cdrow2{justify-items:stretch}
-  .hero .cdchips,.cdshop .cdchips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-  .hero .cdc,.cdshop .cdc{flex-direction:column;align-items:flex-start;gap:2px;padding:8px 10px 9px;min-width:0}
-  .hero .cdc .cdc-n,.cdshop .cdc .cdc-n{font-size:24px;line-height:1}
-  .hero .cdc small,.cdshop .cdc small{font-size:12px;line-height:1.2}
-  .hero .cdc small b,.hero .cdc small strong,.cdshop .cdc small b,.cdshop .cdc small strong{display:block}
-  .hero .cdc .cdic,.cdshop .cdc .cdic{position:absolute;right:8px;top:8px}
+  .hero .cdrow2{justify-items:stretch}
+  .hero .cdchips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .hero .cdc{flex-direction:column;align-items:flex-start;gap:2px;padding:8px 10px 9px;min-width:0}
+  .hero .cdc .cdc-n{font-size:24px;line-height:1}
+  .hero .cdc small{font-size:12px;line-height:1.2}
+  .hero .cdc small b,.hero .cdc small strong{display:block}
+  .hero .cdc .cdic{position:absolute;right:8px;top:8px}
 }
-@media(max-width:360px){.hero .cdchips{gap:8px}.hero .cdc,.cdshop .cdc{padding:7px 7px 8px}.hero .cdc small,.cdshop .cdc small{font-size:12px}.hero .cdc .cdc-n,.cdshop .cdc .cdc-n{font-size:22px}.hero .cdc .cdic,.cdshop .cdc .cdic{right:6px;top:6px}}
-@media(max-width:340px){.hero .cdc{padding-left:6px;padding-right:5px}.hero .cdc small,.cdshop .cdc small{font-size:12px;letter-spacing:-.01em}}
+@media(max-width:360px){.hero .cdchips{gap:8px}.hero .cdc{padding:7px 7px 8px}.hero .cdc small{font-size:12px}.hero .cdc .cdc-n{font-size:22px}.hero .cdc .cdic{right:6px;top:6px}}
+@media(max-width:340px){.hero .cdc{padding-left:6px;padding-right:5px}.hero .cdc small{font-size:12px;letter-spacing:-.01em}}
 /* quiet extras ("Got an idea? Tell us", "Don't see what you want? Tell us"): plain text and an underlined link, like "Print a file" */
 .softlink{margin:18px 0 26px;font-size:15.5px;color:var(--muted)}
 .softlink.center{text-align:center;margin:24px 0 8px}
@@ -1748,7 +1748,7 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 @media(max-width:820px){.pv-nav{display:none}.pview{grid-template-columns:1fr}.pv-track{margin:0 -16px;padding-left:calc(50% - 31vw + 16px);padding-right:calc(50% - 31vw + 16px)}}   /* phones: just swipe */
 @media (prefers-reduced-motion:reduce){.pv-count em{animation:none}}
 .prange{display:flex;align-items:center;gap:10px;margin-top:6px}.prange .linkbtn{white-space:nowrap}.prange .inp{max-width:140px;min-height:38px;padding:6px 10px;font-size:14.5px}.prange .inp.bad{border-color:var(--red)}.prange .linkbtn{font-size:13.5px}
-.cdshop .cdrow2{margin:18px 0 6px}
+
 /* a quick pickup costs a little more: a small pill on the right of that day */
 .choice > svg{flex:none}   /* icons keep their size next to longer text */
 .choice .rushpill{display:inline-block;align-self:flex-start;margin-top:4px;padding:2px 10px;border-radius:999px;border:1.5px solid #E7C66B;background:#FFF6DA;color:#7A5300;font-weight:800;font-size:12.5px;white-space:nowrap}
@@ -1780,6 +1780,72 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
   #fstage:has(.docempty){display:none}   /* prints: the settings (with their own Choose files) come first */
   .pview .pv-pg{width:min(44vw,190px)}.pview .pv-pg.wide{width:min(70vw,300px)}
   .pv-track{padding-left:calc(50% - min(22vw,95px) + 16px);padding-right:calc(50% - min(22vw,95px) + 16px)}
+}
+.bprices{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px 16px;margin-bottom:6px}
+.bpr{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fff}
+.bpr span:first-child{font-weight:700;font-size:14.5px}.bpr small{color:var(--muted);font-weight:600}.bpr .inp{width:88px;min-height:38px}
+/* the free-candy ticket at the end of the booth intro */
+.cticket{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;padding:14px 22px 16px;border-radius:20px;background:var(--xu-gold);color:var(--ink);text-align:center;
+  border:3px dashed rgba(14,24,56,.5);box-shadow:4px 5px 0 #0E1838;animation:isPop .6s cubic-bezier(.2,1.4,.4,1) both .15s;position:relative;order:-2;margin-bottom:8px}
+.cticket::before,.cticket::after{content:"";position:absolute;top:50%;width:20px;height:20px;margin-top:-10px;border-radius:50%;background:#2A3C7E}.cticket::before{left:-12px}.cticket::after{right:-12px}
+.cticket .ct-k{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+.cticket b{font-family:var(--display);font-weight:800;font-size:clamp(34px,10vw,46px);line-height:1;letter-spacing:-.01em}
+.cticket span:last-child{font-weight:800;font-size:16px}
+@media(max-height:720px){.cticket{padding:10px 18px 12px}.cticket b{font-size:30px}.is-scene:has(.cticket){gap:12px;margin-top:4px}
+  .is-scene:has(.cticket) .is-t{font-size:clamp(24px,7.4vw,32px)}.is-scene:has(.cticket) .is-out .is-pin{width:56px}.is-scene:has(.cticket) .is-out .is-stk{width:52px}.is-scene:has(.cticket) .is-out .is-card{width:44px;height:60px}}
+.is-stage:has(.cticket){place-items:start center}.is-scene:has(.cticket){margin-top:clamp(10px,4vh,40px)}   /* the ticket leads, at the top */
+/* the price poster (A4) */
+.pp-tools{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 20px;background:#fff;border-bottom:1.5px solid var(--line)}
+.pp-tools span{flex:1;min-width:200px;font-size:14px;color:var(--muted)}
+.pp-scale{padding:20px;display:flex;justify-content:center;overflow:hidden}
+.poster{width:210mm;height:297mm;flex:none;position:relative;overflow:hidden;background:#EEF1F9;color:var(--ink);transform-origin:top center;box-shadow:0 20px 60px rgba(28,42,87,.25);
+  display:grid;grid-template-rows:138mm 1fr;font-family:var(--body);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pp-top{position:relative;overflow:hidden;background:linear-gradient(165deg,#3A4F99 0%,#1C2A57 100%);color:#fff;display:flex;flex-direction:column;align-items:center;padding:7mm 10mm 0;
+  border-radius:0 0 50% 50% / 0 0 10mm 10mm}
+.pp-dots{position:absolute;inset:0;background:radial-gradient(circle at 1px 1px,rgba(255,255,255,.13) 1.5px,transparent 0) 0 0/7mm 7mm}
+.pp-conf{position:absolute;width:13mm;fill:#F2BC2E;opacity:.9;filter:drop-shadow(.8mm 1mm 0 rgba(10,16,40,.35))}
+.pp-conf.c1,.pp-conf.c5{fill:#F7A8C4}.pp-conf.c3,.pp-conf.c6{fill:#7AD3B0}.pp-conf.c2,.pp-conf.c7{fill:#fff;opacity:.85}
+.pp-conf.c0{left:9mm;top:60mm;transform:rotate(-14deg)}.pp-conf.c1{right:9mm;top:96mm;width:12mm;transform:rotate(12deg)}
+.pp-conf.c2{left:28mm;top:84mm;width:8mm}.pp-conf.c3{left:12mm;top:106mm;width:11mm;transform:rotate(-10deg)}
+.pp-conf.c4{left:14mm;top:9mm;width:8mm;opacity:.6}.pp-conf.c5{right:28mm;top:110mm;width:9mm;transform:rotate(18deg)}.pp-conf.c6{left:36mm;top:110mm;width:7mm}.pp-conf.c7{right:14mm;top:9mm;width:7mm;opacity:.6}
+.pp-logo{position:relative;width:34mm}.pp-logo .logo{width:100%;height:auto;display:block}
+.pp-h{position:relative;margin:2mm 0 0;text-align:center;font-family:var(--display);font-weight:800;line-height:.92;letter-spacing:-.015em}
+.pp-h span{display:block;font-size:15mm;color:#fff}
+.pp-h .pp-gold{position:relative;font-size:21.5mm;color:var(--xu-gold);text-shadow:0 1.2mm 0 #0E1838}
+.pp-gold i{position:absolute;left:-3mm;right:-3mm;bottom:1mm;height:6mm;background:rgba(58,82,163,.95);border-radius:3mm;z-index:-1;transform:rotate(-1.2deg)}
+.pp-qrwrap{position:relative;margin-top:5mm}
+.pp-qr{width:57mm;height:57mm;padding:4.5mm;background:#fff;border-radius:6mm;box-shadow:0 0 0 1.3mm #0E1838,2.2mm 2.6mm 0 1.3mm #0E1838;transform:rotate(-2deg)}
+.pp-qr canvas,.pp-qr img{width:100%!important;height:100%!important;display:block;image-rendering:pixelated}
+.pp-scanme{position:absolute;left:calc(100% + 5mm);top:-3mm;white-space:nowrap;font-family:'Caveat','Segoe Print',cursive;font-weight:700;font-size:12mm;color:var(--xu-gold);transform:rotate(-8deg)}
+.pp-arrow{position:absolute;left:calc(100% + 2mm);top:10mm;width:24mm;transform:scaleX(-1) rotate(-10deg)}
+.pp-sub{position:relative;margin:5mm 0 0;font-size:5.4mm;font-weight:800;text-align:center;line-height:1.25;max-width:150mm}
+.pp-bottom{display:flex;flex-direction:column;padding:7mm 11mm 6mm;background:radial-gradient(circle at 1px 1px,rgba(40,57,113,.09) 1.3px,transparent 0) 0 0/6mm 6mm}   /* the site's own cool background, faintly dotted */
+.pp-head{display:flex;align-items:center;justify-content:space-between;gap:6mm;margin-bottom:4.5mm}
+.pp-head h2{margin:0;font-family:var(--display);font-weight:800;font-size:13mm;line-height:1;white-space:nowrap}
+.pp-head h2 span{background:linear-gradient(var(--xu-gold),var(--xu-gold)) no-repeat 0 92%/100% 3.2mm;padding:0 1mm}
+.pp-ready{margin:0;padding:2.4mm 5mm;border-radius:4mm;background:var(--ink);color:#fff;font-size:3.8mm;font-weight:700;text-align:center;line-height:1.15;transform:rotate(2deg);box-shadow:1.2mm 1.4mm 0 rgba(14,24,56,.3)}
+.pp-ready b{display:block;font-family:var(--display);font-size:6.2mm;color:var(--xu-gold)}
+.pp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm;flex:1;align-content:start}.pp-grid.n4{grid-template-columns:repeat(4,1fr)}.pp-grid.n2{grid-template-columns:repeat(2,1fr)}.pp-grid.n1{grid-template-columns:1fr}
+.pp-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:1.5mm;padding:3mm 3mm 4mm;background:#fff;border:.8mm solid var(--ink);border-radius:5mm;box-shadow:1.4mm 1.7mm 0 var(--ink);transform:rotate(var(--r))}
+.pp-art{width:100%;aspect-ratio:4/3;border-radius:3.5mm;background:#EEF0F7;overflow:hidden}.pp-art svg{width:100%;height:100%;display:block}
+.pp-info{display:flex;flex-direction:column;align-items:center;gap:1.5mm;width:100%}
+.pp-grid.rows{grid-template-columns:repeat(2,1fr);gap:3.5mm 5mm}
+.pp-grid.rows .pp-card{flex-direction:row;align-items:center;text-align:left;gap:3.5mm;padding:2mm 3.5mm 2mm 2mm}
+.pp-grid.rows .pp-art{width:21mm;flex:none}
+.pp-grid.rows .pp-info{align-items:flex-start;gap:.8mm}.pp-grid.rows .pp-name{margin-top:0;font-size:6.4mm}.pp-grid.rows .pp-price b{font-size:9mm}.pp-grid.rows .pp-sizes b{font-size:5.8mm}.pp-grid.rows .pp-sizes li{font-size:3.8mm}
+.pp-name{font-family:var(--display);font-weight:800;font-size:7.2mm;line-height:1.05;margin-top:1mm}
+.pp-price{display:flex;align-items:baseline;gap:1.5mm;white-space:nowrap}.pp-price b{font-family:var(--display);font-weight:800;font-size:10.5mm;line-height:1;padding:.8mm 3mm;border-radius:2.5mm;background:var(--xu-gold);border:.6mm solid var(--ink);transform:rotate(-2deg)}
+.pp-price small{font-size:4mm;color:var(--muted);font-weight:800}
+.pp-sizes{list-style:none;margin:0;padding:0;width:100%;display:grid;gap:.6mm}.pp-sizes li{display:flex;justify-content:space-between;align-items:baseline;gap:2mm;font-size:4.2mm;font-weight:700}
+.pp-sizes b{font-family:var(--display);font-size:6.6mm;line-height:1.1}
+.pp-foot{display:flex;align-items:center;flex-wrap:wrap;gap:2mm 6mm;margin-top:4mm;padding-top:3.5mm;border-top:.6mm dashed #C3CAE0;font-size:4.3mm;font-weight:800;color:var(--ink)}
+.pp-foot span{display:inline-flex;align-items:center;gap:1.5mm}.pp-foot svg{width:5mm;height:5mm}.pp-foot b{margin-left:auto;font-family:var(--display);font-size:6.5mm}
+@media print{
+  @page{size:A4;margin:0}
+  html,body{background:#fff!important}
+  .pp-tools,#toast,.topwrap,.bottombar{display:none!important}
+  .pp-scale{padding:0;height:auto!important;display:block}
+  .poster{transform:none!important;box-shadow:none;margin:0}
 }
 /* fonts: tiles that show your words in each font */
 .wd-fonts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
@@ -3214,6 +3280,8 @@ function applyShopConfig(c){
   CONFIG.confirmOn = c.confirm_on === true;
   CONFIG.boothOn = c.booth_on === true; CONFIG.boothPaused = c.booth_paused === true;
   CONFIG.boothMenu = Array.isArray(c.booth_menu) ? c.booth_menu : D.boothMenu;
+  CONFIG.boothCandy = c.booth_candy !== false;   // free candy for watching the intro (on unless switched off)
+  CONFIG.boothPrices = c.booth_prices && typeof c.booth_prices === 'object' ? c.booth_prices : {};
   CONFIG.boothMax = +c.booth_max > 0 ? +c.booth_max : D.boothMax; CONFIG.boothMinutes = +c.booth_minutes > 0 ? +c.booth_minutes : D.boothMinutes;
   CONFIG.confirmDaysBefore = Number.isFinite(+c.confirm_days_before) && c.confirm_days_before !== null && c.confirm_days_before !== '' ? +c.confirm_days_before : D.confirmDaysBefore;
   CONFIG.maxReschedules = Number.isFinite(+c.max_reschedules) && c.max_reschedules !== null && c.max_reschedules !== '' ? +c.max_reschedules : D.maxReschedules;
@@ -3273,7 +3341,9 @@ function applyShopConfig(c){
     CONFIG.products[k].sizes = base.sizes.map(z => ({ ...z, ...(((c.sizes || {})[k] || {})[z.id] || {}) }));
   }
 }
-const P = key => S.settings.products[key] || mergeProducts({})[key];
+// in booth mode, booth prices (set in the Booth tab) replace the normal ones everywhere; the database charges the same
+const P = key => { const p = S.settings.products[key] || mergeProducts({})[key], bp = S.booth && CONFIG.boothPrices && CONFIG.boothPrices[key];
+  if (!p || !bp) return p; return { ...p, sizes: p.sizes.map(z => Number.isFinite(+bp[z.id]) && bp[z.id] !== '' && bp[z.id] !== null ? { ...z, price: +bp[z.id] } : z) }; };
 const liveSizes = key => P(key).sizes.filter(z => z.enabled);
 const liveAddons = key => P(key).addons.filter(a => a.enabled && a.label);
 const isLive = key => !!P(key) && P(key).enabled && liveSizes(key).length > 0;
@@ -4384,7 +4454,6 @@ function viewShop(){
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap">${progress(1)}
     <h2>What do you want to make?</h2>
     <p class="muted" style="margin:8px 0 0">Pick one to start. You can add more to the same order after.</p>
-    <div class="cdshop">${countdownHTML().replace('aria-label="Coming up"><span class="cd-lbl">Coming up</span>', 'aria-label="Plan your gifts"><span class="cd-lbl">Plan your gifts</span>')}</div>
     ${live.length ? `<div class="bento n${Math.min(live.length, 7)}">${live.map((p, i) => bentoCard(p, i, live.length)).join('')}</div>`
       : `<div class="empty" style="margin-top:20px">${ic('box', 36)}<b>Nothing is available right now.</b><span>Check back soon.</span></div>`}
     ${live.length ? ideaLine("Don't see what you want?", 'product') : ''}
@@ -5782,6 +5851,7 @@ async function viewBooth(sub){
   if (sub === 'checkout') return viewBoothCheckout();
   if (sub === 'wait') return viewBoothWait();
   if (sub === 'board') return viewBoothBoard();
+  if (sub === 'poster') return viewBoothPoster();
   S.booth = true; document.title = `Booth · ${BASE_TITLE}`;
   const mine = S.boothDemo ? null : boothActive();
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap booth">
@@ -5831,6 +5901,48 @@ async function gatherUploads(){   // the same pictures a normal order uploads (p
   for (const it of S.cart.filter(x => x.type === 'prints')) for (const f of it.files) { const d = prsDoc(f.id); if (d && d.kind === 'image' && d.canvas) pages[f.id] = await renderPrintPage(f, d, (it.addons || []).includes('color')); }
   return S.images.concat((S.docs || []).map(d => pages[d.id] || d)).filter(i => used.has(i.id));
 }
+// ---------- free candy: a wrapped sweet, and the ticket at the end of the intro ----------
+function candySVG(c = '#EC282A', cls = ''){
+  return `<svg class="candy ${cls}" viewBox="0 0 120 64" aria-hidden="true"><path d="M30 32L6 12l4 20-4 20z" fill="${c}" stroke="#0E1838" stroke-width="3" stroke-linejoin="round"/><path d="M90 32l24-20-4 20 4 20z" fill="${c}" stroke="#0E1838" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="60" cy="32" rx="32" ry="24" fill="${c}" stroke="#0E1838" stroke-width="3"/><path d="M42 14q-8 18 0 36M60 8v48M78 14q8 18 0 36" stroke="#fff" stroke-width="5" opacity=".75" fill="none" stroke-linecap="round"/>
+    <ellipse cx="48" cy="22" rx="9" ry="5" fill="#fff" opacity=".55" transform="rotate(-25 48 22)"/></svg>`;
+}
+function candyTicketHTML(){
+  return `<div class="cticket" role="note"><span class="ct-k">Thanks for watching!</span><b>FREE CANDY!</b><span>Show this screen at our table</span></div>`;
+}
+// ---------- the price poster (A4): scan for candy, and the booth prices ----------
+function viewBoothPoster(){
+  const was = S.booth; S.booth = true;   // booth prices
+  const list = liveProducts().filter(p => CONFIG.boothMenu.includes(p.key));
+  const cards = list.map((p, i) => { const sizes = liveSizes(p.key), unit = unitWord(p.key, 1);
+    return `<div class="pp-card" style="--r:${[-1.4, 1.1, -.6, 1.5, -1, .8][i % 6]}deg"><div class="pp-art">${productIllo(p.key)}</div><div class="pp-info"><b class="pp-name">${esc(p.name)}</b>
+      ${sizes.length > 1 ? `<ul class="pp-sizes">${sizes.map(z => `<li><span>${esc(z.label)}</span><b>${money(z.price)}</b></li>`).join('')}</ul>` : `<span class="pp-price"><b>${money(sizes[0].price)}</b><small>per ${esc(unit)}</small></span>`}</div></div>`; }).join('');
+  S.booth = was;
+  const site = String(CONFIG.siteUrl || location.host).replace(/^https?:\/\//, '').replace(/\/$/, '');
+  const conf = ['star', 'heart', 'bolt', 'moon', 'star', 'heart', 'bolt', 'star'];
+  $('#app').innerHTML = `<div class="pp-tools"><a class="pilllink" href="#/admin">${ic('back', 18)}Admin</a><span>A4 poster. In the print window, choose A4, no margins, and turn on background graphics.</span>
+      ${btn('Print the poster', { act: 'posterPrint', icon: 'printer' })}</div>
+    <div class="pp-scale"><article class="poster" id="poster">
+      <section class="pp-top">
+        <div class="pp-dots" aria-hidden="true"></div>
+        ${conf.map((k, i) => `<svg class="pp-conf c${i}" viewBox="0 0 24 24" aria-hidden="true"><path d="${LK_SHAPES[k]}"/></svg>`).join('')}
+        <div class="pp-logo">${logoSVG(CONFIG.shopName, true)}</div>
+        <h1 class="pp-h"><span>SCAN &amp; GET</span><span class="pp-gold"><i aria-hidden="true"></i>FREE CANDY</span></h1>
+        <div class="pp-qrwrap"><div class="pp-qr" id="ppQr"></div><span class="pp-scanme">scan me!</span>
+          <svg class="pp-arrow" viewBox="0 0 80 60" aria-hidden="true"><path d="M8 8q40 0 56 38" fill="none" stroke="#F2BC2E" stroke-width="5" stroke-linecap="round"/><path d="M52 40l12 8 3-14" fill="none" stroke="#F2BC2E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <p class="pp-sub">Watch our short intro, then show your screen at our table.</p>
+      </section>
+      <section class="pp-bottom">
+        <div class="pp-head"><h2><span>Booth prices</span></h2><p class="pp-ready">Ready in about<b>${CONFIG.boothMinutes * 2 + 2} minutes</b></p></div>
+        <div class="pp-grid n${Math.min(list.length, 6)} ${list.length >= 4 ? 'rows' : ''}">${cards}</div>
+        <footer class="pp-foot"><span>${ic('cash', 18)} Pay with cash${CONFIG.gcash.enabled ? ' or GCash' : ''} when it’s ready</span><span>${ic('printer', 18)} Prints too: send tonight, get them at school tomorrow</span><b>${esc(site)}</b></footer>
+      </section>
+    </article></div>`;
+  needLib('qr').then(ok => { const q = $('#ppQr'); if (ok && q) new QRCode(q, { text: boothUrl(), width: 720, height: 720, colorDark: '#1C2A57', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); });
+  const fit = () => { const s = $('.pp-scale'), p = $('#poster'); if (!s || !p) return; const k = Math.min(1, (s.clientWidth - 8) / p.offsetWidth); p.style.transform = `scale(${k})`; s.style.height = p.offsetHeight * k + 'px'; };
+  fit(); window.addEventListener('resize', fit); document.title = `Booth poster · ${BASE_TITLE}`;
+}
+
 // ---------- the booth intro: a short animated trailer when the QR code opens the booth ----------
 // Four scenes (welcome, what we make, why us, how it works), story-style progress bars, tap to move on, Skip any time.
 // Made from the page's own drawing: nothing to download, sharp on any screen. Plays once a day on each phone.
@@ -5870,7 +5982,7 @@ function introScenes(){
     { t: 2400, h: `<h2 class="is-t big">Look no further.</h2><div class="is-logo">${logoSVG(CONFIG.shopName, true)}</div>${twoeySVG('is-bud', 'cheer')}` },
     { t: 4200, h: `${route}<h2 class="is-t">Send it tonight.</h2><p class="is-sub">We print it and bring it to you at school, <b>as early as tomorrow.</b></p>` },
     { t: 3400, h: `<h2 class="is-t top">Why print with us?</h2><ul class="is-why2">${why.map(w => `<li>${w}</li>`).join('')}</ul>` },
-    { t: 0, h: `<h2 class="is-t">And right here at the booth: <em>made while you wait.</em></h2>
+    { t: 0, h: `${CONFIG.boothCandy ? candyTicketHTML() : ''}<h2 class="is-t">And right here at the booth: <em>made while you wait.</em></h2>
         <div class="is-out"><span class="o1"><i class="is-pin">${pic}</i><b>Pins</b></span><span class="o2"><i class="is-stk">${pic}</i><b>Stickers</b></span><span class="o3"><i class="is-card">${pic}</i><b>Photo cards</b></span></div>
         <button type="button" class="btn dark wide is-go" data-act="introEnd">${ic('arrow', 20)}<span>Let’s make something</span></button>
         ${prints && menu.includes('prints') ? `<a class="is-print" href="${designRoute('prints')}" data-act="introPrint">${ic('printer', 16)} Or print a file</a>` : ''}` }];
@@ -5878,7 +5990,7 @@ function introScenes(){
 function boothIntro(){
   if (document.querySelector('.intro')) return;
   const sc = introScenes(), o = document.createElement('div'); o.className = 'intro'; o.setAttribute('role', 'dialog'); o.setAttribute('aria-label', 'Welcome to the booth');
-  o.innerHTML = `<div class="is-bars">${sc.map(() => '<span><i></i></span>').join('')}</div><button type="button" class="is-skip" data-act="introEnd">Skip</button>
+  o.innerHTML = `<div class="is-bars">${sc.map(() => '<span><i></i></span>').join('')}</div><button type="button" class="is-skip" data-act="introSkip">Skip</button>
     <div class="is-bg" aria-hidden="true">${['star', 'heart', 'bolt', 'moon', 'star', 'heart'].map((k, i) => `<svg class="is-f f${i}" viewBox="0 0 24 24"><path d="${LK_SHAPES[k]}"/></svg>`).join('')}</div>
     <div class="is-stage" id="isStage"></div><div class="is-tap l" data-intro="-1"></div><div class="is-tap r" data-intro="1"></div>`;
   document.body.appendChild(o); document.documentElement.classList.add('noscroll');
@@ -6156,7 +6268,8 @@ async function drawBoothAdmin(){
     <div class="bc-bar">
       <div class="bc-state ${!on ? 'closed' : paused ? 'paused' : 'open'}"><i aria-hidden="true"></i><b>${!on ? 'Booth closed' : paused ? 'Paused: not taking orders' : 'Booth open'}</b></div>
       <div class="bc-btns">${!on ? smallBtn('Open the booth', 'check', 'boothSet', 'dark', 'data-v="open"') : `${paused ? smallBtn('Take orders again', 'check', 'boothSet', 'dark', 'data-v="resume"') : smallBtn('Pause', 'clock', 'boothSet', 'plain', 'data-v="pause"')}${smallBtn('Close', 'x', 'boothSet', 'plain', 'data-v="close"')}`}
-        <a class="btn sm noi plain" href="#/booth/board" target="_blank" rel="noopener">${ic('eye', 18)}<span>Now ready screen</span></a></div>
+        <a class="btn sm noi plain" href="#/booth/board" target="_blank" rel="noopener">${ic('eye', 18)}<span>Now ready screen</span></a>
+        <a class="btn sm noi plain" href="#/booth/poster" target="_blank" rel="noopener">${ic('printer', 18)}<span>Price poster</span></a></div>
       <p class="muted small bc-sum">${list.length} booth order${list.length === 1 ? '' : 's'} today, ${money(money0)} collected</p>
     </div>
     <div class="bcols">
@@ -6169,6 +6282,11 @@ async function drawBoothAdmin(){
     <details class="panel bset"><summary><b>Booth settings and QR code</b></summary>
       <p class="lab" style="margin:12px 0 6px">On the booth menu</p>
       <div class="bset-menu">${liveProducts().map(p => `<label class="switch"><input type="checkbox" data-bmenu="${p.key}" ${CONFIG.boothMenu.includes(p.key) ? 'checked' : ''}><span>${esc(p.name)}</span></label>`).join('')}</div>
+      <label class="switch" style="margin-top:12px"><input type="checkbox" id="bCandy" ${CONFIG.boothCandy ? 'checked' : ''}><span>Free candy for watching the intro (shows a “Free candy” ticket at the end)</span></label>
+      <p class="lab" style="margin:16px 0 4px">Booth prices</p>
+      <p class="muted small" style="margin:0 0 8px">Leave a box empty to use the normal price.</p>
+      <div class="bprices">${liveProducts().filter(p => CONFIG.boothMenu.includes(p.key)).map(p => liveSizes(p.key).map(z => { const v = (CONFIG.boothPrices[p.key] || {})[z.id];
+        return `<label class="bpr"><span>${esc(p.name)}${liveSizes(p.key).length > 1 ? ` <small>${esc(z.label)}</small>` : ''}</span><span class="pricein"><input class="inp num" type="number" min="0" step="1" inputmode="numeric" data-bprice="${p.key}|${esc(z.id)}" value="${v === undefined || v === null ? '' : esc(v)}" placeholder="${z.price}" aria-label="Booth price for ${esc(p.name)} ${esc(z.label)}, normally ${z.price}"></span></label>`; }).join('')).join('')}</div>
       <div class="bset-n"><label class="dnum"><span>Most orders waiting at once</span><input class="inp num" type="number" min="1" max="60" id="bMax" value="${CONFIG.boothMax}"></label>
         <label class="dnum"><span>Minutes per order (for the wait estimate)</span><input class="inp num" type="number" min="1" max="30" id="bMin" value="${CONFIG.boothMinutes}"></label></div>
       ${smallBtn('Save booth settings', 'check', 'boothSaveSet', 'dark')}
@@ -10162,6 +10280,8 @@ const ACTIONS = {
       const m = String(e && e.message || e); toast(/BOOTH_FULL/.test(m) ? 'The booth is full right now. Try again in a few minutes.' : /BOOTH_PAUSED/.test(m) ? 'We’re catching up. Try again in a few minutes.' : /BOOTH_CLOSED/.test(m) ? 'The booth just closed. Order online for pickup at school.' : friendlyError(e)); }
   },
   introEnd: () => introEnd(),
+  introSkip: () => { const last = document.querySelectorAll('.is-bars span').length - 1; if (CONFIG.boothCandy && S.introNext && !document.querySelector('.is-scene.s' + last)) S.introNext(last); else introEnd(); },
+  posterPrint: () => window.print(),
   introPrint: () => { introEnd(); location.hash = designRoute('prints'); },
   introAgain: () => boothIntro(),
   boothPrev: t => { const f = $('#bPrev'); if (!f) return; document.querySelectorAll('[data-act="boothPrev"]').forEach(b => b.classList.toggle('on', b === t));
@@ -10178,7 +10298,8 @@ const ACTIONS = {
     await api.updateOrder(o.id, { paid: true, amount_paid: o.total, payment: t.dataset.v, status: 'done' }); buzz(8); if (row) row.classList.add('gone'); setTimeout(drawBoothAdmin, 250); } catch (e) { toast(friendlyError(e)); } },
   boothPrint: async t => { try { const list = await api.boothOrders(new Date(Date.now() - 864e5).toISOString()), o = list.find(x => x.id === t.dataset.id); if (o) await makePdf(o, null, false); } catch (e) { toast(friendlyError(e)); } },
   boothSaveSet: async () => { const menu = [...document.querySelectorAll('[data-bmenu]')].filter(i => i.checked).map(i => i.dataset.bmenu); if (!menu.length) return toast('Keep at least one thing on the booth menu.');
-    try { await saveConfigPatch({ booth_menu: menu, booth_max: Math.max(1, Math.min(60, +$('#bMax').value || 15)), booth_minutes: Math.max(1, Math.min(30, +$('#bMin').value || 4)) }); toast('Booth settings saved.'); drawBoothAdmin(); } catch (e) { toast(friendlyError(e)); } },
+    const bp = {}; document.querySelectorAll('[data-bprice]').forEach(i => { const [k, z] = i.dataset.bprice.split('|'), v = i.value.trim(); if (v !== '' && Number.isFinite(+v) && +v >= 0) (bp[k] = bp[k] || {})[z] = Math.round(+v); });
+    try { await saveConfigPatch({ booth_candy: !!($('#bCandy') && $('#bCandy').checked), booth_prices: bp, booth_menu: menu, booth_max: Math.max(1, Math.min(60, +$('#bMax').value || 15)), booth_minutes: Math.max(1, Math.min(30, +$('#bMin').value || 4)) }); toast('Booth settings saved.'); drawBoothAdmin(); } catch (e) { toast(friendlyError(e)); } },
   boothQrSave: () => { const c = document.querySelector('#bQr canvas'); if (c) c.toBlob(b => saveBlob(b, 'stick2it-booth-qr.png')); },
   statusRefresh: async t => { t.disabled = true; t.textContent = 'Checking…'; await refreshStatus(); buzz(6); },
   prRange: t => { S.prRange = t.dataset.id; drawPrints(); const i = document.querySelector('[data-range]'); if (i) i.focus(); },
