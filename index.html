@@ -1512,11 +1512,6 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .bahead{text-align:center;font-size:17px;margin:14px 0 18px}
 .bsound{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin:0 0 16px;border-radius:999px;border:2px dashed var(--ink);background:#fff;color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
 .bsound.on{border-style:solid;background:#E8F5EC;border-color:#2E8B57;color:#1F6B3E}
-.bpop-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
-.bpopgrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
-.pb{aspect-ratio:1;border-radius:50%;border:2.5px solid var(--ink);display:grid;place-items:center;cursor:pointer;color:#fff;box-shadow:inset -4px -5px 0 rgba(0,0,0,.12),inset 4px 4px 0 rgba(255,255,255,.35),2px 3px 0 var(--ink);transition:transform .35s var(--ease),opacity .35s;min-width:40px}
-.pb0{background:var(--xu-gold)}.pb1{background:#EC282A}.pb2{background:#3a52a3}.pb3{background:#7AD3B0}.pb4{background:#F7A8C4}.pb5{background:var(--ink)}
-.pb:active{transform:scale(.88)}.pb.popped{transform:scale(0) rotate(40deg);opacity:0;pointer-events:none}
 .bwait[data-status="ready"] .bnumwrap .bnum{animation:bReady .6s var(--ease) 2}
 @keyframes bReady{50%{transform:rotate(4deg) scale(1.08)}}
 .bready{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 50% 40%,#FFE27A 0,#F2BC2E 55%,#E3A615 100%);animation:bIn .35s var(--ease)}
@@ -1628,7 +1623,7 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 }
 @media (prefers-reduced-motion:reduce){.wander,.dozy .bd-zz g,.bd-bob,.bd-eyes,.bd-shadow,.bd-tuft,.bd-spark,.bb2-nums .bnum.lead,.bb2-nums .bnum.new,.ws-cap span{animation:none}.ws-cap span:first-child{opacity:1}}
 @media(max-width:900px){.bmenu{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}
-@media(max-width:400px){.bt-t b{font-size:17px}.bpopgrid{gap:7px}.bsteps li + li::before{width:14px;margin:0 6px}}
+@media(max-width:400px){.bt-t b{font-size:17px}.bsteps li + li::before{width:14px;margin:0 6px}}
 /* the booth console (admin) */
 .bc-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-bottom:16px}
 .bc-state{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:#fff;border:2px solid var(--line);font-size:15px}
@@ -1665,7 +1660,7 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .is-tap{position:absolute;top:60px;bottom:0;z-index:2}.is-tap.l{left:0;width:30%}.is-tap.r{right:0;width:70%}
 .is-stage{position:absolute;inset:0;z-index:3;pointer-events:none;display:grid;place-items:center;padding:calc(70px + env(safe-area-inset-top,0px)) 24px calc(30px + env(safe-area-inset-bottom,0px))}
 .is-scene{width:min(100%,440px);display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px;position:relative;z-index:1}
-.is-scene .btn,.is-scene .buddy{pointer-events:auto}
+.is-scene .btn,.is-scene .buddy,.is-scene .is-print{pointer-events:auto}
 .is-t{font-family:var(--display);font-weight:800;font-size:clamp(30px,8.5vw,44px);line-height:1.05;margin:0;color:#fff;animation:isUp .55s var(--ease) both .15s}
 .is-t.top{order:-1}
 @keyframes isUp{from{opacity:0;transform:translateY(16px)}}
@@ -1673,39 +1668,42 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .is-f.f1{fill:#EC282A}.is-f.f3{fill:#7AD3B0}
 .is-f.f0{left:7%;top:16%}.is-f.f1{right:9%;top:24%;animation-delay:-2s}.is-f.f2{left:12%;bottom:18%;animation-delay:-4s}.is-f.f3{right:14%;bottom:12%;animation-delay:-1s;width:34px}.is-f.f4{left:46%;top:8%;width:26px;animation-delay:-3s}.is-f.f5{right:40%;bottom:6%;width:30px;animation-delay:-5s}
 @keyframes isFloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-14px) rotate(14deg)}}
-/* scene 1 */
-.s0 .is-logo{width:min(84%,330px);animation:isSlap .7s cubic-bezier(.2,1.6,.4,1) both}.s0 .is-logo .logo{width:100%;height:auto;display:block}
+.is-t em{font-style:normal;color:var(--xu-gold)}
+.is-t.big{font-size:clamp(40px,11vw,58px)}
+.is-art{width:min(78%,300px);height:auto;animation:isPop .6s var(--ease) both}
+/* the night before: the moon rises, the clock hands race */
+.is-moon{animation:isMoon 1.6s var(--ease) both .2s;transform-box:fill-box;transform-origin:center}@keyframes isMoon{from{transform:translateY(30px) rotate(-30deg);opacity:0}}
+.is-hh{animation:isSpin 6s linear infinite;transform-origin:0 0}.is-mh{animation:isSpin 1.2s linear infinite;transform-origin:0 0}@keyframes isSpin{to{transform:rotate(360deg)}}
+.is-tw circle{animation:isTw 1.4s ease-in-out infinite}.is-tw circle:nth-child(2){animation-delay:.5s}.is-tw circle:nth-child(3){animation-delay:.9s}@keyframes isTw{50%{opacity:.2}}
+/* the long line: the queue inches forward, slowly */
+.is-q{animation:isInch 2.8s steps(4) infinite}@keyframes isInch{from{transform:translateX(-32px)}to{transform:translateX(0)}}
+/* look no further */
+.s2 .is-t.big{animation-delay:0s}.s2 .is-logo{width:min(80%,320px);animation:isSlap .7s cubic-bezier(.2,1.6,.4,1) both .35s}.s2 .is-logo .logo{width:100%;height:auto;display:block}
 @keyframes isSlap{0%{transform:scale(2.2) rotate(-14deg);opacity:0}55%{transform:scale(.94) rotate(2deg);opacity:1}75%{transform:scale(1.03) rotate(-1deg)}100%{transform:none}}
-.s0 .is-bud{width:120px;animation:isPop .6s var(--ease) both .45s}@keyframes isPop{from{transform:translateY(40px) scale(.6);opacity:0}}
-/* scene 2 */
-.is-make{display:flex;flex-direction:column;align-items:center;gap:22px;width:100%}
-.is-photo{width:128px;aspect-ratio:1;border-radius:18px;overflow:hidden;border:5px solid #fff;box-shadow:0 0 0 2.5px #0E1838,6px 8px 0 #0E1838;transform:rotate(-5deg);animation:isPop .5s var(--ease) both .2s}
-.is-photo svg,.is-out i svg{display:block;width:100%;height:100%}
+.s2 .is-bud{width:104px;animation:isPop .6s var(--ease) both .8s}@keyframes isPop{from{transform:translateY(40px) scale(.6);opacity:0}}
+/* tonight to tomorrow: a paper plane flies phone, printer, school */
+.is-plane{offset-path:path('M44 60C90 10 150 10 216 60');animation:isFlyRoute 2.6s ease-in-out .3s both}
+@keyframes isFlyRoute{from{offset-distance:0%}to{offset-distance:100%}}
+/* why us: three big lines */
+.is-why2{list-style:none;margin:0;padding:0;display:grid;gap:14px;width:100%}
+.is-why2 li{padding:14px 18px;border-radius:18px;background:#fff;color:var(--ink);font-size:clamp(19px,5vw,23px);text-align:left;box-shadow:4px 5px 0 #0E1838;animation:isSlide .5s cubic-bezier(.2,1.3,.4,1) both}
+.is-why2 li b{font-family:var(--display);font-weight:800}
+.is-why2 li:nth-child(1){animation-delay:.3s}.is-why2 li:nth-child(2){animation-delay:.75s;transform:rotate(-1deg)}.is-why2 li:nth-child(3){animation-delay:1.2s;transform:rotate(1deg)}
+@keyframes isSlide{from{opacity:0;transform:translateX(60px) rotate(4deg)}}
+/* the finale: the booth products */
 .is-out{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:100%}
 .is-out span{display:flex;flex-direction:column;align-items:center;gap:8px;animation:isFly .6s cubic-bezier(.2,1.4,.4,1) both}
-.is-out .o1{animation-delay:.9s}.is-out .o2{animation-delay:1.25s}.is-out .o3{animation-delay:1.6s}
+.is-out .o1{animation-delay:.5s}.is-out .o2{animation-delay:.8s}.is-out .o3{animation-delay:1.1s}
 @keyframes isFly{from{opacity:0;transform:translateY(-70px) scale(.4) rotate(-20deg)}}
-.is-out i{display:block;overflow:hidden;border:4px solid #fff;box-shadow:0 0 0 2px #0E1838,4px 5px 0 #0E1838}
-.is-out .is-pin{width:78px;aspect-ratio:1;border-radius:50%;position:relative}.is-out .is-pin::after{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.55),transparent 42%)}
-.is-out .is-stk{width:72px;aspect-ratio:1;border-radius:22px;transform:rotate(6deg)}
-.is-out .is-card{width:62px;height:82px;border-radius:3px;border-bottom-width:16px;transform:rotate(-5deg)}
-.is-out b{font-family:var(--display);font-size:17px}
-/* scene 3 */
-.is-why{list-style:none;margin:0;padding:0;display:grid;gap:12px;width:100%}
-.is-why li{display:flex;align-items:center;gap:14px;text-align:left;padding:12px 16px;border-radius:18px;background:#fff;color:var(--ink);box-shadow:4px 5px 0 #0E1838;animation:isSlide .5s cubic-bezier(.2,1.3,.4,1) both}
-.is-why li:nth-child(1){animation-delay:.35s}.is-why li:nth-child(2){animation-delay:.75s;transform:rotate(-1deg)}.is-why li:nth-child(3){animation-delay:1.15s}.is-why li:nth-child(4){animation-delay:1.55s;transform:rotate(1deg)}
-@keyframes isSlide{from{opacity:0;transform:translateX(60px) rotate(4deg)}}
-.is-why li > svg{flex:none;width:44px;height:44px;padding:10px;border-radius:13px;background:var(--xu-gold);color:var(--ink)}
-.is-why b{display:block;font-family:var(--display);font-size:19px;line-height:1.2}.is-why span{font-size:14.5px;color:var(--muted)}
-/* scene 4 */
-.is-how{list-style:none;margin:0;padding:0;display:grid;gap:12px;width:100%}
-.is-how li{display:flex;align-items:center;gap:14px;text-align:left;font-weight:700;font-size:18px;animation:isUp .5s var(--ease) both}
-.is-how li:nth-child(1){animation-delay:.3s}.is-how li:nth-child(2){animation-delay:.6s}.is-how li:nth-child(3){animation-delay:.9s}
-.is-how i{flex:none;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-style:normal;font-family:var(--display);font-weight:800;font-size:22px;background:var(--xu-gold);color:var(--ink);border:3px solid #fff;transform:rotate(-5deg)}
-.s3 .is-bud2{width:96px;animation:isPop .6s var(--ease) both 1.1s}
+.is-out i{display:block;overflow:hidden;border:4px solid #fff;box-shadow:0 0 0 2px #0E1838,4px 5px 0 #0E1838}.is-out i svg{display:block;width:100%;height:100%}
+.is-out .is-pin{width:72px;aspect-ratio:1;border-radius:50%;position:relative}.is-out .is-pin::after{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.55),transparent 42%)}
+.is-out .is-stk{width:66px;aspect-ratio:1;border-radius:20px;transform:rotate(6deg)}
+.is-out .is-card{width:56px;height:76px;border-radius:3px;border-bottom-width:14px;transform:rotate(-5deg)}
+.is-out b{font-family:var(--display);font-size:16px}
 .intro .btn.is-go{animation:isUp .5s var(--ease) both 1.3s;background:var(--xu-gold);color:var(--ink);border-color:#fff;box-shadow:4px 5px 0 #0E1838}
 .intro .btn.is-go .bi,.intro .btn.is-go svg{color:var(--ink)}
-@media(max-height:640px){.s0 .is-bud{width:90px}.is-photo{width:100px}.s3 .is-bud2{width:70px}.is-why li{padding:9px 14px}}
+.is-print{display:inline-flex;align-items:center;gap:6px;min-height:40px;color:#fff;font-weight:700;text-decoration:underline;text-underline-offset:4px;pointer-events:auto;animation:isUp .5s var(--ease) both 1.5s}
+@media(max-height:640px){.s2 .is-bud{width:80px}.is-art{width:min(66%,240px)}.is-why2 li{padding:10px 14px}}
 @media (prefers-reduced-motion:reduce){.intro *,.intro{animation-duration:.01ms!important;animation-delay:0s!important}.is-bars .now i{animation:none;width:50%}}
 /* the customer preview in the Booth tab */
 .bprev{margin-top:18px}.bprev-head{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
@@ -5766,20 +5764,31 @@ async function gatherUploads(){   // the same pictures a normal order uploads (p
 // Made from the page's own drawing: nothing to download, sharp on any screen. Plays once a day on each phone.
 const introSeen = () => readJSON('sk_intro') === new Date().toISOString().slice(0, 10);
 function introScenes(){
-  const menu = (S.boothBoard && S.boothBoard.menu) || CONFIG.boothMenu, live = liveProducts().filter(p => menu.includes(p.key));
-  const from = live.length ? Math.min(...live.map(p => fromPrice(p.key))) : 0, mins = ((S.boothBoard && S.boothBoard.minutes) || CONFIG.boothMinutes) * 2 + 2;
+  const menu = (S.boothBoard && S.boothBoard.menu) || CONFIG.boothMenu, prints = printsLive();
   const pic = `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" fill="#9CC3F2"/><circle cx="72" cy="30" r="13" fill="#F2BC2E"/><path d="M0 78Q30 48 58 70T100 62V100H0Z" fill="#3E9B5A"/><path d="M0 90Q45 74 100 86V100H0Z" fill="#2E7D4A"/></svg>`;
+  const night = `<svg class="is-art is-night" viewBox="0 0 160 120" aria-hidden="true"><path class="is-moon" d="M98 22a24 24 0 1 0 22 34 19 19 0 1 1-22-34z" fill="#F2BC2E"/>
+      <g class="is-tw"><circle cx="22" cy="28" r="2.5" fill="#fff"/><circle cx="138" cy="86" r="2" fill="#fff"/><circle cx="40" cy="96" r="1.8" fill="#fff"/></g>
+      <g transform="translate(50 50)"><circle cx="0" cy="0" r="34" fill="#fff" stroke="#0E1838" stroke-width="4"/><circle r="3.5" fill="#283971"/>
+        <path class="is-hh" d="M0 0V-16" stroke="#283971" stroke-width="5" stroke-linecap="round"/><path class="is-mh" d="M0 0V-26" stroke="#EC282A" stroke-width="3.4" stroke-linecap="round"/></g></svg>`;
+  const line = `<svg class="is-art is-line" viewBox="0 0 220 90" aria-hidden="true"><rect x="8" y="70" width="204" height="6" rx="3" fill="rgba(255,255,255,.18)"/>
+      <g class="is-q">${[0, 1, 2, 3, 4, 5].map(i => `<g transform="translate(${30 + i * 32} 0)"><circle cx="0" cy="34" r="11" fill="${['#F2BC2E', '#F7A8C4', '#7AD3B0', '#fff', '#9CC3F2', '#F2BC2E'][i]}"/><rect x="-12" y="48" width="24" height="22" rx="10" fill="${['#F2BC2E', '#F7A8C4', '#7AD3B0', '#fff', '#9CC3F2', '#F2BC2E'][i]}" opacity=".85"/></g>`).join('')}</g>
+      <path d="M200 20v50" stroke="#fff" stroke-width="3" stroke-dasharray="4 5" opacity=".5"/></svg>`;
+  const route = `<svg class="is-art is-route" viewBox="0 0 260 110" aria-hidden="true"><path d="M44 60C90 10 150 10 216 60" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="3" stroke-dasharray="6 7"/>
+      <g transform="translate(16 30)"><rect width="34" height="56" rx="7" fill="#fff" stroke="#0E1838" stroke-width="3"/><rect x="5" y="8" width="24" height="34" rx="2" fill="#9CC3F2"/></g>
+      <g transform="translate(108 70)"><rect x="-26" y="0" width="52" height="24" rx="6" fill="#283971" stroke="#fff" stroke-width="3"/><rect x="-16" y="-12" width="32" height="14" rx="2" fill="#fff"/></g>
+      <g transform="translate(222 36)"><path d="M-26 20L0 0L26 20V56H-26Z" fill="#F2BC2E" stroke="#0E1838" stroke-width="3" stroke-linejoin="round"/><rect x="-7" y="36" width="14" height="20" fill="#0E1838"/><path d="M0 0V-14l12 5-12 5" fill="#EC282A" stroke="#0E1838" stroke-width="2"/></g>
+      <g class="is-plane"><path d="M-12-6L14 0-12 6-6 0Z" fill="#fff" stroke="#0E1838" stroke-width="2" stroke-linejoin="round"/></g></svg>`;
+  const why = [prints ? `<b>${money(printFrom())}</b> a page` : '<b>Student</b> prices', '<b>No lines</b> to wait in', `<b>Brought to you</b> at ${CONFIG.classroomOn ? 'your classroom or the gate' : 'school'}`];
   return [
-    { t: 2800, h: `<div class="is-logo">${logoSVG(CONFIG.shopName, true)}</div>${twoeySVG('is-bud', 'cheer')}<h2 class="is-t">Hi! Welcome to our booth.</h2>` },
-    { t: 3400, h: `<h2 class="is-t top">Your picture, made real.</h2><div class="is-make"><div class="is-photo">${pic}</div>
-        <div class="is-out"><span class="o1"><i class="is-pin">${pic}</i><b>Pins</b></span><span class="o2"><i class="is-stk">${pic}</i><b>Stickers</b></span><span class="o3"><i class="is-card">${pic}</i><b>Photo cards</b></span></div></div>` },
-    { t: 3800, h: `<h2 class="is-t top">Why get it here?</h2><ul class="is-why">
-        <li>${ic('clock', 22)}<span><b>Ready in about ${mins} minutes</b>Made while you wait</span></li>
-        <li>${ic('cash', 22)}<span><b>${from ? `From ${money(from)}` : 'Student prices'}</b>Pay when you pick it up</span></li>
-        <li>${ic('school', 22)}<span><b>Made right here</b>By XU students, for XU students</span></li>
-        <li>${ic('sparkle', 22)}<span><b>Your design, your way</b>Words, frames, filters and more</span></li></ul>` },
-    { t: 0, h: `<h2 class="is-t top">How it works</h2><ol class="is-how"><li><i>1</i><span>Pick something and add your picture</span></li><li><i>2</i><span>Get your number</span></li><li><i>3</i><span>Your phone chimes when it’s ready</span></li></ol>
-        ${twoeySVG('is-bud2', 'cheer')}<button type="button" class="btn dark wide is-go" data-act="introEnd">${ic('arrow', 20)}<span>Let’s make something</span></button>` }];
+    { t: 2900, h: `${night}<h2 class="is-t">Ever needed to print something <em>the night before?</em></h2>` },
+    { t: 2900, h: `${line}<h2 class="is-t">Or waited in a long line at the <em>book center?</em></h2>` },
+    { t: 2400, h: `<h2 class="is-t big">Look no further.</h2><div class="is-logo">${logoSVG(CONFIG.shopName, true)}</div>${twoeySVG('is-bud', 'cheer')}` },
+    { t: 3600, h: `${route}<h2 class="is-t">Send it tonight. We print it and bring it to you at school, <em>as early as tomorrow.</em></h2>` },
+    { t: 3400, h: `<h2 class="is-t top">Why print with us?</h2><ul class="is-why2">${why.map(w => `<li>${w}</li>`).join('')}</ul>` },
+    { t: 0, h: `<h2 class="is-t">And right here at the booth: <em>made while you wait.</em></h2>
+        <div class="is-out"><span class="o1"><i class="is-pin">${pic}</i><b>Pins</b></span><span class="o2"><i class="is-stk">${pic}</i><b>Stickers</b></span><span class="o3"><i class="is-card">${pic}</i><b>Photo cards</b></span></div>
+        <button type="button" class="btn dark wide is-go" data-act="introEnd">${ic('arrow', 20)}<span>Let’s make something</span></button>
+        ${prints && menu.includes('prints') ? `<a class="is-print" href="${designRoute('prints')}" data-act="introPrint">${ic('printer', 16)} Or print a file</a>` : ''}` }];
 }
 function boothIntro(){
   if (document.querySelector('.intro')) return;
@@ -5818,11 +5827,10 @@ function viewBoothWait(demo){
     <ol class="bsteps" id="bSteps"></ol>
     <p class="bahead" id="bAhead" aria-live="polite"></p>
     <button type="button" class="bsound ${S.boothSound ? 'on' : ''}" data-act="boothSound">${ic(S.boothSound ? 'check' : 'bell', 18)}<span>${S.boothSound ? 'Sound on. We’ll chime when it’s ready.' : 'Turn on sound and keep my screen on'}</span></button>
-    <section class="panel bpop"><div class="bpop-h"><b>Pop stickers while you wait</b><span class="muted small" id="bPopN"></span></div><div class="bpopgrid" id="bPop"></div></section>
     <p class="bpay">${ic('cash', 18)}<span>Bring ${money(b.total)}. Pay at the booth: cash${CONFIG.gcash.enabled ? ' or GCash' : ''}.</span></p>
     <p style="text-align:center;margin:6px 0 0"><a class="linkbtn" href="#/booth">Order something else</a></p>
   </main>`;
-  drawBoothSteps(b); drawPop();
+  drawBoothSteps(b);
   if (b.status === 'ready') boothReady(b, true);   // came back (or refreshed) after it was ready: show it again, quietly
   if (demo) return;   // the admin preview: sample data, nothing to check
   boothPoll();
@@ -5860,13 +5868,7 @@ function boothReady(b, quiet){
 }
 async function keepAwake(){ try { if ('wakeLock' in navigator && !document.hidden) boothWake = await navigator.wakeLock.request('screen'); } catch {} }
 document.addEventListener('visibilitychange', () => { if (!document.hidden && location.hash.startsWith('#/booth/') && S.boothSound) keepAwake(); if (!document.hidden && location.hash.startsWith('#/booth/wait')) boothPoll(); });
-// pop stickers while you wait: twelve sticker bubbles; pop them all and the sheet refills
-const POPS = ['star', 'heart', 'bolt', 'moon'];   // drawn from the sticker shapes, as solid white
-function drawPop(){
-  const g = $('#bPop'); if (!g) return; S.popN = S.popN || 0;
-  g.innerHTML = Array.from({ length: 12 }, (_, i) => `<button type="button" class="pb pb${i % 6}" data-act="boothPop" aria-label="Pop"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="${LK_SHAPES[POPS[i % 4]]}" fill="#fff"/></svg></button>`).join('');
-  $('#bPopN').textContent = S.popN ? `${S.popN} popped` : '';
-}
+
 // ---------- sounds that work on iPhones (also with the silent switch on): real audio clips, made here ----------
 // One family of soft, plucked tones, like a kalimba: quick and natural.
 function wavUrl(dur, fn){   // fn(t) -> sample in -1..1
@@ -10021,14 +10023,13 @@ const ACTIONS = {
       const m = String(e && e.message || e); toast(/BOOTH_FULL/.test(m) ? 'The booth is full right now. Try again in a few minutes.' : /BOOTH_PAUSED/.test(m) ? 'We’re catching up. Try again in a few minutes.' : /BOOTH_CLOSED/.test(m) ? 'The booth just closed. Order online for pickup at school.' : friendlyError(e)); }
   },
   introEnd: () => introEnd(),
+  introPrint: () => { introEnd(); location.hash = designRoute('prints'); },
   introAgain: () => boothIntro(),
   boothPrev: t => { const f = $('#bPrev'); if (!f) return; document.querySelectorAll('[data-act="boothPrev"]').forEach(b => b.classList.toggle('on', b === t));
     try { f.contentWindow.location.hash = '#/booth/demo/' + t.dataset.v; } catch { f.src = './#/booth/demo/' + t.dataset.v; } },
   boothRemove: t => { S.cart.splice(+t.dataset.i, 1); buzz(6); if (S.cart.length) viewBoothCheckout(); else location.hash = '#/booth'; },
   boothSound: () => { S.boothSound = true; unlockSound(true); keepAwake(); const b = $('.bsound'); if (b) { b.classList.add('on'); b.innerHTML = `${ic('check', 18)}<span>Sound on. We’ll chime when it’s ready.</span>`; } },
   boothOnWay: () => { const o = document.querySelector('.bready'); if (o) o.remove(); clearInterval(S.readyNag); },
-  boothPop: t => { if (t.classList.contains('popped')) return; t.classList.add('popped'); S.popN = (S.popN || 0) + 1; playPop(); try { navigator.vibrate && navigator.vibrate(12); } catch {}
-    const n = $('#bPopN'); if (n) n.textContent = `${S.popN} popped`; if (!document.querySelector('.pb:not(.popped)')) setTimeout(drawPop, 650); },
   boardStart: () => { unlockSound(true); keepAwake(); S.boothSound = true; const s = $('#bbStart'); if (s) s.remove(); const b = $('#bBoard'); try { b.requestFullscreen && b.requestFullscreen().catch(() => {}); } catch {} },
   boothSet: async t => { const v = t.dataset.v, p = v === 'open' ? { booth_on: true, booth_paused: false } : v === 'pause' ? { booth_paused: true } : v === 'resume' ? { booth_paused: false } : { booth_on: false, booth_paused: false };
     try { await saveConfigPatch(p); toast(v === 'open' ? 'The booth is open.' : v === 'pause' ? 'Paused. New orders wait until you tap “Take orders again”.' : v === 'resume' ? 'Taking orders again.' : 'The booth is closed.'); drawBoothAdmin(); } catch (e) { toast(friendlyError(e)); } },
