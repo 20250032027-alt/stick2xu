@@ -1199,17 +1199,17 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 @media(max-width:600px){.paths{grid-template-columns:1fr;gap:12px}}
 /* Coming up: the label above, every chip alike (the next one only gets its little icon) */
 /* Coming up: little date stickers, slightly tilted like they're stuck on. The next one wears its own color and twinkles. */
-.hero .cdrow2{display:grid;gap:10px;justify-items:start;margin-top:30px}
-.hero .cd-lbl{font-size:14px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--muted)}
-.hero .cdchips{gap:12px;padding:2px 0 4px}
-.hero .cdc{border:2px solid var(--ink);border-radius:14px;padding:6px 13px 6px 10px;box-shadow:2px 2px 0 var(--ink);rotate:-1.5deg;transition:rotate .25s var(--ease),translate .25s var(--ease),box-shadow .25s var(--ease)}
-.hero .cdc:nth-child(2){rotate:1.2deg}.hero .cdc:nth-child(3){rotate:-.7deg}
-.hero .cdc:hover{rotate:0deg;translate:0 -2px;box-shadow:3px 4px 0 var(--ink);border-color:var(--ink)}
-.hero .cdc .cdc-n{font-size:22px}
-.hero .cdc small{font-size:12px}
-.hero .cdc.next{background:color-mix(in srgb,var(--cdc) 11%,#fff);border-color:var(--ink)}
-.hero .cdc.next .cdc-n{color:var(--cdc)}
-.hero .cdtw.t1{right:-5px;top:-6px;width:12px;height:12px}.hero .cdtw.t2{left:-4px;bottom:-5px;width:8px;height:8px}
+.hero .cdrow2,.cdshop .cdrow2{display:grid;gap:10px;justify-items:start;margin-top:30px}
+.hero .cd-lbl,.cdshop .cd-lbl{font-size:14px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--muted)}
+.hero .cdchips,.cdshop .cdchips{gap:12px;padding:2px 0 4px}
+.hero .cdc,.cdshop .cdc{border:2px solid var(--ink);border-radius:14px;padding:6px 13px 6px 10px;box-shadow:2px 2px 0 var(--ink);rotate:-1.5deg;transition:rotate .25s var(--ease),translate .25s var(--ease),box-shadow .25s var(--ease)}
+.hero .cdc:nth-child(2),.cdshop .cdc:nth-child(2){rotate:1.2deg}.hero .cdc:nth-child(3),.cdshop .cdc:nth-child(3){rotate:-.7deg}
+.hero .cdc:hover,.cdshop .cdc:hover{rotate:0deg;translate:0 -2px;box-shadow:3px 4px 0 var(--ink);border-color:var(--ink)}
+.hero .cdc .cdc-n,.cdshop .cdc .cdc-n{font-size:22px}
+.hero .cdc small,.cdshop .cdc small{font-size:12px}
+.hero .cdc.next,.cdshop .cdc.next{background:color-mix(in srgb,var(--cdc) 11%,#fff);border-color:var(--ink)}
+.hero .cdc.next .cdc-n,.cdshop .cdc.next .cdc-n{color:var(--cdc)}
+.hero .cdtw.t1,.cdshop .cdtw.t1{right:-5px;top:-6px;width:12px;height:12px}.hero .cdtw.t2,.cdshop .cdtw.t2{left:-4px;bottom:-5px;width:8px;height:8px}
 @media (prefers-reduced-motion:reduce){.hero .cdc{rotate:0deg}}
 /* homepage review: footer lined up, phones tidied */
 footer .ft-l{display:grid;gap:8px;align-content:start}
@@ -1227,16 +1227,16 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
   .hero > :last-child{width:min(100%,320px);justify-self:center}
 }
 @media(max-width:480px){   /* phones: all three dates as equal tiles on one row: the number on top, the event under it */
-  .hero .cdrow2{justify-items:stretch}
-  .hero .cdchips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-  .hero .cdc{flex-direction:column;align-items:flex-start;gap:2px;padding:8px 10px 9px;min-width:0}
-  .hero .cdc .cdc-n{font-size:24px;line-height:1}
-  .hero .cdc small{font-size:12px;line-height:1.2}
-  .hero .cdc small b,.hero .cdc small strong{display:block}
-  .hero .cdc .cdic{position:absolute;right:8px;top:8px}
+  .hero .cdrow2,.cdshop .cdrow2{justify-items:stretch}
+  .hero .cdchips,.cdshop .cdchips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .hero .cdc,.cdshop .cdc{flex-direction:column;align-items:flex-start;gap:2px;padding:8px 10px 9px;min-width:0}
+  .hero .cdc .cdc-n,.cdshop .cdc .cdc-n{font-size:24px;line-height:1}
+  .hero .cdc small,.cdshop .cdc small{font-size:12px;line-height:1.2}
+  .hero .cdc small b,.hero .cdc small strong,.cdshop .cdc small b,.cdshop .cdc small strong{display:block}
+  .hero .cdc .cdic,.cdshop .cdc .cdic{position:absolute;right:8px;top:8px}
 }
-@media(max-width:360px){.hero .cdchips{gap:8px}.hero .cdc{padding:7px 7px 8px}.hero .cdc small{font-size:12px}.hero .cdc .cdc-n{font-size:22px}.hero .cdc .cdic{right:6px;top:6px}}
-@media(max-width:340px){.hero .cdc{padding-left:6px;padding-right:5px}.hero .cdc small{font-size:12px;letter-spacing:-.01em}}
+@media(max-width:360px){.hero .cdchips{gap:8px}.hero .cdc,.cdshop .cdc{padding:7px 7px 8px}.hero .cdc small,.cdshop .cdc small{font-size:12px}.hero .cdc .cdc-n,.cdshop .cdc .cdc-n{font-size:22px}.hero .cdc .cdic,.cdshop .cdc .cdic{right:6px;top:6px}}
+@media(max-width:340px){.hero .cdc{padding-left:6px;padding-right:5px}.hero .cdc small,.cdshop .cdc small{font-size:12px;letter-spacing:-.01em}}
 /* quiet extras ("Got an idea? Tell us", "Don't see what you want? Tell us"): plain text and an underlined link, like "Print a file" */
 .softlink{margin:18px 0 26px;font-size:15.5px;color:var(--muted)}
 .softlink.center{text-align:center;margin:24px 0 8px}
@@ -1748,7 +1748,7 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 @media(max-width:820px){.pv-nav{display:none}.pview{grid-template-columns:1fr}.pv-track{margin:0 -16px;padding-left:calc(50% - 31vw + 16px);padding-right:calc(50% - 31vw + 16px)}}   /* phones: just swipe */
 @media (prefers-reduced-motion:reduce){.pv-count em{animation:none}}
 .prange{display:flex;align-items:center;gap:10px;margin-top:6px}.prange .linkbtn{white-space:nowrap}.prange .inp{max-width:140px;min-height:38px;padding:6px 10px;font-size:14.5px}.prange .inp.bad{border-color:var(--red)}.prange .linkbtn{font-size:13.5px}
-.wrap > .cdrow2{margin:18px 0 4px}
+.cdshop .cdrow2{margin:18px 0 6px}
 /* a quick pickup costs a little more: a small pill on the right of that day */
 .choice > svg{flex:none}   /* icons keep their size next to longer text */
 .choice .rushpill{display:inline-block;align-self:flex-start;margin-top:4px;padding:2px 10px;border-radius:999px;border:1.5px solid #E7C66B;background:#FFF6DA;color:#7A5300;font-weight:800;font-size:12.5px;white-space:nowrap}
@@ -1769,6 +1769,18 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
   .prog .on em{font-weight:800}
 }
 @media(max-width:350px){.prog{padding:7px 9px}.prog > span:not(.bar){gap:4px;font-size:12px}.prog .bar{margin:0 5px}}
+/* phones: designers get straight to the point */
+@media(max-width:640px){
+  .prog:has(+ .backlink){display:none}   /* in a designer: its own Add, Stick, Order guide is the one that helps */
+  .backlink{min-height:38px;padding:6px 14px;font-size:14.5px;margin:0 0 12px;box-shadow:2px 2px 0 var(--ink)}
+  .tabs{justify-content:flex-start}
+  #sheetArea > .tabs,#sheetArea > .modebar{align-self:stretch}   /* line up on the left, like the guide card */
+}
+@media(max-width:820px){
+  #fstage:has(.docempty){display:none}   /* prints: the settings (with their own Choose files) come first */
+  .pview .pv-pg{width:min(44vw,190px)}.pview .pv-pg.wide{width:min(70vw,300px)}
+  .pv-track{padding-left:calc(50% - min(22vw,95px) + 16px);padding-right:calc(50% - min(22vw,95px) + 16px)}
+}
 /* fonts: tiles that show your words in each font */
 .wd-fonts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .wd-font{display:grid;justify-items:center;align-content:center;gap:3px;min-height:64px;padding:8px 4px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit;cursor:pointer}
@@ -4372,7 +4384,7 @@ function viewShop(){
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap">${progress(1)}
     <h2>What do you want to make?</h2>
     <p class="muted" style="margin:8px 0 0">Pick one to start. You can add more to the same order after.</p>
-    ${countdownHTML().replace('aria-label="Coming up"><span class="cd-lbl">Coming up</span>', 'aria-label="Plan your gifts"><span class="cd-lbl">Plan your gifts</span>')}
+    <div class="cdshop">${countdownHTML().replace('aria-label="Coming up"><span class="cd-lbl">Coming up</span>', 'aria-label="Plan your gifts"><span class="cd-lbl">Plan your gifts</span>')}</div>
     ${live.length ? `<div class="bento n${Math.min(live.length, 7)}">${live.map((p, i) => bentoCard(p, i, live.length)).join('')}</div>`
       : `<div class="empty" style="margin-top:20px">${ic('box', 36)}<b>Nothing is available right now.</b><span>Check back soon.</span></div>`}
     ${live.length ? ideaLine("Don't see what you want?", 'product') : ''}
