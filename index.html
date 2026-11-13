@@ -1021,21 +1021,13 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .dx:hover{background:#F1F3F8}
 .docstage{display:grid;justify-items:center;gap:18px;width:100%}
 .pstack{position:relative;width:min(70%,230px);aspect-ratio:210/297;margin:10px 0 6px}
+.pstack.land{width:min(92%,330px);aspect-ratio:297/210}   /* a wide file looks wide */
 .psheet{position:absolute;inset:0;background:#fff;border:1.5px solid var(--ink);border-radius:4px;box-shadow:var(--shadow-sm);overflow:hidden;display:grid;place-items:center;
   transform:translate(calc(var(--i) * 10px),calc(var(--i) * -8px)) rotate(calc(var(--i) * 3deg));z-index:calc(10 - var(--i));animation:psin .5s var(--ease) both;animation-delay:calc(var(--i) * 80ms)}
-.psheet img{width:100%;height:100%;object-fit:cover}
+.psheet img{width:100%;height:100%;object-fit:contain;background:#fff}
 .psheet span{display:grid;justify-items:center;gap:8px;padding:12px;text-align:center;color:var(--muted);font-size:13px}
 .psheet span b{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
 @keyframes psin{from{opacity:0;transform:translateY(12px)}}
-.pmath{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
-.pmath > div{display:grid;justify-items:center;padding:10px 16px;border:1px solid var(--line);border-radius:14px;background:#fff;min-width:84px}
-.pmath > div.hi{border-color:var(--ink);background:var(--gold-soft)}
-.pmath b{font-family:var(--display);font-size:30px;line-height:1}
-.pmath span{font-size:13px;color:var(--muted);font-weight:600}
-.pmath i{font-style:normal;font-size:22px;color:var(--muted);font-weight:700}
-.rushinfo{display:flex;gap:10px;align-items:flex-start;max-width:460px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#FAFBFD;font-size:14px;color:var(--muted)}
-.rushinfo svg{flex:none;color:#C9951A;margin-top:1px}
-.rushinfo b{color:var(--ink)}
 .docempty{display:grid;justify-items:center;gap:8px;text-align:center;cursor:pointer;width:min(100%,420px);aspect-ratio:210/297;max-height:62svh;margin:0 auto;padding:24px;
   border:2px dashed #B9C3DD;border-radius:12px;background:repeating-linear-gradient(45deg,#F7F8FC 0 10px,#F1F3F9 10px 20px);align-content:center}
 .docempty .ui{width:52px;height:52px;border-radius:16px;background:var(--accent);color:#fff;border:2px solid var(--ink);display:grid;place-items:center;box-shadow:var(--shadow-sm)}
@@ -1727,6 +1719,32 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .txtlink{display:inline-flex;align-items:center;min-height:44px;font-weight:700;color:var(--ink);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;text-decoration-color:var(--xu-gold)}
 .txtlink:hover{text-decoration-color:var(--ink)}
 @media(max-width:360px){.printbig{padding-left:20px}.pb-t b{font-size:19px}.pb-t small{font-size:13px}}
+/* prints: some pages only; the both-sides diagram */
+.docs .prange-go{display:block;width:auto;text-align:left;font-size:13px;min-height:30px;margin:2px 0 0;padding:0}
+.rushline{display:flex;gap:8px;align-items:flex-start;margin:14px 2px 0;padding-top:12px;border-top:1.5px dashed var(--line);font-size:13px;color:var(--muted);line-height:1.4}
+.rushline svg{flex:none;margin-top:1px;color:#C9951A}
+/* the page viewer: swipe through every page */
+.pview{position:relative;width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:6px}
+.pv-track{display:flex;align-items:center;gap:18px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+  padding:10px calc(50% - min(31vw,150px)) 14px;outline:none}
+.pv-track::-webkit-scrollbar{display:none}
+.pv-pg{flex:none;width:min(62vw,300px);margin:0;scroll-snap-align:center;position:relative;transition:opacity .2s}
+.pv-pg.wide{width:min(78vw,420px)}
+.pv-paper{background:#fff;border:1.5px solid var(--ink);border-radius:4px;box-shadow:3px 4px 0 rgba(40,57,113,.18);overflow:hidden;display:grid;place-items:center}
+.pv-paper img{width:100%;height:100%;object-fit:contain;display:block;-webkit-user-drag:none;user-select:none}
+.pview.bw .pv-paper img{filter:grayscale(1)}
+.pv-pg.off .pv-paper{opacity:.35}
+.pv-skip{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:4px 12px;border-radius:999px;background:var(--ink);color:#fff;font-weight:700;font-size:13px;white-space:nowrap}
+.pv-load{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--ink);animation:spin .9s linear infinite}
+.pv-nav{width:44px;height:44px;border-radius:50%;border:2px solid var(--ink);background:#fff;color:var(--ink);display:grid;place-items:center;cursor:pointer;box-shadow:2px 3px 0 var(--ink)}
+.pv-nav.prev svg{transform:none}.pv-nav:disabled{opacity:.3;cursor:default;box-shadow:none}
+.pv-count{grid-column:1/-1;margin:2px 0 0;text-align:center;font-size:14.5px;color:var(--muted);display:flex;flex-wrap:wrap;justify-content:center;gap:2px 8px}
+.pv-count b{color:var(--ink)}.pv-count span{flex-basis:100%;font-size:13px}.pv-count em{flex-basis:100%;font-style:normal;font-weight:700;color:var(--ink);font-size:13px;animation:pvHint 2.4s ease-in-out infinite}
+@keyframes pvHint{0%,100%{transform:translateX(0)}50%{transform:translateX(-8px)}}
+@media(max-width:820px){.pv-nav{display:none}.pview{grid-template-columns:1fr}.pv-track{margin:0 -16px;padding-left:calc(50% - 31vw + 16px);padding-right:calc(50% - 31vw + 16px)}}   /* phones: just swipe */
+@media (prefers-reduced-motion:reduce){.pv-count em{animation:none}}
+.prange{display:flex;align-items:center;gap:10px;margin-top:6px}.prange .linkbtn{white-space:nowrap}.prange .inp{max-width:140px;min-height:38px;padding:6px 10px;font-size:14.5px}.prange .inp.bad{border-color:var(--red)}.prange .linkbtn{font-size:13.5px}
+.wrap > .cdrow2{margin:18px 0 4px}
 /* fonts: tiles that show your words in each font */
 .wd-fonts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .wd-font{display:grid;justify-items:center;align-content:center;gap:3px;min-height:64px;padding:8px 4px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit;cursor:pointer}
@@ -3477,7 +3495,7 @@ function serializeItems(items, pathFor){
     const base = { type: it.type, size: it.size, size_label: z.label, addons: it.addons || [], ...(it.template && it.template.slug ? { template: it.template.slug } : {}),
       addon_labels: (it.addons || []).map(id => (p.addons.find(a => a.id === id) || {}).label).filter(Boolean), unit_price: unitPrice(it) };
     if (it.type === 'prints') return { ...base, qty: it.qty, pages: it.pages, duplex: !!it.duplex,
-      files: (it.files || []).map(f => ({ path: pathFor[f.id], name: f.name, pages: f.pages, kind: f.kind, orient: f.orient || null })) };
+      files: (it.files || []).map(f => ({ path: pathFor[f.id], name: f.name, pages: f.pages, kind: f.kind, orient: f.orient || null, range: f.range || null, total: f.total || null })) };
     if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ ...(sh.free ? { free: true } : {}), ...(sh.imported ? { imported: sh.imported } : {}), ...(sh.fromImport ? { fromImport: sh.fromImport } : {}), ...(sh.template ? { template: sh.template.slug } : {}), items: sh.items.map(x => ({ path: pathFor[x.imageId], ...(isFree(x) ? { x: x.x, y: x.y, w: x.w, ...(x.h ? { h: x.h } : {}) } : { col: x.col, row: x.row, size: x.size }), fit: x.fit, ...(x.border === 'none' ? { border: 'none' } : {}), smooth: itemSmooth(x), ...(x.borderColor ? { borderColor: x.borderColor } : {}), ...(x.filter && x.filter !== 'none' ? { filter: x.filter } : {}) })) })) };
     const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy, bg: x.bg || '#ffffff', ...(fxOn(x.fx) ? { fx: clone(x.fx) } : {}) } : null;
     if (it.type === 'posters' && it.mode === 'pages') return { ...base, qty: it.qty, mode: 'pages', pages: it.pages, across: it.across, tiles: it.pages,
@@ -4178,7 +4196,6 @@ function viewHome(){
           ${btn('Start designing', { href: '#/shop' })}
           <a class="pilllink" href="#/status">${ic('search', 18)}Check my order</a>
         </div>`}
-        ${countdownHTML()}
       </div>
       ${heroArt()}
     </section>
@@ -4329,6 +4346,7 @@ function viewShop(){
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap">${progress(1)}
     <h2>What do you want to make?</h2>
     <p class="muted" style="margin:8px 0 0">Pick one to start. You can add more to the same order after.</p>
+    ${countdownHTML().replace('aria-label="Coming up"><span class="cd-lbl">Coming up</span>', 'aria-label="Plan your gifts"><span class="cd-lbl">Plan your gifts</span>')}
     ${live.length ? `<div class="bento n${Math.min(live.length, 7)}">${live.map((p, i) => bentoCard(p, i, live.length)).join('')}</div>`
       : `<div class="empty" style="margin-top:20px">${ic('box', 36)}<b>Nothing is available right now.</b><span>Check back soon.</span></div>`}
     ${live.length ? ideaLine("Don't see what you want?", 'product') : ''}
@@ -6682,13 +6700,14 @@ async function pdfToPngs(doc, name){
 async function readPdf(blob){
   const lib = await loadPdfJs();
   const pdf = await lib.getDocument({ data: await blob.arrayBuffer() }).promise;
-  let thumb = '';
+  let thumb = '', orient = 'portrait';
   try {
-    const pg = await pdf.getPage(1), v = pg.getViewport({ scale: 1 }), sc = 180 / v.width, vp = pg.getViewport({ scale: sc });
+    const pg = await pdf.getPage(1), v = pg.getViewport({ scale: 1 }), sc = 640 / Math.max(v.width, v.height), vp = pg.getViewport({ scale: sc });   // sharp, even on big screens
+    orient = v.width > v.height ? 'landscape' : 'portrait';
     const c = document.createElement('canvas'); c.width = vp.width; c.height = vp.height;
-    await pg.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise; thumb = c.toDataURL('image/jpeg', .8);
+    await pg.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise; thumb = c.toDataURL('image/jpeg', .85);
   } catch {}
-  return { pages: pdf.numPages, thumb };
+  return { pages: pdf.numPages, thumb, orient };
 }
 async function onDocs(e){
   const files = [...e.target.files]; e.target.value = '';
@@ -6706,8 +6725,9 @@ async function onDocs(e){
         const im = await processFile(f, 3500);
         doc = { id: im.id, blob: im.blob, ext: im.ext, name: f.name, kind: 'image', pages: 1, thumb: im.url, w: im.w, h: im.h, canvas: im.canvas };
       } else { toast(`${f.name} isn't a PDF or a picture.`); continue; }
-      S.docs.push(doc);
+      S.docs.push(doc); S.pvScroll = 0;
       const pf = { id: doc.id, name: doc.name, kind: doc.kind, pages: doc.pages };
+      if (doc.kind === 'pdf') { pf.orient = doc.orient || 'portrait'; pf.total = doc.pages; }
       if (doc.kind === 'image') { pf.orient = doc.w > doc.h ? 'landscape' : 'portrait'; Object.assign(pf, { zoom: 1, ox: 0, oy: 0 }); pf.zoom = fitZoom(doc, pageMm(pf)); }
       S.pr.files.push(pf);
     } catch { toast(`${f.name} didn't open. Try saving it as a PDF again.`); }
@@ -6724,6 +6744,14 @@ function pageMm(f){
 const fitZoom = (im, mm) => Math.min(mm.w / im.w, mm.h / im.h) / Math.max(mm.w / im.w, mm.h / im.h);
 const prsDoc = id => (S.docs || []).find(d => d.id === id);
 const prPages = pr => pr.files.reduce((t, f) => t + (+f.pages || 0), 0);
+// "1-3, 5" -> [1, 2, 3, 5] within 1..total; null when it doesn't make sense
+function parseRange(s, total){
+  const out = new Set(); const parts = String(s || '').replace(/[–—]/g, '-').split(/[,\s]+/).filter(Boolean); if (!parts.length) return null;
+  for (const p of parts) { const m = /^(\d+)(?:-(\d+))?$/.exec(p); if (!m) return null; let a = +m[1], b = m[2] ? +m[2] : a; if (a > b) [a, b] = [b, a];
+    if (a < 1 || b > total) return null; for (let i = a; i <= b; i++) out.add(i); }
+  return [...out].sort((a, b) => a - b);
+}
+const rangeText = list => { const r = []; for (let i = 0; i < list.length; i++) { let j = i; while (j + 1 < list.length && list[j + 1] === list[j] + 1) j++; r.push(j > i ? `${list[i]}-${list[j]}` : `${list[i]}`); i = j; } return r.join(', '); };
 function pageEditorHTML(f, pr){
   const mm = pageMm(f), doc = prsDoc(f.id);
   return `<div class="docstage">
@@ -6775,6 +6803,56 @@ async function renderPrintPage(f, doc, color){
   const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.9));
   return { id: f.id, blob, ext: 'jpg' };
 }
+/* The page viewer: every page of every file in one strip. Swipe (or flick) sideways; pages are drawn as they come into view. */
+function prPageList(pr){
+  const out = [];
+  pr.files.forEach((f, fi) => { const total = f.kind === 'pdf' ? (f.total || f.pages || 1) : 1, sel = f.range ? parseRange(f.range, total) : null;
+    for (let n = 1; n <= total; n++) out.push({ f, fi, n, total, on: !sel || sel.includes(n) }); });
+  return out;
+}
+function pageViewerHTML(pr){
+  const list = prPageList(pr), many = pr.files.length > 1, A4 = 297 / 210;
+  S.pvList = list;
+  return `<div class="pview ${pr.addons.includes('color') ? '' : 'bw'}">
+    <button type="button" class="pv-nav prev" data-act="pvGo" data-d="-1" aria-label="Previous page">${ic('back', 20)}</button>
+    <div class="pv-track" id="pvTrack" tabindex="0" aria-label="Your pages. Swipe or use the arrow keys.">${list.map((p, i) => {
+      const d = prsDoc(p.f.id) || {}, wide = p.f.orient === 'landscape', src = d.kind === 'image' ? d.thumb : (d.pv && d.pv[p.n]) || (p.n === 1 ? d.thumb : '');
+      return `<figure class="pv-pg ${wide ? 'wide' : ''} ${p.on ? '' : 'off'}" data-i="${i}"><div class="pv-paper" style="aspect-ratio:${wide ? A4 : 1 / A4}">${src ? `<img src="${src}" alt="Page ${p.n}${many ? ` of ${esc(p.f.name)}` : ''}">` : '<span class="pv-load"></span>'}</div>
+        ${p.on ? '' : '<span class="pv-skip">Not printing</span>'}</figure>`; }).join('')}</div>
+    <button type="button" class="pv-nav next" data-act="pvGo" data-d="1" aria-label="Next page">${ic('arrow', 20)}</button>
+    <p class="pv-count" id="pvCount" aria-live="polite"></p></div>`;
+}
+// draw a PDF page (once) and remember it
+async function pvRender(i){
+  const p = (S.pvList || [])[i]; if (!p) return; const d = prsDoc(p.f.id); if (!d || d.kind !== 'pdf') return;
+  d.pv = d.pv || {}; if (d.pv[p.n] || (d.pvBusy || {})[p.n]) return; (d.pvBusy = d.pvBusy || {})[p.n] = true;
+  try { const lib = await loadPdfJs(); d.pdfDoc = d.pdfDoc || lib.getDocument({ data: await d.blob.arrayBuffer() }).promise; const pdf = await d.pdfDoc;
+    const pg = await pdf.getPage(p.n), v = pg.getViewport({ scale: 1 }), vp = pg.getViewport({ scale: 900 / Math.max(v.width, v.height) });
+    const c = document.createElement('canvas'); c.width = vp.width; c.height = vp.height; await pg.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+    d.pv[p.n] = c.toDataURL('image/jpeg', .82);
+    const fig = document.querySelector(`.pv-pg[data-i="${i}"]`); if (fig) { const box = fig.querySelector('.pv-paper'); box.style.aspectRatio = `${v.width} / ${v.height}`; fig.classList.toggle('wide', v.width > v.height);
+      box.innerHTML = `<img src="${d.pv[p.n]}" alt="Page ${p.n}">`; }
+  } catch {} finally { d.pvBusy[p.n] = false; }
+}
+function bindPageViewer(){
+  const t = $('#pvTrack'); if (!t) return; const figs = [...t.querySelectorAll('.pv-pg')], list = S.pvList || [];
+  const count = () => { const mid = t.scrollLeft + t.clientWidth / 2; let best = 0, bd = 1e9;
+    figs.forEach((f, i) => { const c = f.offsetLeft + f.offsetWidth / 2, dd = Math.abs(c - mid); if (dd < bd) { bd = dd; best = i; } });
+    S.pvAt = best; const p = list[best], el = $('#pvCount'); if (!p || !el) return;
+    const many = S.pr.files.length > 1, total = list.length;
+    el.innerHTML = `<b>Page ${best + 1}</b> of ${total}${many ? `<span>${esc(p.f.name)}, page ${p.n}</span>` : ''}${total > 1 && best === 0 && !S.pvSwiped ? `<em>Swipe to see every page</em>` : ''}`;
+    t.parentElement.querySelector('.prev').disabled = best === 0; t.parentElement.querySelector('.next').disabled = best === total - 1; };
+  let raf = 0; t.addEventListener('scroll', () => { S.pvSwiped = S.pvSwiped || t.scrollLeft > 20; S.pvScroll = t.scrollLeft; cancelAnimationFrame(raf); raf = requestAnimationFrame(count); }, { passive: true });
+  t.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); pvGo(e.key === 'ArrowRight' ? 1 : -1); } });
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) pvRender(+e.target.dataset.i); }), { root: t, rootMargin: '0px 900px' });
+  figs.forEach(f => io.observe(f));
+  if (S.pvScroll) t.scrollLeft = S.pvScroll;   // redrawn (color, sides, copies): stay on the same page
+  count();
+}
+function pvGo(d){
+  const t = $('#pvTrack'); if (!t) return; const figs = t.querySelectorAll('.pv-pg'), i = Math.max(0, Math.min(figs.length - 1, (S.pvAt || 0) + d)), f = figs[i];
+  t.scrollTo({ left: f.offsetLeft + f.offsetWidth / 2 - t.clientWidth / 2, behavior: 'smooth' });
+}
 function viewPrints(){
   S.view = 'prints';
   if (!S.pr) S.pr = newPr();
@@ -6786,7 +6864,8 @@ function viewPrints(){
 }
 function drawPrints(){
   const pr = S.pr, p = P('prints'), sizes = liveSizes('prints'), color = liveAddons('prints').find(a => a.id === 'color');
-  const pages = prPages(pr), sides = pages * pr.qty, sheets = (pr.duplex ? Math.ceil(pages / 2) : pages) * pr.qty;
+  const pages = prPages(pr), sides = pages * pr.qty, sheets = pr.files.reduce((t, f) => t + (pr.duplex ? Math.ceil((+f.pages || 0) / 2) : (+f.pages || 0)), 0) * pr.qty;   // each file prints on its own sheets
+  const paper = (sizes.find(z => z.id === pr.size) || {}).label || '', anyPair = pr.files.some(f => +f.pages > 1);
   const docById = id => (S.docs || []).find(d => d.id === id) || {};
   let n = 0; const step = t => `<div class="stephead"><i>${++n}</i>${t}</div>`;
   $('#ctrl').innerHTML = `
@@ -6796,7 +6875,9 @@ function drawPrints(){
         <input id="docIn" type="file" accept="application/pdf,image/*" multiple hidden></label>
       ${pr.files.length ? `<ul class="docs">${pr.files.map((f, i) => `<li>
           <span class="dt ${pr.addons.includes('color') ? '' : 'bw'}">${docById(f.id).thumb ? `<img src="${docById(f.id).thumb}" alt="">` : ic('doc', 22)}</span>
-          <span class="dn"><b title="${esc(f.name)}">${esc(f.name)}</b>${f.pages ? `<small>${f.pages} page${f.pages === 1 ? '' : 's'}</small>`
+          <span class="dn"><b title="${esc(f.name)}">${esc(f.name)}</b>${f.pages ? `<small>${f.range ? `Pages ${esc(f.range)} (${f.pages} of ${f.total})` : `${f.pages} page${f.pages === 1 ? '' : 's'}`}${f.orient === 'landscape' ? ', landscape' : ''}</small>
+            ${f.kind === 'pdf' && f.total > 1 ? (S.prRange === f.id || f.range ? `<span class="prange"><input class="inp" data-range="${i}" value="${esc(f.range || '')}" placeholder="Like: 1-3, 5" aria-label="Pages to print from ${esc(f.name)}" inputmode="text">
+              <button type="button" class="linkbtn" data-act="prRangeAll" data-i="${i}">All pages</button></span>` : `<button type="button" class="linkbtn prange-go" data-act="prRange" data-id="${esc(f.id)}">Print only some pages</button>`) : ''}`
             : `<small class="ask">How many pages? <input class="inp num" type="number" min="1" max="500" data-pages="${i}" aria-label="Pages in ${esc(f.name)}"></small>`}</span>
           <span class="dacts">${f.kind === 'image' ? `<button type="button" class="dadj ${S.prSel === f.id ? 'on' : ''}" data-act="prAdjust" data-id="${esc(f.id)}">${ic('move', 14)}${S.prSel === f.id ? 'Adjusting' : 'Adjust'}</button>` : ''}
           <button type="button" class="dx" data-act="prDel" data-i="${i}" aria-label="Remove ${esc(f.name)}">${ic('x', 16)}</button></span></li>`).join('')}</ul>` : ''}
@@ -6809,22 +6890,23 @@ function drawPrints(){
     </section>
     <section>${step('Copies')}
       <div class="qty"><button type="button" data-act="prQty" data-d="-1" aria-label="One less">−</button><input id="prQtyIn" class="num" type="number" inputmode="numeric" min="1" max="${maxQtyFor('prints')}" value="${pr.qty}" aria-label="Copies"><button type="button" data-act="prQty" data-d="1" aria-label="One more">+</button></div>
-    </section>`;
+    </section>
+    <p class="rushline">${ic('clock', 15)}<span>Need it today? Order ${CONFIG.prepHours} hour${CONFIG.prepHours === 1 ? '' : 's'} ahead, +${money(CONFIG.rushSameDay)}. Next school day, +${money(CONFIG.rushNextDay)}.</span></p>`;
   const sel = pr.files.find(f => f.id === S.prSel && f.kind === 'image');
   if (!sel) S.prSel = null;
-  $('#fstage').innerHTML = sel ? pageEditorHTML(sel, pr) : pr.files.length ? `<div class="docstage">
-      <div class="pstack ${pr.addons.includes('color') ? '' : 'bw'}">${pr.files.slice(0, 3).map((f, i) => `<div class="psheet" style="--i:${i}">${docById(f.id).thumb ? `<img src="${docById(f.id).thumb}" alt="">` : `<span>${ic('doc', 40)}<b>${esc(f.name)}</b></span>`}</div>`).join('')}</div>
-      <div class="pmath">
-        <div><b class="num">${pages || '?'}</b><span>page${pages === 1 ? '' : 's'}</span></div><i>×</i>
-        <div><b class="num">${pr.qty}</b><span>cop${pr.qty === 1 ? 'y' : 'ies'}</span></div><i>=</i>
-        <div class="hi"><b class="num">${sides || '?'}</b><span>printed page${sides === 1 ? '' : 's'}</span></div></div>
-      <p class="under">${pages ? `${sheets} sheet${sheets === 1 ? '' : 's'} of ${esc((sizes.find(z => z.id === pr.size) || {}).label || '')} paper${pr.duplex ? ', printed on both sides' : ''}.` : 'Type the page count for each file to see the total.'}</p>
-      <div class="rushinfo">${ic('clock', 18)}<span><b>Need it fast?</b> Pick up any school day. Same day: order at least ${CONFIG.prepHours} hour${CONFIG.prepHours === 1 ? '' : 's'} before pickup, +${money(CONFIG.rushSameDay)}. Next school day: +${money(CONFIG.rushNextDay)}.</span></div>
-    </div>`
+  $('#fstage').innerHTML = sel ? pageEditorHTML(sel, pr) : pr.files.length ? pageViewerHTML(pr)
     : `<label class="docempty"><span class="ui">${ic('plus', 26)}</span><b>Choose files to print</b><small>PDFs or pictures. Homework, reviewers, photos, anything.</small><input class="docPick" type="file" accept="application/pdf,image/*" multiple hidden></label>`;
   document.querySelectorAll('#docIn,.docPick').forEach(i => i.addEventListener('change', onDocs));
-  if (sel) { placePageImg(sel); bindPagePan(sel); }
+  if (sel) { placePageImg(sel); bindPagePan(sel); } else if (pr.files.length) bindPageViewer();
   $('#ctrl').querySelectorAll('[data-pages]').forEach(i => i.addEventListener('change', () => { const f = pr.files[+i.dataset.pages]; f.pages = Math.max(1, Math.min(500, Math.round(+i.value || 0))) || null; drawPrints(); }));
+  $('#ctrl').querySelectorAll('[data-range]').forEach(i => i.addEventListener('change', () => {
+    const f = pr.files[+i.dataset.range], v = i.value.trim();
+    if (!v) { f.range = null; f.pages = f.total; S.prRange = null; return drawPrints(); }
+    const list = parseRange(v, f.total);
+    if (!list) { i.classList.add('bad'); toast(`Use page numbers from 1 to ${f.total}, like 1-3, 5.`); return; }
+    if (list.length === f.total) { f.range = null; f.pages = f.total; } else { f.range = rangeText(list); f.pages = list.length; }
+    S.prRange = null; drawPrints();
+  }));
   const qi = $('#prQtyIn'); if (qi) qi.addEventListener('change', () => { pr.qty = Math.max(1, Math.min(maxQtyFor('prints'), Math.round(+qi.value || 1))); drawPrints(); });
   const ready = pr.files.length && pr.files.every(f => f.pages > 0);
   $('#bottom').innerHTML = `<div><div class="tot num">${money(sides * unitPrice(pr))}</div><div class="sub">${sides} printed page${sides === 1 ? '' : 's'}</div></div>
@@ -7792,7 +7874,7 @@ async function drawAdminBody(){
               ? `<a class="filechip" href="${S.admin.urls[it.pdf.path]}" target="_blank" rel="noopener" download="${esc(o.code + '-' + (it.pdf.name || 'poster.pdf'))}">${ic('download', 16)}<span>${esc(it.pdf.name || 'poster.pdf')}<small>${it.pages} pages, print as it is</small></span></a>`
               : `<span class="filechip off">${ic('doc', 16)}<span>${esc(it.pdf.name || 'poster.pdf')}<small>loading</small></span></span>`)
           : it.type === 'prints' ? (it.files || []).map(f => S.admin.urls[f.path]
-              ? `<a class="filechip" href="${S.admin.urls[f.path]}" target="_blank" rel="noopener" download="${esc(o.code + '-' + (f.name || 'file'))}">${ic('download', 16)}<span>${esc(f.name || 'file')}<small>${f.pages || '?'} page${+f.pages === 1 ? '' : 's'}</small></span></a>`
+              ? `<a class="filechip" href="${S.admin.urls[f.path]}" target="_blank" rel="noopener" download="${esc(o.code + '-' + (f.name || 'file'))}">${ic('download', 16)}<span>${esc(f.name || 'file')}<small>${f.range ? `<b>Only pages ${esc(f.range)}</b> (${f.pages} of ${f.total || '?'})` : `${f.pages || '?'} page${+f.pages === 1 ? '' : 's'}`}${f.orient === 'landscape' ? ', landscape' : ''}</small></span></a>`
               : `<span class="filechip off">${ic('doc', 16)}<span>${esc(f.name || 'file')}<small>loading</small></span></span>`)
           : it.type === 'photos' ? [phThumbHTML(it, { framed: f => S.admin.urls[f.path] || '' }, it.size === 'strip' ? 34 : 56)]
           : [framedThumb(it.front || {}, it.front ? S.admin.urls[it.front.path] : '', frameMm(it), 64)].concat(it.back ? [framedThumb(it.back, S.admin.urls[it.back.path], frameMm(it), 64)] : [])).join('')}</div>
@@ -10071,6 +10153,9 @@ const ACTIONS = {
     try { await saveConfigPatch({ booth_menu: menu, booth_max: Math.max(1, Math.min(60, +$('#bMax').value || 15)), booth_minutes: Math.max(1, Math.min(30, +$('#bMin').value || 4)) }); toast('Booth settings saved.'); drawBoothAdmin(); } catch (e) { toast(friendlyError(e)); } },
   boothQrSave: () => { const c = document.querySelector('#bQr canvas'); if (c) c.toBlob(b => saveBlob(b, 'stick2it-booth-qr.png')); },
   statusRefresh: async t => { t.disabled = true; t.textContent = 'Checking…'; await refreshStatus(); buzz(6); },
+  prRange: t => { S.prRange = t.dataset.id; drawPrints(); const i = document.querySelector('[data-range]'); if (i) i.focus(); },
+  prRangeAll: t => { const f = S.pr.files[+t.dataset.i]; f.range = null; f.pages = f.total; S.prRange = null; drawPrints(); },
+  pvGo: t => pvGo(+t.dataset.d),
   qrRawbt: () => { const c = thermalQr(prnWidth()); if (!c) return toast('Make the QR code first.'); toast('Opening RawBT…'); rawbtImage(c); },
   rawbtTest: () => { const line = '-'.repeat(prnWidth() === 576 ? 48 : 32), now = new Date().toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' });
     toast('Opening RawBT…');
