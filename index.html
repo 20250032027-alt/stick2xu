@@ -1762,12 +1762,13 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 /* the order steps: lines fill in as you go; on phones, a full-width path with every step named */
 .prog .bar.done{background:var(--ink)}.prog .done{color:var(--ink)}
 @media(max-width:640px){
-  .prog{display:flex;flex-wrap:nowrap;align-items:flex-start;gap:0;margin:2px 0 18px;padding:12px 14px 10px;background:#fff;border:1.5px solid var(--line);border-radius:18px}
-  .prog > span:not(.bar){flex-direction:column;gap:5px;flex:none;width:58px;text-align:center;font-size:12.5px}
-  .prog i{width:32px;height:32px;font-size:14.5px}
-  .prog .bar{flex:1;width:auto;height:3px;border-radius:3px;margin-top:15px}
+  .prog{display:flex;flex-wrap:nowrap;align-items:center;gap:0;margin:0 0 14px;padding:7px 12px;background:#fff;border:1.5px solid var(--line);border-radius:14px}
+  .prog > span:not(.bar){flex:none;gap:6px;font-size:13px}
+  .prog i{width:24px;height:24px;font-size:12.5px;border-width:2px}
+  .prog .bar{flex:1;width:auto;min-width:10px;height:2.5px;border-radius:3px;margin:0 8px}
   .prog .on em{font-weight:800}
 }
+@media(max-width:350px){.prog{padding:7px 9px}.prog > span:not(.bar){gap:4px;font-size:12px}.prog .bar{margin:0 5px}}
 /* fonts: tiles that show your words in each font */
 .wd-fonts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .wd-font{display:grid;justify-items:center;align-content:center;gap:3px;min-height:64px;padding:8px 4px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit;cursor:pointer}
