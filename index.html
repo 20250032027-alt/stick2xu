@@ -1041,8 +1041,7 @@ table.biz.buys td:nth-child(2) .inp{min-width:180px}
 .filechip span > :first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .filechip small{font-weight:500;color:var(--muted);font-size:12px}
 .filechip.off{opacity:.6;border-style:dashed}
-.rushtag{color:#8A5E00!important;font-weight:700}
-.sv-row.rushrow{margin-top:14px;padding:10px 14px;border:1px solid #EED9A2;border-radius:12px;background:#FFF8E6;color:#6B4B00;font-weight:700}
+.sv-row.rushrow{margin-top:8px;padding:2px 0;font-size:14.5px;color:var(--muted)}.rushrow span{display:inline-flex;align-items:center;gap:6px}.rushrow svg{color:#C9951A}.rushrow b{color:var(--ink)}
 .choice.off{opacity:1;cursor:not-allowed}
 .choice.off > *{opacity:.45}
 
@@ -1715,7 +1714,8 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .printbig .bi{width:44px;height:44px}
 .pb-t{min-width:0}.pb-t b{display:block;font-family:var(--display);font-size:21px;line-height:1.15;color:#fff}
 .pb-t small{display:block;font-size:14px;font-weight:600;color:rgba(255,255,255,.85)}.pb-t small em{font-style:normal;font-weight:800;color:var(--xu-gold)}
-.o1-row{display:flex;align-items:center;gap:6px 16px;flex-wrap:wrap}.o1-row .pilllink{padding:8px 14px}
+.o1-row{display:flex;align-items:center;gap:6px 16px;flex-wrap:wrap}
+.hero .heroacts.o1 .o1-row{justify-content:flex-start}   /* lines up with the headline and the big button, on phones too */.o1-row .pilllink{padding:8px 14px}
 .txtlink{display:inline-flex;align-items:center;min-height:44px;font-weight:700;color:var(--ink);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;text-decoration-color:var(--xu-gold)}
 .txtlink:hover{text-decoration-color:var(--ink)}
 @media(max-width:360px){.printbig{padding-left:20px}.pb-t b{font-size:19px}.pb-t small{font-size:13px}}
@@ -1728,6 +1728,10 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .pv-track{display:flex;align-items:center;gap:18px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;
   padding:10px calc(50% - min(31vw,150px)) 14px;outline:none}
 .pv-track::-webkit-scrollbar{display:none}
+.pv-track{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14%,#000 86%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 14%,#000 86%,transparent 100%)}   /* the pages beside fade out softly */
+@media(min-width:821px){.designer:has(.pview) #fstage{position:sticky;top:76px;align-self:start;height:calc(100vh - 300px);min-height:400px;display:grid;align-content:center}}   /* the viewer stays in the middle of what you see, while the panel scrolls */
+@media(min-width:821px){.pview .pv-pg{width:min(300px,calc((100vh - 400px) / 1.414))}.pview .pv-pg.wide{width:min(420px,calc((100vh - 400px) * 1.414))}
+  .pv-track{padding-left:calc(50% - min(150px,calc((100vh - 400px) / 2.828)));padding-right:calc(50% - min(150px,calc((100vh - 400px) / 2.828)))}}   /* pages fit the screen's height */
 .pv-pg{flex:none;width:min(62vw,300px);margin:0;scroll-snap-align:center;position:relative;transition:opacity .2s}
 .pv-pg.wide{width:min(78vw,420px)}
 .pv-paper{background:#fff;border:1.5px solid var(--ink);border-radius:4px;box-shadow:3px 4px 0 rgba(40,57,113,.18);overflow:hidden;display:grid;place-items:center}
@@ -1745,6 +1749,16 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 @media (prefers-reduced-motion:reduce){.pv-count em{animation:none}}
 .prange{display:flex;align-items:center;gap:10px;margin-top:6px}.prange .linkbtn{white-space:nowrap}.prange .inp{max-width:140px;min-height:38px;padding:6px 10px;font-size:14.5px}.prange .inp.bad{border-color:var(--red)}.prange .linkbtn{font-size:13.5px}
 .wrap > .cdrow2{margin:18px 0 4px}
+/* a quick pickup costs a little more: a small pill on the right of that day */
+.choice > svg{flex:none}   /* icons keep their size next to longer text */
+.choice .rushpill{display:inline-block;align-self:flex-start;margin-top:4px;padding:2px 10px;border-radius:999px;border:1.5px solid #E7C66B;background:#FFF6DA;color:#7A5300;font-weight:800;font-size:12.5px;white-space:nowrap}
+/* the promo code, folded away until wanted */
+.codecard.ccfold{display:block;padding:0}
+.ccfold > summary{display:flex;align-items:center;gap:10px;min-height:48px;padding:6px 14px;cursor:pointer;list-style:none;font-size:15px}
+.ccfold > summary::-webkit-details-marker{display:none}
+.ccfold > summary svg:first-child{color:#C9951A;flex:none}.ccfold > summary svg:last-child{margin-left:auto;transition:transform .2s}
+.ccfold[open] > summary svg:last-child{transform:rotate(180deg)}
+.ccbody{display:grid;gap:8px;padding:0 14px 14px}
 /* fonts: tiles that show your words in each font */
 .wd-fonts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .wd-font{display:grid;justify-items:center;align-content:center;gap:3px;min-height:64px;padding:8px 4px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit;cursor:pointer}
@@ -2790,6 +2804,7 @@ const dayLabel = v => v === ymd(new Date()) ? 'Today' : fmtDate(v, { weekday: 'l
 
 /* Line icons, one stroke weight */
 const ICONS = {
+  chevron:'<path d="M6 9l6 6 6-6"/>',
   share:'<path d="M12 3v12M7.5 7.5L12 3l4.5 4.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',
   plus:'<path d="M12 5v14M5 12h14"/>', keychain:'<circle cx="7.2" cy="5.6" r="3.6"/><path d="M9.8 8.2l2.3 2.1"/><g transform="rotate(-10 14.6 16)"><rect x="9" y="9.6" width="11.2" height="12.8" rx="2.4"/><path d="M11.4 19.6l2.3-2.7 1.9 1.9 1.2-1.1 1.8 1.9"/><circle cx="16.9" cy="13.3" r="1"/></g>', minus:'<path d="M5 12h14"/>', arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
   check:'<path d="M5 12.5l4.5 4.5L19 7"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>',
@@ -3161,8 +3176,9 @@ function applyShopConfig(c){
   c = c || {};
   const D = CONFIG_DEFAULTS, arr = (v, d) => Array.isArray(v) && v.length ? v : d;
   CONFIG.pickupWeekdays = arr(c.pickup_weekdays, D.pickupWeekdays).map(Number);
-  CONFIG.pickupTimes = arr(c.pickup_times, D.pickupTimes).filter(t => t && t.label && t.time);
-  CONFIG.pickupOptions = arr(c.pickup_places, D.pickupOptions).filter(Boolean);
+  // an empty list is allowed once saved (no gates: classroom or "somewhere else"; no time slots: customers pick a time)
+  CONFIG.pickupTimes = (Array.isArray(c.pickup_times) ? c.pickup_times : D.pickupTimes).filter(t => t && t.label && t.time);
+  CONFIG.pickupOptions = (Array.isArray(c.pickup_places) ? c.pickup_places : D.pickupOptions).filter(Boolean);
   CONFIG.allowCustomPickup = typeof c.allow_custom_pickup === 'boolean' ? c.allow_custom_pickup : D.allowCustomPickup;
   CONFIG.classroomOn = typeof c.classroom_pickup === 'boolean' ? c.classroom_pickup : D.classroomOn;
   CONFIG.leadDays = Number.isFinite(+c.lead_days) && c.lead_days !== null && c.lead_days !== '' ? +c.lead_days : D.leadDays;
@@ -6975,7 +6991,7 @@ function checkoutDates(){
   for (let i = 0; i < 40 && out.length < CONFIG.datesToShow + 1; i++, d.setDate(d.getDate() + 1)) {
     const ds = ymd(d);
     if (!CONFIG.printWeekdays.includes(d.getDay()) || CONFIG.noPickupDates.includes(ds)) continue;
-    if (i === 0 && !CONFIG.pickupTimes.some(t => timeOk(ds, t))) continue;
+    if (i === 0 && !CONFIG.pickupTimes.some(t => timeOk(ds, t)) && !(new Date().getHours() * 60 + new Date().getMinutes() + CONFIG.prepHours * 60 <= OWN_TO)) continue;   // today: a slot, or a time they pick, still fits
     out.push(ds);
   }
   return out;
@@ -7012,7 +7028,7 @@ function viewCheckout(){
         <div class="cbody">
       <div id="xuBox">${xuBoxHTML()}</div>
       <div class="field"><label class="lab" for="nick">Full name <span class="req">*</span></label>
-        <input class="inp" id="nick" maxlength="60" autocomplete="name" placeholder="Juan Dela Cruz" value="${esc(me.nickname || '')}" aria-describedby="e-nick e-nickhelp">
+        <input class="inp" id="nick" maxlength="60" autocomplete="name" placeholder="Your full name" value="${esc(me.nickname || '')}" aria-describedby="e-nick e-nickhelp">
         <p class="help" id="e-nickhelp">As written on your school ID. Bring the ID to pickup.</p>
         <p class="ferr" id="e-nick" role="alert"></p></div>
       <div class="field"><span class="lab" id="l-gs">Grade and section <span class="req">*</span></span>
@@ -7031,16 +7047,17 @@ function viewCheckout(){
         <div class="chead"><i>2</i><b>Pickup</b><span class="csum" id="csum2"></span><button type="button" class="cchange" data-act="coGo" data-s="2">Change</button></div>
         <div class="cbody">
       <fieldset id="whenSet"><legend>When will you pick it up? <span class="req">*</span></legend>
-        ${dates.map(d => `<label class="choice${isRushMake(d) ? ' rushday' : ''}"><input type="radio" name="pdate" value="${d}" ${d === (dates.find(x => !isRushMake(x)) || dates[0]) ? 'checked' : ''}>${ic('calendar', 20)}<span><b>${d === ymd(new Date()) ? 'Today, ' : d === addDays(ymd(new Date()), 1) ? 'Tomorrow, ' : ''}${fmtDate(d)}</b>${rushFee(d) ? `<small class="rushtag">${isRushMake(d) ? 'Rush pickup' : 'Rush'}, +${money(rushFee(d))}</small>` : ''}</span></label>`).join('')}
+        ${dates.map(d => `<label class="choice${isRushMake(d) ? ' rushday' : ''}"><input type="radio" name="pdate" value="${d}" ${d === (dates.find(x => !isRushMake(x)) || dates[0]) ? 'checked' : ''}>${ic('calendar', 20)}<span><b>${d === ymd(new Date()) ? 'Today, ' : d === addDays(ymd(new Date()), 1) ? 'Tomorrow, ' : ''}${fmtDate(d)}</b>${rushFee(d) ? `<span class="rushpill" title="A small extra for a quick pickup">+${money(rushFee(d))} rush</span>` : ''}</span></label>`).join('')}
         <p class="help">${po ? `Prints can be picked up any school day. Same-day orders need at least ${CONFIG.prepHours} hour${CONFIG.prepHours === 1 ? '' : 's'} before the pickup time.`
           : rushOpenNow() && CONFIG.rushMake >= 0 ? `Pick up any ${pickupDaysText()}. Need it sooner? A rush pickup is +${money(CONFIG.rushMake)} and closes at ${hourLabel(CONFIG.rushCutoff)} today. From ${esc(fmtDate(pickupDates()[0] || freeFrom(), { weekday: 'long', month: 'short', day: 'numeric' }))}, no extra fee.`
           : `Pick up any ${pickupDaysText()}. The first date gives us time to check and print your order.${CONFIG.rushOn ? ` (Rush pickups for tomorrow close at ${hourLabel(CONFIG.rushCutoff)}.)` : ''}`}</p>
       </fieldset>
 
       ${`<fieldset id="timeSet"><legend>What time? <span class="req">*</span></legend>
+        ${CONFIG.pickupTimes.length ? '' : '<input type="radio" name="ptime" value="__own" checked hidden>'}
         ${CONFIG.pickupTimes.map((t, i) => `<label class="choice"><input type="radio" name="ptime" value="${esc(timeLabel(t))}" ${i === 0 ? 'checked' : ''}>${ic('clock', 20)}<span><b>${esc(t.label)}</b><small>${esc(t.time)}</small></span></label>`).join('')}
-        <label class="choice"><input type="radio" name="ptime" value="__own">${ic('clock', 20)}<span><b>Pick a time</b><small>Choose any time that works for you</small></span></label>
-        <div id="ownTimeBox" hidden><label class="lab" for="ownTime" style="display:block;margin:6px 0">Your time</label>
+        ${CONFIG.pickupTimes.length ? `<label class="choice"><input type="radio" name="ptime" value="__own">${ic('clock', 20)}<span><b>Pick a time</b><small>Choose any time that works for you</small></span></label>` : ''}
+        <div id="ownTimeBox" ${CONFIG.pickupTimes.length ? 'hidden' : ''}><label class="lab" for="ownTime" style="display:block;margin:6px 0">Your time</label>
           <input class="inp" type="time" id="ownTime" step="300" style="max-width:200px" aria-describedby="e-time"><p class="ferr" id="e-time" role="alert"></p></div>
       </fieldset>`}
 
@@ -7087,12 +7104,6 @@ ${codeCardHTML()}
           <div class="formerr" id="formErr" role="alert"></div>
           <div style="margin-top:14px">${btn('Place my order', { type: 'submit', cls: 'wide', icon: 'check', attrs: 'id="placeBtn"' })}</div>
           <p class="help" style="margin:10px 0 0;text-align:center">Next, you'll get an order code. Save it.</p>
-          <details class="gtk"><summary>Good to know</summary><ul>
-${CONFIG.confirmOn ? `<li>${ic('check', 16)}<span>We print your order only after you tap <b>"I'll be there"</b> in My order, by the day before pickup. Nothing goes to waste.</span></li>` : ''}
-          <li>${ic('calendar', 16)}<span>Miss your pickup? We hold it for one more pickup day. After that it's forfeited and counts as a missed pickup.</span></li>
-          <li>${ic('image', 16)}<span>Printed colors can look a little softer than on your screen.</span></li>
-          <li>${ic('cash', 16)}<span>Bring exact change if you can.${CONFIG.gcash.enabled ? ` Paid by GCash and the order gets cancelled? We send it back within ${CONFIG.refundDays} days.` : ''}</span></li>
-        </ul></details>
         </div></section>
     </form></main>`;
   const form = $('#orderForm');
@@ -7100,13 +7111,14 @@ ${CONFIG.confirmOn ? `<li>${ic('check', 16)}<span>We print your order only after
     syncPerson(form);
     const pe = S.coPerson;
     if ($('#otherBox')) $('#otherBox').hidden = radio(form, 'pickup') !== '__other';
+    if (!form.querySelector('input[name="pickup"]:checked')) { const f = form.querySelector('input[name="pickup"]:not(:disabled)'); if (f) f.checked = true; }   // no gates: the first choice there is
     if ($('#roomBox')) $('#roomBox').hidden = radio(form, 'pickup') !== '__room';
     if ($('#ownTimeBox')) $('#ownTimeBox').hidden = radio(form, 'ptime') !== '__own';
     if ($('#gcashBox')) $('#gcashBox').hidden = radio(form, 'pay') !== 'gcash';
     const place = radio(form, 'pickup') === '__other' ? 'my chosen spot' : radio(form, 'pickup');
     if ($('#promise').checked) setErr(null, 'e-promise', '');
     if ($('#e-sec').textContent) validate(false);
-    const mark = (r, ok, note) => { r.disabled = !ok; const c = r.closest('.choice'); c.classList.toggle('off', !ok); if (note && !ok) c.dataset.note = note; else delete c.dataset.note; if (!ok && r.checked) r.checked = false; };
+    const mark = (r, ok, note) => { r.disabled = !ok; const c = r.closest('.choice'); if (!c) return; c.classList.toggle('off', !ok); if (note && !ok) c.dataset.note = note; else delete c.dataset.note; if (!ok && r.checked) r.checked = false; };
     const pickFirst = name => { if (!radio(form, name)) { const first = form.querySelector(`input[name="${name}"]:not(:disabled)`); if (first) first.checked = true; } };
     let ds = radio(form, 'pdate');
     if (!pe) {   // school pickup limits; pickup people have their own days and no limits
@@ -7273,25 +7285,26 @@ function viewCheckoutKeep(){
 }
 function checkoutTotal(ds){ const sum = computeDeals(S.cart); return sum.total - promoOff(S.promo, sum.total) + rushFee(ds); }
 /* The code card at the top of the Pay step: says what codes are for, and shows the saving once one is in */
+document.addEventListener('toggle', e => { if (e.target.classList && e.target.classList.contains('ccfold')) S.promoOpen = e.target.open; }, true);   // stays open if the page redraws (like after a wrong code)
 function codeCardHTML(){
   const p = S.promo, sum = computeDeals(S.cart), off = p ? promoOff(p, sum.total) : 0, sell = CONFIG.sellersOn;
   if (p) return `<div class="codecard has" aria-live="polite"><span class="cc-ic">${ic('check', 20)}</span>
     <span class="cc-t"><b>${p.seller ? `${esc(p.name)}'s code is on` : `Code ${esc(p.code)} is on`}</b>
       <small>${off ? `You save <b>${money(off)}</b>${p.seller ? ` · thanks for supporting ${esc(p.name)}!` : '.'}` : sum.total < p.min_total ? `Spend ${money(p.min_total)} or more to use it.` : 'It comes off at pickup.'}</small></span>
     <span class="cc-code">${esc(p.code)}</span>${smallBtn('Remove', 'x', 'promoRemove', 'plain')}</div>`;
-  return `<div class="codecard"><span class="cc-ic">${ic('sparkle', 20)}</span>
-    <span class="cc-t"><b>${sell ? 'Got a code from a classmate?' : 'Have a promo code?'}</b>
+  return `<details class="codecard ccfold" ${S.promoOpen ? 'open' : ''}><summary>${ic('sparkle', 18)}<b>${sell ? 'Got a code from a classmate?' : 'Have a promo code?'}</b>${ic('chevron', 16)}</summary><div class="ccbody">
+    <span class="cc-t">
       <small>${sell ? `Stick2It Sellers share codes that take <b>${CONFIG.sellerBuyerOff}% off</b> your order. Promo codes work here too.` : 'Type it here and the discount comes off your total.'}</small></span>
     <div class="cc-row"><label class="lab sr" for="promo">Code</label><input class="inp" id="promo" maxlength="20" autocapitalize="characters" autocomplete="off" placeholder="Type your code" style="text-transform:uppercase">
       ${smallBtn('Apply', 'check', 'promoApply', 'dark')}</div>
     <p class="ferr" id="e-promo" role="alert"></p>${socialHTML() ? `<details class="cc-where"><summary>Where to get promo codes</summary>
-      <p>We share codes on our pages. Follow us so you don't miss the next one.</p>${socialHTML()}</details>` : ''}${sell ? '<p class="cc-skip">No code? No problem, just skip this.</p>' : ''}</div>`;
+      <p>We share codes on our pages. Follow us so you don't miss the next one.</p>${socialHTML()}</details>` : ''}</div></details>`;
 }
 function checkoutSummary(ds){
   const form = $('#orderForm'); ds = ds || (form ? radio(form, 'pdate') : null);
   const sum = computeDeals(S.cart), rush = rushFee(ds);
   const short = S.promo && sum.total < S.promo.min_total ? `<p class="nudgebar">${ic('warn', 16)}<span>Spend ${money(S.promo.min_total)} or more to use code ${esc(S.promo.code)}.</span></p>` : '';
-  return `${short}${savingsHTML(sum, S.promo)}${rush ? `<div class="sv-row rushrow"><span>${ic('clock', 16)}${isRushMake(ds) ? 'Rush pickup' : `Rush fee, ${ds === ymd(new Date()) ? 'same day' : 'next school day'}`}</span><b class="num">+${money(rush)}</b></div>` : ''}
+  return `${short}${savingsHTML(sum, S.promo)}${rush ? `<div class="sv-row rushrow"><span>${ic('clock', 15)}${isRushMake(ds) ? 'Quick pickup' : ds === ymd(new Date()) ? 'Same-day rush' : 'Next-day rush'}</span><b class="num">+${money(rush)}</b></div>` : ''}
     <div class="totalrow"><span>Total</span><b class="num">${money(checkoutTotal(ds))}</b></div>`;
 }
 function setErr(inputId, errId, msg){
@@ -7434,12 +7447,6 @@ function viewDone(){
       </ol>
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px">${btn('Check my order', { act: 'leaveDone', cls: 'dark', attrs: 'data-href="#/status"' })}
         ${o.pickup_date ? `<button type="button" class="pilllink" data-act="calAdd">${ic('calendar', 18)}Add to calendar</button>` : ''}</div>
-      <details class="gtk" style="margin-top:14px"><summary>Good to know</summary><ul>
-        ${o.group ? `<li>${ic('user', 16)}<span>Meet ${esc(o.person_name || 'your pickup person')} only at the place and on the day shown on this page.</span></li>
-        <li>${ic('calendar', 16)}<span>Can't make it? Cancel in My order before it's printed, then order again for another day.</span></li>`
-        : `<li>${ic('school', 16)}<span>Pickup is inside campus only. Never meet anyone outside school for your order.</span></li>
-        <li>${ic('calendar', 16)}<span>Can't make it? Change your pickup day in My order (up to ${CONFIG.maxReschedules} times), or cancel before it's printed.</span></li>`}
-        <li>${ic('lock', 16)}<span>Only the sellers see your name and section. Your pictures are deleted ${CONFIG.cleanupDays} days after your order is done.</span></li></ul></details>
     </section>
     <p class="codeline">${ic('key', 16)}<span>Order code <b class="num">${esc(o.code)}</b>. Keep it just in case; we find orders by your name.</span>
       <button type="button" class="linkbtn" data-act="copyCode">Copy</button><button type="button" class="linkbtn" data-act="savePass">Save as picture</button></p>
@@ -7605,13 +7612,13 @@ function drawStatusCore(){
   });
 }
 function rescheduleHTML(o){
-  const skip = { date: o.pickup_date, time: o.pickup_time, gate: o.pickup };
+  const skip = { date: o.pickup_date, time: o.pickup_time, gate: o.pickup }, keep = CONFIG.pickupTimes.some(t => timeLabel(t) === o.pickup_time) ? null : o.pickup_time;
   const dates = openDates(o.status === 'ready' || o.status === 'printing').filter(d => d !== o.pickup_date && !slotState(d, null, null, skip).dayFull
-    && CONFIG.pickupTimes.some(t => { const st = slotState(d, timeLabel(t), o.pickup, skip); return !st.slotFull && !st.gateTaken && timeOk(d, t); })).slice(0, CONFIG.datesToShow + 1);
+    && (keep || CONFIG.pickupTimes.some(t => { const st = slotState(d, timeLabel(t), o.pickup, skip); return !st.slotFull && !st.gateTaken && timeOk(d, t); }))).slice(0, CONFIG.datesToShow + 1);
   return `<form class="moveform" id="moveForm">
     <b class="mh">${ic('calendar', 18)}Pick a new pickup day</b>
     <div class="mgrid">${dates.map((d, i) => `<label class="choice"><input type="radio" name="mdate" value="${d}" ${i === 0 ? 'checked' : ''}><span>${esc(fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' }))}</span></label>`).join('')}</div>
-    <div class="mgrid">${CONFIG.pickupTimes.map(t => `<label class="choice"><input type="radio" name="mtime" value="${esc(timeLabel(t))}" ${timeLabel(t) === o.pickup_time ? 'checked' : ''}><span>${esc(t.label)} <small>${esc(t.time)}</small></span></label>`).join('')}</div>
+    <div class="mgrid">${keep ? `<label class="choice"><input type="radio" name="mtime" value="${esc(keep)}" checked><span>Same time <small>${esc(keep)}</small></span></label>` : ''}${CONFIG.pickupTimes.map(t => `<label class="choice"><input type="radio" name="mtime" value="${esc(timeLabel(t))}" ${timeLabel(t) === o.pickup_time ? 'checked' : ''}><span>${esc(t.label)} <small>${esc(t.time)}</small></span></label>`).join('')}</div>
     <p class="help" id="mnote"></p>
     <p class="help">Same place: ${esc(o.pickup)}. Moving your pickup also counts as confirming.</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap">${btn('Move my pickup', { type: 'submit', cls: 'dark', icon: 'check' })}${smallBtn('Never mind', '', 'moveClose', 'plain')}</div>
@@ -8601,8 +8608,7 @@ function drawShopForm(){
     e.preventDefault();
     if (!c.pickup_weekdays.length) return toast('Pick at least one pickup day.');
     c.pickup_times = c.pickup_times.filter(t => t.label.trim()); c.pickup_places = c.pickup_places.map(x => x.trim()).filter(Boolean);
-    if (!c.pickup_times.length) return toast('Add at least one pickup time.');
-    if (!c.pickup_places.length) return toast('Add at least one pickup place.');
+    if (!c.pickup_places.length && !c.classroom_pickup && c.classroom_pickup !== undefined && !c.allow_custom_pickup) return toast('Add a pickup place, or turn on classroom delivery or “Somewhere else in school”.');
     if (!c.grades.length) return toast('Add at least one grade.');
     if (c.site_url && !/^https?:\/\/\S+$/.test(c.site_url)) return toast('The website address should start with https://');
     if (c.facebook_url && !/^https:\/\/(www\.|m\.)?facebook\.com\//.test(c.facebook_url)) return toast('The Facebook link should start with https://www.facebook.com/');
