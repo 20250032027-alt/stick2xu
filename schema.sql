@@ -332,6 +332,7 @@ declare
   v_promo public.promo_codes; v_pcode text := nullif(upper(trim(coalesce(p_promo_code, ''))), '');
   v_code text;
   v_admin boolean := public.is_admin();   -- an admin placing an order for someone else
+  v_booth boolean := coalesce(current_setting('stick.booth', true), '') = '1';   -- set only by place_booth_order: picked up at the booth, now
   v_lead int; v_maxr int;                 -- rush pickups: free pickup starts this many days out; max rush orders a day
   v_parent public.orders;                 -- "add more to my order": the order this one goes with
 begin
@@ -531,8 +532,8 @@ begin
   end if;
   v_total := v_subtotal - v_discount;
 
-  -- Pickup today is only for prints-only orders, with enough prep time before the pickup time
-  if p_pickup_date = v_today then
+  -- Pickup today is only for prints-only orders, with enough prep time before the pickup time (booth orders are made on the spot)
+  if p_pickup_date = v_today and not v_booth then
     if not (v_has_prints and v_only_prints) then raise exception 'TOO_SOON'; end if;
     v_tm := regexp_match(p_pickup_time, '(\d{1,2}):(\d{2})\s*(AM|PM)', 'i');
     if v_tm is not null then
@@ -558,7 +559,7 @@ begin
     v_rush := coalesce((s.config->>'rush_make')::int, 20);
     if v_rush > 0 then v_total := v_total + v_rush; v_labels := v_labels || to_jsonb('Rush pickup ₱' || v_rush); end if;
   -- Rush fee for prints: same day, or the next school day
-  elsif v_has_prints then
+  elsif v_has_prints and not v_booth then   -- no rush fee at the booth: that's the booth price
     v_next := v_today + 1;
     while extract(dow from v_next) in (0, 6) loop v_next := v_next + 1; end loop;
     if p_pickup_date = v_today then v_rush := coalesce((s.config->>'rush_same_day')::int, 20);
@@ -569,14 +570,14 @@ begin
 
   -- Several orders at once are fine (each one is still approved by hand). A cap of 5 unfinished orders
   -- per person stops spam. Admins ordering for someone else skip this and the missed-pickup block.
-  if not v_admin and v_parent.id is null and (select count(*) from public.orders
+  if not v_admin and not v_booth and v_parent.id is null and (select count(*) from public.orders
              where public.norm_text(nickname) = v_nick and public.norm_text(grade_section) = v_sec
                and status in ('pending','approved','printing','ready')) >= 5 then
     raise exception 'ACTIVE_ORDER';
   end if;
 
   -- Too many missed pickups
-  if not v_admin and (select count(*) from public.orders
+  if not v_admin and not v_booth and (select count(*) from public.orders
       where public.norm_text(nickname) = v_nick and public.norm_text(grade_section) = v_sec
         and status = 'noshow') >= s.max_noshows then
     raise exception 'BLOCKED';
@@ -595,10 +596,16 @@ begin
 
   -- XU uptown students only (when the admin switch is on): the person must be signed in with a school Google account
   v_xu := v_email like '%@my.xu.edu.ph';
-  if coalesce((s.config->>'require_xu_signin')::boolean, false) and not v_xu and not v_admin and v_school_id is null then raise exception 'XU_ONLY'; end if;
+  if coalesce((s.config->>'require_xu_signin')::boolean, false) and not v_xu and not v_admin and v_school_id is null and not v_booth then raise exception 'XU_ONLY'; end if;
 
   -- an add-on rides along with its order, so it doesn't take another pickup spot
-  if v_parent.id is null and v_school_id is null then perform public.check_pickup(p_pickup_date, p_pickup_time, p_pickup, null); end if;
+  -- a time the customer picked themselves ("2:15 PM"): 8 AM to 5 PM only
+  if trim(p_pickup_time) ~ '^\d{1,2}:\d{2} (AM|PM)$' and (
+       (case when split_part(trim(p_pickup_time), ' ', 2) = 'PM' and split_part(trim(p_pickup_time), ':', 1)::int < 12 then split_part(trim(p_pickup_time), ':', 1)::int + 12
+             when split_part(trim(p_pickup_time), ' ', 2) = 'AM' and split_part(trim(p_pickup_time), ':', 1)::int = 12 then 0
+             else split_part(trim(p_pickup_time), ':', 1)::int end) * 60 + split_part(split_part(trim(p_pickup_time), ':', 2), ' ', 1)::int
+       not between 480 and 1020) then raise exception 'BAD_TIME'; end if;
+  if v_parent.id is null and v_school_id is null and not v_booth then perform public.check_pickup(p_pickup_date, p_pickup_time, p_pickup, null); end if;
 
   -- sheet_count holds the number of things in the order (sheets + pins + posters + keychains)
   insert into public.orders (code, nickname, grade_section, pickup, pickup_date, pickup_time, payment, gcash_ref,
@@ -612,7 +619,9 @@ begin
           v_subtotal, v_discount, v_pcode, v_labels, v_rush,
           -- pickups inside the confirm window (like rush prints) count as confirmed right away
           -- (an admin ordering for someone counts as confirmed: they're arranging it with the person directly)
-          v_admin or coalesce(v_parent.confirmed, false) or p_pickup_date - coalesce((s.config->>'confirm_days_before')::int, 1) <= v_today,
+          -- the confirm step is optional (Settings): when it's off, every order counts as confirmed
+          v_booth or not coalesce((s.config->>'confirm_on')::boolean, false)
+          or v_admin or coalesce(v_parent.confirmed, false) or p_pickup_date - coalesce((s.config->>'confirm_days_before')::int, 1) <= v_today,
           v_fcode, v_credit, case when v_xu then v_email end,
           v_parent.code, case when v_admin then 'Ordered for them by ' || coalesce(nullif(v_email, ''), 'an admin') end, v_scode, v_school_id);
   return v_code;
@@ -1780,3 +1789,74 @@ grant execute on function public.send_suggestion(text, text, text) to anon, auth
 update public.shop_settings
    set products = products || jsonb_build_object('photos', '{"enabled": true, "sizes": [{"id": "instant", "price": 25, "enabled": true}, {"id": "strip", "price": 25, "enabled": true}], "addons": []}'::jsonb)
  where id = 1 and not (products ? 'photos');
+
+-- =====================================================================
+-- The "I'll be there" confirm step is now optional, and off unless switched on in Settings.
+-- While it's off, open orders count as confirmed, so none are released and all of them print.
+-- =====================================================================
+update public.orders set confirmed = true
+ where not confirmed and status in ('pending', 'approved', 'printing')
+   and not coalesce((select (config->>'confirm_on')::boolean from public.shop_settings where id = 1), false);
+
+-- =====================================================================
+-- Booth mode: customers scan the booth QR, order from a short menu, and wait about 10 minutes.
+-- Each booth order gets the day's next queue number (#1, #2...). Prices and deals are the normal ones.
+-- Settings (shop_settings.config): booth_on, booth_paused, booth_menu (product keys), booth_max (queue limit),
+-- booth_minutes (minutes per order, for the wait estimate).
+-- =====================================================================
+alter table public.orders add column if not exists booth boolean not null default false;
+alter table public.orders add column if not exists queue_no int;
+create index if not exists orders_booth_day on public.orders (created_at) where booth;
+
+create or replace function public.place_booth_order(p_name text, p_layout jsonb, p_folder text, p_src text default null)
+returns json language plpgsql security definer set search_path = public as $$
+declare
+  s public.shop_settings; v_code text; v_q int; v_today date := (now() at time zone 'Asia/Manila')::date;
+  v_menu jsonb; v_item jsonb; v_wait int;
+begin
+  select * into s from public.shop_settings where id = 1;
+  if not coalesce((s.config->>'booth_on')::boolean, false) then raise exception 'BOOTH_CLOSED'; end if;
+  if coalesce((s.config->>'booth_paused')::boolean, false) then raise exception 'BOOTH_PAUSED'; end if;
+  v_menu := coalesce(s.config->'booth_menu', '["pins","stickers","photos","prints"]'::jsonb);
+  if jsonb_typeof(p_layout->'items') is distinct from 'array' or jsonb_array_length(p_layout->'items') not between 1 and 5 then raise exception 'BAD_INPUT'; end if;
+  for v_item in select * from jsonb_array_elements(p_layout->'items') loop
+    if not (v_menu ? (v_item->>'type')) then raise exception 'NOT_AVAILABLE'; end if;
+  end loop;
+  perform pg_advisory_xact_lock(hashtext('booth-' || v_today::text));   -- one number at a time
+  select count(*) into v_wait from public.orders
+   where booth and (created_at at time zone 'Asia/Manila')::date = v_today and status in ('pending', 'approved', 'printing');
+  if v_wait >= coalesce((s.config->>'booth_max')::int, 15) then raise exception 'BOOTH_FULL'; end if;
+  perform set_config('stick.booth', '1', true);
+  v_code := public.place_order(trim(p_name), 'Booth', 'Booth', 'cash', null, p_layout, p_folder, coalesce(p_src, 'booth'), v_today, 'At the booth');
+  perform set_config('stick.booth', '', true);
+  select coalesce(max(queue_no), 0) + 1 into v_q from public.orders where booth and (created_at at time zone 'Asia/Manila')::date = v_today;
+  update public.orders set booth = true, queue_no = v_q where code = v_code;
+  return json_build_object('code', v_code, 'queue_no', v_q);
+end $$;
+
+-- A customer's waiting screen: where their booth order is, and how many are ahead of it
+create or replace function public.booth_status(p_code text) returns json
+language sql security definer set search_path = public stable as $$
+  select json_build_object('status', o.status, 'queue_no', o.queue_no, 'total', o.total, 'paid', o.paid,
+    'ahead', (select count(*) from public.orders a where a.booth and (a.created_at at time zone 'Asia/Manila')::date = (o.created_at at time zone 'Asia/Manila')::date
+              and a.queue_no < o.queue_no and a.status in ('pending', 'approved', 'printing')),
+    'minutes', coalesce((select (config->>'booth_minutes')::int from public.shop_settings where id = 1), 4))
+  from public.orders o where o.code = upper(trim(p_code)) and o.booth
+$$;
+
+-- The booth page and the "Now ready" screen: open or not, the wait, and the numbers (never names)
+create or replace function public.booth_board() returns json
+language sql security definer set search_path = public stable as $$
+  with t as (select * from public.orders where booth and (created_at at time zone 'Asia/Manila')::date = (now() at time zone 'Asia/Manila')::date)
+  select json_build_object(
+    'open', coalesce((s.config->>'booth_on')::boolean, false), 'paused', coalesce((s.config->>'booth_paused')::boolean, false),
+    'menu', coalesce(s.config->'booth_menu', '["pins","stickers","photos","prints"]'::jsonb),
+    'minutes', coalesce((s.config->>'booth_minutes')::int, 4), 'max', coalesce((s.config->>'booth_max')::int, 15),
+    'waiting', (select count(*) from t where status in ('pending', 'approved', 'printing')),
+    'making', coalesce((select json_agg(queue_no order by queue_no) from t where status in ('pending', 'approved', 'printing')), '[]'::json),
+    'ready', coalesce((select json_agg(queue_no order by updated_at) from t where status = 'ready'), '[]'::json))
+  from public.shop_settings s where s.id = 1
+$$;
+grant execute on function public.place_booth_order(text, jsonb, text, text) to anon, authenticated;
+grant execute on function public.booth_status(text) to anon, authenticated;
+grant execute on function public.booth_board() to anon, authenticated;

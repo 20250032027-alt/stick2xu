@@ -1528,13 +1528,13 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 @keyframes bIn{from{opacity:0;transform:scale(1.04)}}@keyframes bSpin{to{transform:rotate(360deg)}}
 /* the booth buddy: a sticker that came alive. Moods: idle, work (tongue out), cheer (open smile, sparkles).
    Faces: e-happy (eyes closed), e-oh (surprised, while held). Reactions: r-tap (corner flutters), r-slap (sticks back down). */
-.twoey{display:block;overflow:visible;touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
-.twoey.held{cursor:grabbing;z-index:20;position:relative}
+.twoey{display:block;position:relative;overflow:visible;touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.twoey.held{cursor:grabbing;z-index:20}   /* only lifted above things: its own position (fixed spots beside the number, in the workshop) never changes */
 .bd-bob{animation:bdBob 1.9s ease-in-out infinite;transform-origin:70px 130px}
 .bd-shadow{animation:bdShadow 1.9s ease-in-out infinite;transform-origin:70px 140px;transition:opacity .2s}
 .bd-eyes{animation:bdBlink 4.4s infinite;transform-origin:70px 71px}
-.bd-tuft{transform-origin:102px 42px;animation:bdTuft 2.8s ease-in-out infinite}
-.bd-mo,.bd-spark,.bd-happy{display:none}.m-idle .mo-idle,.m-work .mo-work,.m-cheer .mo-cheer{display:block}
+.bd-tuft{transform-origin:100px 40px;transform-box:view-box;animation:bdTuft 2.8s ease-in-out infinite}
+.bd-mo,.bd-spark,.bd-happy,.bd-sleep,.bd-snore,.bd-zz{display:none}.m-idle .mo-idle,.m-work .mo-work,.m-cheer .mo-cheer{display:block}
 @keyframes bdBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @keyframes bdShadow{0%,100%{transform:scale(1)}50%{transform:scale(.86)}}
 @keyframes bdBlink{0%,91%,100%{transform:scaleY(1)}94.5%{transform:scaleY(.08)}}
@@ -1546,6 +1546,18 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .m-cheer .bd-tuft{animation:bdFlutter .5s ease-in-out infinite}
 .m-cheer .bd-spark{display:block;animation:bdTwinkle .9s ease-in-out infinite;transform-origin:70px 30px}
 @keyframes bdTwinkle{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+/* wandering: a couple of little hops to one side, then back */
+.wander.w-left{animation:bdWanderL 2.6s ease-in-out}.wander.w-right{animation:bdWanderR 2.6s ease-in-out}
+@keyframes bdWanderL{0%,100%{translate:0 0}20%{translate:-8px -6px}35%{translate:-14px 0}55%{translate:-20px -5px}70%{translate:-22px 0}}
+@keyframes bdWanderR{0%,100%{translate:0 0}20%{translate:8px -6px}35%{translate:14px 0}55%{translate:20px -5px}70%{translate:22px 0}}
+/* dozing: the corner peels up, eyes close, slow breaths, little z's drift up */
+.dozy .bd-eyes,.dozy .bd-mo,.dozy .bd-brow{display:none}.dozy .bd-sleep,.dozy .bd-snore,.dozy .bd-zz{display:block}
+.dozy .bd-bob{animation:bdBreathe 3.4s ease-in-out infinite}@keyframes bdBreathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.02,.97)}}
+.dozy .bd-shadow{animation:none}
+.dozy .bd-tuft{animation:bdPeelUp 2.4s ease-out forwards}@keyframes bdPeelUp{to{transform:rotate3d(1,-1,0,58deg)}}   /* folds up along the diagonal crease */
+.dozy .bd-zz g{opacity:0;animation:bdZ 3s ease-in-out infinite}.dozy .bd-zz .z2{animation-delay:1.5s}
+@keyframes bdZ{0%{opacity:0;transform:translate(0,6px)}25%{opacity:1}100%{opacity:0;transform:translate(6px,-12px)}}
+.r-wake .bd-bob{animation:bdWake .45s var(--ease)}@keyframes bdWake{0%{transform:translateY(0) scale(1)}40%{transform:translateY(-12px) scale(1.06)}100%{transform:none}}
 /* faces */
 .e-happy .bd-eyes{display:none}.e-happy .bd-happy{display:block}.e-happy .bd-blush{transform:scale(1.25);transform-box:fill-box;transform-origin:center}
 .e-oh .bd-mo{display:none}.e-oh .mo-oh{display:block}.e-oh .bd-eyes{animation:none;transform:scale(1.12)}
@@ -1558,10 +1570,11 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 /* let go: it sticks back down with a slap */
 .r-slap .bd-bob{animation:bdSlap .5s var(--ease)}@keyframes bdSlap{0%{transform:scale(1.06,.9)}40%{transform:scale(.95,1.06)}100%{transform:scale(1)}}
 /* the workshop: printer + Twoey + what's happening */
-.workshop{position:relative;display:grid;place-items:center;padding:10px 0 0}
-.ws-pr{width:min(240px,60%);height:auto;filter:drop-shadow(4px 6px 0 rgba(10,16,40,.35))}
-.ws-tw{position:absolute;width:min(92px,24%);right:4%;bottom:34px}
-.ws-cap{position:relative;height:26px;width:100%;margin:10px 0 0;text-align:center;font-weight:700;font-size:17px;color:rgba(255,255,255,.85)}
+.workshop{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0 0}
+.ws-row{display:flex;align-items:flex-end;justify-content:center;gap:clamp(6px,1.5vw,18px);width:100%}   /* the printer and the buddy side by side, the caption below: they never overlap */
+.ws-pr{width:min(clamp(190px,26vh,340px),62%);height:auto;flex:none;filter:drop-shadow(4px 6px 0 rgba(10,16,40,.35))}
+.ws-tw{width:clamp(70px,12vh,130px);flex:none;margin-bottom:6px}
+.ws-cap{position:relative;height:30px;width:100%;margin:10px 0 0;text-align:center;font-weight:700;font-size:clamp(16px,2vh,21px);color:rgba(255,255,255,.85)}
 .ws-cap span{position:absolute;inset:0;opacity:0;animation:btCap 8s infinite}
 .ws-cap span:nth-child(2){animation-delay:2s}.ws-cap span:nth-child(3){animation-delay:4s}.ws-cap span:nth-child(4){animation-delay:6s}
 /* the waiting screen: Twoey beside the number */
@@ -1578,26 +1591,26 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .bb2-clock{margin-left:auto;font-family:var(--display);font-weight:800;font-size:26px;opacity:.85}
 .bb2 h2,.bb2 h3{font-family:var(--display);font-weight:800;margin:0;color:var(--xu-gold)}
 .bb2-ready{grid-area:ready;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.14);border-radius:28px;padding:22px 24px;display:flex;flex-direction:column;min-height:0}
-.bb2-ready h2{font-size:clamp(26px,3vw,40px);margin-bottom:20px}
-.bb2-nums{display:flex;flex-wrap:wrap;gap:30px 26px;align-content:flex-start}
-.bb2-nums .bnum{font-size:clamp(46px,6vw,80px)}
-.bb2-nums .bnum.lead{font-size:clamp(70px,8vw,118px);animation:bbLead 2.4s ease-in-out infinite}   /* the newest: biggest, gently breathing */
+.bb2-ready h2{font-size:clamp(26px,min(3vw,4.6vh),46px);margin-bottom:clamp(18px,3vh,32px)}
+.bb2-nums{display:flex;flex-wrap:wrap;gap:clamp(24px,3.4vh,44px) clamp(20px,2vw,34px);align-content:flex-start}
+.bb2-nums .bnum{font-size:clamp(46px,min(6vw,9vh),112px)}   /* grows with the screen, so it reads from across the booth */
+.bb2-nums .bnum.lead{font-size:clamp(70px,min(9.5vw,15vh),180px);animation:bbLead 2.4s ease-in-out infinite}   /* the newest: biggest, gently breathing */
 @keyframes bbLead{0%,100%{transform:rotate(-4deg) scale(1)}50%{transform:rotate(-3deg) scale(1.05)}}
 .bb2-nums{padding:8px 0 0 10px}
 .bb2-nums .bnum.new{animation:bPopIn .8s var(--ease)}
 @keyframes bPopIn{0%{transform:scale(.3) rotate(-20deg);opacity:0}70%{transform:scale(1.12) rotate(3deg)}100%{transform:rotate(-4deg)}}
 .bb2-none{display:flex;align-items:center;gap:18px;margin:auto 0}.bb2-none .twoey{width:96px;flex:none}
 .bb2-none p{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(24px,2.6vw,34px);line-height:1.2}.bb2-none span{font-family:var(--body);font-weight:600;font-size:.62em;opacity:.8}
-.bb2-work{grid-area:work;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.14);border-radius:28px;padding:16px 20px 20px;min-height:0}
-.bb2-work h3{font-size:22px;margin:14px 0 10px}
+.bb2-work{grid-area:work;display:flex;flex-direction:column;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.14);border-radius:28px;padding:16px 20px 20px;min-height:0}
+.bb2-work h3{font-size:clamp(20px,2.6vh,28px);margin:14px 0 10px}
 .bb2-chips{display:flex;flex-wrap:wrap;gap:10px}
 .bb2-chips span{padding:6px 14px;border-radius:999px;background:#fff;color:var(--ink);font-family:var(--display);font-weight:800;font-size:clamp(20px,2.2vw,28px);box-shadow:2px 3px 0 rgba(10,16,40,.4)}
 .bb2-chips .bb2-idle{background:transparent;color:rgba(255,255,255,.7);box-shadow:none;padding:6px 0;font-family:var(--body);font-weight:600;font-size:18px}
 .bb2-qr{grid-area:qr;display:flex;align-items:center;gap:16px;padding:14px 16px;border-radius:22px;background:#fff;color:var(--ink);box-shadow:4px 5px 0 rgba(10,16,40,.45)}
-.bb2-qrbox{flex:none;width:108px;height:108px}.bb2-qrbox canvas,.bb2-qrbox img{width:100%!important;height:100%!important;display:block}
-.bb2-qr b{display:block;font-family:var(--display);font-size:24px}.bb2-qr span{font-size:15px;color:var(--muted)}
-.bb2-tip{grid-area:tip;text-align:center;font-weight:700;font-size:18px;min-height:28px}
-.bb2-tip span{display:inline-block;opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s}.bb2-tip span.in{opacity:.85;transform:none}
+.bb2-qrbox{flex:none;width:clamp(96px,13vh,150px);height:clamp(96px,13vh,150px)}.bb2-qrbox canvas,.bb2-qrbox img{width:100%!important;height:100%!important;display:block}
+.bb2-qr b{display:block;font-family:var(--display);font-size:clamp(22px,2.8vh,30px)}.bb2-qr span{font-size:clamp(14px,1.7vh,18px);color:var(--muted)}
+.bb2-tip{grid-area:tip;text-align:center;font-weight:700;font-size:clamp(16px,min(1.6vw,2.4vh),24px);min-height:30px}
+.bb2-tip span{display:inline-block;opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s}.bb2-tip span.in{opacity:.95;transform:none}
 .bb2-banner{position:absolute;left:50%;top:50%;z-index:5;display:flex;align-items:center;gap:18px;padding:20px 34px 20px 22px;border-radius:30px;background:var(--xu-gold);color:var(--ink);
   border:4px solid #fff;box-shadow:0 0 0 3px var(--ink),8px 10px 0 3px var(--ink);transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;transition:transform .45s var(--ease),opacity .3s}
 .bb2-banner.on{transform:translate(-50%,-50%) scale(1);opacity:1}
@@ -1606,13 +1619,14 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .bb2-startcard{width:min(100%,420px);text-align:center;background:#fff;color:var(--ink);border-radius:28px;padding:24px 24px 26px;border:3px solid var(--ink);box-shadow:6px 8px 0 #0b1330}
 .bb2-startcard .twoey{width:100px;margin:-70px auto 6px}.bb2-startcard h2{color:var(--ink);font-size:26px;margin:0 0 6px}.bb2-startcard p{color:var(--muted);margin:0 0 18px}
 @media(max-width:820px){
+  .bb2-ready{min-height:36vh}
   .bb2{grid-template-columns:1fr;grid-template-areas:"top" "ready" "work" "qr" "tip";grid-template-rows:auto;gap:16px;padding-left:16px;padding-right:16px}
   .bb2-top .logo{height:44px}.bb2-clock{font-size:20px}
-  .bb2-ready{padding:18px}.bb2-nums{gap:22px 18px}.bb2-nums .bnum{font-size:clamp(40px,12vw,64px)}.bb2-nums .bnum.lead{font-size:clamp(60px,18vw,100px)}
+  .bb2-ready{padding:18px}.bb2-nums{gap:22px 18px}.bb2-nums .bnum{font-size:clamp(40px,min(12vw,7vh),84px)}.bb2-nums .bnum.lead{font-size:clamp(60px,min(18vw,11vh),130px)}
   .bb2-none .twoey{width:72px}.bb2-banner{width:calc(100% - 40px);padding:16px 18px}.bb2-banner .twoey{width:64px}
   .bb2-qrbox{width:84px;height:84px}.bb2-qr b{font-size:20px}.bb2-tip{font-size:15px}
 }
-@media (prefers-reduced-motion:reduce){.bd-bob,.bd-eyes,.bd-shadow,.bd-tuft,.bd-spark,.bb2-nums .bnum.lead,.bb2-nums .bnum.new,.ws-cap span{animation:none}.ws-cap span:first-child{opacity:1}}
+@media (prefers-reduced-motion:reduce){.wander,.dozy .bd-zz g,.bd-bob,.bd-eyes,.bd-shadow,.bd-tuft,.bd-spark,.bb2-nums .bnum.lead,.bb2-nums .bnum.new,.ws-cap span{animation:none}.ws-cap span:first-child{opacity:1}}
 @media(max-width:900px){.bmenu{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}
 @media(max-width:400px){.bt-t b{font-size:17px}.bpopgrid{gap:7px}.bsteps li + li::before{width:14px;margin:0 6px}}
 /* the booth console (admin) */
@@ -1693,6 +1707,11 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .intro .btn.is-go .bi,.intro .btn.is-go svg{color:var(--ink)}
 @media(max-height:640px){.s0 .is-bud{width:90px}.is-photo{width:100px}.s3 .is-bud2{width:70px}.is-why li{padding:9px 14px}}
 @media (prefers-reduced-motion:reduce){.intro *,.intro{animation-duration:.01ms!important;animation-delay:0s!important}.is-bars .now i{animation:none;width:50%}}
+/* the customer preview in the Booth tab */
+.bprev{margin-top:18px}.bprev-head{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
+.bprev-head h3{margin:0 0 2px}.bprev-head p{margin:0}.bprev-btns{flex-wrap:wrap}
+.bphone{width:300px;height:626px;margin:0 auto;border-radius:38px;border:10px solid #1B2340;box-shadow:0 18px 40px rgba(28,42,87,.25);overflow:hidden;background:#fff;position:relative}
+.bphone iframe{width:390px;height:836px;border:0;transform:scale(.718);transform-origin:0 0;display:block}
 /* fonts: tiles that show your words in each font */
 .wd-fonts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .wd-font{display:grid;justify-items:center;align-content:center;gap:3px;min-height:64px;padding:8px 4px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit;cursor:pointer}
@@ -2906,6 +2925,7 @@ function friendlyError(e){
   if (m.includes('BAD_INPUT')) return 'Some details are missing. Fill in every box and try again.';
   if (m.includes('NO_PGNET')) return 'Turn on pg_net in Supabase first: Database → Extensions → search "pg_net" → enable. Then try again.';
   if (m.includes('GATE_TAKEN')) return "At that time we'll be at a different gate. Pick the other gate, or another time.";
+  if (m.includes('BAD_TIME')) return 'We can’t do pickups at that time. Try another time.';
   if (m.includes('SLOT_FULL')) return 'That spot just filled up for this time. Pick another spot, time or day.';
   if (m.includes('DAY_FULL')) return 'That pickup day just filled up. Pick another day.';
   if (m.includes('XU_ONLY')) return 'Please sign in with your XU school account (@my.xu.edu.ph) to order.';
@@ -4011,6 +4031,8 @@ function viewLocked(){
 }
 function bootDone(){ const b = document.getElementById('boot'); if (!b || b.dataset.out) return; b.dataset.out = '1'; b.classList.add('out'); setTimeout(() => b.remove(), 500); }
 function route(keep){
+  if (document.querySelector('.intro')) closeIntro();
+  if (document.querySelector('.bready')) { document.querySelectorAll('.bready').forEach(x => x.remove()); clearInterval(S.readyNag); }   // overlays never outlive their page
   bootDone();
   if (S.halt) return;
   document.title = BASE_TITLE;
@@ -5686,11 +5708,12 @@ function boothLineHTML(b){
   return `<p class="bline"><i aria-hidden="true"></i>${b.waiting ? `${b.waiting} order${b.waiting === 1 ? '' : 's'} ahead, ${minutesWord((b.waiting + 1) * b.minutes)}` : 'No line right now. Yours would be next!'}</p>`;
 }
 async function viewBooth(sub){
+  if (sub === 'demo') { const mode = location.hash.split('/')[3] || 'menu'; S.boothDemo = mode; if (['wait', 'making', 'ready'].includes(mode)) return viewBoothWait(mode); }
   if (sub === 'checkout') return viewBoothCheckout();
   if (sub === 'wait') return viewBoothWait();
   if (sub === 'board') return viewBoothBoard();
   S.booth = true; document.title = `Booth · ${BASE_TITLE}`;
-  const mine = boothActive();
+  const mine = S.boothDemo ? null : boothActive();
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap booth">
     <div class="bhero"><h1>Made while you wait.</h1>
       <p class="lead">Pick something, add your picture, and we’ll make it right here. You’ll get a number, and your phone lights up when it’s ready.</p>
@@ -5701,9 +5724,9 @@ async function viewBooth(sub){
     <p style="text-align:center;margin:0 0 12px"><button type="button" class="linkbtn" data-act="introAgain">${ic('sparkle', 15)} Watch the intro again</button></p>
   </main>`;
   drawBoothMenu();
-  if (!introSeen() && !mine) boothIntro();
+  if (S.boothDemo === 'intro' || (!S.boothDemo && !introSeen() && !mine)) boothIntro();
   try { S.boothBoard = await api.boothBoard(); } catch {}
-  if (!location.hash.startsWith('#/booth') || location.hash.startsWith('#/booth/')) return;
+  if (!location.hash.startsWith('#/booth') || (location.hash.startsWith('#/booth/') && !location.hash.startsWith('#/booth/demo'))) return;
   const b = S.boothBoard;
   if (b && !b.open) { $('#main').innerHTML = `<section class="panel bclosed"><h2>The booth is closed right now.</h2><p>You can still order online and get it at school.</p>${btn('Go to the shop', { href: '#/shop' })}</section>`; S.booth = false; return; }
   $('#bLine').innerHTML = boothLineHTML(b); drawBoothMenu();
@@ -5765,16 +5788,20 @@ function boothIntro(){
     <div class="is-bg" aria-hidden="true">${['star', 'heart', 'bolt', 'moon', 'star', 'heart'].map((k, i) => `<svg class="is-f f${i}" viewBox="0 0 24 24"><path d="${LK_SHAPES[k]}"/></svg>`).join('')}</div>
     <div class="is-stage" id="isStage"></div><div class="is-tap l" data-intro="-1"></div><div class="is-tap r" data-intro="1"></div>`;
   document.body.appendChild(o); document.documentElement.classList.add('noscroll');
-  let i = -1, timer = null;
-  const go = n => { if (n < 0) n = 0; if (n >= sc.length) return introEnd(); i = n; clearTimeout(timer);
+  let i = -1;
+  const go = n => { if (!document.body.contains(o)) return; if (n < 0) n = 0; if (n >= sc.length) return introEnd(); i = n; clearTimeout(S.introTimer);
     const st = o.querySelector('#isStage'); st.innerHTML = `<div class="is-scene s${i}">${sc[i].h}</div>`;
     o.querySelectorAll('.is-bars span').forEach((b, k) => { b.className = k < i ? 'done' : k === i ? 'now' : ''; b.firstChild.style.animationDuration = (sc[k].t || 1) + 'ms'; });
     o.querySelector('.is-tap.r').hidden = i === sc.length - 1;
-    if (sc[i].t) timer = setTimeout(() => go(i + 1), sc[i].t); };
+    if (sc[i].t) S.introTimer = setTimeout(() => go(i + 1), sc[i].t); };
   o.querySelectorAll('[data-intro]').forEach(t => t.addEventListener('click', () => go(i + +t.dataset.intro)));
   S.introNext = go; go(0);
 }
+function closeIntro(){   // leaving the page: the intro goes with it (without counting as watched)
+  clearTimeout(S.introTimer); document.querySelectorAll('.intro').forEach(o => o.remove()); document.documentElement.classList.remove('noscroll');
+}
 function introEnd(){
+  clearTimeout(S.introTimer);
   localStorage.setItem('sk_intro', JSON.stringify(new Date().toISOString().slice(0, 10)));
   const o = document.querySelector('.intro'); document.documentElement.classList.remove('noscroll');
   if (o) { o.classList.add('out'); setTimeout(() => o.remove(), 350); }
@@ -5782,9 +5809,10 @@ function introEnd(){
 
 // ---------- the waiting screen ----------
 let boothTimer = null, boothWake = null;
-function viewBoothWait(){
-  const b = boothSaved(); if (!b) { location.replace('#/booth'); return; }
-  S.booth = true; clearInterval(boothTimer);
+function viewBoothWait(demo){
+  const b = demo ? { code: 'DEMO', q: 12, name: 'Mia', total: 30, status: demo === 'wait' ? 'pending' : demo === 'making' ? 'printing' : 'ready', ahead: demo === 'wait' ? 2 : 0, minutes: 4 } : boothSaved();
+  if (!b) { location.replace('#/booth'); return; }
+  S.booth = true; clearInterval(boothTimer); document.querySelectorAll('.bready').forEach(o => o.remove());
   $('#app').innerHTML = `${topbar()}<main id="main" class="wrap narrow booth bwait" data-status="${esc(b.status || 'pending')}">
     <div class="bnumwrap"><div class="bnum num" id="bNum">#${b.q}</div>${twoeySVG('wt-tw')}<p class="bfor">for ${esc(b.name)}</p></div>
     <ol class="bsteps" id="bSteps"></ol>
@@ -5794,8 +5822,10 @@ function viewBoothWait(){
     <p class="bpay">${ic('cash', 18)}<span>Bring ${money(b.total)}. Pay at the booth: cash${CONFIG.gcash.enabled ? ' or GCash' : ''}.</span></p>
     <p style="text-align:center;margin:6px 0 0"><a class="linkbtn" href="#/booth">Order something else</a></p>
   </main>`;
-  drawBoothSteps(b); drawPop(); boothPoll();
+  drawBoothSteps(b); drawPop();
   if (b.status === 'ready') boothReady(b, true);   // came back (or refreshed) after it was ready: show it again, quietly
+  if (demo) return;   // the admin preview: sample data, nothing to check
+  boothPoll();
   boothTimer = setInterval(() => { if (!location.hash.startsWith('#/booth/wait')) { clearInterval(boothTimer); return; } if (!document.hidden) boothPoll(); }, 5000);
 }
 const BSTEPS = [['pending', 'Got it'], ['printing', 'Making it'], ['ready', 'Ready!']];
@@ -5857,10 +5887,16 @@ function chimeUrl(){
   return S.chimeUrl || (S.chimeUrl = wavUrl(.7, t => (tine(t, 783.99, 9) * .34 + tine(t - .07, 1046.5, 8) * .34 + tine(t - .14, 1567.98, 6) * .42) * .9));
 }
 // the bubble pop (and the buddy's sounds): a short rising "bloop" from the same family
-function popUrl(){
-  return S.popUrl || (S.popUrl = wavUrl(.12, t => (Math.sin(TAU * (520 * t + 3400 * t * t)) * Math.min(1, t / .003) * Math.exp(-t * 34) * .7 + tine(t, 1318.5, 40) * .18)));
+function popUrl(k = 1){   // k shifts the pitch, so repeated taps don't sound the same
+  S.popUrls = S.popUrls || {}; const key = k.toFixed(2);
+  return S.popUrls[key] || (S.popUrls[key] = wavUrl(.11, t => (Math.sin(TAU * k * (520 * t + 3400 * t * t)) * Math.min(1, t / .003) * Math.exp(-t * 36) * .7 + tine(t, 1318.5 * k, 42) * .16)));
 }
-function playPop(vol = 1){ try { const a = new Audio(popUrl()); a.volume = Math.min(1, .75 * vol); const p = a.play(); if (p && p.catch) p.catch(() => {}); } catch {} }
+const POP_PITCH = [.84, .94, 1, 1.12, 1.26];
+// soft: the buddy's touches play quietly, at one of five pitches (never the same twice in a row)
+function playPop(vol = 1, soft){
+  try { let k; do { k = POP_PITCH[Math.floor(Math.random() * POP_PITCH.length)]; } while (k === S.lastPop && POP_PITCH.length > 1); S.lastPop = k;
+    const a = new Audio(popUrl(k)); a.volume = Math.max(0, Math.min(1, (soft ? .32 : .7) * vol)); const p = a.play(); if (p && p.catch) p.catch(() => {}); } catch {}
+}
 // phones only let a page play sound after a tap: the first tap anywhere quietly unlocks it, and the sound buttons play it once so you hear it works
 function unlockSound(audible){
   try { if (!S.chimeEl) { S.chimeEl = new Audio(chimeUrl()); S.chimeEl.preload = 'auto'; }
@@ -5896,20 +5932,36 @@ function twoeySVG(cls = '', mood){
       <g class="bd-mo mo-work"><path d="M63 85q7 5 14 0" stroke="#283971" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="77.5" cy="88.5" r="3.4" fill="#F47C9C" stroke="#283971" stroke-width="1.6"/></g>
       <g class="bd-mo mo-cheer"><path d="M58 82q12 17 24 0z" fill="#283971" stroke="#283971" stroke-width="3" stroke-linejoin="round"/><path d="M64 90q6 5 12 0q-6-3-12 0z" fill="#F47C9C"/></g>
       <ellipse class="bd-mo mo-oh" cx="70" cy="88" rx="5" ry="6.5" fill="#283971"/>
+      <path class="bd-sleep" d="M48 72q7 4 14 0M78 72q7 4 14 0" stroke="#283971" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+      <path class="bd-snore" d="M64 87q6 3 12 0" stroke="#283971" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+      <path class="bd-shine" d="M38 52q2-11 13-13" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".55"/>
       <path class="bd-tuft" d="M88 28L116 56Q97 59 90 51Q84 43 88 28Z" fill="url(#${g})" stroke="#283971" stroke-width="3.2" stroke-linejoin="round"/>
-      <g class="bd-spark" fill="#F2BC2E" stroke="#fff" stroke-width="1.5"><path d="M14 40l3 8 8 3-8 3-3 8-3-8-8-3 8-3z"/><path d="M126 18l2.2 6 6 2.2-6 2.2-2.2 6-2.2-6-6-2.2 6-2.2z"/></g>
+      <g class="bd-zz" fill="none" stroke-linecap="round" stroke-linejoin="round"><g class="z1"><path d="M106 20h8l-8 9h8" stroke="#fff" stroke-width="6"/><path d="M106 20h8l-8 9h8" stroke="#283971" stroke-width="2.6"/></g>
+        <g class="z2"><path d="M118 6h6l-6 7h6" stroke="#fff" stroke-width="5.5"/><path d="M118 6h6l-6 7h6" stroke="#283971" stroke-width="2.4"/></g></g>
+      <g class="bd-spark" fill="#F2BC2E" stroke="#fff" stroke-width="1.5"><path d="M14 40l3 8 8 3-8 3-3 8-3-8-8-3 8-3z"/><path d="M124 14l2.2 6 6 2.2-6 2.2-2.2 6-2.2-6-6-2.2 6-2.2z"/></g>
     </g></svg>`;
 }
 // sticker physics: grab to peel it up, let go and it sticks back down; a tap makes its corner flutter
 let bdHold = null;
 function bdReact(s, kind){
   s.classList.remove('r-tap', 'r-slap'); void s.getBoundingClientRect(); s.classList.add(kind === 'tap' ? 'r-tap' : 'r-slap', 'e-happy');
-  playPop(kind === 'tap' ? 1 : .8); try { navigator.vibrate && navigator.vibrate(kind === 'tap' ? 8 : 14); } catch {}
+  playPop(kind === 'slap' ? 1 : .85, true); try { navigator.vibrate && navigator.vibrate(kind === 'slap' ? 12 : 6); } catch {}
   clearTimeout(s._bdT); s._bdT = setTimeout(() => s.classList.remove('r-tap', 'r-slap', 'e-happy'), 950);
 }
+// left alone, it hops aside now and then; after a longer while its corner peels up and it dozes off. A touch wakes it.
+setInterval(() => {
+  const now = Date.now();
+  document.querySelectorAll('.buddy.m-idle').forEach(s => {
+    if (!s._seen) s._seen = now; const quiet = now - Math.max(s._seen, s._touched || 0);
+    if (quiet > 40000) { if (!s.classList.contains('dozy')) s.classList.add('dozy'); return; }
+    if (quiet > 9000 && !s.classList.contains('wander') && Math.random() < .35) { s.classList.add('wander', Math.random() < .5 ? 'w-left' : 'w-right'); setTimeout(() => s.classList.remove('wander', 'w-left', 'w-right'), 2600); }
+  });
+}, 3000);
 document.addEventListener('pointerdown', e => {
   const s = e.target.closest && e.target.closest('.buddy'); if (!s) return;
   e.preventDefault(); e.stopPropagation(); try { s.setPointerCapture(e.pointerId); } catch {}
+  s._touched = Date.now(); s.classList.remove('wander', 'w-left', 'w-right');
+  if (s.classList.contains('dozy')) { s.classList.remove('dozy'); s.classList.add('e-oh', 'r-wake'); setTimeout(() => s.classList.remove('e-oh', 'r-wake'), 450); }
   bdHold = { s, id: e.pointerId, x: e.clientX, y: e.clientY, moved: false }; s.style.transition = 'none';
 }, true);
 document.addEventListener('pointermove', e => {
@@ -5930,7 +5982,7 @@ document.addEventListener('click', e => { if (e.target.closest && e.target.close
 let wsN = 0;
 function workshopHTML(){
   const id = 'wsclip' + (++wsN);
-  return `<div class="workshop" aria-hidden="true">
+  return `<div class="workshop" aria-hidden="true"><div class="ws-row">
     <svg class="bt-pr ws-pr" viewBox="0 0 200 190"><defs><clipPath id="${id}"><rect x="0" y="66" width="200" height="124"/></clipPath></defs>
       <g clip-path="url(#${id})"><g class="bt-paper"><rect x="46" y="10" width="108" height="140" rx="6" fill="#fff" stroke="#283971" stroke-width="2.5"/>
         <path d="M46 38h108M46 66h108M46 94h108M46 122h108M73 10v140M100 10v140M127 10v140" stroke="#E3E7F2" stroke-width="1.5"/>
@@ -5940,7 +5992,7 @@ function workshopHTML(){
         <g class="bt-s s4"><rect x="111" y="96" width="32" height="24" rx="5" fill="#283971" stroke="#fff" stroke-width="3" paint-order="stroke" transform="rotate(-6 127 108)"/></g></g></g>
       <rect x="20" y="30" width="160" height="40" rx="12" fill="#283971" stroke="#fff" stroke-width="3"/><rect x="34" y="22" width="132" height="14" rx="6" fill="#3a52a3" stroke="#fff" stroke-width="2.5"/>
       <rect x="40" y="62" width="120" height="6" rx="3" fill="#1b2752"/><circle class="bt-led" cx="160" cy="46" r="5" fill="#F2BC2E"/><rect x="34" y="42" width="40" height="7" rx="3.5" fill="#4a5d9e"/></svg>
-    ${twoeySVG('ws-tw')}
+    ${twoeySVG('ws-tw')}</div>
     <p class="ws-cap"><span>Warming up the printer</span><span>Printing your stickers</span><span>Pressing the pins</span><span>Cutting them out</span></p></div>`;
 }
 // ---------- the "Now ready" screen at the booth ----------
@@ -5984,8 +6036,17 @@ async function saveConfigPatch(patch){   // change a few settings without touchi
   const config = { ...(S.settings.configRaw || {}), ...patch };
   await api.saveSettings({ config }); S.settings.configRaw = config; applyShopConfig(config);
 }
+function boothPreview(){
+  if ($('#bPrevWrap')) return; const body = $('#admBody'); if (!body) return;
+  const w = document.createElement('section'); w.id = 'bPrevWrap'; w.className = 'panel bprev';
+  const modes = [['intro', 'Intro'], ['menu', 'Menu'], ['wait', 'Waiting'], ['making', 'Making it'], ['ready', 'Ready']];
+  w.innerHTML = `<div class="bprev-head"><div><h3>What customers see</h3><p class="muted small">The booth page on a phone, with sample data. Ordering is switched off here, so try anything.</p></div>
+      <div class="seg bprev-btns" role="group" aria-label="Preview">${modes.map(([k, l]) => `<button type="button" data-act="boothPrev" data-v="${k}" class="${k === 'menu' ? 'on' : ''}">${l}</button>`).join('')}</div></div>
+    <div class="bphone"><iframe id="bPrev" title="What customers see on their phone" src="./#/booth/demo/menu" loading="lazy"></iframe></div>`;
+  body.insertAdjacentElement('afterend', w);
+}
 async function drawBoothAdmin(){
-  const body = $('#admBody'); clearInterval(S.admin.poll);
+  const body = $('#admBody'); clearInterval(S.admin.poll); boothPreview();
   const since = new Date(); since.setHours(0, 0, 0, 0);
   let list = [];
   try { list = await api.boothOrders(since.toISOString()); } catch (e) { body.innerHTML = `<p class="ferr">${esc(friendlyError(e))}</p>`; return; }
@@ -6763,6 +6824,17 @@ async function loadAvail(dates){
 /* Pickup dates for checkout. Prints-only orders can be picked up any school day, even today. */
 const timeMins = t => { const m = String(t).match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i); return m ? (+m[1] % 12 + (/pm/i.test(m[3]) ? 12 : 0)) * 60 + +m[2] : null; };
 const printsOnly = () => S.cart.length > 0 && S.cart.every(it => it.type === 'prints');
+// "Pick a time": any time from 8 AM to 5 PM works (not said out loud; other times get a gentle no). Today also needs prep time.
+const OWN_FROM = 8 * 60, OWN_TO = 17 * 60;
+const ownMins = () => { const v = ($('#ownTime') || {}).value || ''; const m = /^(\d{1,2}):(\d{2})/.exec(v); return m ? +m[1] * 60 + +m[2] : null; };
+const ownLabel = () => { const m = ownMins(); if (m === null) return ''; const h = Math.floor(m / 60), mm = String(m % 60).padStart(2, '0'); return `${(h + 11) % 12 + 1}:${mm} ${h < 12 ? 'AM' : 'PM'}`; };
+function ownTimeProblem(ds){
+  const m = ownMins(); if (m === null) return 'Pick a time.';
+  if (m < OWN_FROM || m > OWN_TO) return 'We can’t do pickups at that time. Try another time.';
+  if (ds === ymd(new Date())) { const n = new Date(); if (m - (n.getHours() * 60 + n.getMinutes()) < CONFIG.prepHours * 60) return 'That’s too soon for today. Pick a later time.'; }
+  return '';
+}
+const chosenTime = form => { const t = radio(form, 'ptime'); return t === '__own' ? ownLabel() : t; };
 function timeOk(ds, t){
   if (ds !== ymd(new Date())) return true;
   const now = new Date(), mins = timeMins(t.time);
@@ -6854,6 +6926,9 @@ function viewCheckout(){
 
       ${`<fieldset id="timeSet"><legend>What time? <span class="req">*</span></legend>
         ${CONFIG.pickupTimes.map((t, i) => `<label class="choice"><input type="radio" name="ptime" value="${esc(timeLabel(t))}" ${i === 0 ? 'checked' : ''}>${ic('clock', 20)}<span><b>${esc(t.label)}</b><small>${esc(t.time)}</small></span></label>`).join('')}
+        <label class="choice"><input type="radio" name="ptime" value="__own">${ic('clock', 20)}<span><b>Pick a time</b><small>Choose any time that works for you</small></span></label>
+        <div id="ownTimeBox" hidden><label class="lab" for="ownTime" style="display:block;margin:6px 0">Your time</label>
+          <input class="inp" type="time" id="ownTime" step="300" style="max-width:200px" aria-describedby="e-time"><p class="ferr" id="e-time" role="alert"></p></div>
       </fieldset>`}
 
       <fieldset id="whereSet"><legend>Where? <span class="req">*</span></legend>
@@ -6913,6 +6988,7 @@ ${CONFIG.confirmOn ? `<li>${ic('check', 16)}<span>We print your order only after
     const pe = S.coPerson;
     if ($('#otherBox')) $('#otherBox').hidden = radio(form, 'pickup') !== '__other';
     if ($('#roomBox')) $('#roomBox').hidden = radio(form, 'pickup') !== '__room';
+    if ($('#ownTimeBox')) $('#ownTimeBox').hidden = radio(form, 'ptime') !== '__own';
     if ($('#gcashBox')) $('#gcashBox').hidden = radio(form, 'pay') !== 'gcash';
     const place = radio(form, 'pickup') === '__other' ? 'my chosen spot' : radio(form, 'pickup');
     if ($('#promise').checked) setErr(null, 'e-promise', '');
@@ -6943,14 +7019,18 @@ ${CONFIG.confirmOn ? `<li>${ic('check', 16)}<span>We print your order only after
     $('#promiseTxt').innerHTML = S.addTo
       ? `I'll pick it up with <b>${esc(S.addTo.code)}</b> on <b>${esc(fmtDate(S.addTo.pickup_date))}</b>, <b>${esc(S.addTo.pickup_time || '')}</b>, at <b>${esc(S.addTo.pickup || '')}</b>`
       : pe ? `I'll meet <b>${esc(personName(pe))}</b> on <b>${esc(fmtDate(radio(form, 'pday')))}</b> at <b>${esc(radio(form, 'pspot') || '')}</b>`
-      : `I'll pick it up on <b>${esc(fmtDate(radio(form, 'pdate')))}</b>, <b>${esc(radio(form, 'ptime'))}</b>, at <b>${esc(place)}</b>`;
+      : `I'll pick it up on <b>${esc(fmtDate(radio(form, 'pdate')))}</b>, <b>${esc(chosenTime(form))}</b>, at <b>${esc(place)}</b>`;
     if ($('#e-where') && $('#e-where').textContent && (pe || S.me || !CONFIG.requireXu)) $('#e-where').textContent = '';
   };
   form.addEventListener('change', sync); sync();
   loadAvail(dates).then(() => { if (document.body.contains(form)) sync(); });
   if ($('#promo')) $('#promo').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); ACTIONS.promoApply(); } });   // no box once a code is in
   // errors clear the moment they're fixed (while typing), so nothing moves when they tap Next
-  ['nick','sec','grade','otherPlace','roomPlace'].forEach(id => $('#' + id) && ['input', 'change'].forEach(ev => $('#' + id).addEventListener(ev, () => { validate(false); coRender(); })));
+  ['nick','sec','grade','otherPlace','roomPlace','ownTime'].forEach(id => $('#' + id) && ['input', 'change'].forEach(ev => $('#' + id).addEventListener(ev, () => { validate(false); coRender(); })));
+  // a message goes away the moment the answer works
+  ['input', 'change'].forEach(ev => { const ot = $('#ownTime'), rp = $('#roomPlace');
+    if (ot) ot.addEventListener(ev, () => { if ($('#e-time').textContent && !ownTimeProblem(radio($('#orderForm'), 'pdate'))) setErr('ownTime', 'e-time', ''); });
+    if (rp) rp.addEventListener(ev, () => { if ($('#e-room').textContent && rp.value.trim().length >= 2) setErr('roomPlace', 'e-room', ''); }); });
   form.addEventListener('submit', e => { if (xuNeeded()) { e.preventDefault(); S.coStep = S.people.length ? 2 : 1; coRender(); toast(S.people.length ? 'Sign in with your XU account for pickup at school, or pick up from a person.' : 'Sign in with your XU account first.'); return; } if (S.coStep < 3) { e.preventDefault(); ACTIONS.coNext({ dataset: { s: String(S.coStep) } }); return; } submitOrder(e); });
   checkoutAdminMode();
   if (S.addTo) {
@@ -7005,7 +7085,7 @@ function coRender(){
   const g = $('#grade').value, sec = $('#sec').value.trim(), nm = $('#nick').value.trim();
   const gs = S.coFreeSec ? sec : g ? `${g} - ${sec}` : '';
   $('#csum1').textContent = nm ? `${nm}${gs ? `, ${gs}` : ''}` : '';
-  const pe = chosenPerson(form), d = pe ? radio(form, 'pday') : radio(form, 'pdate'), t = radio(form, 'ptime'), pl = radio(form, 'pickup');
+  const pe = chosenPerson(form), d = pe ? radio(form, 'pday') : radio(form, 'pdate'), t = chosenTime(form), pl = radio(form, 'pickup');
   $('#csum2').textContent = !d ? '' : pe ? `${fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' })}, ${personName(pe)}, ${radio(form, 'pspot') || ''}`
     : `${fmtDate(d, { weekday: 'short', month: 'short', day: 'numeric' })}, ${String(t || '').replace(/\s*\(.*\)/, '')}, ${pl === '__other' ? (($('#otherPlace') || {}).value || 'in school') : pl === '__room' ? 'Your classroom' + (($('#roomPlace') || {}).value ? ': ' + $('#roomPlace').value : '') : pl}`;
   const tot = $('#ordTot'); if (tot) tot.textContent = money(checkoutTotal(d));
@@ -7128,6 +7208,7 @@ function validateFields(form, which){
     if (grade && sec.length >= 2) $('#sec').setAttribute('aria-invalid', 'false');
   }
   if (other && which.place) ok = setErr('otherPlace', 'e-place', $('#otherPlace').value.trim().length < 3 ? 'Tell us where in school to meet.' : '') && ok;
+  if (radio(form, 'ptime') === '__own' && which.place) ok = setErr('ownTime', 'e-time', ownTimeProblem(radio(form, 'pdate'))) && ok;
   if (radio(form, 'pickup') === '__room' && which.place) ok = setErr('roomPlace', 'e-room', $('#roomPlace').value.trim().length < 2 ? 'Tell us your room so we can bring it to you.' : '') && ok;
   if (S.coPerson && radio(form, 'pspot') === '__other' && (which.place || all)) ok = setErr('pOther', 'e-pother', $('#pOther').value.trim().length < 3 ? `Tell ${personName(S.coPerson)} where to meet.` : '') && ok;
   const noTime = !S.addTo && !S.coPerson && !!radio(form, 'pdate') && !radio(form, 'ptime');
@@ -7143,7 +7224,7 @@ async function submitOrder(e){
   const nickname = $('#nick').value.trim(), section = S.coFreeSec ? $('#sec').value.trim() : `${$('#grade').value} - ${$('#sec').value.trim()}`;
   const person = S.addTo ? null : chosenPerson(form);
   let pickup = radio(form, 'pickup'); if (pickup === '__other') pickup = 'Other: ' + $('#otherPlace').value.trim(); else if (pickup === '__room') pickup = 'Classroom: ' + $('#roomPlace').value.trim();
-  let pickupDate = radio(form, 'pdate'), pickupTime = radio(form, 'ptime');
+  let pickupDate = radio(form, 'pdate'), pickupTime = chosenTime(form);
   if (person) { pickup = radio(form, 'pspot'); if (pickup === '__other') pickup = 'Other: ' + $('#pOther').value.trim(); pickupDate = radio(form, 'pday'); pickupTime = 'Any time'; }
   if (S.addTo) { pickup = S.addTo.pickup; pickupDate = S.addTo.pickup_date; pickupTime = S.addTo.pickup_time; }   // same pickup as the order it adds to
   const payment = radio(form, 'pay'), gcashRef = $('#gref') ? $('#gref').value.trim() : '';
@@ -7570,6 +7651,7 @@ async function drawAdminBody(){
   if (S.admin.tab === 'posters') return drawPosters();
   if (S.admin.tab === 'post') return drawPostMaker();
   if (S.admin.tab === 'booth') return drawBoothAdmin();
+  const pw = $('#bPrevWrap'); if (pw) pw.remove();
   if (S.admin.tab === 'settings') { const r = drawSettings(); setupSettingsNav(); return r; }
   const all = S.admin.orders, f = S.admin.filter, who = S.admin.person || '';
   // Pickup person filter: '' everyone, 'school' pickup at school, or one person's id
@@ -9521,7 +9603,7 @@ const ACTIONS = {
     const form = $('#orderForm');
     if (n === 2 && form && !S.addTo && !S.coPerson && radio(form, 'pdate') && !radio(form, 'ptime')) { setErr(null, 'e-where', 'Every pickup time on that day is full. Pick another day.'); return; }
     if (n === 2 && xuNeeded()) { setErr(null, 'e-where', 'Pickup at school needs your XU account. Sign in in step 1, or pick up from a person.'); return; }
-    const bad = n === 1 ? ['e-nick', 'e-sec'] : ['e-place', 'e-pother', 'e-room'];
+    const bad = n === 1 ? ['e-nick', 'e-sec'] : ['e-place', 'e-pother', 'e-room', 'e-time'];
     if (bad.some(id => $('#' + id) && $('#' + id).textContent)) { const f = $('#orderForm [aria-invalid="true"]'); if (f) f.focus(); return; }
     S.coStep = n + 1 + (n === 1 && S.addTo ? 1 : 0); coRender(); buzz(6);   // an add-on skips Pickup
     const nx = document.querySelector(`.cstep[data-step="${n + 1}"]`); if (nx) nx.scrollIntoView({ block: 'start' });
@@ -9926,6 +10008,7 @@ const ACTIONS = {
     S.ph = null; saveManyToCart(items);
   },
   boothPlace: async t => {
+    if (S.boothDemo) return toast('This is the preview. Orders from here aren’t sent.');
     const name = ($('#bName').value || '').trim(); if (name.length < 2) { setErr('bName', 'e-bname', 'Tell us your name so we can call you.'); $('#bName').focus(); return; }
     t.disabled = true; t.innerHTML = '<span>Getting your number</span><span class="bi"><span class="spin"></span></span>';
     try {
@@ -9939,6 +10022,8 @@ const ACTIONS = {
   },
   introEnd: () => introEnd(),
   introAgain: () => boothIntro(),
+  boothPrev: t => { const f = $('#bPrev'); if (!f) return; document.querySelectorAll('[data-act="boothPrev"]').forEach(b => b.classList.toggle('on', b === t));
+    try { f.contentWindow.location.hash = '#/booth/demo/' + t.dataset.v; } catch { f.src = './#/booth/demo/' + t.dataset.v; } },
   boothRemove: t => { S.cart.splice(+t.dataset.i, 1); buzz(6); if (S.cart.length) viewBoothCheckout(); else location.hash = '#/booth'; },
   boothSound: () => { S.boothSound = true; unlockSound(true); keepAwake(); const b = $('.bsound'); if (b) { b.classList.add('on'); b.innerHTML = `${ic('check', 18)}<span>Sound on. We’ll chime when it’s ready.</span>`; } },
   boothOnWay: () => { const o = document.querySelector('.bready'); if (o) o.remove(); clearInterval(S.readyNag); },
