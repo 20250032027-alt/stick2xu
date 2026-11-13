@@ -768,7 +768,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
   .topacts.has-cart .pilllink:not(.cartpill) .lbl{display:none}
   .topacts .pilllink{padding:8px 12px}
   .prog{flex-wrap:nowrap;gap:6px}
-  .prog span:not(.on) em{display:none}
+  .prog span:not(.on) em{display:inline}
   .prog .bar{width:14px}
   .bottombar{padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
   .bottombar .tot{font-size:26px}
@@ -1759,6 +1759,15 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .ccfold > summary svg:first-child{color:#C9951A;flex:none}.ccfold > summary svg:last-child{margin-left:auto;transition:transform .2s}
 .ccfold[open] > summary svg:last-child{transform:rotate(180deg)}
 .ccbody{display:grid;gap:8px;padding:0 14px 14px}
+/* the order steps: lines fill in as you go; on phones, a full-width path with every step named */
+.prog .bar.done{background:var(--ink)}.prog .done{color:var(--ink)}
+@media(max-width:640px){
+  .prog{display:flex;flex-wrap:nowrap;align-items:flex-start;gap:0;margin:2px 0 18px;padding:12px 14px 10px;background:#fff;border:1.5px solid var(--line);border-radius:18px}
+  .prog > span:not(.bar){flex-direction:column;gap:5px;flex:none;width:58px;text-align:center;font-size:12.5px}
+  .prog i{width:32px;height:32px;font-size:14.5px}
+  .prog .bar{flex:1;width:auto;height:3px;border-radius:3px;margin-top:15px}
+  .prog .on em{font-weight:800}
+}
 /* fonts: tiles that show your words in each font */
 .wd-fonts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .wd-font{display:grid;justify-items:center;align-content:center;gap:3px;min-height:64px;padding:8px 4px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit;cursor:pointer}
@@ -4022,7 +4031,7 @@ function progress(step){
   if (S.booth) return '';   // the booth has its own short path
   const names = ['Design', 'Details', 'All set'];
   const label = n => `<em>${n}</em>`;
-  return `<nav class="prog" aria-label="Order steps">${names.map((n, i) => `${i ? '<span class="bar" aria-hidden="true"></span>' : ''}
+  return `<nav class="prog" aria-label="Order steps">${names.map((n, i) => `${i ? `<span class="bar ${i + 1 <= step ? 'done' : ''}" aria-hidden="true"></span>` : ''}
     <span class="${i + 1 === step ? 'on' : i + 1 < step ? 'done' : ''}" ${i + 1 === step ? 'aria-current="step"' : ''}><i>${i + 1 < step ? ic('check', 14) : i + 1}</i>${label(n)}</span>`).join('')}</nav>`;
 }
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
