@@ -6014,7 +6014,7 @@ function introEnd(){
 }
 
 // ---------- the waiting screen ----------
-let boothTimer = null, boothWake = null;
+let boothTimer = null;
 function viewBoothWait(demo){
   const b = demo ? { code: 'DEMO', q: 12, name: 'Mia', total: 30, status: demo === 'wait' ? 'pending' : demo === 'making' ? 'printing' : 'ready', ahead: demo === 'wait' ? 2 : 0, minutes: 4 } : boothSaved();
   if (!b) { location.replace('#/booth'); return; }
@@ -6061,10 +6061,10 @@ function boothReady(b, quiet){
   o.innerHTML = `<div class="bready-in"><p class="bready-k">Your order is ready!</p><div class="bnum big num">#${b.q}</div><p>Come to the booth and show this screen.</p>
     <button type="button" class="btn dark wide" data-act="boothOnWay">${ic('check', 18)}<span>I’m on my way</span></button></div>${twoeySVG('rd-tw jump')}`;
   document.body.appendChild(o);
-  S.readyNag = setInterval(() => { if (!document.body.contains(o)) { clearInterval(S.readyNag); return; } chime(); try { navigator.vibrate && navigator.vibrate([400, 200, 400]); } catch {} }, 8000);
+  let nudges = 0; clearInterval(S.readyNag);   // a gentle reminder, at most twice more
+  S.readyNag = setInterval(() => { if (!document.body.contains(o) || ++nudges > 2) { clearInterval(S.readyNag); return; } chime(); try { navigator.vibrate && navigator.vibrate([200, 120, 200]); } catch {} }, 15000);
 }
-async function keepAwake(){ try { if ('wakeLock' in navigator && !document.hidden) boothWake = await navigator.wakeLock.request('screen'); } catch {} }
-document.addEventListener('visibilitychange', () => { if (!document.hidden && location.hash.startsWith('#/booth/') && S.boothSound) keepAwake(); if (!document.hidden && location.hash.startsWith('#/booth/wait')) boothPoll(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden && location.hash.startsWith('#/booth/') && S.boothSound) keepAwake(true); if (!document.hidden && location.hash.startsWith('#/booth/wait')) boothPoll(); });
 
 // ---------- sounds that work on iPhones (also with the silent switch on): real audio clips, made here ----------
 // One family of soft, plucked tones, like a kalimba: quick and natural.
@@ -6081,10 +6081,12 @@ function wavUrl(dur, fn){   // fn(t) -> sample in -1..1
 const TAU = Math.PI * 2;
 // a plucked tine: a bright attack that mellows quickly, like a kalimba
 const tine = (u, f, decay) => u < 0 ? 0 : Math.sin(TAU * f * u + Math.sin(TAU * f * 3.5 * u) * 1.6 * Math.exp(-u * 38)) * Math.min(1, u / .002) * Math.exp(-u * decay);
-// the "ready" sound: three quick notes rising into each other, about half a second
+// the "ready" sound: a soft, rounded two-note bell, quiet like a nudge (pure tones, gentle start, smooth fade)
+const bell = (u, f, decay) => u < 0 ? 0 : (Math.sin(TAU * f * u) + Math.sin(TAU * f * 2 * u) * .12 + Math.sin(TAU * f * 3 * u) * .03) * (1 - Math.exp(-u / .012)) * Math.exp(-u * decay);
 function chimeUrl(){
-  return S.chimeUrl || (S.chimeUrl = wavUrl(.7, t => (tine(t, 783.99, 9) * .34 + tine(t - .07, 1046.5, 8) * .34 + tine(t - .14, 1567.98, 6) * .42) * .9));
+  return S.chimeUrl || (S.chimeUrl = wavUrl(1.1, t => (bell(t, 880, 4.2) * .5 + bell(t - .16, 1318.5, 3.6) * .45) * .55));
 }
+const silentUrl = () => S.silentUrl || (S.silentUrl = wavUrl(.06, () => 0));
 // the bubble pop (and the buddy's sounds): a short rising "bloop" from the same family
 function popUrl(k = 1){   // k shifts the pitch, so repeated taps don't sound the same
   S.popUrls = S.popUrls || {}; const key = k.toFixed(2);
@@ -6094,17 +6096,19 @@ const POP_PITCH = [.84, .94, 1, 1.12, 1.26];
 // soft: the buddy's touches play quietly, at one of five pitches (never the same twice in a row)
 function playPop(vol = 1, soft){
   try { let k; do { k = POP_PITCH[Math.floor(Math.random() * POP_PITCH.length)]; } while (k === S.lastPop && POP_PITCH.length > 1); S.lastPop = k;
-    const a = new Audio(popUrl(k)); a.volume = Math.max(0, Math.min(1, (soft ? .32 : .7) * vol)); const p = a.play(); if (p && p.catch) p.catch(() => {}); } catch {}
+    const a = new Audio(popUrl(k)); a.volume = Math.max(0, Math.min(1, (soft ? .24 : .6) * vol)); const p = a.play(); if (p && p.catch) p.catch(() => {}); } catch {}
 }
-// phones only let a page play sound after a tap: the first tap anywhere quietly unlocks it, and the sound buttons play it once so you hear it works
+// phones only let a page play sound after a tap. The first tap anywhere unlocks it by playing a moment of silence;
+// the sound buttons play the bell once instead, so you hear that it works. Afterwards the same player carries the bell.
 function unlockSound(audible){
-  try { if (!S.chimeEl) { S.chimeEl = new Audio(chimeUrl()); S.chimeEl.preload = 'auto'; }
-    const a = S.chimeEl; a.muted = !audible; a.currentTime = 0;
-    const p = a.play(); if (p && p.then) p.then(() => { if (!audible) { a.pause(); a.currentTime = 0; } a.muted = false; S.soundReady = true; }).catch(() => { a.muted = false; });
+  try { if (!S.chimeEl) { S.chimeEl = new Audio(); S.chimeEl.preload = 'auto'; }
+    const a = S.chimeEl; a.src = audible ? chimeUrl() : silentUrl();
+    const p = a.play(); if (p && p.then) p.then(() => { S.soundReady = true; if (!audible) setTimeout(() => { if (a.paused) { a.src = chimeUrl(); a.load(); } }, 150); }).catch(() => {});
   } catch {}
 }
 ['click', 'touchend'].forEach(ev => document.addEventListener(ev, () => { if (!S.soundReady) unlockSound(false); }, { capture: true, passive: true }));
-function chime(){ try { if (!S.chimeEl) return; S.chimeEl.muted = false; S.chimeEl.currentTime = 0; const p = S.chimeEl.play(); if (p && p.catch) p.catch(() => {}); } catch {} }
+// the one bell for the whole site (booth, "Now ready" screen, My order, admin alerts)
+function chime(){ try { if (!S.chimeEl) { S.chimeEl = new Audio(); } const a = S.chimeEl; if (!a.src || a.src === S.silentUrl) a.src = chimeUrl(); a.currentTime = 0; const p = a.play(); if (p && p.catch) p.catch(() => {}); } catch {} }
 
 // ---------- the booth buddy: a sticker that came alive, and behaves like one ----------
 // No arms or legs: a die-cut sticker with a face and a peeled corner (its "tuft").
@@ -8040,18 +8044,9 @@ async function drawAdminBody(){
           : f === 'printing' && all.some(o => o.status === 'ready') ? `<span>Ready orders wait under "Ready" for pickup day.</span>${smallBtn('Go to Ready', 'arrow', 'admFilter', 'dark', 'data-f="ready"')}`
           : '<span>New orders show up under "To review".</span>'}</div>`}</div>`;
 }
-function chime(){
+async function keepAwake(on){   // keeps the screen on (booth waiting screen, "Now ready" screen, pickup mode)
   try {
-    const A = window.AudioContext || window.webkitAudioContext; if (!A) return;
-    const ctx = S.admin.audio || (S.admin.audio = new A()), now = ctx.currentTime;
-    [880, 1320].forEach((f, i) => { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.value = f;
-      g.gain.setValueAtTime(0.0001, now + i * .18); g.gain.exponentialRampToValueAtTime(0.25, now + i * .18 + .02); g.gain.exponentialRampToValueAtTime(0.0001, now + i * .18 + .4);
-      o.connect(g).connect(ctx.destination); o.start(now + i * .18); o.stop(now + i * .18 + .45); });
-  } catch {}
-}
-async function keepAwake(on){
-  try {
-    if (on && 'wakeLock' in navigator) { S.admin.wake = await navigator.wakeLock.request('screen'); }
+    if (on && 'wakeLock' in navigator && !document.hidden) { S.admin.wake = await navigator.wakeLock.request('screen'); }
     else if (!on && S.admin.wake) { await S.admin.wake.release(); S.admin.wake = null; }
   } catch {}
 }
@@ -10287,9 +10282,9 @@ const ACTIONS = {
   boothPrev: t => { const f = $('#bPrev'); if (!f) return; document.querySelectorAll('[data-act="boothPrev"]').forEach(b => b.classList.toggle('on', b === t));
     try { f.contentWindow.location.hash = '#/booth/demo/' + t.dataset.v; } catch { f.src = './#/booth/demo/' + t.dataset.v; } },
   boothRemove: t => { S.cart.splice(+t.dataset.i, 1); buzz(6); if (S.cart.length) viewBoothCheckout(); else location.hash = '#/booth'; },
-  boothSound: () => { S.boothSound = true; unlockSound(true); keepAwake(); const b = $('.bsound'); if (b) { b.classList.add('on'); b.innerHTML = `${ic('check', 18)}<span>Sound on. We’ll chime when it’s ready.</span>`; } },
+  boothSound: () => { S.boothSound = true; unlockSound(true); keepAwake(true); const b = $('.bsound'); if (b) { b.classList.add('on'); b.innerHTML = `${ic('check', 18)}<span>Sound on. We’ll chime when it’s ready.</span>`; } },
   boothOnWay: () => { const o = document.querySelector('.bready'); if (o) o.remove(); clearInterval(S.readyNag); },
-  boardStart: () => { unlockSound(true); keepAwake(); S.boothSound = true; const s = $('#bbStart'); if (s) s.remove(); const b = $('#bBoard'); try { b.requestFullscreen && b.requestFullscreen().catch(() => {}); } catch {} },
+  boardStart: () => { unlockSound(true); keepAwake(true); S.boothSound = true; const s = $('#bbStart'); if (s) s.remove(); const b = $('#bBoard'); try { b.requestFullscreen && b.requestFullscreen().catch(() => {}); } catch {} },
   boothSet: async t => { const v = t.dataset.v, p = v === 'open' ? { booth_on: true, booth_paused: false } : v === 'pause' ? { booth_paused: true } : v === 'resume' ? { booth_paused: false } : { booth_on: false, booth_paused: false };
     try { await saveConfigPatch(p); toast(v === 'open' ? 'The booth is open.' : v === 'pause' ? 'Paused. New orders wait until you tap “Take orders again”.' : v === 'resume' ? 'Taking orders again.' : 'The booth is closed.'); drawBoothAdmin(); } catch (e) { toast(friendlyError(e)); } },
   boothMove: async t => { if (t.dataset.v === 'cancelled' && !armed(t, 'Tap again to cancel')) return;
