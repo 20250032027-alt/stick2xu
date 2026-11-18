@@ -1504,9 +1504,10 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .bready{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 50% 40%,#FFE27A 0,#F2BC2E 55%,#E3A615 100%);animation:bIn .35s var(--ease)}
 .bready::before{content:"";position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 50% 40%,rgba(255,255,255,.18) 0 10deg,transparent 10deg 20deg);animation:bSpin 30s linear infinite}
 .bready-in{position:relative;text-align:center;color:var(--ink);width:100%;max-width:420px}
-.bready-k{font-family:var(--display);font-weight:800;font-size:clamp(28px,7vw,40px);margin:0 0 26px}
-.bready .bnum.big{font-size:clamp(76px,24vw,160px);background:#fff;margin-bottom:28px}
-.bready p{font-size:18px;font-weight:700;margin:0 0 22px}
+.bready p{font-size:clamp(20px,5.6vw,26px);font-weight:800;line-height:1.3;margin:0 auto 28px;max-width:16ch}
+.bready .bready-k{font-family:var(--display);font-weight:800;font-size:clamp(34px,10vw,52px);line-height:1.05;margin:0 0 30px;max-width:none}
+.bready .bnum.big{font-size:clamp(80px,25vw,170px);background:#fff;margin-bottom:34px}
+.bready .btn.wide{min-height:62px;font-size:19px}
 @keyframes bIn{from{opacity:0;transform:scale(1.04)}}@keyframes bSpin{to{transform:rotate(360deg)}}
 /* the booth buddy: a sticker that came alive. Moods: idle, work (tongue out), cheer (open smile, sparkles).
    Faces: e-happy (eyes closed), e-oh (surprised, while held). Reactions: r-tap (corner flutters), r-slap (sticks back down). */
@@ -1562,8 +1563,6 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 /* the waiting screen: Twoey beside the number */
 .bnumwrap{position:relative}
 .wt-tw{position:absolute;width:76px;right:max(4%,calc(50% - 210px));top:-6px}
-.bready .rd-tw{position:absolute;width:110px;left:50%;bottom:-6px;transform:translateX(-50%)}
-.bready-in{padding-bottom:110px}
 /* the "Now ready" screen */
 .bb2{position:relative;min-height:100vh;min-height:100dvh;box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);grid-template-areas:"top top" "ready work" "ready qr" "tip tip";grid-template-rows:auto 1fr auto auto;gap:22px 28px;
   padding:calc(22px + env(safe-area-inset-top,0px)) 32px calc(18px + env(safe-area-inset-bottom,0px));color:#fff;overflow:hidden;
@@ -1736,7 +1735,9 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .pv-pg.wide{width:min(78vw,420px)}
 .pv-paper{background:#fff;border:1.5px solid var(--ink);border-radius:4px;box-shadow:3px 4px 0 rgba(40,57,113,.18);overflow:hidden;display:grid;place-items:center}
 .pv-paper img{width:100%;height:100%;object-fit:contain;display:block;-webkit-user-drag:none;user-select:none}
-.pview.bw .pv-paper img{filter:grayscale(1)}
+.pv-pg.bw .pv-paper img{filter:grayscale(1)}
+.pv-col{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:inline-flex;align-items:center;gap:5px;min-height:36px;padding:6px 14px;border-radius:999px;border:2px solid var(--ink);background:#fff;color:var(--ink);font:inherit;font-weight:800;font-size:13.5px;white-space:nowrap;cursor:pointer;box-shadow:2px 3px 0 var(--ink)}
+.pv-col.on{background:var(--xu-gold)}
 .pv-pg.off .pv-paper{opacity:.35}
 .pv-skip{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:4px 12px;border-radius:999px;background:var(--ink);color:#fff;font-weight:700;font-size:13px;white-space:nowrap}
 .pv-load{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--ink);animation:spin .9s linear infinite}
@@ -1796,8 +1797,9 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .is-stage:has(.cticket){place-items:start center}.is-scene:has(.cticket){margin-top:clamp(10px,4vh,40px)}   /* the ticket leads, at the top */
 /* the price poster (A4) */
 .pp-tools{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 20px;background:#fff;border-bottom:1.5px solid var(--line)}
-.pp-tools span{flex:1;min-width:200px;font-size:14px;color:var(--muted)}
-.pp-scale{padding:20px;display:flex;justify-content:center;overflow:hidden}
+.pp-tools > span{flex:1;min-width:200px;font-size:14px;color:var(--muted)}
+.pp-tools > *{max-width:100%;box-sizing:border-box}@media(max-width:520px){.pp-tools > span{flex-basis:100%;order:3}}   /* phones: the buttons fit, the tip goes underneath */
+.pp-scale{padding:20px;display:flex;justify-content:center;overflow:hidden;contain:paint;max-width:100%}   /* the shrunk poster never widens the page on phones */
 .poster{width:210mm;height:297mm;flex:none;position:relative;overflow:hidden;background:#EEF1F9;color:var(--ink);transform-origin:top center;box-shadow:0 20px 60px rgba(28,42,87,.25);
   display:grid;grid-template-rows:131mm 1fr;font-family:var(--body);-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .pp-top{position:relative;overflow:hidden;background:linear-gradient(165deg,#3A4F99 0%,#1C2A57 100%);color:#fff;display:flex;flex-direction:column;align-items:center;padding:7mm 10mm 0;
@@ -1853,6 +1855,14 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
   .pp-scale{padding:0;height:auto!important;display:block}
   .poster{transform:none!important;box-shadow:none;margin:0}
 }
+/* prints: three color choices, color pages, copies */
+.seg.seg3 button{font-size:14px;padding-left:6px;padding-right:6px;line-height:1.15}
+.mixhint{display:flex;gap:6px;align-items:flex-start;margin:8px 0 0}.mixhint svg{flex:none;margin-top:2px;color:#C9951A}
+.pcolor{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px}.pcolor .pc-l{font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap}.pcolor svg{color:#C9951A;flex:none}.pcolor .inp{flex:1 1 110px;min-width:0;max-width:170px;min-height:38px;padding:6px 10px;font-size:14.5px}.pcolor .inp.bad{border-color:var(--red)}.pcolor small{font-weight:700;color:var(--ink)}
+.docs .pcolor1{display:inline-flex;align-items:center;gap:4px;font-size:13.5px;min-height:32px;margin-top:4px}.docs .pcolor1.on{color:#8A6400}
+.copyno{font-style:normal;font-weight:800;font-size:12px;padding:0 7px;border-radius:999px;background:var(--gold-soft);border:1px solid #EED9A0;color:var(--ink)}
+.docs .dlinks{display:flex;flex-wrap:wrap;gap:0 16px;margin-top:2px}.docs .dlinks .linkbtn{display:inline-flex;align-items:center;gap:4px;font-size:13.5px;min-height:34px;padding:0}
+.dacts{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;align-items:center}
 /* fonts: tiles that show your words in each font */
 .wd-fonts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .wd-font{display:grid;justify-items:center;align-content:center;gap:3px;min-height:64px;padding:8px 4px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit;cursor:pointer}
@@ -2735,7 +2745,7 @@ const CONFIG = {
     pins: {
       name: 'Pins', blurb: 'Round button pins with your picture', unit: 'pin', enabled: false, maxQty: 60,   // big enough for a whole class
       // faceMm = the pin you hold. cutMm = the paper circle, which wraps around the edge. Match these to the pin machine.
-      sizes: [{ id: '44', label: '44 mm', price: 30, faceMm: 44, cutMm: 44 }, { id: '58', label: '58 mm', price: 35, faceMm: 58, cutMm: 70, enabled: false }],
+      sizes: [{ id: '44', label: '44 mm', price: 30, faceMm: 44, cutMm: 48 }, { id: '58', label: '58 mm', price: 35, faceMm: 58, cutMm: 70, enabled: false }],
       addons: []
     },
     posters: {
@@ -3345,6 +3355,8 @@ function applyShopConfig(c){
     const base = D.products[k];
     CONFIG.products[k].maxQty = +((c.max_qty || {})[k]) > 0 ? +c.max_qty[k] : (base.maxQty || D.maxQty);
     CONFIG.products[k].sizes = base.sizes.map(z => ({ ...z, ...(((c.sizes || {})[k] || {})[z.id] || {}) }));
+    // a pin's paper circle must be bigger than its front, or nothing wraps around the edge (that shows as a white rim): 4 mm more at least
+    if (k === 'pins') CONFIG.products[k].sizes.forEach(z => { if (+z.cutMm <= +z.faceMm) z.cutMm = +z.faceMm + 4; });
   }
 }
 // in booth mode, booth prices (set in the Booth tab) replace the normal ones everywhere; the database charges the same
@@ -3362,7 +3374,16 @@ function unitPrice(it){
   return (z ? z.price : 0) + (it.type === 'posters' ? ((+it.tiles || 1) - 1) * CONFIG.posterExtraSheet : 0) + (it.addons || []).reduce((t, id) => { const a = p.addons.find(x => x.id === id && x.enabled); return t + (a ? a.price : 0); }, 0);
 }
 const itemUnits = it => it.type === 'stickers' ? it.sheets.filter(s => s.items.length).length : it.type === 'prints' ? (+it.qty || 0) * (+it.pages || 0) : it.qty;
-const itemTotal = it => itemUnits(it) * unitPrice(it);
+// prints with "Some in color": each color page (per copy) costs the Color price on top; the database charges the same
+const colorAddonPrice = () => { const a = (P('prints').addons || []).find(x => x.id === 'color' && x.enabled); return a ? +a.price || 0 : 0; };
+function fileColorList(f){   // the pages this file prints in color ("Some in color"), only among the pages it prints
+  if (!f.color) return []; const total = f.kind === 'pdf' ? (f.total || f.pages || 1) : 1, col = parseRange(f.color, total) || [], sel = f.range ? parseRange(f.range, total) : null;
+  return col.filter(n => !sel || sel.includes(n));
+}
+const fileColorPages = f => fileColorList(f).length;
+const prColorPages = it => it.type === 'prints' && it.mixed && !(it.addons || []).includes('color') ? (it.files || []).reduce((t, f) => t + fileColorPages(f), 0) : 0;
+const colorExtra = it => prColorPages(it) * (+it.qty || 0) * colorAddonPrice();
+const itemTotal = it => itemUnits(it) * unitPrice(it) + colorExtra(it);
 /* Deals: per product, the better of "buy X get Y free" and "bulk discount"; combos on top; then a promo code. */
 const liveDeals = () => (S.settings.deals || []).filter(d => d.enabled && (d.type === 'combo' ? (d.products || []).every(isLive) : isLive(d.product)));
 const unitWord = (key, n) => { const u = (CONFIG.products[key] || {}).unit || 'item'; return n === 1 ? u : u + 's'; };
@@ -3376,7 +3397,7 @@ function dealLabel(d){
 }
 function computeDeals(items){
   const lines = items.map(it => ({ type: it.type, price: unitPrice(it), units: itemUnits(it) })).filter(l => l.units > 0);
-  const subtotal = lines.reduce((t, l) => t + l.price * l.units, 0), applied = [];
+  const subtotal = lines.reduce((t, l) => t + l.price * l.units, 0) + items.reduce((t, it) => t + colorExtra(it), 0), applied = [];
   for (const p of [...new Set(lines.map(l => l.type))]) {
     const mine = lines.filter(l => l.type === p), n = mine.reduce((t, l) => t + l.units, 0);
     let best = null;
@@ -3453,7 +3474,7 @@ function itemDetails(it){
   const bits = [];
   const labels = it.addon_labels || (it.addons || []).map(id => (P(it.type).addons.find(a => a.id === id) || {}).label).filter(Boolean);
   if (labels.length) bits.push(labels.join(', '));
-  if (it.type === 'prints') { if (!labels.length) bits.push('Black and white'); bits.push(it.duplex ? 'double-sided' : 'one side'); }
+  if (it.type === 'prints') { const cp = it.color_pages || prColorPages(it); if (cp && !labels.length) bits.push(`Black and white, ${cp} page${cp === 1 ? '' : 's'} in color`); else if (!labels.length) bits.push('Black and white'); bits.push(it.duplex ? 'double-sided' : 'one side'); }
   if (it.type === 'stickers') { const sep = (it.sheets || []).filter(sh => sh.fromImport);
     if (sep.length) bits.push(`${sep.length} sheet${sep.length === 1 ? '' : 's'} cut out from an imported sheet`);
     const imps = (it.sheets || []).filter(sh => sh.imported);
@@ -3608,8 +3629,9 @@ function serializeItems(items, pathFor){
     const p = P(it.type), z = p.sizes.find(x => x.id === it.size) || p.sizes[0];
     const base = { type: it.type, size: it.size, size_label: z.label, addons: it.addons || [], ...(it.template && it.template.slug ? { template: it.template.slug } : {}),
       addon_labels: (it.addons || []).map(id => (p.addons.find(a => a.id === id) || {}).label).filter(Boolean), unit_price: unitPrice(it) };
-    if (it.type === 'prints') return { ...base, qty: it.qty, pages: it.pages, duplex: !!it.duplex,
-      files: (it.files || []).map(f => ({ path: pathFor[f.id], name: f.name, pages: f.pages, kind: f.kind, orient: f.orient || null, range: f.range || null, total: f.total || null })) };
+    if (it.type === 'prints') return { ...base, qty: it.qty, pages: it.pages, duplex: !!it.duplex, ...(prColorPages(it) ? { mixed: true, color_pages: prColorPages(it) } : {}),
+      files: (it.files || []).map(f => ({ path: pathFor[f.id] || pathFor[f.src], name: f.name, pages: f.pages, kind: f.kind, orient: f.orient || null, range: f.range || null, total: f.total || null,
+        ...(prColorPages(it) && fileColorPages(f) ? { color: rangeText(fileColorList(f)) } : {}), ...(f.copyNo ? { copy_no: f.copyNo } : {}) })) };
     if (it.type === 'stickers') return { ...base, sheets: it.sheets.filter(sh => sh.items.length).map(sh => ({ ...(sh.free ? { free: true } : {}), ...(sh.imported ? { imported: sh.imported } : {}), ...(sh.fromImport ? { fromImport: sh.fromImport } : {}), ...(sh.template ? { template: sh.template.slug } : {}), items: sh.items.map(x => ({ path: pathFor[x.imageId], ...(isFree(x) ? { x: x.x, y: x.y, w: x.w, ...(x.h ? { h: x.h } : {}) } : { col: x.col, row: x.row, size: x.size }), fit: x.fit, ...(x.border === 'none' ? { border: 'none' } : {}), smooth: itemSmooth(x), ...(x.borderColor ? { borderColor: x.borderColor } : {}), ...(x.filter && x.filter !== 'none' ? { filter: x.filter } : {}) })) })) };
     const d = x => x && x.imageId ? { path: pathFor[x.imageId], zoom: x.zoom, ox: x.ox, oy: x.oy, bg: x.bg || '#ffffff', ...(fxOn(x.fx) ? { fx: clone(x.fx) } : {}) } : null;
     if (it.type === 'posters' && it.mode === 'pages') return { ...base, qty: it.qty, mode: 'pages', pages: it.pages, across: it.across, tiles: it.pages,
@@ -3650,10 +3672,13 @@ function SupaBackend(){
     async saveSettings(patch){ const { error } = await sb.from('shop_settings').update(patch).eq('id', 1); if (error) throw error; },
     // pictures upload 3 at a time, and a failed one tries again (a weak signal shouldn't cost anyone their order). Same files, same quality.
     async uploadAll(images, folder){
-      const pathFor = {}, jobs = images.map((img, i) => ({ img, path: `orders/${folder}/img${i}.${img.ext}` })); let next = 0;
-      const one = async ({ img, path }) => { for (let a = 1; ; a++) {
+      // the same file twice (a duplicated PDF) uploads once; every copy points to that one upload
+      const pathFor = {}, byBlob = new Map(), jobs = []; let next = 0;
+      images.forEach(img => { const j = byBlob.get(img.blob); if (j) { j.ids.push(img.id); return; }
+        const job = { img, ids: [img.id], path: `orders/${folder}/img${jobs.length}.${img.ext}` }; byBlob.set(img.blob, job); jobs.push(job); });
+      const one = async ({ img, ids, path }) => { for (let a = 1; ; a++) {
         const { error } = await sb.storage.from(B).upload(path, img.blob, { contentType: img.blob.type, upsert: a > 1 });
-        if (!error) { pathFor[img.id] = path; return; }
+        if (!error) { ids.forEach(id => pathFor[id] = path); return; }
         if (a >= 3) throw new Error('Upload failed: ' + error.message);
         await new Promise(r => setTimeout(r, 700 * a)); } };
       await Promise.all(Array.from({ length: Math.min(3, jobs.length) }, async () => { while (next < jobs.length) await one(jobs[next++]); }));
@@ -5906,8 +5931,8 @@ function viewBoothCheckout(){
 }
 async function gatherUploads(){   // the same pictures a normal order uploads (print pages rendered first)
   const used = new Set(cartImageIds()), pages = {};
-  for (const it of S.cart.filter(x => x.type === 'prints')) for (const f of it.files) { const d = prsDoc(f.id); if (d && d.kind === 'image' && d.canvas) pages[f.id] = await renderPrintPage(f, d, (it.addons || []).includes('color')); }
-  return S.images.concat((S.docs || []).map(d => pages[d.id] || d)).filter(i => used.has(i.id));
+  for (const it of S.cart.filter(x => x.type === 'prints')) for (const f of it.files) { const d = prsDoc(f.id); if (d && d.kind === 'image' && d.canvas) pages[f.id] = await renderPrintPage(f, d, (it.addons || []).includes('color') || (it.mixed && fileColorPages(f) > 0)); }
+  return S.images.concat((S.docs || []).map(d => pages[d.id] || d)).filter(i => used.has(i.id) && !(i.src && i.kind === 'pdf' && used.has(i.src)));
 }
 // ---------- free candy: a wrapped sweet, and the ticket at the end of the intro ----------
 function candySVG(c = '#EC282A', cls = ''){
@@ -6069,7 +6094,7 @@ function boothReady(b, quiet){
   S.titleFlash = setInterval(() => { document.title = n++ % 2 ? title : `READY #${b.q}`; if (n > 40) { clearInterval(S.titleFlash); document.title = title; } }, 900);
   const o = document.createElement('div'); o.className = 'bready'; o.setAttribute('role', 'alertdialog'); o.setAttribute('aria-label', `Number ${b.q} is ready`);
   o.innerHTML = `<div class="bready-in"><p class="bready-k">Your order is ready!</p><div class="bnum big num">#${b.q}</div><p>Come to the booth and show this screen.</p>
-    <button type="button" class="btn dark wide" data-act="boothOnWay">${ic('check', 18)}<span>I’m on my way</span></button></div>${twoeySVG('rd-tw jump')}`;
+    <button type="button" class="btn dark wide" data-act="boothOnWay">${ic('check', 18)}<span>I’m on my way</span></button></div>`;
   document.body.appendChild(o);
   let nudges = 0; clearInterval(S.readyNag);   // a gentle reminder, at most twice more
   S.readyNag = setInterval(() => { if (!document.body.contains(o) || ++nudges > 2) { clearInterval(S.readyNag); return; } chime(); try { navigator.vibrate && navigator.vibrate([200, 120, 200]); } catch {} }, 15000);
@@ -6927,13 +6952,13 @@ function pageEditorHTML(f, pr){
   return `<div class="docstage">
     <div class="pagewrap" style="width:min(100%, ${f.orient === 'landscape' ? 520 : 380}px, calc(56svh * ${(mm.pageW / mm.pageH).toFixed(4)}))">
       <div class="paper" style="aspect-ratio:${mm.pageW}/${mm.pageH};padding:${mm.margin / mm.pageW * 100}%">
-        <div class="frame has-img ${pr.addons.includes('color') ? '' : 'bw'}" id="pframe" style="aspect-ratio:${mm.w}/${mm.h}">
+        <div class="frame has-img ${(pr.addons.includes('color') || (pr.mixed && fileColorPages(f) > 0)) ? '' : 'bw'}" id="pframe" style="aspect-ratio:${mm.w}/${mm.h}">
           ${doc ? `<img id="pimg" src="${doc.thumb}" alt="" draggable="false">` : ''}</div></div></div>
     <div class="pgctl">
       <div class="seg">${['portrait','landscape'].map(o => `<button type="button" class="${f.orient === o ? 'on' : ''}" data-act="pgOrient" data-o="${o}">${o === 'portrait' ? 'Tall page' : 'Wide page'}</button>`).join('')}</div>
       <div class="seg">${[['fit', 'Whole picture'], ['fill', 'Fill the page']].map(([v, l]) => `<button type="button" data-act="pgFit" data-v="${v}">${l}</button>`).join('')}</div>
       <div class="zoomrow" style="width:100%">${ic('search', 18)}<input type="range" id="pzoom" min="0.2" max="3" step="0.01" value="${f.zoom}" aria-label="Zoom"></div>
-      <p class="help" style="margin:0">Drag to move, pinch or use the slider to zoom. ${pr.addons.includes('color') ? '' : 'Shown in black and white, the way it will print.'}</p>
+      <p class="help" style="margin:0">Drag to move, pinch or use the slider to zoom. ${(pr.addons.includes('color') || (pr.mixed && fileColorPages(f) > 0)) ? '' : 'Shown in black and white, the way it will print.'}</p>
       ${btn('Done', { act: 'prDone', icon: 'check', cls: 'dark' })}
     </div></div>`;
 }
@@ -6973,6 +6998,7 @@ async function renderPrintPage(f, doc, color){
   const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.9));
   return { id: f.id, blob, ext: 'jpg' };
 }
+const prIsColor = (pr, f, n) => (pr.addons || []).includes('color') || (!!pr.mixed && !!f.color && (parseRange(f.color, f.kind === 'pdf' ? (f.total || f.pages || 1) : 1) || []).includes(n));
 /* The page viewer: every page of every file in one strip. Swipe (or flick) sideways; pages are drawn as they come into view. */
 function prPageList(pr){
   const out = [];
@@ -6983,12 +7009,13 @@ function prPageList(pr){
 function pageViewerHTML(pr){
   const list = prPageList(pr), many = pr.files.length > 1, A4 = 297 / 210;
   S.pvList = list;
-  return `<div class="pview ${pr.addons.includes('color') ? '' : 'bw'}">
+  return `<div class="pview ${pr.mixed ? 'mixed' : ''}">
     <button type="button" class="pv-nav prev" data-act="pvGo" data-d="-1" aria-label="Previous page">${ic('back', 20)}</button>
     <div class="pv-track" id="pvTrack" tabindex="0" aria-label="Your pages. Swipe or use the arrow keys.">${list.map((p, i) => {
       const d = prsDoc(p.f.id) || {}, wide = p.f.orient === 'landscape', src = d.kind === 'image' ? d.thumb : (d.pv && d.pv[p.n]) || (p.n === 1 ? d.thumb : '');
-      return `<figure class="pv-pg ${wide ? 'wide' : ''} ${p.on ? '' : 'off'}" data-i="${i}"><div class="pv-paper" style="aspect-ratio:${wide ? A4 : 1 / A4}">${src ? `<img src="${src}" alt="Page ${p.n}${many ? ` of ${esc(p.f.name)}` : ''}">` : '<span class="pv-load"></span>'}</div>
-        ${p.on ? '' : '<span class="pv-skip">Not printing</span>'}</figure>`; }).join('')}</div>
+      const col = prIsColor(pr, p.f, p.n);
+      return `<figure class="pv-pg ${wide ? 'wide' : ''} ${p.on ? '' : 'off'} ${col ? 'col' : 'bw'}" data-i="${i}"><div class="pv-paper" style="aspect-ratio:${wide ? A4 : 1 / A4}">${src ? `<img src="${src}" alt="Page ${p.n}${many ? ` of ${esc(p.f.name)}` : ''}">` : '<span class="pv-load"></span>'}</div>
+        ${p.on ? (pr.mixed ? `<button type="button" class="pv-col ${col ? 'on' : ''}" data-act="pvColor" data-i="${i}" aria-pressed="${col}">${col ? `${ic('check', 14)}Color` : 'Black and white'}</button>` : '') : '<span class="pv-skip">Not printing</span>'}</figure>`; }).join('')}</div>
     <button type="button" class="pv-nav next" data-act="pvGo" data-d="1" aria-label="Next page">${ic('arrow', 20)}</button>
     <p class="pv-count" id="pvCount" aria-live="polite"></p></div>`;
 }
@@ -7044,19 +7071,23 @@ function drawPrints(){
       <label class="upload"><span class="ui">${ic('plus', 22)}</span><span>Choose files<small>PDFs or pictures, from your phone, tablet, or computer. We count the pages for you.</small></span>
         <input id="docIn" type="file" accept="application/pdf,image/*" multiple hidden></label>
       ${pr.files.length ? `<ul class="docs">${pr.files.map((f, i) => `<li>
-          <span class="dt ${pr.addons.includes('color') ? '' : 'bw'}">${docById(f.id).thumb ? `<img src="${docById(f.id).thumb}" alt="">` : ic('doc', 22)}</span>
-          <span class="dn"><b title="${esc(f.name)}">${esc(f.name)}</b>${f.pages ? `<small>${f.range ? `Pages ${esc(f.range)} (${f.pages} of ${f.total})` : `${f.pages} page${f.pages === 1 ? '' : 's'}`}${f.orient === 'landscape' ? ', landscape' : ''}</small>
+          <span class="dt ${pr.addons.includes('color') || (pr.mixed && fileColorPages(f)) ? '' : 'bw'}">${docById(f.id).thumb ? `<img src="${docById(f.id).thumb}" alt="">` : ic('doc', 22)}</span>
+          <span class="dn"><b title="${esc(f.name)}">${esc(f.name)}</b>${f.pages ? `<small>${f.copyNo ? `<em class="copyno">Copy ${f.copyNo}</em> ` : ''}${f.range ? `Pages ${esc(f.range)} (${f.pages} of ${f.total})` : `${f.pages} page${f.pages === 1 ? '' : 's'}`}${f.orient === 'landscape' ? ', landscape' : ''}</small>
             ${f.kind === 'pdf' && f.total > 1 ? (S.prRange === f.id || f.range ? `<span class="prange"><input class="inp" data-range="${i}" value="${esc(f.range || '')}" placeholder="Like: 1-3, 5" aria-label="Pages to print from ${esc(f.name)}" inputmode="text">
-              <button type="button" class="linkbtn" data-act="prRangeAll" data-i="${i}">All pages</button></span>` : `<button type="button" class="linkbtn prange-go" data-act="prRange" data-id="${esc(f.id)}">Print only some pages</button>`) : ''}`
+              <button type="button" class="linkbtn" data-act="prRangeAll" data-i="${i}">All pages</button></span>` : '') : ''}
+            <span class="dlinks">${f.kind === 'pdf' && f.total > 1 && !(S.prRange === f.id || f.range) ? `<button type="button" class="linkbtn" data-act="prRange" data-id="${esc(f.id)}">Some pages only</button>` : ''}<button type="button" class="linkbtn" data-act="prDup" data-i="${i}">${ic('copy', 13)} Duplicate</button></span>
+            ${pr.mixed ? (f.kind === 'pdf' && (f.total || 1) > 1 ? `<span class="pcolor">${ic('sparkle', 14)}<b class="pc-l">Color pages</b><input class="inp" data-colorpages="${i}" value="${esc(f.color || '')}" placeholder="Like: 1, 4-6" aria-label="Pages of ${esc(f.name)} to print in color" inputmode="text">${fileColorPages(f) ? `<small>${fileColorPages(f)} in color</small>` : ''}</span>`
+              : `<button type="button" class="linkbtn pcolor1 ${f.color ? 'on' : ''}" data-act="prFileColor" data-i="${i}">${f.color ? `${ic('check', 14)} In color` : 'Print this in color'}</button>`) : ''}`
             : `<small class="ask">How many pages? <input class="inp num" type="number" min="1" max="500" data-pages="${i}" aria-label="Pages in ${esc(f.name)}"></small>`}</span>
           <span class="dacts">${f.kind === 'image' ? `<button type="button" class="dadj ${S.prSel === f.id ? 'on' : ''}" data-act="prAdjust" data-id="${esc(f.id)}">${ic('move', 14)}${S.prSel === f.id ? 'Adjusting' : 'Adjust'}</button>` : ''}
           <button type="button" class="dx" data-act="prDel" data-i="${i}" aria-label="Remove ${esc(f.name)}">${ic('x', 16)}</button></span></li>`).join('')}</ul>` : ''}
     </section>
     <section>${step('Paper and color')}
       ${sizes.length > 1 ? `<div class="sizes" style="margin-bottom:12px">${sizes.map(z => `<button class="size ${pr.size === z.id ? 'on' : ''}" type="button" data-act="prSize" data-size="${esc(z.id)}" aria-pressed="${pr.size === z.id}"><span>${esc(z.label)}<small class="num">${money(z.price)} a page</small></span></button>`).join('')}</div>` : ''}
-      ${color ? `<div class="seg">${[['bw', 'Black and white'], ['color', 'Color']].map(([v, l]) => `<button type="button" class="${(pr.addons.includes('color') ? 'color' : 'bw') === v ? 'on' : ''}" data-act="prColor" data-v="${v}">${l}</button>`).join('')}</div>` : ''}
+      ${color ? `<div class="seg seg3">${[['bw', 'Black and white'], ['mixed', 'Some in color'], ['color', 'All color']].map(([v, l]) => `<button type="button" class="${(pr.addons.includes('color') ? 'color' : pr.mixed ? 'mixed' : 'bw') === v ? 'on' : ''}" data-act="prColor" data-v="${v}">${l}</button>`).join('')}</div>
+        ${pr.mixed ? `<p class="help mixhint">${ic('sparkle', 15)}<span>Tap a page in the preview to switch it to color${pr.files.some(f => f.kind === 'pdf' && (f.total || 1) > 1) ? ', or type the page numbers under each file' : ''}.</span></p>` : ''}` : ''}
       <div class="seg" style="margin-top:10px">${[[false, 'One side'], [true, 'Both sides']].map(([v, l]) => `<button type="button" class="${pr.duplex === v ? 'on' : ''}" data-act="prDuplex" data-v="${v}">${l}</button>`).join('')}</div>
-      <p class="help" style="margin-top:8px">${money(unitPrice(pr))} per printed page${color ? `, ${pr.addons.includes('color') ? 'color' : 'black and white'}` : ''}. Both sides uses less paper and costs the same per page.</p>
+      <p class="help" style="margin-top:8px">${pr.mixed && color ? `${money(unitPrice(pr))} a page in black and white, ${money(unitPrice(pr) + colorAddonPrice())} in color${prColorPages(pr) ? ` (${prColorPages(pr)} page${prColorPages(pr) === 1 ? '' : 's'} in color)` : ''}` : `${money(unitPrice(pr))} per printed page${color ? `, ${pr.addons.includes('color') ? 'color' : 'black and white'}` : ''}`}. Both sides uses less paper and costs the same per page.</p>
     </section>
     <section>${step('Copies')}
       <div class="qty"><button type="button" data-act="prQty" data-d="-1" aria-label="One less">−</button><input id="prQtyIn" class="num" type="number" inputmode="numeric" min="1" max="${maxQtyFor('prints')}" value="${pr.qty}" aria-label="Copies"><button type="button" data-act="prQty" data-d="1" aria-label="One more">+</button></div>
@@ -7069,6 +7100,13 @@ function drawPrints(){
   document.querySelectorAll('#docIn,.docPick').forEach(i => i.addEventListener('change', onDocs));
   if (sel) { placePageImg(sel); bindPagePan(sel); } else if (pr.files.length) bindPageViewer();
   $('#ctrl').querySelectorAll('[data-pages]').forEach(i => i.addEventListener('change', () => { const f = pr.files[+i.dataset.pages]; f.pages = Math.max(1, Math.min(500, Math.round(+i.value || 0))) || null; drawPrints(); }));
+  $('#ctrl').querySelectorAll('[data-colorpages]').forEach(i => i.addEventListener('change', () => {
+    const f = pr.files[+i.dataset.colorpages], v = i.value.trim(), total = f.total || f.pages || 1;
+    if (!v) { f.color = null; return drawPrints(); }
+    const list = parseRange(v, total);
+    if (!list) { i.classList.add('bad'); toast(`Use page numbers from 1 to ${total}, like 1, 4-6.`); return; }
+    f.color = rangeText(list); drawPrints();
+  }));
   $('#ctrl').querySelectorAll('[data-range]').forEach(i => i.addEventListener('change', () => {
     const f = pr.files[+i.dataset.range], v = i.value.trim();
     if (!v) { f.range = null; f.pages = f.total; S.prRange = null; return drawPrints(); }
@@ -7079,7 +7117,8 @@ function drawPrints(){
   }));
   const qi = $('#prQtyIn'); if (qi) qi.addEventListener('change', () => { pr.qty = Math.max(1, Math.min(maxQtyFor('prints'), Math.round(+qi.value || 1))); drawPrints(); });
   const ready = pr.files.length && pr.files.every(f => f.pages > 0);
-  $('#bottom').innerHTML = `<div><div class="tot num">${money(sides * unitPrice(pr))}</div><div class="sub">${sides} printed page${sides === 1 ? '' : 's'}</div></div>
+  const cps = prColorPages(pr) * pr.qty;
+  $('#bottom').innerHTML = `<div><div class="tot num">${money(sides * unitPrice(pr) + colorExtra(pr))}</div><div class="sub">${sides} printed page${sides === 1 ? '' : 's'}${cps ? `, ${cps} in color` : ''}</div></div>
     ${btn(S.editing !== null ? 'Save changes' : 'Add to order', { act: 'addPrints', icon: S.editing !== null ? 'check' : 'arrow', attrs: ready ? '' : 'disabled' })}`;
   bumpTotal();
 }
@@ -7514,9 +7553,9 @@ async function submitOrder(e){
     const sum = computeDeals(S.cart), finalTotal = checkoutTotal(pickupDate);
     const pages = {};
     for (const it of S.cart.filter(x => x.type === 'prints')) for (const f of it.files) {
-      const d = prsDoc(f.id); if (d && d.kind === 'image' && d.canvas) pages[f.id] = await renderPrintPage(f, d, (it.addons || []).includes('color'));
+      const d = prsDoc(f.id); if (d && d.kind === 'image' && d.canvas) pages[f.id] = await renderPrintPage(f, d, (it.addons || []).includes('color') || (it.mixed && fileColorPages(f) > 0));
     }
-    const uploads = S.images.concat((S.docs || []).map(d => pages[d.id] || d)).filter(i => used.has(i.id));
+    const uploads = S.images.concat((S.docs || []).map(d => pages[d.id] || d)).filter(i => used.has(i.id) && !(i.src && i.kind === 'pdf' && used.has(i.src)));   // a duplicated PDF goes up once
     const { code } = await api.placeOrder({ okPost: !!($('#okPost') && $('#okPost').checked), nickname, section, pickup, pickupDate, pickupTime, payment, gcashRef, src: S.addTo ? '' : SRC, promo: S.promo && !S.promo.seller && sum.total >= S.promo.min_total ? S.promo.code : null, seller: CONFIG.sellersOn ? (S.promo && S.promo.seller ? S.promo.code : sellerRef()) || null : null, school: person && person.linked ? S.linkCode : null, person: person ? person.id : null, images: uploads, items: S.cart, addTo: S.addTo && S.addTo.code });
     const addedTo = S.addTo && S.addTo.code; S.addTo = null;
     S.lastOrder = { code, nickname, section, pickup, pickup_date: pickupDate, pickup_time: pickupTime, payment, total: finalTotal, add_to: addedTo || null, for_someone: !!S.coAdmin, group: !!person, person_name: person ? personName(person) : null };
@@ -7956,7 +7995,7 @@ async function drawAdminBody(){
       const n = po.reduce((t, o) => t + orderItems(o).filter(it => it.type === 'pins').reduce((u, it) => u + (+it.qty || 0), 0), 0);
       const per = pinGrid(frameMm({ type: 'pins', size: '44' }).w).per, sheets = Math.ceil(n / per), free = sheets * per - n;
       const g = pinGrid(frameMm({ type: 'pins', size: '44' }).w), minis = Array.from({ length: Math.min(sheets, 4) }, (_, k) => { const filled = k < sheets - 1 ? per : n - per * (sheets - 1);
-        return `<span class="ps-a4 psmini" title="Sheet ${k + 1}: ${filled} of ${per}">${Array.from({ length: per }, (_, i) => `<span class="${i < filled ? 'ps-fill' : 'ps-spot'}" style="left:${(g.x0 + (i % g.cols) * (g.d + g.gap)) / 210 * 100}%;top:${(g.y0 + Math.floor(i / g.cols) * (g.d + g.gap)) / 297 * 100}%;width:${g.d / 210 * 100}%"></span>`).join('')}</span>`; }).join('');
+        return `<span class="ps-a4 psmini" title="Sheet ${k + 1}: ${filled} of ${per}">${Array.from({ length: per }, (_, i) => `<span class="${i < filled ? 'ps-fill' : 'ps-spot'}" style="left:${g.pos[i].x / 210 * 100}%;top:${g.pos[i].y / 297 * 100}%;width:${g.d / 210 * 100}%"></span>`).join('')}</span>`; }).join('');
       return po.length ? `<div class="batchbar pinbar"><span class="minis">${minis}</span><span><b>${n} pin${n === 1 ? '' : 's'}</b> from ${po.length} order${po.length === 1 ? '' : 's'}, packed onto <b>${sheets} sheet${sheets === 1 ? '' : 's'}</b>${free ? ` (${free} spot${free === 1 ? '' : 's'} still free${sheets > 1 ? ' on the last' : ''})` : ', no spots wasted'}.</span>${smallBtn('Pins PDF', 'printer', 'aPinSheet', 'dark')}${smallBtn('PNG', 'download', 'aPinSheetPng', 'plain')}</div>` : ''; })() : ''}
     ${f === 'approved' ? (() => { const ko = all.filter(kcWaiting); if (!ko.length) return '';
       const n = ko.reduce((t, o) => t + kcCount(o), 0), mm = frameMm({ type: 'keychains', size: 'std' });
@@ -8035,7 +8074,7 @@ async function drawAdminBody(){
               ? `<a class="filechip" href="${S.admin.urls[it.pdf.path]}" target="_blank" rel="noopener" download="${esc(o.code + '-' + (it.pdf.name || 'poster.pdf'))}">${ic('download', 16)}<span>${esc(it.pdf.name || 'poster.pdf')}<small>${it.pages} pages, print as it is</small></span></a>`
               : `<span class="filechip off">${ic('doc', 16)}<span>${esc(it.pdf.name || 'poster.pdf')}<small>loading</small></span></span>`)
           : it.type === 'prints' ? (it.files || []).map(f => S.admin.urls[f.path]
-              ? `<a class="filechip" href="${S.admin.urls[f.path]}" target="_blank" rel="noopener" download="${esc(o.code + '-' + (f.name || 'file'))}">${ic('download', 16)}<span>${esc(f.name || 'file')}<small>${f.range ? `<b>Only pages ${esc(f.range)}</b> (${f.pages} of ${f.total || '?'})` : `${f.pages || '?'} page${+f.pages === 1 ? '' : 's'}`}${f.orient === 'landscape' ? ', landscape' : ''}</small></span></a>`
+              ? `<a class="filechip" href="${S.admin.urls[f.path]}" target="_blank" rel="noopener" download="${esc(o.code + '-' + (f.name || 'file'))}">${ic('download', 16)}<span>${esc(f.name || 'file')}<small>${f.range ? `<b>Only pages ${esc(f.range)}</b> (${f.pages} of ${f.total || '?'})` : `${f.pages || '?'} page${+f.pages === 1 ? '' : 's'}`}${f.copy_no ? ` (copy ${f.copy_no})` : ''}${f.color ? `, <b>color: pages ${esc(f.color)}</b>` : ''}${f.orient === 'landscape' ? ', landscape' : ''}</small></span></a>`
               : `<span class="filechip off">${ic('doc', 16)}<span>${esc(f.name || 'file')}<small>loading</small></span></span>`)
           : it.type === 'photos' ? [phThumbHTML(it, { framed: f => S.admin.urls[f.path] || '' }, it.size === 'strip' ? 34 : 56)]
           : [framedThumb(it.front || {}, it.front ? S.admin.urls[it.front.path] : '', frameMm(it), 64)].concat(it.back ? [framedThumb(it.back, S.admin.urls[it.back.path], frameMm(it), 64)] : [])).join('')}</div>
@@ -8091,7 +8130,8 @@ async function setStatus(id, patch, msg){
   } catch (e) { toast(friendlyError(e)); }
 }
 
-function renderFramed(img, d, mm, dpi, round){
+const PIN_BLEED = 2;   // mm the pin picture runs past its cut line, so a cut that's a little wide still shows the design, not white paper
+function renderFramed(img, d, mm, dpi, round, bleedMm = 0){
   let pw = Math.round(mm.w / 25.4 * dpi), ph = Math.round(mm.h / 25.4 * dpi);
   const k = Math.min(1, 3200 / Math.max(pw, ph)); pw = Math.round(pw * k); ph = Math.round(ph * k);
   const c = document.createElement('canvas'); c.width = pw; c.height = ph;
@@ -8100,14 +8140,30 @@ function renderFramed(img, d, mm, dpi, round){
   x.fillStyle = d.bg || '#ffffff'; x.fillRect(0, 0, pw, ph);
   fxDrawImage(x, img, d, L.left * pw, L.top * ph, L.dw * pw, L.dh * ph);
   if (fxOn(d.fx)) paintFx(x, d, pw, ph, { round: !!round, face: mm.vis ? mm.vis / mm.w : 1 });   // words and ring, exactly like the preview
+  if (round && bleedMm > 0) {   // the bleed ring: the design's own edge, gently enlarged outward, then the true design on top, centered
+    const pb = Math.round(pw * (mm.w + 2 * bleedMm) / mm.w), o = (pb - pw) / 2, b = document.createElement('canvas'); b.width = b.height = pb;
+    const y = b.getContext('2d'); y.beginPath(); y.arc(pb / 2, pb / 2, pb / 2, 0, Math.PI * 2); y.clip();
+    y.drawImage(c, 0, 0, pb, pb); y.drawImage(c, o, o, pw, pw);
+    return { data: b.toDataURL('image/png'), fmt: 'PNG', bleed: bleedMm };
+  }
   return round ? { data: c.toDataURL('image/png'), fmt: 'PNG' } : { data: c.toDataURL('image/jpeg', 0.92), fmt: 'JPEG' };
 }
 /* Pins: as many paper circles as fit on A4, evenly spaced (4 across, 6 down at 44 mm) */
 function pinGrid(d){
-  const W = 210, H = 297, minM = 6, gap = CONFIG.pinGapMm || 7;
-  const cols = Math.max(1, Math.floor((W - 2 * minM + gap) / (d + gap))), rows = Math.max(1, Math.floor((H - 2 * minM + gap) / (d + gap)));
-  const gw = cols * d + (cols - 1) * gap, gh = rows * d + (rows - 1) * gap;
-  return { cols, rows, per: cols * rows, d, gap, x0: (W - gw) / 2, y0: (H - gh) / 2 };
+  // 10 pins a sheet, spread as far apart as the page allows (more room to cut around each one).
+  // Staggered like a checkerboard: 5 rows of 2, every other row shifted, so neighbors sit diagonally apart instead of stacked close.
+  // Each pin's top-left corner is in pos (mm). Pins too big for that fall back to a plain grid with the space set in Settings.
+  const W = 210, H = 297, m = 6 + PIN_BLEED, gap = CONFIG.pinGapMm || 7, room = 4 + 2 * PIN_BLEED;
+  const sx = (W - 2 * m - d) / 3, sy = (H - 2 * m - d) / 4;
+  if (sx > 0 && sy > 0 && Math.min(Math.hypot(sx, sy), 2 * sx, 2 * sy) >= d + room) {
+    const pos = []; for (let r = 0; r < 5; r++) for (const c of r % 2 ? [1, 3] : [0, 2]) pos.push({ x: m + c * sx, y: m + r * sy });
+    return { cols: 2, rows: 5, per: 10, d, gap, pos, x0: m, y0: m };
+  }
+  const cols = Math.max(1, Math.floor((W - 2 * m + gap) / (d + gap))), rows = Math.max(1, Math.floor((H - 2 * m + gap) / (d + gap)));
+  const gx = cols > 1 ? (W - 2 * m - cols * d) / (cols - 1) : 0, gy = rows > 1 ? (H - 2 * m - rows * d) / (rows - 1) : 0;
+  const x0 = cols > 1 ? m : (W - d) / 2, y0 = rows > 1 ? m : (H - d) / 2;
+  const pos = Array.from({ length: cols * rows }, (_, i) => ({ x: x0 + (i % cols) * (d + gx), y: y0 + Math.floor(i / cols) * (d + gy) }));
+  return { cols, rows, per: cols * rows, d, gap, gx, gy, pos, x0, y0 };
 }
 /* Keychains: inserts in a grid. paired = front and back side by side, so the columns come in twos */
 function kcGrid(w, h, paired){
@@ -8170,7 +8226,7 @@ async function pinSheets(asPng, again){
     for (let ii = 0; ii < items.length; ii++) {
       const it = items[ii], img = urls[it.front.path] ? await loadImg(urls[it.front.path]).catch(() => null) : null;
       if (!img) { failed.push(o.code); continue; }
-      const mm = frameMm(it), fr = renderFramed(img, it.front, mm, 600, true);
+      const mm = frameMm(it), fr = renderFramed(img, it.front, mm, 600, true, PIN_BLEED);
       fr.alias = `pin_${o.code}_${ii}`;
       for (let q = 0; q < (+it.qty || 0); q++) pieces.push({ fr, code: o.code, d: mm.w });
     }
@@ -8186,10 +8242,10 @@ async function pinSheets(asPng, again){
       if (!doc) doc = new window.jspdf.jsPDF({ unit: 'mm', format: [210, 297], orientation: 'portrait' }); else doc.addPage([210, 297], 'portrait');
       pageNo++;
       g.list.slice(k, k + gr.per).forEach((pc, i) => {
-        const x = gr.x0 + (i % gr.cols) * (g.d + gr.gap), y = gr.y0 + Math.floor(i / gr.cols) * (g.d + gr.gap);
-        doc.addImage(pc.fr.data, pc.fr.fmt, x, y, g.d, g.d, pc.fr.alias, 'FAST');
+        const { x, y } = gr.pos[i];
+        const bl = pc.fr.bleed || 0; doc.addImage(pc.fr.data, pc.fr.fmt, x - bl, y - bl, g.d + 2 * bl, g.d + 2 * bl, pc.fr.alias, 'FAST');   // the cut line stays on the true circle
         if (printLabels()) { cutGuide(doc); doc.circle(x + g.d / 2, y + g.d / 2, g.d / 2, 'S'); }
-        if (printLabels()) { doc.setFontSize(5); doc.setTextColor(150); doc.text(pc.code, x + g.d / 2, y + g.d + 2.3, { align: 'center' }); }
+        if (printLabels()) { doc.setFontSize(5); doc.setTextColor(150); doc.text(pc.code, x + g.d / 2, y + g.d + (pc.fr.bleed || 0) + 2.3, { align: 'center' }); }
       });
       if (printLabels()) { doc.setFontSize(6); doc.setTextColor(150); doc.text(`Pin sheet ${pageNo} of ${totalPages}`, 205, 3.2, { align: 'right' }); }
     }
@@ -8387,7 +8443,7 @@ async function makePdf(o, batch, asPng){
     // pins and keychains: fill A4 pages with copies
     const pieces = [];
     const front = await getImg(it.front.path).catch(() => null);
-    const fr = front ? renderFramed(front, it.front, mm, mm.round ? 600 : 300, !!mm.round) : null;   // pins at 600 dpi: crisp even when cut small
+    const fr = front ? renderFramed(front, it.front, mm, mm.round ? 600 : 300, !!mm.round, mm.round ? PIN_BLEED : 0) : null;   // pins at 600 dpi: crisp even when cut small
     let bk = null;
     if (it.type === 'keychains' && it.back_mode !== 'blank') {
       if (it.back_mode === 'different' && it.back) { const b2 = await getImg(it.back.path).catch(() => null); bk = b2 ? renderFramed(b2, it.back, mm, 300, false) : null; }
@@ -8408,12 +8464,12 @@ async function makePdf(o, batch, asPng){
     for (let q = 0; q < it.qty; q++) { pieces.push(fr); if (bk) pieces.push(bk); }
     const grid = mm.round ? pinGrid(mm.w) : kcGrid(mm.w, mm.h, !!bk);   // the same grids as the shared pin and keychain sheets
     const cols = grid.cols, rows = grid.rows;
-    const per = cols * rows, pages = Math.ceil(pieces.length / per);
+    const per = grid.per || cols * rows, pages = Math.ceil(pieces.length / per);
     for (let pg = 0; pg < pages; pg++) {
       page(A4W, A4H); cutGuide(doc);
       pieces.slice(pg * per, (pg + 1) * per).forEach((pc, i) => {
-        const x = grid.x0 + (i % cols) * (mm.w + grid.gap), y = grid.y0 + Math.floor(i / cols) * (mm.h + grid.gap);
-        if (pc) doc.addImage(pc.data, pc.fmt, x, y, mm.w, mm.h, `p${ii}_${pieces.indexOf(pc)}`, 'FAST');
+        const { x, y } = grid.pos ? grid.pos[i] : { x: grid.x0 + (i % cols) * (mm.w + (grid.gx ?? grid.gap)), y: grid.y0 + Math.floor(i / cols) * (mm.h + (grid.gy ?? grid.gap)) };
+        if (pc) { const bl = pc.bleed || 0; doc.addImage(pc.data, pc.fmt, x - bl, y - bl, mm.w + 2 * bl, mm.h + 2 * bl, `p${ii}_${pieces.indexOf(pc)}`, 'FAST'); }
         if (printLabels()) { if (mm.round) doc.circle(x + mm.w / 2, y + mm.h / 2, mm.w / 2, 'S'); else cutRect(doc, x, y, mm.w, mm.h); }
       });
       doc.setLineDashPattern([], 0); doc.setLineCap('butt');
@@ -8598,7 +8654,7 @@ function drawShopForm(){
       <p class="help" style="margin-top:6px">Per-page prices and paper sizes are under Products → Prints. Color is the "Color" extra there.</p></div>
 
     <div class="cfgsec"><div class="sub">Pin and keychain sheets</div>
-      <div class="pgrid2"><label class="dnum"><span>Space between pins (mm)</span>${n('pin_gap_mm', c.pin_gap_mm, 2, 20)}</label>
+      <div class="pgrid2"><label class="dnum"><span>Space between pins (mm), for pins too big for 10 a sheet</span>${n('pin_gap_mm', c.pin_gap_mm, 2, 20)}</label>
         <label class="dnum"><span>Space between keychains (mm)</span>${n('kc_gap_mm', c.kc_gap_mm, 1, 20)}</label></div>
       <p class="help" style="margin-top:6px">More space is easier to cut but fits fewer on a page. At 7 mm, 20 pins fit on one A4 sheet; at 3.5 mm, 24.</p></div>
 
@@ -8721,7 +8777,7 @@ function drawShopForm(){
 
     <div class="cfgsec"><div class="sub">Sizes (mm)</div>
       <div class="pgrid2">
-        ${CONFIG.products.pins.sizes.map(z => `<label class="dnum"><span>${esc(z.label)} pin: paper circle</span>${n('sizes.pins.' + z.id + '.cutMm', c.sizes.pins[z.id].cutMm, 10, 150)}</label>`).join('')}
+        ${CONFIG.products.pins.sizes.map(z => `<label class="dnum"><span>${esc(z.label)} pin: paper circle (bigger than the pin, so it wraps the edge)</span>${n('sizes.pins.' + z.id + '.cutMm', c.sizes.pins[z.id].cutMm, 10, 150)}</label>`).join('')}
         ${CONFIG.products.keychains.sizes.map(z => `<label class="dnum"><span>Keychain insert width</span>${n('sizes.keychains.' + z.id + '.wMm', c.sizes.keychains[z.id].wMm, 10, 150)}</label>
           <label class="dnum"><span>Keychain insert height</span>${n('sizes.keychains.' + z.id + '.hMm', c.sizes.keychains[z.id].hMm, 10, 150)}</label>`).join('')}</div>
       <p class="help" style="margin-top:6px">Paper circle is the printed circle you cut out (44 mm prints right). Keychain insert = the picture slot inside the keychain, the supplier's "template size": 25 × 42 mm for the 3.2 × 5 cm keychains. These numbers win over everything else, so keep them right.</p></div>
@@ -9782,12 +9838,27 @@ const ACTIONS = {
   pgFit: t => { const f = S.pr.files.find(x => x.id === S.prSel); if (!f) return; f.ox = f.oy = 0; f.zoom = t.dataset.v === 'fit' ? fitZoom(prsDoc(f.id), pageMm(f)) : 1; placePageImg(f); },
   prDel: t => { S.pr.files.splice(+t.dataset.i, 1); drawPrints(); },
   prSize: t => { S.pr.size = t.dataset.size; drawPrints(); },
-  prColor: t => { S.pr.addons = t.dataset.v === 'color' ? ['color'] : []; drawPrints(); },
+  prColor: t => { const v = t.dataset.v; S.pr.addons = v === 'color' ? ['color'] : []; S.pr.mixed = v === 'mixed'; drawPrints(); },
+  pvColor: t => {   // "Some in color": tap a page to switch it
+    const p = (S.pvList || [])[+t.dataset.i]; if (!p) return; const f = p.f, total = f.kind === 'pdf' ? (f.total || f.pages || 1) : 1;
+    const set = new Set(parseRange(f.color || '', total) || []); set.has(p.n) ? set.delete(p.n) : set.add(p.n);
+    f.color = set.size ? rangeText([...set].sort((a, b) => a - b)) : null; buzz(6); drawPrints();
+  },
+  prFileColor: t => { const f = S.pr.files[+t.dataset.i]; f.color = f.color ? null : rangeText(Array.from({ length: f.kind === 'pdf' ? (f.total || f.pages || 1) : 1 }, (_, k) => k + 1)); drawPrints(); },
+  prDup: t => {   // another copy of a file, right below it, with its own pages and color (a PDF still uploads once)
+    if (S.pr.files.length >= 20) return toast('You can add up to 20 files.');
+    const i = +t.dataset.i, f = S.pr.files[i], d = prsDoc(f.id), id = uid(), src = f.src || f.id;
+    if (d) { d.pv = d.pv || {}; S.docs.push({ ...d, id, src: d.src || d.id }); }
+    const sameSrc = S.pr.files.filter(x => (x.src || x.id) === src);
+    if (!f.copyNo) f.copyNo = 1;
+    S.pr.files.splice(i + 1, 0, { ...clone(f), id, src, copyNo: Math.max(...sameSrc.map(x => x.copyNo || 1)) + 1 });
+    buzz(6); toast('Added another copy. Change its pages or color if you like.'); drawPrints();
+  },
   prDuplex: t => { S.pr.duplex = t.dataset.v === 'true'; drawPrints(); },
   prQty: t => { buzz(5); S.pr.qty = Math.max(1, Math.min(maxQtyFor('prints'), S.pr.qty + +t.dataset.d)); drawPrints(); },
   addPrints: () => {
     const pr = S.pr; if (!pr.files.length || !pr.files.every(f => f.pages > 0)) return;
-    const item = { type: 'prints', size: pr.size, addons: pr.addons.slice(), qty: pr.qty, duplex: pr.duplex, pages: prPages(pr), files: pr.files.map(f => ({ ...f })) };
+    const item = { type: 'prints', size: pr.size, addons: pr.addons.slice(), qty: pr.qty, duplex: pr.duplex, pages: prPages(pr), ...(pr.mixed ? { mixed: true } : {}), files: pr.files.map(f => ({ ...f })) };
     S.prSel = null;
     S.pr = null; saveToCart(item);
   },
