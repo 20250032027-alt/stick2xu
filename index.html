@@ -1474,6 +1474,32 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .bmine{display:flex;align-items:center;gap:14px;margin:18px 0 0;padding:12px 16px;border-radius:var(--r-md);background:var(--gold-soft);border:2px solid var(--ink);box-shadow:3px 4px 0 var(--ink);color:var(--ink);text-decoration:none}
 .bmine b{display:block}.bmine small{color:var(--muted)}.bmine > svg{margin-left:auto}
 .bmenu{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin:26px 0 18px}
+/* booth announcement: the shop's notice look, set into the booth page's width */
+.bnote .in{max-width:760px}
+/* in the shop: the line back to a booth order that's still being made */
+.bstrip{display:flex;align-items:center;gap:10px;max-width:1120px;margin:0 auto;padding:8px 20px;color:var(--ink);text-decoration:none;font-size:15px;background:var(--gold-soft);border-bottom:1px solid #EED9A2}
+.bstrip > span:nth-child(2){flex:1;min-width:0}.bstrip .bnum.sm{font-size:16px}
+.bstrip.go{background:var(--xu-gold);font-weight:700}
+#bStrip:has(.bstrip){background:var(--gold-soft)}#bStrip:has(.go){background:var(--xu-gold)}
+/* the booth's way to the online shop */
+.bshop{display:grid;gap:4px;margin:28px 0 8px;padding:18px 18px 16px;border-radius:var(--r-md);background:var(--ink);color:#fff;text-decoration:none;box-shadow:4px 5px 0 var(--xu-gold);transition:transform .2s var(--ease)}
+.bshop:active{transform:translate(2px,2px)}
+.bshop-k{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--xu-gold)}
+.bshop b{font-family:var(--display);font-size:21px;line-height:1.2}
+.bshop-p{color:rgba(255,255,255,.82);font-size:15px;line-height:1.45}
+.bshop-go{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-weight:800;color:var(--xu-gold)}
+.bshop.after{margin-top:20px}
+.bwait:is([data-status="done"],[data-status="cancelled"],[data-status="rejected"]) :is(.bsound,.bpay){display:none}
+/* admin: the announcement box */
+.bn-adm{margin:0 0 16px;padding:14px 16px;border-radius:var(--r-md);background:#fff;border:1.5px solid var(--line)}
+.bn-adm.live{border-color:#9FD7B5;background:#F6FBF8}
+.bn-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:10px}.bn-head > b{display:inline-flex;align-items:center;gap:7px}
+.bn-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.bn-row #bnText{flex:1 1 240px;min-width:0}.bn-row select{flex:0 0 auto;width:auto}
+.bn-quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.bn-quick .chip{min-height:34px;font-size:13.5px;padding:4px 12px}
+/* menu: an odd last tile takes the full row, laid out sideways, so there's no hole */
+@media (max-width:900px){
+  .bmenu .btile:last-child:nth-child(odd){grid-column:1/-1;grid-template-columns:minmax(0,46%) 1fr;align-items:center;gap:14px}
+}
 .btile{display:grid;gap:8px;padding:12px 12px 14px;border-radius:22px;background:#fff;border:2px solid var(--ink);box-shadow:4px 5px 0 var(--ink);color:var(--ink);text-decoration:none;transform:rotate(var(--r));transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
 .btile:hover{transform:rotate(0) translateY(-3px);box-shadow:5px 8px 0 var(--ink)}
 .btile:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
@@ -1501,13 +1527,20 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .bsound.on{border-style:solid;background:#E8F5EC;border-color:#2E8B57;color:#1F6B3E}
 .bwait[data-status="ready"] .bnumwrap .bnum{animation:bReady .6s var(--ease) 2}
 @keyframes bReady{50%{transform:rotate(4deg) scale(1.08)}}
-.bready{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 50% 40%,#FFE27A 0,#F2BC2E 55%,#E3A615 100%);animation:bIn .35s var(--ease)}
-.bready::before{content:"";position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 50% 40%,rgba(255,255,255,.18) 0 10deg,transparent 10deg 20deg);animation:bSpin 30s linear infinite}
-.bready-in{position:relative;text-align:center;color:var(--ink);width:100%;max-width:420px}
-.bready p{font-size:clamp(20px,5.6vw,26px);font-weight:800;line-height:1.3;margin:0 auto 28px;max-width:16ch}
-.bready .bready-k{font-family:var(--display);font-weight:800;font-size:clamp(34px,10vw,52px);line-height:1.05;margin:0 0 30px;max-width:none}
-.bready .bnum.big{font-size:clamp(80px,25vw,170px);background:#fff;margin-bottom:34px}
-.bready .btn.wide{min-height:62px;font-size:19px}
+.bready{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:24px 20px;overflow:hidden;background:radial-gradient(circle at 50% 42%,#FFE27A 0,#F2BC2E 55%,#E3A615 100%);animation:bIn .35s var(--ease)}
+.bready-in{position:relative;text-align:center;color:var(--ink);width:100%;max-width:420px;display:grid;justify-items:center}
+/* the rays turn around the number itself, so everything lines up on one centre */
+.rd-burst{position:relative;margin:22px 0 30px}
+.rd-burst::before{content:"";position:absolute;left:50%;top:50%;width:260vmax;height:260vmax;margin:-130vmax 0 0 -130vmax;z-index:-1;pointer-events:none;background:repeating-conic-gradient(rgba(255,255,255,.2) 0 10deg,transparent 10deg 20deg);animation:bSpin 40s linear infinite}
+.rd-k{display:inline-flex;align-items:center;gap:7px;padding:7px 16px 8px;border-radius:999px;background:var(--ink);color:#fff;font-weight:800;font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.rd-k svg{color:var(--xu-gold)}
+.bready .bnum.big{font-size:clamp(84px,26vw,170px);background:#fff;margin:0}
+.bready .bnum.big.code{font-size:clamp(34px,11vw,64px)}
+.rd-h{font-family:var(--display);font-weight:800;font-size:clamp(30px,8.6vw,46px);line-height:1.08;margin:0 0 10px;text-wrap:balance;overflow-wrap:anywhere}
+.rd-s{font-size:clamp(17px,4.8vw,21px);font-weight:600;line-height:1.35;margin:0 0 18px;max-width:24ch;text-wrap:balance}
+.rd-pay{display:inline-flex;align-items:center;gap:8px;margin:0 0 26px;padding:8px 14px;border-radius:12px;background:rgba(255,255,255,.55);font-weight:700;font-size:16px}
+.rd-pay b{font-size:18px}
+.bready .btn.wide{min-height:62px;font-size:19px;width:100%}
 @keyframes bIn{from{opacity:0;transform:scale(1.04)}}@keyframes bSpin{to{transform:rotate(360deg)}}
 /* the booth buddy: a sticker that came alive. Moods: idle, work (tongue out), cheer (open smile, sparkles).
    Faces: e-happy (eyes closed), e-oh (surprised, while held). Reactions: r-tap (corner flutters), r-slap (sticks back down). */
@@ -1590,8 +1623,10 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .bb2-qr{grid-area:qr;display:flex;align-items:center;gap:16px;padding:14px 16px;border-radius:22px;background:#fff;color:var(--ink);box-shadow:4px 5px 0 rgba(10,16,40,.45)}
 .bb2-qrbox{flex:none;width:clamp(96px,13vh,150px);height:clamp(96px,13vh,150px)}.bb2-qrbox canvas,.bb2-qrbox img{width:100%!important;height:100%!important;display:block}
 .bb2-qr b{display:block;font-family:var(--display);font-size:clamp(22px,2.8vh,30px)}.bb2-qr span{font-size:clamp(14px,1.7vh,18px);color:var(--muted)}
-.bb2-tip{grid-area:tip;text-align:center;font-weight:700;font-size:clamp(16px,min(1.6vw,2.4vh),24px);min-height:30px}
+.bb2-tip{grid-area:tip;text-align:center;justify-content:center;align-items:center;font-weight:700;font-size:clamp(16px,min(1.6vw,2.4vh),24px);min-height:30px}
 .bb2-tip span{display:inline-block;opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s}.bb2-tip span.in{opacity:.95;transform:none}
+.bb2-tip span.note{display:inline-flex;align-items:center;gap:12px;padding:10px 26px;border-radius:999px;background:rgba(255,255,255,.12);color:#fff;font-size:1.2em}
+.bb2-tip span.note svg{flex:none;color:var(--xu-gold)}.bb2-tip span.note.alert{background:var(--xu-gold);color:var(--ink)}.bb2-tip span.note.alert svg{color:var(--ink)}
 .bb2-banner{position:absolute;left:50%;top:50%;z-index:5;display:flex;align-items:center;gap:18px;padding:20px 34px 20px 22px;border-radius:30px;background:var(--xu-gold);color:var(--ink);
   border:4px solid #fff;box-shadow:0 0 0 3px var(--ink),8px 10px 0 3px var(--ink);transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;transition:transform .45s var(--ease),opacity .3s}
 .bb2-banner.on{transform:translate(-50%,-50%) scale(1);opacity:1}
@@ -1630,10 +1665,9 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .bset-menu{display:flex;flex-wrap:wrap;gap:4px 18px}.bset-n{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
 .bqr{display:flex;gap:16px;align-items:center;margin-top:18px;padding-top:16px;border-top:1.5px dashed var(--line)}.bqr p{margin:4px 0 8px}
 @media(max-width:900px){.bcols{grid-template-columns:1fr}.bset-n{grid-template-columns:1fr}}
-@media (prefers-reduced-motion:reduce){.bline i,.bwait .bnumwrap .bnum,.bready,.bready::before,.bc-state.open i{animation:none}}
+@media (prefers-reduced-motion:reduce){.bline i,.bwait .bnumwrap .bnum,.bready,.rd-burst::before,.bc-state.open i{animation:none}}
 .liveline{display:flex;align-items:center;gap:8px;margin:0 0 12px;font-size:14px;color:var(--muted)}
 .liveline i{width:8px;height:8px;border-radius:50%;background:#2E8B57;animation:bPulse 1.8s infinite}.liveline span{flex:1}
-.bready .bnum.code{font-size:clamp(34px,11vw,64px);background:#fff;margin-bottom:24px}
 @media (prefers-reduced-motion:reduce){.liveline i{animation:none}}
 /* the booth intro */
 .noscroll{overflow:hidden}
@@ -3298,6 +3332,7 @@ function applyShopConfig(c){
   CONFIG.boothMenu = Array.isArray(c.booth_menu) ? c.booth_menu : D.boothMenu;
   CONFIG.boothCandy = c.booth_candy !== false;   // free candy for watching the intro (on unless switched off)
   CONFIG.boothPrices = c.booth_prices && typeof c.booth_prices === 'object' ? c.booth_prices : {};
+  CONFIG.boothNotice = c.booth_notice && typeof c.booth_notice === 'object' ? c.booth_notice : { on: false, kind: 'info', text: '' };   // the booth's own announcement
   CONFIG.boothMax = +c.booth_max > 0 ? +c.booth_max : D.boothMax; CONFIG.boothMinutes = +c.booth_minutes > 0 ? +c.booth_minutes : D.boothMinutes;
   CONFIG.confirmDaysBefore = Number.isFinite(+c.confirm_days_before) && c.confirm_days_before !== null && c.confirm_days_before !== '' ? +c.confirm_days_before : D.confirmDaysBefore;
   CONFIG.maxReschedules = Number.isFinite(+c.max_reschedules) && c.max_reschedules !== null && c.max_reschedules !== '' ? +c.max_reschedules : D.maxReschedules;
@@ -4128,18 +4163,32 @@ function noticeHTML(){
   return `<div class="notice ${nt.kind === 'alert' ? 'alert' : ''}" role="status"><div class="in">${ic(nt.kind === 'alert' ? 'warn' : 'sparkle', 18)}<span>${esc(nt.text)}</span>
     <button type="button" class="nx" data-act="noticeClose" data-k="${esc(key)}" aria-label="Hide this message">${ic('x', 16)}</button></div></div>`;
 }
+/* The booth's announcement: its own message, separate from the shop's. The live copy comes with the booth board
+   (checked every few seconds), so a change at the table reaches phones that are already open. */
+function boothNote(){ const b = S.boothBoard; return b && 'notice' in b ? (b.notice || {}) : (CONFIG.boothNotice || {}); }
+function boothNoticeHTML(){
+  const nt = boothNote(); if (!nt.on || !String(nt.text || '').trim()) return '<div id="bNote"></div>';
+  return `<div id="bNote"><div class="notice bnote ${nt.kind === 'alert' ? 'alert' : ''}" role="status"><div class="in">${ic(nt.kind === 'alert' ? 'warn' : 'sparkle', 18)}<span>${esc(nt.text)}</span></div></div></div>`;
+}
+function refreshBoothNote(){ const n = $('#bNote'); if (n && S.booth) n.outerHTML = boothNoticeHTML(); }
+// In the shop, while a booth order is still being made: one line back to it (it also alerts here when ready)
+const BSTRIP = { pending: 'Waiting its turn', approved: 'Waiting its turn', printing: 'Being made now', ready: 'Ready! Come to the booth' };
+function boothStripHTML(){
+  const b = boothActive(); if (!b) return '<div id="bStrip"></div>';
+  return `<div id="bStrip"><a class="bstrip ${b.status === 'ready' ? 'go' : ''}" href="#/booth/wait"><span class="bnum sm num">#${b.q}</span><span><b>Your booth order</b> · ${BSTRIP[b.status] || 'In line'}</span>${ic('arrow', 16)}</a></div>`;
+}
 function topbar(){
   const n = S.cart.length, onCart = location.hash.startsWith('#/cart');
   if (S.booth) { const h = location.hash, onMenu = h === '#/booth' || h === '#/booth/';   // booth mode: logo, a "Booth" tag, and the way back to the menu. Nothing else.
     return `<div class="topwrap bhd"><header class="top"><a class="mark" href="#/booth" aria-label="Booth menu">${logoSVG(CONFIG.shopName)}</a><span class="bhd-tag">Booth</span>
       <div class="topacts">${n && !h.startsWith('#/booth/checkout') && !h.startsWith('#/booth/wait') ? `<a class="pilllink cartpill" href="#/booth/checkout" aria-label="Your order, ${n} item${n > 1 ? 's' : ''}">${ic('sticker', 18)}<span class="lbl">Order</span><b class="badge-n num">${n}</b></a>` : ''}
-        ${onMenu ? '' : `<a class="pilllink" href="#/booth">${ic('back', 18)}<span class="lbl">Menu</span></a>`}</div></header></div>`; }
+        ${onMenu ? '' : `<a class="pilllink" href="#/booth">${ic('back', 18)}<span class="lbl">Menu</span></a>`}</div></header></div>${boothNoticeHTML()}`; }
   return `<div class="topwrap"><header class="top"><a class="mark" href="#/" data-act="logoTap" aria-label="${esc(CONFIG.shopName)} home">${logoSVG(CONFIG.shopName)}</a>
     <div class="topacts ${n && !onCart ? 'has-cart' : ''}">
       ${n && !onCart ? `<a class="pilllink cartpill" href="#/cart" aria-label="Your order, ${n} item${n > 1 ? 's' : ''}">${ic('sticker', 18)}<span class="lbl">Cart</span><b class="badge-n num">${n}</b></a>` : ''}
       <button type="button" class="acctbtn ${S.me ? 'in' : ''}" data-act="acct" aria-label="${S.me ? `Signed in as ${esc(S.me.email)}. Your orders` : 'Sign in with your XU account'}" title="${S.me ? esc(S.me.email) : 'Sign in with your XU account'}">${acctInner()}</button>
       <a class="pilllink ${['confirm', 'here'].includes(myAction(S.myOrder)) ? 'needs' : ''}" href="#/status" aria-label="Check my order${['confirm', 'here'].includes(myAction(S.myOrder)) ? ' (something to do)' : ''}">${ic('box', 18)}<span class="lbl">My order</span></a>
-    </div></header></div>${noticeHTML()}${actionStripHTML()}${S.addTo && !location.hash.startsWith('#/checkout') ? `<div class="addtowrap"><p class="hint addto">${ic('plus', 18)}<span><b>Adding to ${esc(S.addTo.code)}.</b> Same pickup: ${esc(S.addTo.pickup_date ? fmtDate(S.addTo.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' }) : '')}${S.addTo.pickup_time ? ', ' + esc(S.addTo.pickup_time) : ''}, ${esc(S.addTo.pickup || '')}. Design what you want to add, then check out.</span><button type="button" class="linkbtn" data-act="addToCancel">Stop adding</button></p></div>` : ''}`;
+    </div></header></div>${noticeHTML()}${boothStripHTML()}${actionStripHTML()}${S.addTo && !location.hash.startsWith('#/checkout') ? `<div class="addtowrap"><p class="hint addto">${ic('plus', 18)}<span><b>Adding to ${esc(S.addTo.code)}.</b> Same pickup: ${esc(S.addTo.pickup_date ? fmtDate(S.addTo.pickup_date, { weekday: 'short', month: 'short', day: 'numeric' }) : '')}${S.addTo.pickup_time ? ', ' + esc(S.addTo.pickup_time) : ''}, ${esc(S.addTo.pickup || '')}. Design what you want to add, then check out.</span><button type="button" class="linkbtn" data-act="addToCancel">Stop adding</button></p></div>` : ''}`;
 }
 function progress(step){
   if (S.booth) return '';   // the booth has its own short path
@@ -5902,7 +5951,7 @@ async function viewBooth(sub){
   if (!location.hash.startsWith('#/booth') || (location.hash.startsWith('#/booth/') && !location.hash.startsWith('#/booth/demo'))) return;
   const b = S.boothBoard;
   if (b && !b.open) { $('#main').innerHTML = `<section class="panel bclosed"><h2>The booth is closed right now.</h2><p>You can still order online and get it at school.</p>${btn('Go to the shop', { href: '#/shop' })}</section>`; S.booth = false; return; }
-  $('#bLine').innerHTML = boothLineHTML(b); drawBoothMenu();
+  $('#bLine').innerHTML = boothLineHTML(b); drawBoothMenu(); refreshBoothNote();
 }
 function drawBoothMenu(){
   const box = $('#bMenu'); if (!box) return; const b = S.boothBoard, menu = (b && b.menu) || CONFIG.boothMenu, stop = b && b.paused;
@@ -6061,18 +6110,30 @@ function viewBoothWait(demo){
     <button type="button" class="bsound ${S.boothSound ? 'on' : ''}" data-act="boothSound">${ic(S.boothSound ? 'check' : 'bell', 18)}<span>${S.boothSound ? 'Sound on. We’ll chime when it’s ready.' : 'Turn on sound and keep my screen on'}</span></button>
     <p class="bpay">${ic('cash', 18)}<span>Bring ${money(b.total)}. Pay at the booth: cash${CONFIG.gcash.enabled ? ' or GCash' : ''}.</span></p>
     <p style="text-align:center;margin:6px 0 0"><a class="linkbtn" href="#/booth">Order something else</a></p>
+    <div id="bShop"></div>
   </main>`;
   drawBoothSteps(b);
-  if (b.status === 'ready') boothReady(b, true);   // came back (or refreshed) after it was ready: show it again, quietly
+  if (b.status === 'ready' && !b.seenReady) boothReady(b, true);   // came back (or refreshed) after it was ready: show it again, quietly
   if (demo) return;   // the admin preview: sample data, nothing to check
   boothPoll();
   boothTimer = setInterval(() => { if (!location.hash.startsWith('#/booth/wait')) { clearInterval(boothTimer); return; } if (!document.hidden) boothPoll(); }, 5000);
 }
+/* The way from the booth to the online shop. While they wait: something to look at, and the alert still finds them.
+   After pickup: the reason to come back. */
+function boothShopHTML(b){
+  const after = ['done', 'cancelled', 'rejected'].includes(b.status);
+  return `<a class="bshop ${after ? 'after' : ''}" href="#/">
+    <span class="bshop-k">${after ? 'Next time' : 'While you wait'}</span>
+    <b>${after ? 'Skip the line. Order from your phone.' : 'There’s more in our online shop'}</b>
+    <span class="bshop-p">${after ? 'Prints, stickers and pins, ready for pickup at school or brought to your classroom.' : `Prints, stickers and pins for pickup at school. We’ll still alert you when #${b.q} is ready.`}</span>
+    <span class="bshop-go">Visit stick2it.me ${ic('arrow', 16)}</span></a>`;
+}
 const BSTEPS = [['pending', 'Got it'], ['printing', 'Making it'], ['ready', 'Ready!']];
 function drawBoothSteps(b){
-  const at = b.status === 'ready' || b.status === 'done' ? 2 : b.status === 'printing' ? 1 : 0;
+  const at = b.status === 'done' ? 3 : b.status === 'ready' ? 2 : b.status === 'printing' ? 1 : 0;
   const bud = document.querySelector('.wt-tw'); if (bud) { bud.classList.remove('m-idle', 'm-work', 'm-cheer'); bud.classList.add(['ready', 'done'].includes(b.status) ? 'm-cheer' : b.status === 'printing' ? 'm-work' : 'm-idle'); }
   $('#bSteps').innerHTML = BSTEPS.map(([k, l], i) => `<li class="${i < at ? 'did' : i === at ? 'now' : ''}"><i aria-hidden="true">${i < at ? ic('check', 12) : ''}</i><span>${l}</span></li>`).join('');
+  const sh = $('#bShop'); if (sh) sh.innerHTML = boothShopHTML(b);
   const a = $('#bAhead');
   if (b.status === 'done') a.innerHTML = `<b>Enjoy it, ${esc(b.name)}!</b> Thanks for visiting the booth.`;
   else if (['cancelled', 'rejected'].includes(b.status)) a.innerHTML = `<b>This order was cancelled.</b> Ask us at the booth if that’s a surprise.`;
@@ -6084,8 +6145,21 @@ async function boothPoll(){
   const b = boothSaved(); if (!b) return;
   let r; try { r = await api.boothStatus(b.code); } catch { return; } if (!r) return;
   const was = b.status; Object.assign(b, { status: r.status, ahead: r.ahead, minutes: r.minutes, paid: r.paid }); localStorage.setItem('sk_booth', JSON.stringify(b));
-  const main = $('.bwait'); if (!main) return; main.dataset.status = r.status; drawBoothSteps(b);
+  const main = $('.bwait'); if (main) { main.dataset.status = r.status; drawBoothSteps(b); }
+  const st = $('#bStrip'); if (st) st.outerHTML = boothStripHTML();
   if (r.status === 'ready' && was !== 'ready') boothReady(b);
+  if (r.status !== 'ready' && was === 'ready') { document.querySelectorAll('.bready').forEach(o => o.remove()); clearInterval(S.readyNag); }   // picked up: the alert goes
+  if (main && (S.boothPolls = (S.boothPolls || 0) + 1) % 6 === 1) { try { S.boothBoard = await api.boothBoard(); refreshBoothNote(); } catch {} }
+}
+// Away from the waiting page (the menu, a design page, the shop): keep checking, so the ready alert still finds them
+setInterval(() => { const h = location.hash;
+  if (document.hidden || h.startsWith('#/booth/wait') || h.startsWith('#/booth/board') || h.startsWith('#/booth/demo') || h.startsWith('#/booth/poster') || h.startsWith('#/admin') || !boothActive()) return;
+  boothPoll(); }, 8000);
+function readyHTML({ kicker = 'Ready for pickup', num, code, head, sub, pay, btnLabel }){
+  return `<div class="bready-in"><span class="rd-k">${ic('check', 16)}${kicker}</span>
+    <div class="rd-burst"><div class="bnum big num ${code ? 'code' : ''}">${esc(num)}</div></div>
+    <h2 class="rd-h">${head}</h2><p class="rd-s">${sub}</p>${pay ? `<p class="rd-pay">${ic('cash', 18)}<span>${pay}</span></p>` : '<span style="height:8px"></span>'}
+    <button type="button" class="btn dark wide" data-act="boothOnWay">${ic('check', 18)}<span>${btnLabel}</span></button></div>`;
 }
 function boothReady(b, quiet){
   if (document.querySelector('.bready')) return;
@@ -6093,8 +6167,8 @@ function boothReady(b, quiet){
   const title = document.title; let n = 0; clearInterval(S.titleFlash);
   S.titleFlash = setInterval(() => { document.title = n++ % 2 ? title : `READY #${b.q}`; if (n > 40) { clearInterval(S.titleFlash); document.title = title; } }, 900);
   const o = document.createElement('div'); o.className = 'bready'; o.setAttribute('role', 'alertdialog'); o.setAttribute('aria-label', `Number ${b.q} is ready`);
-  o.innerHTML = `<div class="bready-in"><p class="bready-k">Your order is ready!</p><div class="bnum big num">#${b.q}</div><p>Come to the booth and show this screen.</p>
-    <button type="button" class="btn dark wide" data-act="boothOnWay">${ic('check', 18)}<span>I’m on my way</span></button></div>`;
+  o.innerHTML = readyHTML({ num: '#' + b.q, head: b.name ? `Come get it, ${esc(b.name)}!` : 'Come get it!', sub: 'Show this screen at the booth.',
+    pay: b.paid ? '' : `Bring <b class="num">${money(b.total)}</b>, cash${CONFIG.gcash.enabled ? ' or GCash' : ''}`, btnLabel: 'I’m on my way' });
   document.body.appendChild(o);
   let nudges = 0; clearInterval(S.readyNag);   // a gentle reminder, at most twice more
   S.readyNag = setInterval(() => { if (!document.body.contains(o) || ++nudges > 2) { clearInterval(S.readyNag); return; } chime(); try { navigator.vibrate && navigator.vibrate([200, 120, 200]); } catch {} }, 15000);
@@ -6251,11 +6325,16 @@ function viewBoothBoard(){
   </main>`;
   const clock = () => { const c = $('#bbClock'); if (c) c.textContent = new Date().toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit' }); };
   clock(); clockTimer = setInterval(clock, 15000);
-  let ti = 0; const tip = () => { const t = $('#bbTip'); if (!t) return; t.classList.remove('in'); setTimeout(() => { t.textContent = BB_TIPS()[ti++ % BB_TIPS().length]; t.classList.add('in'); }, 250); };
+  // the footer: the booth announcement when there is one (it stays put), otherwise the rotating tips
+  let ti = 0; const tip = () => { const t = $('#bbTip'); if (!t) return; const nt = boothNote(), on = nt.on && String(nt.text || '').trim();
+    if (on && t.dataset.note === nt.text) return;
+    t.classList.remove('in'); setTimeout(() => { t.classList.toggle('note', !!on); t.classList.toggle('alert', !!on && nt.kind === 'alert'); t.dataset.note = on ? nt.text : '';
+      t.innerHTML = on ? `${ic(nt.kind === 'alert' ? 'warn' : 'sparkle', 22)}${esc(nt.text)}` : esc(BB_TIPS()[ti++ % BB_TIPS().length]); t.classList.add('in'); }, 250); };
   tip(); tipTimer = setInterval(tip, 6000);
   needLib('qr').then(ok => { const q = $('#bbQr'); if (ok && q) new QRCode(q, { text: boothUrl(), width: 240, height: 240, colorDark: '#283971', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); });
   const tick = async () => { if (!location.hash.startsWith('#/booth/board')) { clearInterval(boardTimer); clearInterval(tipTimer); clearInterval(clockTimer); return; }
     let b; try { b = await api.boothBoard(); } catch { return; } if (!b) return;
+    const was = JSON.stringify(boothNote()); S.boothBoard = b; if (JSON.stringify(boothNote()) !== was) tip();
     const fresh = S.boardSeen ? b.ready.filter(n => !S.boardSeen.includes(n)) : [], list = b.ready.slice(-9).reverse();
     $('#bbReady').innerHTML = list.length ? list.map((n, i) => `<span class="bnum num ${i === 0 ? 'lead' : ''} ${fresh.includes(n) ? 'new' : ''}">#${n}</span>`).join('')
       : `<div class="bb2-none">${twoeySVG('sm')}<p>Nothing ready yet.<br><span>Hang tight, we’re on it!</span></p></div>`;
@@ -6311,6 +6390,7 @@ async function drawBoothAdmin(){
         <a class="btn sm noi plain" href="#/booth/poster" target="_blank" rel="noopener">${ic('printer', 18)}<span>Price poster</span></a></div>
       <p class="muted small bc-sum">${list.length} booth order${list.length === 1 ? '' : 's'} today, ${money(money0)} collected</p>
     </div>
+    ${boothNoteAdminHTML()}
     <div class="bcols">
       ${colHTML('New', 'c-new', news, o => `${smallBtn('Start making', 'printer', 'boothMove', 'dark', `data-id="${o.id}" data-v="printing"`)}<button type="button" class="linkbtn" data-act="boothMove" data-id="${o.id}" data-v="cancelled">Cancel</button>`, 'No new orders')}
       ${colHTML('Making', 'c-make', making, o => `${smallBtn('Ready! Alert them', 'bell', 'boothMove', 'dark', `data-id="${o.id}" data-v="ready"`)}<button type="button" class="linkbtn" data-act="boothPrint" data-id="${o.id}">Print</button>`, 'Nothing being made')}
@@ -6332,8 +6412,29 @@ async function drawBoothAdmin(){
       <div class="bqr"><div id="bQr" aria-label="QR code to the booth page"></div><div><b>The booth QR code</b><p class="muted small">Print it big and put it on the table. It opens the booth menu.</p>${smallBtn('Download it', 'download', 'boothQrSave', 'plain')}</div></div>
     </details></div>`;
   boothQr();
-  S.admin.poll = setInterval(() => { if (S.admin.tab === 'booth' && !document.hidden && !document.querySelector('.bset[open] input:focus')) drawBoothAdmin(); }, 5000);
+  S.admin.poll = setInterval(() => { if (S.admin.tab === 'booth' && !document.hidden && !document.querySelector('.bconsole input:focus, .bconsole select:focus')) drawBoothAdmin(); }, 5000);
 }
+// The booth announcement: typed at the table, on every booth phone and the Now ready screen within seconds
+const BN_QUICK = ['Pins are sold out for today', 'Back in 10 minutes', 'Last orders at 4:30 PM', 'Cash only for now'];
+function boothNoteAdminHTML(){
+  const nt = CONFIG.boothNotice || {}, live = nt.on && String(nt.text || '').trim(), d = S.admin.bnDraft;
+  const val = d !== undefined ? d.text : live ? nt.text : '', kind = d !== undefined ? d.kind : nt.kind;
+  return `<section class="bn-adm ${live ? 'live' : ''}"><div class="bn-head"><b>${ic('bell', 17)}Announcement</b>
+      ${live ? `<span class="tag ok">${ic('check', 13)}On customers’ phones now</span>` : '<span class="muted small">Shows on booth phones and the Now ready screen</span>'}</div>
+    <div class="bn-row"><input class="inp" id="bnText" maxlength="90" value="${esc(val)}" placeholder="Like: Pins are sold out for today" aria-label="Announcement">
+      <select class="inp" id="bnKind" aria-label="Style"><option value="info" ${kind !== 'alert' ? 'selected' : ''}>Info</option><option value="alert" ${kind === 'alert' ? 'selected' : ''}>Important</option></select>
+      ${smallBtn(live ? 'Update' : 'Show it', 'check', 'boothNoteSave', 'dark')}${live ? smallBtn('Hide', 'x', 'boothNoteHide', 'plain') : ''}</div>
+    <div class="bn-quick">${BN_QUICK.map(q => `<button type="button" class="chip" data-act="boothNoteQuick" data-v="${esc(q)}">${esc(q)}</button>`).join('')}</div></section>`;
+}
+async function boothNoteSet(on){
+  const text = ($('#bnText').value || '').trim(), kind = $('#bnKind').value;
+  if (on && !text) { toast('Type the announcement first.'); $('#bnText').focus(); return; }
+  try { await saveConfigPatch({ booth_notice: { on, kind, text: on ? text : (CONFIG.boothNotice.text || '') } }); S.admin.bnDraft = undefined;
+    toast(on ? 'Announcement is on.' : 'Announcement hidden.'); drawBoothAdmin();
+    const f = $('#bPrev'); try { f && f.contentWindow.location.reload(); } catch {} } catch (e) { toast(friendlyError(e)); }
+}
+document.addEventListener('input', e => { if (e.target && (e.target.id === 'bnText' || e.target.id === 'bnKind')) S.admin.bnDraft = { text: $('#bnText').value, kind: $('#bnKind').value }; });
+document.addEventListener('change', e => { if (e.target && e.target.id === 'bnKind') S.admin.bnDraft = { text: $('#bnText').value, kind: $('#bnKind').value }; });
 const boothUrl = () => (String(CONFIG.siteUrl || location.origin).replace(/\/$/, '')) + '/#/booth';
 async function boothQr(){ const box = $('#bQr'); if (!box || !(await needLib('qr'))) return; box.innerHTML = ''; new QRCode(box, { text: boothUrl(), width: 168, height: 168, colorDark: '#283971', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); }
 
@@ -7726,9 +7827,9 @@ async function refreshStatus(){
 function orderReadyAlert(o){
   confetti(); chime(); try { navigator.vibrate && navigator.vibrate([300, 120, 300, 120, 700]); } catch {}
   const d = document.createElement('div'); d.className = 'bready'; d.setAttribute('role', 'alertdialog'); d.setAttribute('aria-label', 'Your order is ready');
-  d.innerHTML = `<div class="bready-in"><p class="bready-k">Your order is ready!</p><div class="bnum big code num">${esc(o.code)}</div>
-    <p>${/^Classroom: /.test(o.pickup || '') ? 'We’re bringing it to your classroom.' : `Pick it up ${o.pickup ? `at ${esc(String(o.pickup).replace(/^Other: /, ''))}` : 'at school'}.`}</p>
-    <button type="button" class="btn dark wide" data-act="boothOnWay">${ic('check', 18)}<span>Got it</span></button></div>`;
+  const toClass = /^Classroom: /.test(o.pickup || '');
+  d.innerHTML = readyHTML({ kicker: toClass ? 'Order ready' : 'Ready for pickup', num: o.code, code: true, head: toClass ? 'It’s on its way to you!' : 'Your order is ready!',
+    sub: toClass ? 'We’re bringing it to your classroom.' : `Pick it up ${o.pickup ? `at ${esc(String(o.pickup).replace(/^Other: /, ''))}` : 'at school'}.`, btnLabel: 'Got it' });
   document.body.appendChild(d);
 }
 function drawStatusCore(){
@@ -8205,7 +8306,8 @@ function kcPlace(units, g, stack){
 }
 const kcStack = () => !!S.admin.kcStack;
 const kcLayoutSwitch = () => `<span class="kcseg" role="group" aria-label="Front and back">${[['', 'Side by side'], ['1', 'Stacked']].map(([v, l]) => `<button type="button" class="${(v === '1') === kcStack() ? 'on' : ''}" data-act="kcLayout" data-v="${v}">${l}</button>`).join('')}</span>`;
-const printLabels = () => S.admin.labels !== false;
+// remembered on this computer, so a refresh keeps the choice
+const printLabels = () => { if (S.admin.labels === undefined) { try { S.admin.labels = localStorage.getItem('sk_print_labels') !== 'off'; } catch { S.admin.labels = true; } } return S.admin.labels !== false; };
 try { if (S && S.admin && S.admin.kcStack === undefined) S.admin.kcStack = localStorage.getItem('sk_kc_stack') === '1'; } catch {}
 // confirmed orders whose pins haven't gone onto a shared pin sheet yet
 const pinsWaiting = o => o.status === 'approved' && o.confirmed && !o.images_deleted && !(o.layout && o.layout.pins_on_sheet) && orderItems(o).some(it => it.type === 'pins' && it.front);   // names and codes on printouts (admin switch)
@@ -10118,7 +10220,7 @@ const ACTIONS = {
   aKcAgainPng: () => kcSheets(true, true).catch(e => toast(friendlyError(e))),
   aPinAgain: () => pinSheets(false, true).catch(e => toast(friendlyError(e))),
   aPinAgainPng: () => pinSheets(true, true).catch(e => toast(friendlyError(e))),
-  aLabels: () => { S.admin.labels = !printLabels(); toast(printLabels() ? 'Codes, names and cut lines will be on printouts.' : 'Clean printouts: no codes, names or cut lines. Stickers keep their white border. Keep orders sorted yourself.'); drawAdminBody(); },
+  aLabels: () => { S.admin.labels = !printLabels(); try { localStorage.setItem('sk_print_labels', S.admin.labels ? 'on' : 'off'); } catch {} toast(printLabels() ? 'Codes, names and cut lines will be on printouts.' : 'Clean printouts: no codes, names or cut lines. Stickers keep their white border. Keep orders sorted yourself.'); drawAdminBody(); },
   aEdit: t => {
     const o = S.admin.orders.find(x => x.id === t.dataset.id); if (!o) return;
     const items = orderItems(o), unit = it => (P(it.type).sizes.find(z => z.id === it.size) || {}).price || 0;
@@ -10380,8 +10482,12 @@ const ACTIONS = {
     try { f.contentWindow.location.hash = '#/booth/demo/' + t.dataset.v; } catch { f.src = './#/booth/demo/' + t.dataset.v; } },
   boothRemove: t => { S.cart.splice(+t.dataset.i, 1); buzz(6); if (S.cart.length) viewBoothCheckout(); else location.hash = '#/booth'; },
   boothSound: () => { S.boothSound = true; unlockSound(true); keepAwake(true); const b = $('.bsound'); if (b) { b.classList.add('on'); b.innerHTML = `${ic('check', 18)}<span>Sound on. We’ll chime when it’s ready.</span>`; } },
-  boothOnWay: () => { const o = document.querySelector('.bready'); if (o) o.remove(); clearInterval(S.readyNag); },
+  boothOnWay: () => { const o = document.querySelector('.bready'); if (o) o.remove(); clearInterval(S.readyNag);
+    const bs = boothSaved(); if (bs && bs.status === 'ready') { bs.seenReady = true; localStorage.setItem('sk_booth', JSON.stringify(bs)); } if (boothActive() && !location.hash.startsWith('#/booth/wait') && !location.hash.startsWith('#/status')) location.hash = '#/booth/wait'; },
   boardStart: () => { unlockSound(true); keepAwake(true); S.boothSound = true; const s = $('#bbStart'); if (s) s.remove(); const b = $('#bBoard'); try { b.requestFullscreen && b.requestFullscreen().catch(() => {}); } catch {} },
+  boothNoteSave: () => boothNoteSet(true),
+  boothNoteHide: () => boothNoteSet(false),
+  boothNoteQuick: t => { $('#bnText').value = t.dataset.v; S.admin.bnDraft = { text: t.dataset.v, kind: $('#bnKind').value }; $('#bnText').focus(); },
   boothSet: async t => { const v = t.dataset.v, p = v === 'open' ? { booth_on: true, booth_paused: false } : v === 'pause' ? { booth_paused: true } : v === 'resume' ? { booth_paused: false } : { booth_on: false, booth_paused: false };
     try { await saveConfigPatch(p); toast(v === 'open' ? 'The booth is open.' : v === 'pause' ? 'Paused. New orders wait until you tap “Take orders again”.' : v === 'resume' ? 'Taking orders again.' : 'The booth is closed.'); drawBoothAdmin(); } catch (e) { toast(friendlyError(e)); } },
   boothMove: async t => { if (t.dataset.v === 'cancelled' && !armed(t, 'Tap again to cancel')) return;
