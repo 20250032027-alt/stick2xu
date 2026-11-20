@@ -325,7 +325,7 @@ declare
   v_friend public.friends; v_fcode text; v_credit int := 0; v_fon boolean; v_seller public.sellers; v_scode text; v_son boolean;
   v_person public.pickup_people; v_school_id uuid; v_link text;   -- v_school_id: the pickup person's id
   v_email text := lower(coalesce(auth.jwt()->>'email', '')); v_xu boolean;
-  v_tiles int; v_pages int; v_has_prints boolean := false; v_only_prints boolean := true;
+  v_tiles int; v_pages int; v_has_prints boolean := false; v_only_prints boolean := true; v_cp int; v_cprice int;
   v_today date := (now() at time zone 'Asia/Manila')::date; v_next date; v_rush int := 0; v_tm text[]; v_mins int;
   v_lines jsonb := '[]'::jsonb; v_subtotal int; v_discount int := 0; v_labels jsonb := '[]'::jsonb;
   v_p text; v_n int; v_k int; v_save int; v_best int; v_best_label text; v_deal jsonb;
@@ -355,7 +355,7 @@ begin
      or length(trim(coalesce(p_pickup,''))) < 3 or length(p_pickup) > 120
      or p_payment not in ('cash','gcash')
      or p_folder !~ '^[0-9]+-[a-z0-9]+$'
-     or length(p_layout::text) > 80000
+     or length(p_layout::text) > 200000   -- room for pins in a customer's own font (their letter outlines are saved with the order)
      or p_pickup_date is null or p_pickup_date < v_today or p_pickup_date > v_today + 45
      or length(trim(coalesce(p_pickup_time,''))) < 3 or length(p_pickup_time) > 40
      or jsonb_typeof(p_layout->'items') is distinct from 'array'
@@ -405,6 +405,9 @@ begin
       if v_item->>'type' = 'prints' then
         v_pages := coalesce((v_item->>'pages')::int, 0);
         if v_pages < 1 or v_pages > 500 or jsonb_array_length(coalesce(v_item->'files', '[]'::jsonb)) < 1 then raise exception 'BAD_INPUT'; end if;
+        -- "Some in color": how many of the pages (per copy) print in color; never more than the pages
+        v_cp := coalesce((v_item->>'color_pages')::int, 0);
+        if v_cp < 0 or v_cp > v_pages then raise exception 'BAD_INPUT'; end if;
         v_units := v_units * v_pages;      -- copies x pages
         v_has_prints := true;
       elsif v_item->>'type' = 'photos' then
@@ -420,6 +423,10 @@ begin
 
     if v_item->>'type' <> 'prints' then v_only_prints := false; end if;
     v_unit := coalesce((v_size->>'price')::int, 0);
+    -- at the booth, a booth price set in Settings (booth_prices: { product: { size: price } }) takes the place of the normal one
+    if v_booth and (s.config->'booth_prices'->(v_item->>'type')->>(v_size->>'id')) ~ '^\d+$' then
+      v_unit := (s.config->'booth_prices'->(v_item->>'type')->>(v_size->>'id'))::int;
+    end if;
     -- big posters: first sheet at the size price, each extra sheet costs extra
     if v_item->>'type' = 'posters' then
       -- sheets across x sheets down (each 1 to 6), or an older fixed sheet count
@@ -442,6 +449,14 @@ begin
     end loop;
 
     v_total := v_total + v_units * v_unit;
+    -- prints with some pages in color: the Color price on just those pages (per copy). Not a deal line, so deals count pages as before.
+    if v_item->>'type' = 'prints' and coalesce((v_item->>'color_pages')::int, 0) > 0 and not (coalesce(v_item->'addons', '[]'::jsonb) ? 'color') then
+      v_cprice := null;
+      select (e.value->>'price')::int into v_cprice from jsonb_array_elements(coalesce(v_prod->'addons', '[]'::jsonb)) e
+        where e.value->>'id' = 'color' and coalesce((e.value->>'enabled')::boolean, true) limit 1;
+      if v_cprice is null then raise exception 'NOT_AVAILABLE'; end if;
+      v_total := v_total + (v_item->>'qty')::int * (v_item->>'color_pages')::int * v_cprice;
+    end if;
     v_count := v_count + v_units;
     v_lines := v_lines || jsonb_build_object('type', v_item->>'type', 'price', v_unit, 'units', v_units);
   end loop;
@@ -1852,6 +1867,7 @@ language sql security definer set search_path = public stable as $$
     'open', coalesce((s.config->>'booth_on')::boolean, false), 'paused', coalesce((s.config->>'booth_paused')::boolean, false),
     'menu', coalesce(s.config->'booth_menu', '["pins","stickers","photos","prints"]'::jsonb),
     'minutes', coalesce((s.config->>'booth_minutes')::int, 4), 'max', coalesce((s.config->>'booth_max')::int, 15),
+    'notice', coalesce(s.config->'booth_notice', '{}'::jsonb),
     'waiting', (select count(*) from t where status in ('pending', 'approved', 'printing')),
     'making', coalesce((select json_agg(queue_no order by queue_no) from t where status in ('pending', 'approved', 'printing')), '[]'::json),
     'ready', coalesce((select json_agg(queue_no order by updated_at) from t where status = 'ready'), '[]'::json))

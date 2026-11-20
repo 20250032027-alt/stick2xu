@@ -1914,6 +1914,23 @@ footer .social > .muted{flex-basis:auto;text-align:left;margin-right:4px}
 .wd-stk{max-width:100%;height:auto;max-height:150px}
 /* Make it yours */
 .fxc{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.fx-body .seg.tight button{flex:1 1 auto;padding:8px 2px;font-size:14.5px}
+.fx-rng{display:flex;align-items:center;gap:8px;color:var(--muted);min-width:0}.fx-rng input[type=range]{flex:1 1 0;width:auto;min-width:0;accent-color:var(--accent);height:34px}.fx-rng svg{flex:none}
+.fx-body .fxg{min-width:0}
+.fx-a{font-family:'Cabinet Grotesk',system-ui,sans-serif;font-weight:800;color:var(--ink);line-height:1;flex:none;width:20px;text-align:center}.fx-a.s{font-size:13px}.fx-a.l{font-size:22px}
+.fx-pos{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.fx-pos .help{margin:0;flex:1 1 150px}
+.gdsvg{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;overflow:visible;filter:drop-shadow(0 0 1px rgba(20,30,70,.8))}
+.gdsvg path,.gdsvg circle,.gdsvg rect{fill:none;vector-effect:non-scaling-stroke;stroke:rgba(255,255,255,.95);stroke-width:1}
+.gdsvg .gd-th path{stroke-dasharray:3 4}.gdsvg .gd-ct path{stroke-width:1.4}
+.gdsvg .gd-safe{stroke:#F2BC2E;stroke-dasharray:5 4;stroke-width:1.5}
+.snp{position:absolute;z-index:5;pointer-events:none;background:#ec282a;box-shadow:0 0 0 1px rgba(255,255,255,.85)}.snp[hidden]{display:none}
+.snp.v{top:0;bottom:0;width:1.5px;margin-left:-.75px}.snp.h{left:0;right:0;height:1.5px;margin-top:-.75px}
+.txbox{position:absolute;z-index:4;pointer-events:none;border:1.5px dashed rgba(255,255,255,.95);box-shadow:0 0 0 1px rgba(40,57,113,.6);border-radius:6px}.txbox[hidden]{display:none}
+.adjtog{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tgl{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:6px 16px;border:2px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font:inherit;font-weight:700;font-size:15px;cursor:pointer}
+.tgl:hover{border-color:var(--ink)}.tgl.on{border-color:var(--ink);background:var(--gold-soft)}.tgl svg{flex:none}
+.adj-leg{margin:8px 0 0}.adj-leg[hidden]{display:none}
+.split .adjsec .adjtog{flex:1 0 100%;margin-top:0}.split .adjsec .adj-leg{flex:1 0 100%;margin:0}
 .fx-tabs{display:flex;width:100%}.fx-tabs button{flex:1;position:relative;min-height:44px}
 .fx-dot{position:absolute;top:6px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--xu-gold);box-shadow:0 0 0 1.5px var(--ink)}
 .fx-body{margin-top:16px}
@@ -2943,6 +2960,9 @@ const dayLabel = v => v === ymd(new Date()) ? 'Today' : fmtDate(v, { weekday: 'l
 /* Line icons, one stroke weight */
 const ICONS = {
   chevron:'<path d="M6 9l6 6 6-6"/>',
+  grid:'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>',
+  magnet:'<path d="M5 14V4h4v10a3 3 0 0 0 6 0V4h4v10a7 7 0 0 1-14 0z"/><path d="M5 8h4M15 8h4"/>',
+  curveU:'<path d="M4 7c2 10 14 10 16 0"/>', curveN:'<path d="M4 17c2-10 14-10 16 0"/>',
   share:'<path d="M12 3v12M7.5 7.5L12 3l4.5 4.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',
   plus:'<path d="M12 5v14M5 12h14"/>', keychain:'<circle cx="7.2" cy="5.6" r="3.6"/><path d="M9.8 8.2l2.3 2.1"/><g transform="rotate(-10 14.6 16)"><rect x="9" y="9.6" width="11.2" height="12.8" rx="2.4"/><path d="M11.4 19.6l2.3-2.7 1.9 1.9 1.2-1.1 1.8 1.9"/><circle cx="16.9" cy="13.3" r="1"/></g>', minus:'<path d="M5 12h14"/>', arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
   check:'<path d="M5 12.5l4.5 4.5L19 7"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>',
@@ -3679,7 +3699,21 @@ function serializeItems(items, pathFor){
     return out;
   });
 }
-const orderItems = o => (o.layout && o.layout.items) || [{ type: 'stickers', size: 'a4', size_label: 'A4 sheet', addons: [], addon_labels: [], sheets: (o.layout && o.layout.sheets) || [] }];
+/* Pins in a customer's own font carry that font's letter outlines. Many pins in one font would each repeat them, so an order keeps one copy (layout.fonts)
+   and each pin just names it. orderItems puts them back, so everything else (admin, printing) sees whole designs. */
+function packFonts(items){
+  const fonts = {};
+  items.forEach(it => [it.front, it.back].forEach(d => { const t = d && d.fx && d.fx.text, c = t && t.cf; if (!c || !c.g || !c.k) return;
+    const f = fonts[c.k] || (fonts[c.k] = { m: c.m, g: {} }); Object.assign(f.g, c.g); t.cf = { k: c.k }; }));
+  return Object.keys(fonts).length ? fonts : null;
+}
+function unpackFonts(items, fonts){
+  const fill = d => { const c = d && d.fx && d.fx.text && d.fx.text.cf; if (!c || c.g || !fonts[c.k]) return d;
+    return { ...d, fx: { ...d.fx, text: { ...d.fx.text, cf: { k: c.k, m: fonts[c.k].m, g: fonts[c.k].g } } } }; };
+  return items.map(it => it.front || it.back ? { ...it, ...(it.front ? { front: fill(it.front) } : {}), ...(it.back ? { back: fill(it.back) } : {}) } : it);
+}
+const orderItems = o => { const l = o.layout || {};
+  return l.items ? (l.fonts ? unpackFonts(l.items, l.fonts) : l.items) : [{ type: 'stickers', size: 'a4', size_label: 'A4 sheet', addons: [], addon_labels: [], sheets: l.sheets || [] }]; };
 const orderPaths = o => orderItems(o).flatMap(it => it.mode === 'pages' && it.pdf ? [it.pdf.path] : it.type === 'prints' ? (it.files || []).map(f => f.path) : it.type === 'photos' ? (it.frames || []).map(f => f.path) : it.type === 'stickers' ? (it.sheets || []).flatMap(sh => sh.items.map(x => x.path)) : [it.front && it.front.path, it.back && it.back.path]).filter(Boolean);
 
 /* =====================================================================
@@ -3722,14 +3756,15 @@ function SupaBackend(){
     async placeOrder(p){
       const folder = Date.now() + '-' + uid();
       const pathFor = await this.uploadAll(p.images, folder);
-      const layout = { items: serializeItems(p.items, pathFor), ...(p.okPost ? { ok_to_post: true } : {}) };
+      const items = serializeItems(p.items, pathFor), fonts = packFonts(items), layout = { items, ...(fonts ? { fonts } : {}), ...(p.okPost ? { ok_to_post: true } : {}) };
       const code = await rpc('place_order', { p_nickname: p.nickname, p_grade_section: p.section, p_pickup: p.pickup, p_payment: p.payment,
         p_gcash_ref: p.gcashRef || null, p_layout: layout, p_folder: folder, p_src: p.src || null, p_pickup_date: p.pickupDate, p_pickup_time: p.pickupTime, p_promo_code: p.promo || null, p_seller: p.seller || null, p_school: p.school || null, p_add_to: p.addTo || null, ...(p.person ? { p_person: p.person } : {}) });
       return { code };
     },
     async placeBoothOrder(p){
       const folder = Date.now() + '-' + uid(), pathFor = await this.uploadAll(p.images, folder);
-      return await rpc('place_booth_order', { p_name: p.name, p_layout: { items: serializeItems(p.items, pathFor) }, p_folder: folder, p_src: SRC || 'booth' });
+      const items = serializeItems(p.items, pathFor), fonts = packFonts(items);
+      return await rpc('place_booth_order', { p_name: p.name, p_layout: { items, ...(fonts ? { fonts } : {}) }, p_folder: folder, p_src: SRC || 'booth' });
     },
     async boothStatus(code){ return await rpc('booth_status', { p_code: code }); },
     async boothBoard(){ return await rpc('booth_board', {}); },
@@ -3907,7 +3942,7 @@ function drawThumbEd(){ const box = $('#sheet .sheetbox'); if (!box) return; con
     cv.addEventListener('pointermove', mv); cv.addEventListener('pointerup', up); });
 }
 async function tplModeImage(type){
-  await fxFontsReady();
+  await fxFontsReady(type !== 'stickers');
   if (type === 'stickers') {   // the whole sheet, drawn like the print (cut lines included)
     const sheet = S.sheets[S.cur]; if (!sheet || !sheet.items.length) return null;
     const g = geom(), dpi = 170, k = dpi / 25.4, c = document.createElement('canvas'); c.width = Math.round(g.widthMm * k); c.height = Math.round(g.heightMm * k);
@@ -4738,10 +4773,20 @@ const WORD_FONTS = { bold: ['800', "'Cabinet Grotesk', 'Arial Black', sans-serif
   marker: ['400', "'Permanent Marker', 'Comic Sans MS', cursive", 'Marker'], tall: ['400', "'Bebas Neue', 'Arial Narrow', sans-serif", 'Tall'],
   hand: ['700', "'Caveat', cursive", 'Casual'] };
 const WORD_FONTS_CSS = 'https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&family=Bebas+Neue&family=Caveat:wght@700&family=Pacifico&family=Permanent+Marker&display=swap';
-S.customFonts = S.customFonts || [];
+S.customFonts = S.customFonts || []; S.otFonts = S.otFonts || {};   // a font file the customer added (kept in memory only; pins save its letter shapes instead)
+S.guides = safeLS.get('sk_guides') === '1'; S.snap = safeLS.get('sk_snap') !== '0';   // pin editor: guide lines (off until asked) and snap to center (on)
 function wordFont(k){ if (WORD_FONTS[k]) return WORD_FONTS[k]; const c = S.customFonts.find(f => f.key === k); return c ? ['400', `'${c.family}', sans-serif`, c.label] : WORD_FONTS.bold; }
-function wordFontsLoad(){ if (document.getElementById('wdFontsCss')) return; const l = document.createElement('link'); l.id = 'wdFontsCss'; l.rel = 'stylesheet'; l.href = WORD_FONTS_CSS; document.head.appendChild(l); }
-async function wordFontReady(k){ const [w, fam] = wordFont(k); try { await document.fonts.load(`${w} 60px ${fam}`); } catch {} }
+let wdFontsP = null;
+// loads the extra fonts' stylesheet once; the promise settles when it is in (or failed), so callers can wait before asking for a font
+function wordFontsLoad(){
+  if (wdFontsP) return wdFontsP;
+  return wdFontsP = new Promise(res => {
+    let l = document.getElementById('wdFontsCss');
+    if (!l) { l = document.createElement('link'); l.id = 'wdFontsCss'; l.rel = 'stylesheet'; l.href = WORD_FONTS_CSS; document.head.appendChild(l); }
+    l.addEventListener('load', () => res(), { once: true }); l.addEventListener('error', () => { wdFontsP = null; res(); }, { once: true }); setTimeout(res, 6000);
+  });
+}
+async function wordFontReady(k){ const [w, fam] = wordFont(k); try { if (WORD_FONTS[k] && k !== 'bold' && k !== 'clean') await wordFontsLoad(); await document.fonts.load(`${w} 60px ${fam}`); } catch {} }
 function fontTilesHTML(act, cur, sample){
   const every = Object.keys(WORD_FONTS).map(k => [k, WORD_FONTS[k]]).concat(S.customFonts.map(f => [f.key, ['400', `'${f.family}', sans-serif`, f.label]]));
   const showAll = S.moreFonts || every.slice(4).some(([k]) => k === cur), all = showAll ? every : every.slice(0, 4);
@@ -4751,13 +4796,17 @@ function fontTilesHTML(act, cur, sample){
     ${showAll ? `<label class="wd-font up" title="Use a font file from your phone or computer"><span class="wd-sample">${ic('plus', 18)}</span><small>Your font</small><input type="file" accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2" hidden data-fontup="${act}"></label>`
       : `<button type="button" class="wd-font up" data-act="moreFonts"><span class="wd-sample">${ic('plus', 18)}</span><small>More fonts</small></button>`}</div>`;
 }
-async function fontUpload(input){
+async function fontUpload(input, outlines){
   const f = input.files && input.files[0]; input.value = ''; if (!f) return null;
   if (f.size > 6 * 1048576) { toast('That font file is too big (over 6 MB).'); return null; }
   try {
-    const family = 'UserFont' + (S.customFonts.length + 1), face = new FontFace(family, await f.arrayBuffer()); await face.load(); document.fonts.add(face);
-    const label = f.name.replace(/\.(ttf|otf|woff2?)$/i, '').replace(/[-_]+/g, ' ').slice(0, 16) || 'Your font', key = 'custom:' + family;
-    S.customFonts.push({ key, family, label }); toast(`${label} is ready. It works while this page is open.`); return key;
+    const buf = await f.arrayBuffer(), family = 'UserFont' + (S.customFonts.length + 1), label = f.name.replace(/\.(ttf|otf|woff2?)$/i, '').replace(/[-_]+/g, ' ').slice(0, 16) || 'Your font', key = 'custom:' + family;
+    if (outlines) {   // pins and keychains: read the letter shapes, so the printed one matches on any computer
+      if (!(await needLib('ot'))) { toast("The font tool didn't load. Check your internet and try again."); return null; }
+      try { S.otFonts[key] = window.opentype.parse(buf.slice(0)); } catch { toast("That font file didn't open. Try a .ttf or .otf file."); return null; }
+      try { const face = new FontFace(family, buf); await face.load(); document.fonts.add(face); } catch {}   // only for the little "Aa" sample on its tile
+    } else { const face = new FontFace(family, buf); await face.load(); document.fonts.add(face); }
+    S.customFonts.push({ key, family, label }); toast(outlines ? `${label} is ready.` : `${label} is ready. It works while this page is open.`); return key;
   } catch { toast("That font file didn't open. Try a .ttf or .otf file."); return null; }
 }
 function wordsCanvas(w){
@@ -5549,7 +5598,8 @@ const LIBS = { pdf: ['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.u
                qr: ['https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js', () => window.QRCode],
                zip: ['https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js', () => window.JSZip],
                shot: ['https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', () => window.html2canvas],
-               img: ['https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js', () => window.htmlToImage] };
+               img: ['https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js', () => window.htmlToImage],
+               ot: ['https://cdnjs.cloudflare.com/ajax/libs/opentype.js/1.3.4/opentype.min.js', () => window.opentype] };   // reads a customer's font file so its letter shapes can be saved with the pin
 const libLoads = {};
 function needLib(k){
   const [url, ready] = LIBS[k]; if (ready()) return Promise.resolve(true);
@@ -6120,13 +6170,13 @@ function viewBoothWait(demo){
 }
 /* The way from the booth to the online shop. While they wait: something to look at, and the alert still finds them.
    After pickup: the reason to come back. */
-function boothShopHTML(b){
+function boothShopHTML(b){   // the booth is one day; the shop is every day
   const after = ['done', 'cancelled', 'rejected'].includes(b.status);
   return `<a class="bshop ${after ? 'after' : ''}" href="#/">
-    <span class="bshop-k">${after ? 'Next time' : 'While you wait'}</span>
-    <b>${after ? 'Skip the line. Order from your phone.' : 'There’s more in our online shop'}</b>
-    <span class="bshop-p">${after ? 'Prints, stickers and pins, ready for pickup at school or brought to your classroom.' : `Prints, stickers and pins for pickup at school. We’ll still alert you when #${b.q} is ready.`}</span>
-    <span class="bshop-go">Visit stick2it.me ${ic('arrow', 16)}</span></a>`;
+    <span class="bshop-k">${after ? 'See you again' : 'After today'}</span>
+    <b>${after ? 'Need something printed tomorrow? We’re still here.' : 'The booth is today. The shop is every day.'}</b>
+    <span class="bshop-p">${after ? 'Same prints, stickers and pins, ordered from your phone anytime.' : 'Order from your phone anytime.'} Pick it up at school, or we bring it to your classroom.</span>
+    <span class="bshop-go">${after ? 'Order at' : 'Find us at'} stick2it.me ${ic('arrow', 16)}</span></a>`;
 }
 const BSTEPS = [['pending', 'Got it'], ['printing', 'Making it'], ['ready', 'Ready!']];
 function drawBoothSteps(b){
@@ -6468,7 +6518,7 @@ function fdSync(){ const f = S.fd; if (!batchOn(f)) return; if (!f.batch) { f.ba
 function fdLoad(i){ const f = S.fd; fdSync(); f.cur = Math.max(0, Math.min(f.batch.length - 1, i)); Object.assign(f, f.batch[f.cur]); f.side = 'front'; }
 function fdAdd(imageId){   // a new pin; it keeps the open pin's look (ring, filter, letters), not its words
   const f = S.fd; fdSync(); const cur = f.front, d = blankDesign(); if (imageId) d.imageId = imageId; d.bg = (cur && cur.bg) || '#ffffff';
-  if (cur && cur.fx) { d.fx = clone(cur.fx); if (d.fx.text) d.fx.text.value = ''; }
+  if (cur && cur.fx) { d.fx = clone(cur.fx); if (d.fx.text) { d.fx.text.value = ''; delete d.fx.text.cf; } }
   f.batch.push({ front: d, back: blankDesign(), backMode: f.backMode || 'same', qty: 1, side: 'front' }); f.cur = f.batch.length - 1; Object.assign(f, f.batch[f.cur]);
 }
 const batchList = () => { const f = S.fd; if (!batchOn(f)) return [fdEntry(f)]; fdSync(); return f.batch; };
@@ -6516,26 +6566,128 @@ const FX_FILTER_NAMES = [['none', 'None'], ['bw', 'Black and white'], ['warm', '
 const shortFilters = cur => S.moreFilters || FX_FILTER_NAMES.slice(4).some(([v]) => v === cur) ? FX_FILTER_NAMES : FX_FILTER_NAMES.slice(0, 4);
 const filtersMore = cur => shortFilters(cur).length < FX_FILTER_NAMES.length ? moreTile('moreFilters', 'More') : '';
 const FX_COLORS = ['#ffffff', '#283971', '#111111', '#F2BC2E', '#ec282a', '#F7A8C4', '#7AD3B0'];
-const FX_FONTS = { bold: ['800', "'Cabinet Grotesk', 'Arial Black', sans-serif", 'Bold'], clean: ['700', "'Satoshi', system-ui, sans-serif", 'Clean'] };
+const FX_FONTS = WORD_FONTS;   // pins, keychains and posters use the same letters as word stickers (the list near the top of the word maker)
+const FX_BASE = ['bold', 'clean'];   // already on the page; the others come from Google Fonts the first time one is used
 const fxFilterCss = d => (d && d.fx && FX_FILTERS[d.fx.filter]) || '';
 const fxOn = fx => !!fx && ((fx.filter && fx.filter !== 'none') || (fx.ring && fx.ring.style && fx.ring.style !== 'none') || (fx.text && (fx.text.value || '').trim()));
 const fxEnsure = d => { d.fx = d.fx || {}; d.fx.text = d.fx.text || { value: '', place: 'bottom', font: 'bold', color: '#ffffff' }; d.fx.ring = d.fx.ring || { style: 'none', color: '#283971', size: 'thin' }; return d.fx; };
 const fxContrast = c => { const h = (c || '#ffffff').replace('#', ''), n = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h, 16);
   const l = (0.299 * (n >> 16 & 255) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255)) / 255; return l > 0.62 ? '#283971' : '#ffffff'; };
-const fxFontsWanted = fx => fx && fx.text && (fx.text.value || '').trim() ? [`${FX_FONTS[fx.text.font] ? FX_FONTS[fx.text.font][0] : '800'} 40px ${(FX_FONTS[fx.text.font] || FX_FONTS.bold)[1]}`] : [];
-async function fxFontsReady(){ try { await Promise.all(Object.values(FX_FONTS).map(([w, fam]) => document.fonts.load(`${w} 40px ${fam}`))); } catch {} }
+const fxFontsWanted = fx => fx && fx.text && (fx.text.value || '').trim() && !fx.text.cf ? [`${FX_FONTS[fx.text.font] ? FX_FONTS[fx.text.font][0] : '800'} 40px ${(FX_FONTS[fx.text.font] || FX_FONTS.bold)[1]}`] : [];
+const fxNeedsExtra = fx => { const t = fx && fx.text; return !!(t && (t.value || '').trim() && !t.cf && FX_FONTS[t.font] && !FX_BASE.includes(t.font)); };
+let fxScratch = null;   // a throwaway canvas, for measuring words
+const fxLoaded = new Set();   // extra fonts confirmed loaded (document.fonts.check can say yes before the stylesheet has even arrived)
+// all = also the extra fonts (printing, saved templates: any design may use them)
+async function fxFontsReady(all){
+  try {
+    if (all) await wordFontsLoad();
+    await Promise.all(Object.entries(FX_FONTS).filter(([k]) => all || FX_BASE.includes(k)).map(([, [w, fam]]) => document.fonts.load(`${w} 40px ${fam}`)));
+  } catch {}
+}
+function fxFontLoad(fx){   // settles once this design's letters are ready (or can't be)
+  const t = fx && fx.text, w = (t && FX_FONTS[t.font]) || FX_FONTS.bold;
+  return (fxNeedsExtra(fx) ? wordFontsLoad() : Promise.resolve()).then(() => document.fonts.load(`${w[0]} 40px ${w[1]}`)).then(() => { if (fxNeedsExtra(fx)) fxLoaded.add(t.font); }).catch(() => {});
+}
+/* The letters. A built-in font draws with the canvas text calls. A font the customer brought draws its saved letter outlines
+   (fx.text.cf = { m, g: { letter: [width, path] } }, all in a 1000-unit square), so it prints the same everywhere without the font file. */
+const FX_GLYPH_OK = /^[MmLlHhVvCcSsQqTtAaZz0-9eE.,\s-]*$/, FX_PATHS = new Map();
+function fxPath(d){
+  if (typeof d !== 'string' || !d) return null;
+  let p = FX_PATHS.get(d);
+  if (p === undefined) { p = d.length < 9000 && FX_GLYPH_OK.test(d) ? new Path2D(d) : null; if (FX_PATHS.size > 600) FX_PATHS.clear(); FX_PATHS.set(d, p); }
+  return p;
+}
+function fxKit(x, tx){
+  const [wt, fam] = FX_FONTS[tx.font] || FX_FONTS.bold, cf = tx.cf && typeof tx.cf === 'object' && tx.cf.g && typeof tx.cf.g === 'object' ? tx.cf : null;
+  const F = fs => { x.font = `${wt} ${fs}px ${fam}`; };
+  const gl = ch => { if (!cf || !Object.prototype.hasOwnProperty.call(cf.g, ch)) return null; const g = cf.g[ch];
+    return Array.isArray(g) && g[0] >= 0 && g[0] < 5000 && (!g[1] || fxPath(g[1])) ? g : null; };
+  const kit = {
+    chw(ch, fs){ const g = gl(ch); if (g) return g[0] * fs / 1000; F(fs); return x.measureText(ch).width; },
+    strw(s, fs){ if (!cf) { F(fs); return x.measureText(s).width; } let w = 0; for (const ch of s) w += kit.chw(ch, fs); return w; },
+    // one letter centred on (0,0) of the current transform; mode: 's' outline, 'f' fill, 'sf' both
+    ch(ch, fs, mode, col, con, lw){
+      const g = gl(ch), st = mode.includes('s') && con, fl = mode.includes('f'); x.lineJoin = 'round';
+      if (!g) { F(fs); x.textAlign = 'center'; x.textBaseline = 'middle'; if (st) { x.strokeStyle = con; x.lineWidth = lw; x.strokeText(ch, 0, 0); } if (fl) { x.fillStyle = col; x.fillText(ch, 0, 0); } return; }
+      const p = g[1] && fxPath(g[1]); if (!p) return;   // a space
+      x.save(); x.translate(-g[0] * fs / 2000, (cf.m || 0.35) * fs); x.scale(fs / 1000, fs / 1000);
+      if (st) { x.strokeStyle = con; x.lineWidth = lw * 0.67 * 1000 / fs; x.stroke(p); }   // a thinner outline than the built-in fonts: a heavy font's little holes stay open
+      if (fl) { x.fillStyle = col; x.fill(p); }
+      x.restore();
+    },
+    // a straight line of words centred on (cx, cy): outline under all the letters, then the fill
+    line(s, fs, cx, cy, col, con, lw){
+      if (!cf) { F(fs); x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineJoin = 'round'; if (con) { x.strokeStyle = con; x.lineWidth = lw; x.strokeText(s, cx, cy); } x.fillStyle = col; x.fillText(s, cx, cy); return; }
+      let a = cx - kit.strw(s, fs) / 2; const at = [];
+      for (const ch of s) { const cw = kit.chw(ch, fs); at.push([ch, a + cw / 2]); a += cw; }
+      for (const m of ['s', 'f']) for (const [ch, px] of at) { x.save(); x.translate(px, cy); kit.ch(ch, fs, m, col, con, lw); x.restore(); }
+    }
+  };
+  return kit;
+}
+// read the letter shapes a design needs from the customer's font file (kept in memory); call when the words or font change
+function fxGlyphsSync(tx){
+  const k = tx.font || '';
+  if (!k.startsWith('custom:')) { delete tx.cf; return; }
+  const ft = S.otFonts[k]; if (!ft) return;   // the file isn't open any more: keep the letters already saved
+  const upm = ft.unitsPerEm || 1000, same = tx.cf && tx.cf.k === k, old = same && tx.cf.g ? tx.cf.g : {}, g = {};
+  let m = same && tx.cf.m != null ? tx.cf.m : null;
+  if (m == null) { let cap = 0; try { cap = ft.charToGlyph('H').getBoundingBox().y2 || 0; } catch {}
+    m = cap > 0 ? cap / 2 / upm : ((ft.ascender || 800) + (ft.descender || -200)) / 2 / upm; if (!(m > 0 && m < 1)) m = 0.35; }
+  let size = 0;
+  for (const ch of new Set([...(tx.value || '').trim()])) {
+    if (old[ch]) { g[ch] = old[ch]; size += old[ch][1].length; continue; }
+    if (size > 12000) break;   // a very detailed font: the rest of the letters fall back to Bold, so one pin never gets heavy
+    try { const gl = ft.charToGlyph(ch); if (ch !== ' ' && (!gl || !gl.index)) continue;   // the font has no such letter: that one falls back to Bold
+      const d = ch === ' ' ? '' : gl.getPath(0, 0, 1000).toPathData(0), adv = Math.round((gl.advanceWidth || upm / 2) * 1000 / upm);
+      if (d.length < 9000) { g[ch] = [adv, d]; size += d.length; } } catch {}
+  }
+  tx.cf = { k, m: Math.round(m * 1000) / 1000, g };
+}
+const fxFreeOn = d => !!(d && d.fx && d.fx.text && d.fx.text.place === 'free' && (d.fx.text.value || '').trim());
+// Words placed anywhere, and bent: where every letter goes, in pixels of a W x H picture, and the box around the words.
+// x / y are where the middle of that box sits (a share of the picture); size 1..100; curve -100 (smile) .. 100 (arch).
+function fxAutoSize(kit, s, W, H){   // until the Size slider is touched, the words size themselves to be about two thirds as wide as the picture
+  const m = Math.min(W, H), unit = kit.strw(s, 100) / 100 || 0.6;
+  return Math.max(1, Math.min(70, (0.66 * W / unit / m - 0.05) / 0.003));
+}
+function fxSizeNow(tx, mm){ fxScratch = fxScratch || document.createElement('canvas').getContext('2d'); return Math.round(tx.size == null ? fxAutoSize(fxKit(fxScratch, tx), tx.value.trim(), mm.w * 10, mm.h * 10) : +tx.size); }
+function fxFreeLayout(kit, tx, W, H){
+  const s = tx.value.trim(), m = Math.min(W, H), fs = m * (0.05 + 0.003 * Math.max(1, Math.min(100, tx.size == null ? fxAutoSize(kit, s, W, H) : +tx.size)));
+  const cv = Math.max(-100, Math.min(100, +tx.curve || 0)), px = (tx.x == null ? 0.5 : +tx.x) * W, py = (tx.y == null ? 0.5 : +tx.y) * H, hh = fs * 0.55, pad = fs * 0.12;
+  if (Math.abs(cv) < 1.5) { const w = kit.strw(s, fs); return { fs, cx: px, cy: py, items: null, box: { x0: px - w / 2 - pad, y0: py - hh, x1: px + w / 2 + pad, y1: py + hh } }; }
+  const chars = [...s], cws = chars.map(ch => kit.chw(ch, fs)), w = cws.reduce((a, b) => a + b, 0) || 1;
+  const th = Math.abs(cv) / 100 * 1.15 * Math.PI, r = w / th, sg = cv > 0 ? 1 : -1, raw = []; let a = -w / 2, bx0 = 1e9, bx1 = -1e9, by0 = 1e9, by1 = -1e9;
+  chars.forEach((ch, i) => { const ph = (a + cws[i] / 2) / r; raw.push({ ch, x: r * Math.sin(ph), y: sg * r * (1 - Math.cos(ph)), r: sg * ph, hw: cws[i] / 2 + pad }); a += cws[i]; });
+  raw.forEach(it => { const c = Math.cos(it.r), n = Math.sin(it.r);
+    for (const [u, v] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { const dx = u * it.hw, dy = v * hh, X = it.x + dx * c - dy * n, Y = it.y + dx * n + dy * c;
+      bx0 = Math.min(bx0, X); bx1 = Math.max(bx1, X); by0 = Math.min(by0, Y); by1 = Math.max(by1, Y); } });
+  const ox = px - (bx0 + bx1) / 2, oy = py - (by0 + by1) / 2;
+  return { fs, items: raw.map(it => ({ ch: it.ch, x: it.x + ox, y: it.y + oy, r: it.r })), box: { x0: bx0 + ox, y0: by0 + oy, x1: bx1 + ox, y1: by1 + oy } };
+}
+function fxFreeDraw(x, kit, tx, W, H){
+  const col = tx.color || '#ffffff', con = fxContrast(col), L = fxFreeLayout(kit, tx, W, H), lw = L.fs * 0.24;
+  if (!L.items) { kit.line(tx.value.trim(), L.fs, L.cx, L.cy, col, con, lw); return; }
+  for (const m of ['s', 'f']) for (const it of L.items) { x.save(); x.translate(it.x, it.y); x.rotate(it.r); kit.ch(it.ch, L.fs, m, col, con, lw); x.restore(); }
+}
+function fxTextBoxFrac(tx, mm){   // the box around free words, as shares of the picture (to draw the frame around them and to tell if a finger is on them)
+  fxScratch = fxScratch || document.createElement('canvas').getContext('2d');
+  const W = mm.w * 10, H = mm.h * 10, b = fxFreeLayout(fxKit(fxScratch, tx), tx, W, H).box;
+  return { x0: b.x0 / W, y0: b.y0 / H, x1: b.x1 / W, y1: b.y1 / H };
+}
 // opt: { round: true for pins, face: visible face as a share of the printed circle (the rest wraps around the back) }
 function paintFx(x, d, W, H, opt){
   const fx = d && d.fx; if (!fxOn(fx)) return;
   const ring = fx.ring && fx.ring.style !== 'none' ? fx.ring : null, tx = fx.text && (fx.text.value || '').trim() ? fx.text : null;
+  const kit = tx ? fxKit(x, tx) : null, free = !!tx && tx.place === 'free';
   x.save();
   if (opt.round) {
     const cx = W / 2, cy = H / 2, R = W / 2, Rf = R * (opt.face || 1), t = Rf * (ring && ring.size === 'thick' ? 0.21 : 0.14);
     // where curved words sit on the ring (so dots and stripes leave that part plain)
-    const onRingTx = !!(tx && ring && ring.style !== 'double' && tx.place !== 'across');
+    const onRingTx = !!(tx && !free && ring && ring.style !== 'double' && tx.place !== 'across');
     let gapA = null;
-    if (onRingTx) { const [wt0, fam0] = FX_FONTS[tx.font] || FX_FONTS.bold, s0 = tx.value.trim(); let fs0 = t * 0.66; const r0 = Rf - t / 2;
-      const wAt = () => { x.font = `${wt0} ${fs0}px ${fam0}`; return [...s0].reduce((a, ch) => a + x.measureText(ch).width + fs0 * 0.06, -fs0 * 0.06); };
+    if (onRingTx) { const s0 = tx.value.trim(); let fs0 = t * 0.66; const r0 = Rf - t / 2;
+      const wAt = () => [...s0].reduce((a, ch) => a + kit.chw(ch, fs0) + fs0 * 0.06, -fs0 * 0.06);
       while (wAt() / r0 > Math.PI * 1.15 && fs0 > 4) fs0 *= 0.92;
       const half = wAt() / r0 / 2 + t * 0.45 / r0, mid = tx.place === 'top' ? -Math.PI / 2 : Math.PI / 2; gapA = [mid - half, mid + half]; }
     const inGap = a => { if (!gapA) return false; let v = a; while (v < gapA[0]) v += Math.PI * 2; while (v > gapA[0] + Math.PI * 2) v -= Math.PI * 2; return v <= gapA[1]; };
@@ -6552,23 +6704,21 @@ function paintFx(x, d, W, H, opt){
           if (gapA) { x.fillStyle = col; x.beginPath(); x.arc(cx, cy, R, gapA[0], gapA[1]); x.arc(cx, cy, inner, gapA[1], gapA[0], true); x.closePath(); x.fill(); } }
       }
     }
-    if (tx) {
-      const [wt, fam] = FX_FONTS[tx.font] || FX_FONTS.bold, col = tx.color || '#ffffff', con = fxContrast(col), onRing = onRingTx;
+    if (tx && !free) {
+      const col = tx.color || '#ffffff', con = fxContrast(col), onRing = onRingTx;
       const s = tx.value.trim();
       if (tx.place === 'across') {
-        let fs = Rf * 0.26; x.font = `${wt} ${fs}px ${fam}`; const maxW = Rf * 1.55, w0 = x.measureText(s).width; if (w0 > maxW) { fs *= maxW / w0; x.font = `${wt} ${fs}px ${fam}`; }
-        x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineJoin = 'round'; const y = cy + Rf * 0.52;
-        x.strokeStyle = con; x.lineWidth = fs * 0.24; x.strokeText(s, cx, y); x.fillStyle = col; x.fillText(s, cx, y);
+        let fs = Rf * 0.26; const maxW = Rf * 1.55, w0 = kit.strw(s, fs); if (w0 > maxW) fs *= maxW / w0;
+        kit.line(s, fs, cx, cy + Rf * 0.52, col, con, fs * 0.24);
       } else {
         const top = tx.place === 'top'; let fs = onRing ? t * 0.66 : Rf * 0.17; const rr = () => onRing ? Rf - t / 2 : Rf - fs * 0.95;
-        const gap = () => fs * 0.06, widthAt = () => { x.font = `${wt} ${fs}px ${fam}`; return [...s].reduce((a, ch) => a + x.measureText(ch).width + gap(), -gap()); };
+        const gap = () => fs * 0.06, widthAt = () => [...s].reduce((a, ch) => a + kit.chw(ch, fs) + gap(), -gap());
         while (widthAt() / rr() > Math.PI * 1.15 && fs > 4) fs *= 0.92;   // keep the words on about the bottom (or top) half
-        const r = rr(), span = widthAt() / r; x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineJoin = 'round';
+        const r = rr(), span = widthAt() / r;
         let a = top ? -Math.PI / 2 - span / 2 : Math.PI / 2 + span / 2;
-        for (const ch of s) { const cw = x.measureText(ch).width, step = (cw + gap()) / r, mid = top ? a + cw / 2 / r : a - cw / 2 / r;
+        for (const ch of s) { const cw = kit.chw(ch, fs), step = (cw + gap()) / r, mid = top ? a + cw / 2 / r : a - cw / 2 / r;
           x.save(); x.translate(cx + r * Math.cos(mid), cy + r * Math.sin(mid)); x.rotate(top ? mid + Math.PI / 2 : mid - Math.PI / 2);
-          if (!onRing) { x.strokeStyle = con; x.lineWidth = fs * 0.24; x.strokeText(ch, 0, 0); }
-          x.fillStyle = col; x.fillText(ch, 0, 0); x.restore(); a = top ? a + step : a - step; }
+          kit.ch(ch, fs, onRing ? 'f' : 'sf', col, con, fs * 0.24); x.restore(); a = top ? a + step : a - step; }
       }
     }
   } else {
@@ -6586,13 +6736,14 @@ function paintFx(x, d, W, H, opt){
           for (let k = -H; k < W + H; k += t * 0.6) { x.beginPath(); x.moveTo(k, 0); x.lineTo(k + H, H); x.stroke(); } x.restore(); }
       }
     }
-    if (tx) {
-      const [wt, fam] = FX_FONTS[tx.font] || FX_FONTS.bold, col = tx.color || '#ffffff', con = fxContrast(col), s = tx.value.trim(), pad = ring ? t : 0;
-      let fs = m * 0.12; x.font = `${wt} ${fs}px ${fam}`; const maxW = W - 2 * pad - m * 0.12, w0 = x.measureText(s).width; if (w0 > maxW) { fs *= maxW / w0; x.font = `${wt} ${fs}px ${fam}`; }
+    if (tx && !free) {
+      const col = tx.color || '#ffffff', con = fxContrast(col), s = tx.value.trim(), pad = ring ? t : 0;
+      let fs = m * 0.12; const maxW = W - 2 * pad - m * 0.12, w0 = kit.strw(s, fs); if (w0 > maxW) fs *= maxW / w0;
       const y = tx.place === 'top' ? pad + m * 0.04 + fs * 0.62 : H - pad - m * 0.04 - fs * 0.62;
-      x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineJoin = 'round'; x.strokeStyle = con; x.lineWidth = fs * 0.24; x.strokeText(s, W / 2, y); x.fillStyle = col; x.fillText(s, W / 2, y);
+      kit.line(s, fs, W / 2, y, col, con, fs * 0.24);
     }
   }
+  if (free) fxFreeDraw(x, kit, tx, W, H);   // words placed anywhere sit on top of the ring
   x.restore();
 }
 // browsers without canvas filters (older Safari): the same looks, worked out pixel by pixel
@@ -6621,13 +6772,36 @@ function fxPaintCanvas(cv, d, opt){
   if (!cv) return; const w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return;
   const k = Math.min(3, window.devicePixelRatio || 1); cv.width = Math.round(w * k); cv.height = Math.round(h * k);
   const x = cv.getContext('2d'), paint = () => { x.clearRect(0, 0, cv.width, cv.height); paintFx(x, d, cv.width, cv.height, opt); }; paint();
-  const want = fxFontsWanted(d && d.fx); if (want.length && !want.every(f => document.fonts.check(f))) Promise.all(want.map(f => document.fonts.load(f))).then(paint).catch(() => {});
+  const fx = d && d.fx, want = fxFontsWanted(fx);
+  if (want.length && (fxNeedsExtra(fx) ? !fxLoaded.has(fx.text.font) : !want.every(f => document.fonts.check(f)))) fxFontLoad(fx).then(() => { paint(); if (opt && opt.onFont) opt.onFont(); });
 }
 function fxPaintStage(){
   const f = S.fd; if (!f || !['pins', 'keychains', 'posters'].includes(f.type)) return;
-  const d = shownDesign(), mm = frameMm(f), opt = { round: f.type === 'pins', face: mm.vis ? mm.vis / mm.w : 1, thin: f.type === 'posters' };
+  const d = shownDesign(), mm = frameMm(f), opt = { round: f.type === 'pins', face: mm.vis ? mm.vis / mm.w : 1, thin: f.type === 'posters', onFont: fxTextBoxUpdate };
   document.querySelectorAll('#fstage canvas.fxc').forEach(cv => fxPaintCanvas(cv, d, opt));
   ['#fimg', '#fimg2'].forEach(q => { const el = $(q); if (el) el.style.filter = fxFilterCss(d); });
+  fxTextBoxUpdate();
+}
+// the dashed box around words that can be dragged, and the frame's touch handling when they are there
+function fxTextBoxUpdate(){
+  const f = S.fd, fr = $('#frame'), el = fr && fr.querySelector('.txbox'); if (!f || !fr || !el) return;
+  const d = shownDesign(), free = fxFreeOn(d), on = free && f.fxOpen !== false && (f.fxTab || 'text') === 'text';
+  if (!on) el.hidden = true;
+  else { const b = fxTextBoxFrac(d.fx.text, frameMm(f)); el.hidden = false; el.style.cssText = `left:${b.x0 * 100}%;top:${b.y0 * 100}%;width:${(b.x1 - b.x0) * 100}%;height:${(b.y1 - b.y0) * 100}%`; }
+  if (free !== (fr.dataset.free === '1')) { fr.dataset.free = free ? '1' : ''; placeImg(); }
+}
+// guide lines, the red snap lines, and the words box: small layers on top of the editing picture (not part of what prints)
+function frameOverlays(){
+  const fr = $('#frame'), f = S.fd; if (!fr || !f || !['pins', 'keychains', 'posters'].includes(f.type)) return;
+  fr.querySelectorAll('.gdsvg, .snp, .txbox').forEach(e => e.remove());
+  const mm = frameMm(f), safe = f.type === 'pins' ? `<circle class="gd-safe" cx="50" cy="50" r="${(((mm.vis || mm.w) / 2 - 3) / mm.w * 100).toFixed(2)}"/>` : '<rect class="gd-safe" x="5" y="5" width="90" height="90" rx="1.5"/>';
+  fr.insertAdjacentHTML('beforeend', `${S.guides ? `<svg class="gdsvg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><g class="gd-th"><path d="M33.333 0V100M66.667 0V100M0 33.333H100M0 66.667H100"/></g><g class="gd-ct"><path d="M50 0V100M0 50H100"/></g>${safe}</svg>` : ''}<span class="snp v" hidden></span><span class="snp h" hidden></span><span class="txbox" hidden></span>`);
+}
+function snapLines(vx, hy){   // show the red lines while something is caught on them (where, as a share of the picture, or null)
+  const fr = $('#frame'); if (!fr) return;
+  const v = fr.querySelector('.snp.v'), h = fr.querySelector('.snp.h');
+  if (v) { v.hidden = vx == null; if (vx != null) v.style.left = vx * 100 + '%'; }
+  if (h) { h.hidden = hy == null; if (hy != null) h.style.top = hy * 100 + '%'; }
 }
 // the "Make it yours" section: Words / Ring (Border) / Filter
 function fxSectionHTML(step, d){
@@ -6635,16 +6809,21 @@ function fxSectionHTML(step, d){
   const fx = fxEnsure(d), tab = f.fxTab || 'text', pin = f.type === 'pins', ringName = pin ? 'Ring' : 'Border', im = imgById(d.imageId);
   const sw = (act, cur, extra = '') => `<div class="swatches fx-sw">${FX_COLORS.map(c => `<button type="button" class="sw ${cur.toLowerCase() === c.toLowerCase() ? 'on' : ''}" style="background:${c}" data-act="${act}" data-c="${c}" aria-label="Color ${c}" aria-pressed="${cur.toLowerCase() === c.toLowerCase()}"></button>`).join('')}
     <label class="sw rainbow ${FX_COLORS.some(c => c.toLowerCase() === cur.toLowerCase()) ? '' : 'on'}" title="Pick any color"><input type="color" data-fxpick="${act}" value="${cur}" aria-label="Pick any color">${FX_COLORS.some(c => c.toLowerCase() === cur.toLowerCase()) ? '' : `<span style="background:${cur}"></span>`}</label>${extra}</div>`;
-  const seg = (act, cur, opts) => `<div class="seg">${opts.map(([v, l]) => `<button type="button" class="${cur === v ? 'on' : ''}" data-act="${act}" data-v="${v}" aria-pressed="${cur === v}">${l}</button>`).join('')}</div>`;
-  const places = pin ? [['bottom', 'Bottom'], ['top', 'Top'], ['across', 'Across']] : [['bottom', 'Bottom'], ['top', 'Top']];
+  const seg = (act, cur, opts, cls = '') => `<div class="seg ${cls}">${opts.map(([v, l]) => `<button type="button" class="${cur === v ? 'on' : ''}" data-act="${act}" data-v="${v}" aria-pressed="${cur === v}">${l}</button>`).join('')}</div>`;
+  const places = pin ? [['bottom', 'Bottom'], ['top', 'Top'], ['across', 'Across'], ['free', 'Anywhere']] : [['bottom', 'Bottom'], ['top', 'Top'], ['free', 'Anywhere']];
   if (!places.some(([v]) => v === fx.text.place)) fx.text.place = 'bottom';
   const g = (label, body, wide) => `<div class="fxg ${wide ? 'wide' : ''}">${label}${body}</div>`, L = t => `<p class="lab flab">${t}</p>`;
   if (f.type === 'posters' && tab === 'text' && !places.some(([v]) => v === fx.text.place)) fx.text.place = 'bottom';
+  const rng = (key, min, max, val, a, b) => `<div class="fx-rng">${a}<input type="range" data-fxrange="${key}" min="${min}" max="${max}" step="1" value="${val}" aria-label="${key === 'size' ? 'Size of the words' : 'Curve of the words'}">${b}</div>`;
+  const freeBits = g(L('Size'), rng('size', 1, 100, fxSizeNow(fx.text, frameMm(f)), '<b class="fx-a s" aria-hidden="true">A</b>', '<b class="fx-a l" aria-hidden="true">A</b>'))
+    + g(L('Curve'), rng('curve', -100, 100, +fx.text.curve || 0, ic('curveU', 20), ic('curveN', 20)))
+    + `<div class="fxg wide"><div class="fx-pos">${smallBtn('Center it', '', 'fxCenter', 'plain')}<span class="help">Drag the words on the picture to move them.</span></div></div>`;
   const body = tab === 'text' ? g(`<label class="lab flab" for="fxWords">Words <span class="muted small" style="font-weight:500">optional</span></label>`,
         `<div class="fx-words"><input class="inp" id="fxWords" maxlength="28" value="${esc(fx.text.value || '')}" placeholder="A name or a date" autocomplete="off">
         ${fx.text.value ? `<button type="button" class="fx-clear" data-act="fxTextClear" aria-label="Remove the words">${ic('x', 16)}</button>` : ''}</div>`, true)
-      + g(L('Where'), seg('fxPlace', fx.text.place, places))
-      + g(L('Letters'), seg('fxFont', fx.text.font, Object.entries(FX_FONTS).map(([k, v]) => [k, `<span style="font-family:${v[1].replace(/"/g, '&quot;')};font-weight:${v[0]}">${v[2]}</span>`])))
+      + g(L('Where'), seg('fxPlace', fx.text.place, places, 'tight'), true)
+      + (fx.text.place === 'free' ? freeBits : '')
+      + g(L('Letters'), fontTilesHTML('fxFont', fx.text.font, fx.text.value) + ((fx.text.font || '').startsWith('custom:') ? '<p class="help" style="margin:8px 0 0">Your font is saved with the order, so it prints just like this.</p>' : ''), true)
       + g(L('Color'), sw('fxTextColor', fx.text.color || '#ffffff'), true)
     : tab === 'ring' ? `<div class="fxg wide">${L('Style')}
       <div class="fx-rings">${(() => { const all = [['none', 'None'], ['solid', 'Solid'], ['dots', 'Dots'], ['stripes', 'Stripes'], ['double', 'Double']], showAll = S.moreRings || all.slice(3).some(([v]) => v === fx.ring.style);
@@ -6665,12 +6844,23 @@ function moreRedraw(){ if (S.view === 'framed') drawFramedCtrl(); else if (S.vie
 function fxAfter(){ buzz(4); fdSync(); drawFramedCtrl(); fxPaintStage(); }
 function fxBind(){
   const d = activeDesign(), w = $('#fxWords');
-  if (w && d) { w.addEventListener('input', () => { fxEnsure(d).text.value = w.value; fxPaintStage(); });
+  if (w && d) { w.addEventListener('input', () => { const tx = fxEnsure(d).text; tx.value = w.value; fxGlyphsSync(tx); fxPaintStage(); });
     w.addEventListener('change', () => batchTrayRefresh()); }
   document.querySelectorAll('[data-fxpick]').forEach(inp => {
     const apply = () => { const dd = activeDesign(); if (!dd) return; const fx = fxEnsure(dd); if (inp.dataset.fxpick === 'fxTextColor') fx.text.color = inp.value; else fx.ring.color = inp.value; fxPaintStage(); };
     inp.addEventListener('input', apply); inp.addEventListener('change', () => { apply(); drawFramedCtrl(); });
   });
+  document.querySelectorAll('[data-fxrange]').forEach(inp => {
+    const key = inp.dataset.fxrange, fill = () => inp.style.setProperty('--p', `${(inp.value - inp.min) / (inp.max - inp.min) * 100}%`); fill();
+    inp.addEventListener('input', () => { const dd = activeDesign(); if (!dd) return; let v = +inp.value;
+      if (key === 'curve' && S.snap && Math.abs(v) < 5) { v = 0; inp.value = 0; }   // a soft stop at "straight"
+      fxEnsure(dd).text[key] = v; fill(); fxPaintStage(); });
+    inp.addEventListener('change', () => batchTrayRefresh());
+  });
+  document.querySelectorAll('.fx-body [data-fontup]').forEach(i => i.addEventListener('change', async () => {
+    const k = await fontUpload(i, true), dd = activeDesign(); if (!k || !dd) return;
+    const tx = fxEnsure(dd).text; tx.font = k; fxGlyphsSync(tx); fxAfter(); }));
+  if (document.querySelector('.fx-body .wd-fonts')) wordFontsLoad();   // so the little "Aa" on each font tile shows that font
 }
 
 function drawFramedCtrl(){
@@ -6722,6 +6912,10 @@ function drawFramedCtrl(){
       <div class="zoomrow">${ic('search', 18)}<input type="range" id="zoom" min="0.4" max="3" step="0.01" value="${d.zoom}" aria-label="Zoom">
         ${smallBtn('Reset', '', 'fdReset', 'plain')}</div>
       <p class="hint" style="margin-top:10px">${ic('move', 18)}<span>Drag the picture to move it. Pinch with two fingers, or use the slider, to zoom in and out.</span></p>
+      <div class="adjtog" role="group" aria-label="Help with positioning">
+        <button type="button" class="tgl ${S.guides ? 'on' : ''}" data-act="guidesToggle" aria-pressed="${!!S.guides}">${ic('grid', 18)}<span>Guides</span></button>
+        <button type="button" class="tgl ${S.snap ? 'on' : ''}" data-act="snapToggle" aria-pressed="${!!S.snap}">${ic('magnet', 18)}<span>Snap to center</span></button></div>
+      <p class="help adj-leg" ${S.guides ? '' : 'hidden'}>The gold dashes mark a safe area: keep faces and words inside it. The thin lines split ${f.type === 'pins' ? 'the pin' : 'the picture'} into thirds.</p>
       <div class="bgrow"><p class="lab flab">Background <span class="muted small" style="font-weight:500">shows when you zoom out</span></p>
       ${(() => { const bg = (d.bg || '#ffffff').toLowerCase(), custom = bg !== '#ffffff'; return `<div class="swatches">
         <button type="button" class="sw ${custom ? '' : 'on'}" style="background:#fff" data-act="fdBg" data-c="#ffffff" aria-label="White background" aria-pressed="${!custom}"></button>
@@ -6760,7 +6954,8 @@ function drawFramedCtrl(){
   }
   const z = $('#zoom');
   if (z) { const fill = () => z.style.setProperty('--p', `${(z.value - z.min) / (z.max - z.min) * 100}%`); fill();
-    z.addEventListener('input', () => { const dd = activeDesign(); if (dd) { dd.zoom = +z.value; placeImg(); } fill(); }); }
+    z.addEventListener('input', () => { const dd = activeDesign(); if (S.snap && Math.abs(+z.value - 1) < 0.025) z.value = 1;   // a soft stop at 1x
+      if (dd) { dd.zoom = +z.value; placeImg(); } fill(); }); }
   $('#ctrl').querySelectorAll('input[name="backMode"]').forEach(r => r.addEventListener('change', () => {
     f.backMode = r.value; if (f.backMode === 'different' && !f.back.imageId) Object.assign(f.back, blankDesign());
     drawFramed();
@@ -6864,7 +7059,7 @@ function drawFramedStage(){
   $('#fstage').querySelectorAll('.filePick').forEach(i => i.addEventListener('change', onFiles));
   const frEl = $('#frame'); if (frEl) frEl.classList.toggle('has-img', !!$('#fimg'));
   const img = $('#fimg'); if (img) { if (img.complete) placeImg(); else img.onload = placeImg; }
-  bindPan(); fxPaintStage(); ppBind(); keepPinRound();
+  frameOverlays(); bindPan(); fxPaintStage(); ppBind(); keepPinRound();
 }
 let pinRO = null;
 function keepPinRound(){
@@ -6888,7 +7083,7 @@ function placeImg(){
   const img2 = $('#fimg2'); if (img2) img2.setAttribute('style', fracStyle(L) + flt);
   // Let the page scroll in any direction the picture can't move in (e.g. a wide photo in a tall poster)
   const fr = $('#frame');
-  if (fr) { const mx = Math.abs(L.dw - 1) > .002, my = Math.abs(L.dh - 1) > .002; fr.style.touchAction = mx && my ? 'none' : mx ? 'pan-y' : my ? 'pan-x' : 'pan-y'; }
+  if (fr) { const mx = Math.abs(L.dw - 1) > .002, my = Math.abs(L.dh - 1) > .002; fr.style.touchAction = fxFreeOn(d) || (mx && my) ? 'none' : mx ? 'pan-y' : my ? 'pan-x' : 'pan-y'; }
   const big = S.fd.type === 'posters' && (+S.fd.tiles || 1) > 1;   // big posters are seen from farther away
   $('#reswarn').innerHTML = L.dpi < (big ? 90 : 150) ? `<p class="warnline">${ic('warn', 16)}${big
     ? `This picture is ${im.w} pixels wide, which may look soft this big. Try a bigger picture or fewer sheets.`
@@ -6898,15 +7093,27 @@ function syncZoomSlider(d){
   const z = $('#zoom'); if (!z) return;
   z.value = d.zoom; z.style.setProperty('--p', `${(z.value - z.min) / (z.max - z.min) * 100}%`);
 }
-/* One finger (or mouse) drags the picture. Two fingers pinch to zoom, and moving both drags too. */
+/* One finger (or mouse) drags the picture. Two fingers pinch to zoom, and moving both drags too.
+   Words placed with "Anywhere" drag on their own. Things catch on the center (and the thirds, when Guides are on): red lines show it. */
+const SNAP_PX = 9;
 function bindPan(){
   const fr = $('#frame'); if (!fr || fr.dataset.locked === 'true') return;
-  const pts = new Map(); let st = null;
-  const begin = () => {
+  const pts = new Map(); let st = null, caught = '';
+  const magnet = (v, to, t) => { if (!S.snap) return null; let best = null; for (const c of to) if (Math.abs(v - c) < t && (best === null || Math.abs(v - c) < Math.abs(v - best))) best = c; return best; };
+  const show = (vx, hy) => { const k = vx + '|' + hy; if (k === caught) return; caught = k; snapLines(vx, hy); if (vx != null || hy != null) buzz(3); };
+  const reach = d => { const im = d && imgById(d.imageId); if (!im) return { x: false, y: false }; const mm = frameMm(S.fd), L = layoutFrac(im, d, mm.w, mm.h); return { x: Math.abs(L.dw - 1) > .002, y: Math.abs(L.dh - 1) > .002 }; };
+  const onWords = (e, r) => {
+    const d = activeDesign(); if (!fxFreeOn(d)) return false;
+    const b = fxTextBoxFrac(d.fx.text, frameMm(S.fd)), px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height, m = 12 / r.width;
+    return px >= b.x0 - m && px <= b.x1 + m && py >= b.y0 - m && py <= b.y1 + m;
+  };
+  const begin = hitWords => {
     const d = activeDesign(); if (!d || !d.imageId) { st = null; return; }
     const p = [...pts.values()], r = fr.getBoundingClientRect();
-    if (p.length === 1) st = { mode: 'pan', x: p[0].x, y: p[0].y, ox: d.ox, oy: d.oy, r };
-    else if (p.length >= 2) {
+    if (p.length === 1) {
+      if (hitWords) st = { mode: 'words', x: p[0].x, y: p[0].y, tx: d.fx.text.x == null ? 0.5 : +d.fx.text.x, ty: d.fx.text.y == null ? 0.5 : +d.fx.text.y, r };
+      else st = { mode: 'pan', x: p[0].x, y: p[0].y, ox: d.ox, oy: d.oy, r, can: reach(d) };
+    } else if (p.length >= 2) {
       const [a, b] = p;
       st = { mode: 'pinch', dist: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)), zoom: d.zoom, mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2, ox: d.ox, oy: d.oy, r };
     } else st = null;
@@ -6915,7 +7122,7 @@ function bindPan(){
     const d0 = activeDesign(); if (!d0 || !d0.imageId) return;   // nothing to move yet: let taps reach the "add a picture" button
     pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
     try { fr.setPointerCapture(e.pointerId); } catch {}
-    begin();
+    begin(pts.size === 1 && onWords(e, fr.getBoundingClientRect()));
   });
   fr.addEventListener('pointermove', e => {
     if (!pts.has(e.pointerId)) return;
@@ -6923,17 +7130,28 @@ function bindPan(){
     const d = activeDesign(); if (!st || !d) return;
     e.preventDefault();
     const p = [...pts.values()];
+    if (st.mode === 'words' && p.length === 1) {
+      const tx = d.fx.text; let nx = st.tx + (p[0].x - st.x) / st.r.width, ny = st.ty + (p[0].y - st.y) / st.r.height;
+      const to = S.guides ? [1 / 3, 0.5, 2 / 3] : [0.5], sx = magnet(nx, to, SNAP_PX / st.r.width), sy = magnet(ny, to, SNAP_PX / st.r.height);
+      if (sx !== null) nx = sx; if (sy !== null) ny = sy;
+      tx.x = Math.max(0.03, Math.min(0.97, nx)); tx.y = Math.max(0.03, Math.min(0.97, ny)); show(sx, sy); fxPaintStage(); return;
+    }
     if (st.mode === 'pan' && p.length === 1) {
-      d.ox = st.ox + (p[0].x - st.x) / st.r.width; d.oy = st.oy + (p[0].y - st.y) / st.r.height;
+      let ox = st.ox + (p[0].x - st.x) / st.r.width, oy = st.oy + (p[0].y - st.y) / st.r.height;
+      const sx = st.can.x ? magnet(ox, [0], SNAP_PX / st.r.width) : null, sy = st.can.y ? magnet(oy, [0], SNAP_PX / st.r.height) : null;
+      if (sx !== null) ox = 0; if (sy !== null) oy = 0;
+      d.ox = ox; d.oy = oy; show(sx === null ? null : 0.5, sy === null ? null : 0.5);
     } else if (st.mode === 'pinch' && p.length >= 2) {
       const [a, b] = p, dist = Math.hypot(a.x - b.x, a.y - b.y);
-      d.zoom = Math.max(0.4, Math.min(3, st.zoom * dist / st.dist));
+      let z = st.zoom * dist / st.dist; if (S.snap && Math.abs(z - 1) < 0.03) z = 1;   // a soft stop at 1x
+      d.zoom = Math.max(0.4, Math.min(3, z));
       d.ox = st.ox + ((a.x + b.x) / 2 - st.mx) / st.r.width; d.oy = st.oy + ((a.y + b.y) / 2 - st.my) / st.r.height;
       syncZoomSlider(d);
     }
     placeImg();
   });
-  const end = e => { pts.delete(e.pointerId); begin(); };
+  const end = e => { const was = st && st.mode; pts.delete(e.pointerId); begin(false);
+    if (!pts.size) { show(null, null); if (was === 'words') { fdSync(); batchTrayRefresh(); } } };
   fr.addEventListener('pointerup', end); fr.addEventListener('pointercancel', end);
   fr.addEventListener('wheel', e => {
     const d = activeDesign(); if (!d || !d.imageId) return;
@@ -8317,7 +8535,7 @@ const pinsAgain = o => o.status === 'printing' && !o.images_deleted && orderItem
 const kcAgain = o => o.status === 'printing' && !o.images_deleted && orderItems(o).some(it => it.type === 'keychains' && it.front);
 async function pinSheets(asPng, again){
   if (!(await needLib('pdf'))) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
-  await fxFontsReady();
+  await fxFontsReady(true);
   const list = S.admin.orders.filter(again ? pinsAgain : pinsWaiting);
   if (!list.length) return toast(again ? 'No orders in Printing have pins.' : 'No confirmed pin orders waiting to print.');
   toast(`Packing the pins from ${list.length} order${list.length === 1 ? '' : 's'}. This can take a bit.`);
@@ -8371,7 +8589,7 @@ const sheetsCoverOrder = o => { const l = o.layout || {}; return orderItems(o).e
 /* Every confirmed keychain waiting to print, from all orders, on shared A4 sheets. Two-sided ones: front and back side by side. */
 async function kcSheets(asPng, again){
   if (!(await needLib('pdf'))) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
-  await fxFontsReady();
+  await fxFontsReady(true);
   const list = S.admin.orders.filter(again ? kcAgain : kcWaiting);
   if (!list.length) return toast(again ? 'No orders in Printing have keychains.' : 'No confirmed keychain orders waiting to print.');
   toast(`Packing the keychains from ${list.length} order${list.length === 1 ? '' : 's'}. This can take a bit.`);
@@ -8433,7 +8651,7 @@ async function batchPrint(date){
   S.admin.filter = 'printing'; drawAdminBody();
 }
 async function makePdf(o, batch, asPng){
-  await fxFontsReady();
+  await fxFontsReady(true);
   if (!(await needLib('pdf'))) { toast("The PDF tool didn't load. Check your internet and refresh."); return; }
   if (o.images_deleted) { if (!batch) toast('The pictures for this order were already cleaned up.'); return 'gone'; }
   const asIs = it => it.type === 'prints' || it.mode === 'pages';   // customer files we print exactly as they are
@@ -9882,15 +10100,20 @@ const ACTIONS = {
   moreFonts: () => { S.moreFonts = true; moreRedraw(); },
   moreRings: () => { S.moreRings = true; moreRedraw(); },
   moreFilters: () => { S.moreFilters = true; moreRedraw(); },
-  fxPlace: t => { const d = activeDesign(); if (!d) return; fxEnsure(d).text.place = t.dataset.v; fxAfter(); },
-  fxFont: t => { const d = activeDesign(); if (!d) return; fxEnsure(d).text.font = t.dataset.v; fxAfter(); },
+  fxPlace: t => { const d = activeDesign(); if (!d) return; const tx = fxEnsure(d).text; tx.place = t.dataset.v;
+    if (tx.place === 'free') { if (tx.curve == null) tx.curve = 0; if (tx.x == null) tx.x = 0.5; if (tx.y == null) tx.y = 0.5; } fxAfter(); },
+  fxCenter: () => { const d = activeDesign(); if (!d) return; const tx = fxEnsure(d).text; tx.x = 0.5; tx.y = 0.5; buzz(4); fdSync(); fxPaintStage(); },
+  fxFont: t => { const d = activeDesign(); if (!d) return; const tx = fxEnsure(d).text; tx.font = t.dataset.v; fxGlyphsSync(tx); fxAfter(); },
+  guidesToggle: t => { S.guides = !S.guides; safeLS.set('sk_guides', S.guides ? '1' : '0'); t.classList.toggle('on', S.guides); t.setAttribute('aria-pressed', S.guides);
+    const lg = document.querySelector('.adj-leg'); if (lg) lg.hidden = !S.guides; frameOverlays(); fxTextBoxUpdate(); buzz(4); },
+  snapToggle: t => { S.snap = !S.snap; safeLS.set('sk_snap', S.snap ? '1' : '0'); t.classList.toggle('on', S.snap); t.setAttribute('aria-pressed', S.snap); buzz(4); },
   fxTextColor: t => { const d = activeDesign(); if (!d) return; fxEnsure(d).text.color = t.dataset.c; fxAfter(); },
   fxTextClear: () => { const d = activeDesign(); if (!d) return; fxEnsure(d).text.value = ''; fxAfter(); },
   fxRing: t => { const d = activeDesign(); if (!d) return; const fx = fxEnsure(d); fx.ring.style = t.dataset.v;
     if (t.dataset.v !== 'none' && (fx.text.value || '').trim() && fx.text.color === '#ffffff' && fxContrast(fx.ring.color) !== '#ffffff') fx.text.color = '#283971'; fxAfter(); },
   fxRingSize: t => { const d = activeDesign(); if (!d) return; fxEnsure(d).ring.size = t.dataset.v; fxAfter(); },
   fxRingColor: t => { const d = activeDesign(); if (!d) return; const fx = fxEnsure(d); fx.ring.color = t.dataset.c;
-    if ((fx.text.value || '').trim() && fx.text.place !== 'across' && fx.text.color.toLowerCase() === t.dataset.c.toLowerCase()) fx.text.color = fxContrast(t.dataset.c); fxAfter(); },
+    if ((fx.text.value || '').trim() && !['across', 'free'].includes(fx.text.place) && fx.text.color.toLowerCase() === t.dataset.c.toLowerCase()) fx.text.color = fxContrast(t.dataset.c); fxAfter(); },
   fxFilter: t => { const d = activeDesign(); if (!d) return; fxEnsure(d).filter = t.dataset.v; fxAfter(); },
   fdSize: t => { S.fd.size = t.dataset.size; posterRegrid(S.fd); drawFramed(); },
   fdOrient: t => { S.fd.orient = t.dataset.o; posterRegrid(S.fd); drawFramed(); },
